@@ -1,0 +1,366 @@
+fileFormatVersion: 2
+guid: 9a0000637ce89264f87f95a20e35c9a3
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: HumanoidParts_0
+    21300002: HumanoidParts_1
+    21300004: HumanoidParts_2
+    21300006: HumanoidParts_3
+    21300008: HumanoidParts_4
+    21300010: HumanoidParts_5
+    21300012: HumanoidParts_6
+    21300014: HumanoidParts_7
+    21300016: HumanoidParts_8
+    21300018: HumanoidParts_9
+    21300020: HumanoidParts_10
+    21300022: HumanoidParts_11
+    21300024: HumanoidParts_12
+    21300026: HumanoidParts_13
+    21300028: HumanoidParts_14
+    21300030: HumanoidParts_15
+    21300032: HumanoidParts_16
+    21300034: HumanoidParts_17
+    21300036: HumanoidParts_18
+    21300038: HumanoidParts_19
+    21300040: HumanoidParts_20
+    21300042: HumanoidParts_21
+    21300044: HumanoidParts_22
+    21300046: HumanoidParts_23
+    21300048: HumanoidParts_24
+    21300050: HumanoidParts_25
+    21300052: HumanoidParts_26
+    21300054: HumanoidParts_27
+    21300056: HumanoidParts_28
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: HumanoidParts_0
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 315
+        width: 62
+        height: 58
+      alignment: 9
+      pivot: {x: .519999981, y: .109999999}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_1
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 336
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_2
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 318
+        width: 63
+        height: 56
+      alignment: 9
+      pivot: {x: .460000008, y: .119999997}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_3
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 306
+        width: 31
+        height: 29
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_4
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 206
+        width: 120
+        height: 110
+      alignment: 9
+      pivot: {x: .560000002, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_5
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 281
+        width: 33
+        height: 31
+      alignment: 9
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_6
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 250
+        width: 50
+        height: 46
+      alignment: 9
+      pivot: {x: .800000012, y: .829999983}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_7
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 253
+        width: 34
+        height: 46
+      alignment: 9
+      pivot: {x: .74000001, y: .129999995}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_8
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 181
+        width: 103
+        height: 111
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_9
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 194
+        width: 28
+        height: 34
+      alignment: 9
+      pivot: {x: .25999999, y: .790000021}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_10
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 194
+        width: 31
+        height: 57
+      alignment: 9
+      pivot: {x: .330000013, y: .870000005}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_11
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 218
+        width: 50
+        height: 33
+      alignment: 9
+      pivot: {x: .349999994, y: .870000005}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_12
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 180
+        width: 48
+        height: 53
+      alignment: 9
+      pivot: {x: .319999993, y: .129999995}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_13
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 141
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_14
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 138
+        width: 80
+        height: 43
+      alignment: 9
+      pivot: {x: .5, y: .870000005}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_15
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 126
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_16
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 78
+        width: 27
+        height: 64
+      alignment: 9
+      pivot: {x: .469999999, y: .649999976}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_17
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 64
+        width: 37
+        height: 65
+      alignment: 9
+      pivot: {x: .469999999, y: .850000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_18
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 46
+        width: 27
+        height: 65
+      alignment: 9
+      pivot: {x: .5, y: .779999971}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_19
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 68
+        width: 37
+        height: 59
+      alignment: 9
+      pivot: {x: .449999988, y: .709999979}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_20
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 91
+        width: 80
+        height: 43
+      alignment: 9
+      pivot: {x: .469999999, y: .860000014}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6
+        width: 53
+        height: 29
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_22
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 14
+        width: 21
+        height: 51
+      alignment: 9
+      pivot: {x: .5, y: .899999976}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_23
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 20
+        width: 29
+        height: 68
+      alignment: 9
+      pivot: {x: .600000024, y: .879999995}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_24
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 3
+        width: 47
+        height: 35
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_25
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 3
+        width: 51
+        height: 30
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_26
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 26
+        width: 20
+        height: 51
+      alignment: 9
+      pivot: {x: .469999999, y: .889999986}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_27
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 15
+        width: 20
+        height: 61
+      alignment: 9
+      pivot: {x: .610000014, y: .829999983}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HumanoidParts_28
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 0
+        width: 68
+        height: 38
+      alignment: 9
+      pivot: {x: .620000005, y: .860000014}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

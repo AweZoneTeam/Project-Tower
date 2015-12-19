@@ -1,0 +1,179 @@
+fileFormatVersion: 2
+guid: b6c3bcbc2e14b7745804cb41eb62ac5f
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: idle_0
+    21300002: idle_1
+    21300004: idle_2
+    21300006: idle_3
+    21300008: idle_4
+    21300010: idle_5
+    21300012: idle_6
+    21300014: idle_7
+    21300016: idle_8
+    21300018: idle_9
+    21300020: idle_10
+    21300022: idle_11
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: idle_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 458
+        width: 157
+        height: 96
+      alignment: 9
+      pivot: {x: .253404856, y: .463337898}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_1
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 458
+        width: 155
+        height: 96
+      alignment: 9
+      pivot: {x: .260565281, y: .463716179}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_2
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 458
+        width: 156
+        height: 96
+      alignment: 9
+      pivot: {x: .294937342, y: .46408686}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_3
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 456
+        width: 157
+        height: 100
+      alignment: 9
+      pivot: {x: .247929081, y: .4777008}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_4
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 326
+        width: 156
+        height: 101
+      alignment: 9
+      pivot: {x: .262100011, y: .457792968}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_5
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 326
+        width: 156
+        height: 101
+      alignment: 9
+      pivot: {x: .277141094, y: .453537136}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_6
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 326
+        width: 156
+        height: 100
+      alignment: 9
+      pivot: {x: .266865253, y: .464804381}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_7
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 326
+        width: 156
+        height: 98
+      alignment: 9
+      pivot: {x: .264855415, y: .480444163}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_8
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 210
+        width: 159
+        height: 96
+      alignment: 9
+      pivot: {x: .2676332, y: .494993836}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_9
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 210
+        width: 152
+        height: 95
+      alignment: 9
+      pivot: {x: .253240287, y: .500847399}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_10
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 210
+        width: 155
+        height: 96
+      alignment: 9
+      pivot: {x: .271459967, y: .478294522}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idle_11
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 210
+        width: 149
+        height: 96
+      alignment: 9
+      pivot: {x: .259027481, y: .472666889}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

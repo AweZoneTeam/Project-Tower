@@ -1,0 +1,19 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Editor\SOManager.cs">
+    <Files>
+      <File FileName="Assets\Editor\AnimEditorData.cs" Line="7" Column="2" />
+      <File FileName="Assets\Editor\UltimateAnimator\UltimateAnimatorWindow.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editor\UltimateAnimator\RightAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editor\UltimateAnimator\LeftAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\TowerEditors\AnimationEditorData.cs" Line="6" Column="2" />
+      <File FileName="Assets\Editor\UltimateAnimator\AnimatorScreen.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\ObjectControllers\RootCharacterController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editor\SOManager.cs" Line="12" Column="39" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

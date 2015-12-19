@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1129D46E-481E-8ECF-3310-582BACDA2498}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_6_3;UNITY_4_6;UNITY_STANDALONE_LINUX;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Чисто Моя Папка!!!!/Programes/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Чисто Моя Папка!!!!/Programes/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Editor\AnimEditorData.cs" />
+     <Compile Include="Assets\Editor\AnimationViewManager.cs" />
+     <Compile Include="Assets\Editor\ProjectTowerWindow.cs" />
+     <Compile Include="Assets\Editor\SOManager.cs" />
+     <Compile Include="Assets\Editor\UltimateAnimator\AnimatorScreen.cs" />
+     <Compile Include="Assets\Editor\UltimateAnimator\LeftAnimator.cs" />
+     <Compile Include="Assets\Editor\UltimateAnimator\RightAnimator.cs" />
+     <Compile Include="Assets\Editor\UltimateAnimator\UltimateAnimatorWindow.cs" />
+     <Compile Include="Assets\Scripts 1\Asset\Editor\GAFAnimationAssetEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Asset\Editor\GAFAssetPostProcessor.cs" />
+     <Compile Include="Assets\Scripts 1\Asset\Editor\GAFResourceEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Asset\Editor\GAFResourceManager.cs" />
+     <Compile Include="Assets\Scripts 1\Core\Editor\GAFBaseMovieClipEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Core\Editor\GAFConverterWindowListener.cs" />
+     <Compile Include="Assets\Scripts 1\Core\Editor\GAFMovieClipEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Core\Editor\GAFObjectsManagerEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Objects\Editor\GAFBakedObjectControllerEditor.cs" />
+     <Compile Include="Assets\Scripts 1\Objects\Editor\GAFObjectEditor.cs" />
+     <None Include="Assets\Resources\Shaders\GAFShaderBase.cginc" />
+     <None Include="Assets\Resources\Shaders\GAFObjectsGroup.shader" />
+     <None Include="Assets\Docs\What&apos;s new.txt" />
+     <None Include="Assets\Resources\Shaders\GAFMaskedObject.shader" />
+     <None Include="Assets\Resources\Shaders\GAFMaskObject.shader" />
+     <None Include="Assets\Docs\Readme.txt" />
+ <Reference Include="Assembly-UnityScript">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Чисто Моя Папка!!!!/Programes/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.3/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.UI">
+ <HintPath>C:/Чисто Моя Папка!!!!/Programes/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.3/Editor/UnityEditor.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="GAF">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Assets/Plugins/GAF.dll</HintPath>
+ </Reference>
+ <Reference Include="Ionic.Zip.Reduced">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Assets/Plugins/Ionic.Zip.Reduced.dll</HintPath>
+ </Reference>
+ <Reference Include="GAFConverter">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Assets/Plugins/Editor/GAFConverter.dll</HintPath>
+ </Reference>
+ <Reference Include="GAFEditor">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Assets/Plugins/Editor/GAFEditor.dll</HintPath>
+ </Reference>
+ <Reference Include="MiniJson">
+ <HintPath>C:/Чисто Моя Папка!!!!/Games/мои игры/project Tower/Весенний проект/01.Система передвижения/Assets/Plugins/Editor/MiniJson.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.Graphs">
+ <HintPath>C:/Чисто Моя Папка!!!!/Programes/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-vs.csproj">
+      <Project>{584D7400-E014-55E6-932C-94D2F892E0A6}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
