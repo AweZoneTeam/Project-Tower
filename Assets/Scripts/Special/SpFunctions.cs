@@ -694,7 +694,6 @@ public class SpFunctions : MonoBehaviour {
 		int i;
 		for (i=0;i<parts.Count;i++)
 		{
-			print(parts[i].mov.individualMaterials[0]);
 			if (parts[i].mov.individualMaterials[0]!=null)
 				parts[i].mov.setMaterialColor(color);
 			ChangePartColor(parts[i].parts, color);
