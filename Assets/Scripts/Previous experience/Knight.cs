@@ -33,28 +33,28 @@ public class Knight : MonoBehaviour {
 		grabing = Physics2D.OverlapCircle (grabCheck.position, grabRadius, whatIsGrab);
 		grabing2 = Physics2D.OverlapCircle (grabCheck.position, grabRadius2, whatIsGrab);
 		if (climb == 0) {
-			rigidbody2D.WakeUp();
+			GetComponent<Rigidbody2D>().WakeUp();
 			grounded = Physics2D.OverlapCircle (groundCheck.position, groundRadius, whatIsGround);
 			move = Input.GetAxis ("Horizontal");
-			rigidbody2D.velocity = new Vector2 (move * maxSpeed, rigidbody2D.velocity.y);
+			GetComponent<Rigidbody2D>().velocity = new Vector2 (move * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 			if ((move < 0) && (facingRight)) 
 				Flip ();
 			if ((move > 0) && (!facingRight))
 				Flip ();
 		}
 		if (climb == 1) {
-			rigidbody2D.Sleep();
+			GetComponent<Rigidbody2D>().Sleep();
 			grounded=false;
 			movey=Input.GetAxis ("Vertical");
 			movex=Input.GetAxis ("Horizontal");
-			if (grabing2) rigidbody2D.velocity=new Vector2(movex*grabSpeed,movey*grabSpeed);
+			if (grabing2) GetComponent<Rigidbody2D>().velocity=new Vector2(movex*grabSpeed,movey*grabSpeed);
 		}
 	}
 	
 	
 	void Update () {
 		if (grounded && Input.GetKeyDown (KeyCode.Space)) {
-			rigidbody2D.AddForce (new Vector2 (0, jumpForce));
+			GetComponent<Rigidbody2D>().AddForce (new Vector2 (0, jumpForce));
 		}
 		if ((grabTiming>=30) && grabing && Input.GetKeyDown (KeyCode.E) && (climb == 0)) {
 			climb=1;

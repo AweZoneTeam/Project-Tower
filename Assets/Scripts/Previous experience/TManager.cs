@@ -9,6 +9,6 @@ public class TManager : MonoBehaviour {
 	
 	void Awake()
 	{
-		gameObject.renderer.material.GetTexture (tex.name);
+		gameObject.GetComponent<Renderer>().material.GetTexture (tex.name);
 	}
 }

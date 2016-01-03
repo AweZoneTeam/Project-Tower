@@ -173,7 +173,7 @@ public class ActionTypes : MonoBehaviour
 		GameObject bullet;
 		bullet=Instantiate(obj, trans.position, trans.rotation) as GameObject;
 		bullet.transform.Rotate (rot);
-		bullet.rigidbody2D.AddForce(vect);
+		bullet.GetComponent<Rigidbody2D>().AddForce(vect);
 	}
 
 	/*//тип 2 номер 1
@@ -292,7 +292,7 @@ public class ActionTypes : MonoBehaviour
 	{
 
 		GameObject obj = Instantiate (bullet,pos, bullet.transform.rotation) as GameObject;
-		obj.rigidbody2D.velocity = new Vector2 (veloc.x, veloc.y);
+		obj.GetComponent<Rigidbody2D>().velocity = new Vector2 (veloc.x, veloc.y);
 		HitController hitControl = obj.GetComponentInChildren<HitController> ();
 		hitControl.pDamage = pDamage;
 		hitControl.fDamage = fDamage;

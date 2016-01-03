@@ -79,7 +79,7 @@ public class HitController : MonoBehaviour
 					//if (attack>=3*target.stability) - здесь я хочу реализовать захват
 					if (attack>=2*target.stability)
 					{
-						Rigidbody2D rigid=target.gameObject.rigidbody2D;
+						Rigidbody2D rigid=target.gameObject.GetComponent<Rigidbody2D>();
 						if (rigid!=null)
 						{
 							if (direction==1)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ItemClass : MonoBehaviour 
 {
-	public string name;
+	public string item_name;
 	public string type;
 	public  GameObject[] objects;
 	public int[] parametres1;

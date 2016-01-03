@@ -11,12 +11,12 @@ public class TextureController : MonoBehaviour
 
 	void Awake()
 	{
-		renderer.material.mainTextureScale = new Vector2 (transform.lossyScale.x * texX, transform.lossyScale.z * texY);
+		GetComponent<Renderer>().material.mainTextureScale = new Vector2 (transform.lossyScale.x * texX, transform.lossyScale.z * texY);
 	}
 
 	void FixedUpdate()
 	{
-		renderer.material.mainTextureScale = new Vector2 (transform.lossyScale.x * texX, transform.lossyScale.z * texY);
+		GetComponent<Renderer>().material.mainTextureScale = new Vector2 (transform.lossyScale.x * texX, transform.lossyScale.z * texY);
 	}
 
 }

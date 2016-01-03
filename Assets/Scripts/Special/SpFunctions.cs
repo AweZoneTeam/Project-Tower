@@ -209,34 +209,34 @@ public class SpFunctions : MonoBehaviour {
 			if (actions[i].actType==1)
 			{
 				if (actions[i].actNumb==1)
-					actTypes.AchieveSpeedX(actions[i].OBJ[0].rigidbody2D,
+					actTypes.AchieveSpeedX(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					                       actions[i].OBJ[0].GetComponent<Stats>(), 
 					                       ChooseDirection(clavi.buttons[actions[i].PRM[2]],clavi.buttons[actions[i].PRM[3]])*actions[i].PRM[0], 
 					                       actions[i].PRM[1]);
 				else if (actions[i].actNumb==2)
-					actTypes.AchieveSpeedY(actions[i].OBJ[0].rigidbody2D,
+					actTypes.AchieveSpeedY(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					                       actions[i].OBJ[0].GetComponent<Stats>(), 
 					                       ChooseDirection(clavi.buttons[actions[i].PRM[2]],clavi.buttons[actions[i].PRM[3]])*actions[i].PRM[0], 
 					                       actions[i].PRM[1]);
 				else if (actions[i].actNumb==3)
-					actTypes.AchieveSpeed(actions[i].OBJ[0].rigidbody2D,
+					actTypes.AchieveSpeed(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					                       actions[i].OBJ[0].GetComponent<Stats>(), 
 					                       ChooseDirection(clavi.buttons[actions[i].PRM[2]],clavi.buttons[actions[i].PRM[3]])*actions[i].PRM[0], 
 					                       ChooseDirection(clavi.buttons[actions[i].PRM[4]],clavi.buttons[actions[i].PRM[5]])*actions[i].PRM[0], 
 					                       actions[i].PRM[1]);
 				else if (actions[i].actNumb==4)
-					actTypes.SetVeloc(actions[i].OBJ[0].rigidbody2D,
+					actTypes.SetVeloc(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					                  new Vector2(actions[i].OBJ[0].GetComponent<Stats>().direction*actions[i].PRM[0]*1f,
 					            				  actions[i].PRM[1]*1f));
 				else if (actions[i].actNumb==5)
-					actTypes.Forcing(actions[i].OBJ[0].rigidbody2D, 
+					actTypes.Forcing(actions[i].OBJ[0].GetComponent<Rigidbody2D>(), 
 					                 new Vector2(ChooseDirection(clavi.buttons[actions[i].PRM[2]],
 					                                             clavi.buttons[actions[i].PRM[3]])*actions[i].PRM[0]*1f,
 					            	 			 actions[i].PRM[1]*1f),
 					                 this);
 				else if (actions[i].actNumb==6)
 				{
-					actTypes.Climb(actions[i].OBJ[0].rigidbody2D,
+					actTypes.Climb(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					               actions[i].OBJ[0].GetComponent<Stats>(),
 					               infTypes,
 					               actions[i].OBJ[0].GetComponent<InfoGets>(),
@@ -249,7 +249,7 @@ public class SpFunctions : MonoBehaviour {
 					k1++;
 				}
 				else if (actions[i].actNumb==7)
-					actTypes.MoveToClimb(actions[i].OBJ[0].rigidbody2D,
+					actTypes.MoveToClimb(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 					                     actions[i].OBJ[0].GetComponent<Stats>(),
 					                     actions[i].OBJ[0].GetComponent<InfoGets>(),
 					                     actions[i].PRM[0],
@@ -363,7 +363,7 @@ public class SpFunctions : MonoBehaviour {
 			else if (actions[i].actType==4)
 			{
 				if (actions[i].actNumb==0)
-					actTypes.GravityOn(actions[i].OBJ[0].rigidbody2D,
+					actTypes.GravityOn(actions[i].OBJ[0].GetComponent<Rigidbody2D>(),
 						               actions[i].PRM[0]*1f/10f,
 					                   actions[i].PRM[1]==1);
 			}
@@ -539,8 +539,8 @@ public class SpFunctions : MonoBehaviour {
 					}
 				}
 				else if (ClaveComparation(activities[i].why.claves,clav))
-					if (FComparation(Mathf.Abs(stats.gameObject.rigidbody2D.velocity.x),activities[i].why.speedX*1f)&&
-					    FComparation(Mathf.Abs(stats.gameObject.rigidbody2D.velocity.y),activities[i].why.speedY*1f)&&
+					if (FComparation(Mathf.Abs(stats.gameObject.GetComponent<Rigidbody2D>().velocity.x),activities[i].why.speedX*1f)&&
+					    FComparation(Mathf.Abs(stats.gameObject.GetComponent<Rigidbody2D>().velocity.y),activities[i].why.speedY*1f)&&
 					    IntComparation(stats.direction+2, activities[i].why.direction)&&
 					    IntComparation(stats.stats.groundness,activities[i].why.groundness)&&
 					    IntComparation(stats.stats.obstacleness,activities[i].why.obstacleness)&&
@@ -694,6 +694,7 @@ public class SpFunctions : MonoBehaviour {
 		int i;
 		for (i=0;i<parts.Count;i++)
 		{
+			print(parts[i].mov.individualMaterials[0]);
 			if (parts[i].mov.individualMaterials[0]!=null)
 				parts[i].mov.setMaterialColor(color);
 			ChangePartColor(parts[i].parts, color);
