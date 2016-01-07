@@ -7,7 +7,7 @@ public class DestroyableObjectController : NMoveableObjectController {
 	public Organism stats;
 	public OrgActivityClass.activities[] whatToEmploy;
 	public List<ActionClass.act> whatToDo; 
-	public animClass.anim[] whatToPerform;
+	public List<animClass.anim> whatToPerform;
 
 	[HideInInspector] public int activityNumb;
 	private int actNumb;
@@ -53,10 +53,13 @@ public class DestroyableObjectController : NMoveableObjectController {
 	{
 		for (i=0;i<activityNumb;i++)
 		{
-			for (j=0;j<whatToEmploy[i].howLook.Length; j++)
-					animNumb=sp.AddAnimation(whatToPerform, whatToEmploy[i].howLook[j].anim, animNumb);
+			for (j = 0; j < whatToEmploy [i].howLook.Length; j++) {
+				//animNumb = sp.AddAnimation (whatToPerform, whatToEmploy [i].howLook [j].anim, animNumb);
+				whatToPerform.Add(whatToEmploy [i].howLook [j].anim);
+				animNumb = whatToPerform.Count;
+			}
 		}
-		sp.SortAnimation (whatToPerform, animNumb);
+		sp.SortAnimation (whatToPerform);
 	}
 
 	public void AnimateIt()
@@ -104,8 +107,8 @@ public class DestroyableObjectController : NMoveableObjectController {
 		AnimateIt ();
 		actNumb=sp.DoActions (whatToDo);
 		CoordinateActivities ();
+		whatToPerform.Clear ();
 		animNumb = 0;
-
 		OrientateIt ();
 	}
 }

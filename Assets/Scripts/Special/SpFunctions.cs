@@ -107,9 +107,10 @@ public class SpFunctions : MonoBehaviour {
 		return numb;
 	}
 
-	public int SortAnimation(animClass.anim[] anims, int numb)
+	public int SortAnimation(List<animClass.anim> anims)
 	{
 		int i, j;
+		int numb = anims.Count;
 		animClass.anim x;
 		for (i=0;i<numb-1; i++)
 			for (j=i+1;j<numb;j++)
@@ -781,12 +782,6 @@ public class SpFunctions : MonoBehaviour {
 			if (j<kk.clv[i].but.Length) k[i]=true;
 		}
 		return k[0]&&k[1]&&k[2]&&k[3];
-	}
-
-	public int ExperimentFunction(int kk)
-	{
-		kk++;
-		return kk;
 	}
 
 	public void Flip(Transform trans, int x)

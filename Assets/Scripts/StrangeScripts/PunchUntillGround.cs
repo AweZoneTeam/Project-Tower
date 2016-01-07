@@ -39,7 +39,9 @@ public class PunchUntillGround : MonoBehaviour {
 			stage = 2;
 		if ((stats.stats.groundness < 3)&&(eTime>0))
 			stage = 3;
-		controller.animNumb=sp.AddAnimation(controller.whatToPerform, activity.howLook[stage-1].anim, controller.animNumb);
+		//controller.animNumb=sp.AddAnimation(controller.whatToPerform, activity.howLook[stage-1].anim, controller.animNumb);
+		controller.whatToPerform.Add (activity.howLook[stage-1].anim);
+		controller.animNumb = controller.whatToPerform.Count;
 		if (stage<3)
 		{
 			if (stage==2)
