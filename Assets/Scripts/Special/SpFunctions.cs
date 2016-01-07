@@ -198,11 +198,12 @@ public class SpFunctions : MonoBehaviour {
 		return vect1 - vect3;
 	}
 
-	public int DoActions(ActionClass.act[] actions, int numb)
+	public int DoActions(List<ActionClass.act> actions)
 	{
 		ActionTypes actTypes = GetComponent<ActionTypes> ();
 		InfoGetTypes infTypes = GetComponent<InfoGetTypes> ();
 		clavisher clavi = GetComponent<clavisher> ();
+		int numb = actions.Count;
 		int j;
 		for (int i=0;i<numb;i++)
 		{
@@ -450,6 +451,7 @@ public class SpFunctions : MonoBehaviour {
 			}
 		}
 		numb = 0;
+		actions.Clear ();
 		return numb;
 	}
 

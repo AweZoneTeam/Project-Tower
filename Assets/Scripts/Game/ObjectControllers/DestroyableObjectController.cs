@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DestroyableObjectController : NMoveableObjectController {
 
 	public Organism stats;
 	public OrgActivityClass.activities[] whatToEmploy;
-	public ActionClass.act[] whatToDo; 
+	public List<ActionClass.act> whatToDo; 
 	public animClass.anim[] whatToPerform;
 
 	[HideInInspector] public int activityNumb;
@@ -29,17 +30,20 @@ public class DestroyableObjectController : NMoveableObjectController {
 		{
 			for (j=0; j<whatToEmploy[i].what.Length;j++)
 			{
-				if (whatToEmploy[i].what[j].actType==0)
-					actNumb=sp.AddAction(whatToDo,whatToEmploy[i].what[j],actNumb);
-				else 
+				if (whatToEmploy [i].what [j].actType == 0) {
+					whatToDo.Add (whatToEmploy [i].what [j]);
+					actNumb = whatToDo.Count;
+				} else 
 				{
 					e=0;
 					while ((whatToDo[e].actType!=whatToEmploy[i].what[j].actType)&&(e<actNumb))
 						e++;
-					if (e!=actNumb)
-						sp.ChangeAction(whatToDo,whatToEmploy[i].what[j],e);
-					else
-						actNumb=sp.AddAction(whatToDo,whatToEmploy[i].what[j],actNumb);
+					if (e != actNumb) {
+						whatToDo [e] = whatToEmploy [i].what [j];
+					} else {
+						whatToDo.Add(whatToEmploy [i].what [j]);
+						actNumb = whatToDo.Count;
+					}
 				}
 			}				
 		}
@@ -98,7 +102,7 @@ public class DestroyableObjectController : NMoveableObjectController {
 		LearnActions ();
 		LearnAnimations ();
 		AnimateIt ();
-		actNumb=sp.DoActions (whatToDo, actNumb);
+		actNumb=sp.DoActions (whatToDo);
 		CoordinateActivities ();
 		animNumb = 0;
 
