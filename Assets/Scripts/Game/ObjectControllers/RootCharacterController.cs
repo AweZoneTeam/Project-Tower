@@ -7,7 +7,7 @@ public class RootCharacterController : NAAObjectController {
 	public List<ActivityClass.activites> whatToEmploy;
 	public List<ActionClass.act> whatToDo; 
 	public animClass.anim[] whatToPerform;
-	public int actNumb;
+	//public int actNumb;
 	public int animNumb;
 	public float kk;
 	public int jj1;
@@ -253,6 +253,7 @@ public class RootCharacterController : NAAObjectController {
 		LearnActivities ();
 		PrepareEquipment ();
 		LearnActions ();
+		Sp.DoActions (whatToDo);
 		LearnAnimations ();
 		AnimateIt ();
 		CoordinateActivities ();

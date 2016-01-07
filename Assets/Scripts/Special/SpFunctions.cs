@@ -450,9 +450,8 @@ public class SpFunctions : MonoBehaviour {
 				actTypes.Experimental();
 			}
 		}
-		numb = 0;
 		actions.Clear ();
-		return numb;
+		return 0;
 	}
 
 	public void AnalyseSituation(StatsClass.stats stats1, StatsClass.stats stats2)
