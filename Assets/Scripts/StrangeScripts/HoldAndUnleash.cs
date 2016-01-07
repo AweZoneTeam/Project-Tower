@@ -45,7 +45,6 @@ public class HoldAndUnleash : MonoBehaviour {
 		else
 			stage = 2;
 		controller.whatToPerform.Add (activity.howLook[stage-1].anim);
-		controller.animNumb = controller.whatToPerform.Count;
 		if (stage == 1) {
 			hitBox.actTime++;
 			time++;

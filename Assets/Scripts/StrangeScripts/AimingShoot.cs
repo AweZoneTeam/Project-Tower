@@ -70,7 +70,6 @@ public class AimingShoot : MonoBehaviour {
 		{
 		case 1:
 			controller.whatToPerform.Add (activity.howLook [0].anim);
-			controller.animNumb = controller.whatToPerform.Count;
 			if (bTime==0) 
 				obj=Instantiate(aim,pos,aim.transform.rotation) as GameObject;
 			break;
@@ -101,7 +100,6 @@ public class AimingShoot : MonoBehaviour {
 				if (angle<=activity.howLook[j].speedY)
 					break;
 			controller.whatToPerform.Add (activity.howLook [j].anim);
-			controller.animNumb = controller.whatToPerform.Count;
 			break;
 		case 3:
 			if (obj!=null)
@@ -110,7 +108,6 @@ public class AimingShoot : MonoBehaviour {
 					if (angle<=activity.howLook[j].speedY)
 						break;
 				controller.whatToPerform.Add (activity.howLook [j].anim);
-				controller.animNumb = controller.whatToPerform.Count;
 				Destroy(obj);
 				obj=null;
 			}

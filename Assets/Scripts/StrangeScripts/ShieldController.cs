@@ -90,10 +90,7 @@ public class ShieldController : MonoBehaviour {
 			else if (targetSpeed*stats.direction<0) animNumb=3;
 			else animNumb=1;
 		}
-
-		//controller.animNumb=sp.AddAnimation(controller.whatToPerform, activity.howLook[animNumb].anim, controller.animNumb);
 		controller.whatToPerform.Add (activity.howLook[animNumb].anim);
-		controller.animNumb = controller.whatToPerform.Count;
 		if (stage>0)
 			for (i=0; i<controller.whatToEmploy.Count; i++)
 				if ((controller.whatToEmploy [i].numb == numb) && (controller.whatToEmploy [i].weapon == weapon))

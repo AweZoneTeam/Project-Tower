@@ -48,9 +48,7 @@ public class PunchUntilTarget : MonoBehaviour {
 		}
 		else
 			stage = 3;
-		//controller.animNumb=sp.AddAnimation(controller.whatToPerform, activity.howLook[stage-1].anim, controller.animNumb);
 		controller.whatToPerform.Add (activity.howLook[stage-1].anim);
-		controller.animNumb = controller.whatToPerform.Count;
 		if (stage<3)
 		{
 			if (stage==2)

@@ -77,36 +77,6 @@ public class SpFunctions : MonoBehaviour {
 		return new Vector2 (vect.x, vect.y);
 	}
 
-	public int AddAction(ActionClass.act[] actions, ActionClass.act action, int numb)
-	{
-		actions [numb] = action;
-		numb++;
-		return numb;
-	}
-
-	public int DeleteAction(ActionClass.act[] actions, int del, int numb)
-	{
-		for (int i=del+1;i<numb;i++)
-			actions[i-1]=actions[i];
-		numb--;
-		return numb;
-	}
-
-	public int AddAnimation(animClass.anim[] animats, animClass.anim animat, int numb)
-	{
-		animats [numb] = animat;
-		numb++;
-		return numb;
-	}
-	
-	public int DeleteAnimation(animClass.anim[] animats, int del, int numb)
-	{
-		for (int i=del+1;i<numb;i++)
-			animats[i-1]=animats[i];
-		numb--;
-		return numb;
-	}
-
 	public int SortAnimation(List<animClass.anim> anims)
 	{
 		int i, j;

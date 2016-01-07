@@ -7,7 +7,7 @@ public class RootCharacterController : NAAObjectController {
 	public List<ActivityClass.activites> whatToEmploy;
 	public List<ActionClass.act> whatToDo; 
 	public List<animClass.anim> whatToPerform;
-	public int animNumb;
+	//public int animNumb;
 	public float kk;
 	public int jj1;
 	public int jj2;
@@ -176,7 +176,7 @@ public class RootCharacterController : NAAObjectController {
 				    		//	((!whatToEmploy[i].howLook[j].weaponInRightHand)&&(gameObject.GetComponent<Equipment>().leftWeapon.type==whatToEmploy[i].howLook[j].weaponType))||
 				    		//	(whatToEmploy[i].howLook[j].weaponType==0)){
 						whatToPerform.Add(act.howLook[j].anim);
-						animNumb = whatToPerform.Count;
+						//animNumb = whatToPerform.Count;
 									//animNumb=Sp.AddAnimation(whatToPerform, act.howLook[j].anim, animNumb);
 									break;
 							//	}
@@ -189,7 +189,7 @@ public class RootCharacterController : NAAObjectController {
 	{
 		Sp.BeginAnimateIt (animator.headParts);
 		Sp.BeginAnimateIt (animator.ledParts);
-		for (i=0;i<animNumb;i++)
+		for (i=0;i<whatToPerform.Count;i++)
 		{
 			Sp.AnimateIt(animator.headParts, whatToPerform[i]);
 			Sp.AnimateIt(animator.ledParts, whatToPerform[i]);
@@ -259,7 +259,6 @@ public class RootCharacterController : NAAObjectController {
 		CoordinateActivities ();
 		Sp.GetInformation (infoGets);
 		whatToPerform.Clear ();
-		animNumb = 0;
 		OrientateIt ();
 	}
 
