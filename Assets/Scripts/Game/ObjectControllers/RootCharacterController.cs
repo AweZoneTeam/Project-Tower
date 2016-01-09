@@ -188,7 +188,7 @@ public class RootCharacterController : NAAObjectController {
 	public void AnimateIt()
 	{
 		Sp.BeginAnimateIt (animator.parts);
-		for (i=0;i<animNumb;i++)
+		for (i=0;i<whatToPerform.Count;i++)
 			Sp.AnimateIt(animator.parts, whatToPerform[i]);
 		Sp.FinallyAnimateIt (animator.parts);
 	}

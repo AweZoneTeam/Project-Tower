@@ -4,7 +4,7 @@
     <Files>
       <File FileName="Assets/Scripts/DifferentClasses/Stats/Organism.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Special/SpFunctions.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Game/ObjectControllers/RootCharacterController.cs" Line="189" Column="3" />
+      <File FileName="Assets/Scripts/Game/ObjectControllers/RootCharacterController.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Game/ObjectControllers/DestroyableObjectController.cs" Line="65" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>

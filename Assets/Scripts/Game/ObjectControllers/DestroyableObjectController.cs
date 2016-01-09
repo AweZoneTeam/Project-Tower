@@ -64,7 +64,7 @@ public class DestroyableObjectController : NMoveableObjectController {
 	public void AnimateIt()
 	{
 		sp.BeginAnimateIt (animator.parts);
-		for (i=animNumb-1;i>=0;i--)
+		for (i=whatToPerform.Count;i>=0;i--)
 			sp.AnimateIt(animator.parts, whatToPerform[i]);
 		sp.FinallyAnimateIt (animator.parts);
 	}
