@@ -57,10 +57,10 @@ public class DestroyableObjectController : NMoveableObjectController {
 
 	public void AnimateIt()
 	{
-		sp.BeginAnimateIt (animator.headParts);
+		sp.BeginAnimateIt (animator.parts);
 		for (i=animNumb-1;i>=0;i--)
-			sp.AnimateIt(animator.headParts, whatToPerform[i]);
-		sp.FinallyAnimateIt (animator.headParts);
+			sp.AnimateIt(animator.parts, whatToPerform[i]);
+		sp.FinallyAnimateIt (animator.parts);
 	}
 
 	public void CoordinateActivities()

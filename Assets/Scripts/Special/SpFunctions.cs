@@ -741,7 +741,6 @@ public class SpFunctions : MonoBehaviour {
 		for (i=0; i<parts.Count; i++) {
 			//if (parts[i].animationMod==0)
 			//{
-			parts [i].led = true;
 			parts [i].addictiveFrame = addictiveFrame;
 		//}
 			//else 
@@ -750,6 +749,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 		return;
 	}
+
 	public void FrameToFrame(GAF.Core.GAFMovieClip mov, bool loop)
 	{
 		int i;

@@ -40,7 +40,7 @@ public class RootCharacterController : NAAObjectController {
 
 	}
 
-	public void LearnActivities()
+	public void LearnActivities()// Метод, в котором персонаж узнаёт, какой деятельностью заняться. Деятельность - то, что однозначно характеризует, что совершает персонаж
 	{
 				j = Sp.ChemByZanyatsya (actions.activities, stats, 12, clav);
 		while (stats.stats.employment<0) 
@@ -55,7 +55,7 @@ public class RootCharacterController : NAAObjectController {
 
 	}
 
-	public void PrepareEquipment()
+	public void PrepareEquipment()//Метод, в котором персонаж входит в боевую стадию, или выходит из неё
 	{
 		if (equip.rightWeapon!=null)
 		{
@@ -83,7 +83,7 @@ public class RootCharacterController : NAAObjectController {
 			battleStance = false;
 	}
 
-	public void LearnActions()
+	public void LearnActions()//Персонаж узнаёт, какие действия совершать. Деятельность содержит множество действий - элементарных функций, которые совершает персонаж
 	{
 		ActivityClass.activites act;
 		for (i=0; i<whatToEmploy.Count; i++)
@@ -139,7 +139,7 @@ public class RootCharacterController : NAAObjectController {
 		}
 	}
 
-	public void LearnAnimations()
+	public void LearnAnimations()//Персонаж анализирует, какие анимации ему надо проигрывать
 	{
 		ActivityClass.activites act;
 		for (i=0;i<whatToEmploy.Count;i++)
@@ -180,17 +180,10 @@ public class RootCharacterController : NAAObjectController {
 
 	public void AnimateIt()
 	{
-		Sp.BeginAnimateIt (animator.headParts);
-		Sp.BeginAnimateIt (animator.ledParts);
+		Sp.BeginAnimateIt (animator.parts);
 		for (i=0;i<animNumb;i++)
-		{
-			Sp.AnimateIt(animator.headParts, whatToPerform[i]);
-			Sp.AnimateIt(animator.ledParts, whatToPerform[i]);
-		}
-		Sp.FinallyAnimateIt (animator.headParts);
-		Sp.AnimateLedGafs (animator.ledParts, 
-		                   (int)animator.headParts [0].mov.getCurrentFrameNumber () - (int)animator.headParts [0].mov.currentSequence.startFrame);
-		Sp.FinallyAnimateIt (animator.ledParts);
+			Sp.AnimateIt(animator.parts, whatToPerform[i]);
+		Sp.FinallyAnimateIt (animator.parts);
 	}
 
 	public void CoordinateActivities()

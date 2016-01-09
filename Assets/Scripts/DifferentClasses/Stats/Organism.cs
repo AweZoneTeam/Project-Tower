@@ -98,11 +98,8 @@ public class Organism : Stats
 		else if (k > 0.1f)
 			k -= 0.05f;
 		color = Color.red+(1f-k)*Color.green+(1f-k)*Color.blue;
-		if (anim != null)
-		{
-			sp.ChangePartColor(anim.headParts,color);
-			sp.ChangePartColor(anim.ledParts,color);
-		}
+		if (anim!=null)
+			sp.ChangePartColor(anim.parts,color);
 	}
 
 }

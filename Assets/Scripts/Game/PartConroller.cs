@@ -2,91 +2,74 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//Части - это основы управления любой анимации в Project Tower. 
 public class PartConroller : MonoBehaviour 
 {
 	
 	
 	public int numb, type, mod, animationMod, frame, addictiveFrame;
 	public GAF.Core.GAFMovieClip mov;
-	public int realNumb;
 	
 	public string currentState, nextState;
 	public bool loop;
-	public bool reload;
-	public bool led;
 	[HideInInspector]
 	public bool isWeaponFx;
 	public int FPS;
-	public int right;
-	public float isItRight;
+	[HideInInspector]
+	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
+	public bool inversed;//если правда, то все правые анимации меняются с левыми. Удобно использовать для одноручных оружий.
 	public List<PartConroller> parts;
-	public int kk;
-	
+	/*public List<GameObjecat> prefabParts;//Сюда запихиваются префабные части, а значит, они никуда не денутся, если мы, например, перейдём в новую сцену.
+	[HideInInspector]
+	public List<Vector2> partPositions; // Если у части еть зависимые части, то здесь будет список их относительного положения. Задаются эти положения в режакторе анимаций*/
+		
 	public int partsNumb;
-	public SATClass.sat[] sats;
+	public List<animationSoundData> soundData;
 	
-	private AnimationInterpretator interp;
+	public AnimationInterpretator interp;
 	private SpFunctions sp;
 	private SoundManager sManager;
 	public AudioSource efxSource;
 	private uint k = 1;
 	
 	public int jj;
-	
+
+	//Инициализация
 	public void Awake () 
 	{
 		partsNumb = 0;
-		interp = GetComponent<AnimationInterpretator> ();	
 		sp = GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SpFunctions> ();
 		sManager=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SoundManager> ();
 	}
-	
+
+	//Работа части заключается в том, чтобы интерпретировать полученные 2 числа от аниматора в анимацию, которую должен проигрывать подчинённый гаф.
 	public void Work()
 	{
-		isItRight = right*Mathf.Sign(transform.lossyScale.x);
-		if (gameObject.GetComponent<WeaponClass> () == null) 
-		{
-			jj = 0;
-			realNumb = numb;
+		orientation = Mathf.Sign(transform.lossyScale.x);
+		if (inversed) {
+			orientation *= -1;
 		}
-		else if (gameObject.GetComponent<WeaponClass>().type ==0)
-		{
-			jj = 0;
-			realNumb = numb;
+		animationInfo animInfo=interp.animTypes [type].animInfo[numb];
+		//Зависимые части способны задавать анимации, так как руку надо сжимать, чтобы держать меч
+		if (parts.Count != 0) {
+			if (((orientation >= 0) && (parts [parts.Count - 1].interp.animTypes [type].animInfo [numb].rsequence.parentSequence.Length > 1))||
+				((orientation <= 0) && (parts [parts.Count - 1].interp.animTypes [type].animInfo [numb].lsequence.parentSequence.Length > 1))) 
+			{
+				animInfo = parts [parts.Count - 1].interp.animTypes [type].animInfo [numb];
+			} 
 		}
-		//nextState = interp.animms [type].anims [numb].rsequence;
-		else 
-		{
-			jj = interp.animms [type].anims.Length;
-			if (gameObject.GetComponent<WeaponClass>().handEmployment==2)
-			isItRight=right;
-			realNumb= gameObject.GetComponent<WeaponClass>().active==false? 
-				numb: realNumb=interp.animms[type].anims.Length-numb-1;
-			/*interp.animms [type].anims [interp.animms [type].anims.Length-numb-1].rsequence:
-					interp.animms[type].anims[numb].rsequence;*/
-		}
-		if (isWeaponFx)
-			realNumb = interp.animms [type].anims.Length - numb - 1;
-
-		if (isItRight >= 0)
-			nextState = interp.animms [type].anims [realNumb].rsequence;
+		//Анимации могут зависеть от ориентации персонажа
+		if (orientation >= 0)
+			nextState = interp.animTypes [type].animInfo[numb].rsequence.sequence;
 		else
-			nextState = interp.animms [type].anims [realNumb].lsequence;
-		for (int i=0; i<parts.Count; i++)
-			if (parts [i].gameObject.GetComponent<WeaponClass> () != null)
-				if ((parts [i].gameObject.GetComponent<WeaponClass> ().active)&&
-				    ((parts [i].gameObject.GetComponent<WeaponClass> ().orientation == isItRight)&&
-				 	 (parts[i].gameObject.GetComponent<WeaponClass> ().handEmployment!=2)||
-				    (parts [i].gameObject.GetComponent<WeaponClass> ().orientation == right) &&
-				    (parts[i].gameObject.GetComponent<WeaponClass> ().handEmployment==2)))
-					if (!parts[i].gameObject.GetComponent<AnimationInterpretator>().animms[type].anims[parts[i].gameObject.GetComponent<AnimationInterpretator>().animms[type].anims.Length-numb-1].notWeaponMove)
-						nextState = parts [i].nextState;
-		if ((nextState!=currentState)&&(nextState!="StopAnimation"))
+			nextState = interp.animTypes [type].animInfo[numb].lsequence.sequence;
+		//Здесь происходит смена анимации
+		if ((nextState!=currentState)&&(!interp.animTypes [type].animInfo [numb].stopStepByStep))
 		{	
 			currentState=nextState;
-			loop=interp.animms[type].anims[numb].loop;
-			FPS=interp.animms[type].anims[numb].FPS;
-			sats=interp.animms [type].anims [numb].rsats;
+			loop=interp.animTypes[type].animInfo[numb].loop;
+			FPS=interp.animTypes[type].animInfo[numb].FPS;
+			soundData=interp.animTypes [type].animInfo [numb].soundData;
 			mov.setSequence(currentState,true);
 			mov.settings.targetFPS=k*(uint)FPS;
 			if (loop)
@@ -96,46 +79,52 @@ public class PartConroller : MonoBehaviour
 			mov.setPlaying(true);
 			mov.play();
 		}
-		if (interp.animms [type].anims [numb].stepByStep)
-			mov.setPlaying(true);
-		if (interp.animms [type].anims [numb].stopStepByStep)
-			mov.gotoAndStop(mov.getCurrentFrameNumber());
-		if (!led) 
-			mov.setPlaying (true);
-		else 
-			mov.setPlaying(false);
-		frame = (int)mov.getCurrentFrameNumber ();
 
-		if (addictiveFrame>-1)
+		//StepByStep - обеспечивает такие анимации, как поднятие по верёвке и по лестнице, которые проигрываются только при свершении действия
+		if (interp.animTypes [type].animInfo [numb].stepByStep)
+			mov.setPlaying(true);
+		if (interp.animTypes [type].animInfo [numb].stopStepByStep)
+			mov.gotoAndStop(mov.getCurrentFrameNumber());
+		//Здесь происходит озвучивание анимации
+		for (int i=0;i< interp.animTypes [type].animInfo [numb].soundData.Count;i++)
 		{
-			sp.ss=mov.name;
-			mov.gotoAndStop(mov.currentSequence.startFrame+k*(uint)addictiveFrame);
-			addictiveFrame=-1;
-		}
-		for (int i=0;i< interp.animms [type].anims [numb].rsats.Length;i++)
-		{
-			if ((interp.animms [type].anims [numb].rsats[i].time<=frame)&&
-			    (!interp.animms [type].anims [numb].rsats[i].played))
+			if ((interp.animTypes [type].animInfo [numb].soundData[i].time<=frame)&&
+				(!interp.animTypes [type].animInfo [numb].soundData[i].played))
 			{
-				sManager.RandomizeSfx(efxSource, interp.animms [type].anims [numb].rsats[i].audios);
-				interp.animms [type].anims [numb].rsats[i].played=true;
+				sManager.RandomizeSfx(efxSource, interp.animTypes [type].animInfo [numb].soundData[i].audios);
+				interp.animTypes [type].animInfo [numb].soundData[i].played=true;
 			}
-			else if ((interp.animms [type].anims [numb].rsats[i].time >frame)&&
-			         (interp.animms [type].anims [numb].rsats[i].played))
+			else if ((interp.animTypes [type].animInfo [numb].soundData[i].time >frame)&&
+				(interp.animTypes [type].animInfo [numb].soundData[i].played))
 			{
-				interp.animms [type].anims [numb].rsats[i].played=false;					
+				interp.animTypes [type].animInfo [numb].soundData[i].played=false;					
 			}
 		}
-		if (isItRight >= 0) {
-			for (int i=0; i<interp.animms[type].anims[realNumb].taos.Length; i++)
-				if ((frame >= interp.animms [type].anims [realNumb].taos [i].time) && (interp.animms [type].anims [realNumb].taos [i].order != mov.settings.spriteLayerValue))
-					sp.ChangeRenderOrder (interp.animms [type].anims [realNumb].taos [i].order, mov.gameObject);
+
+		//Здесь происходит учёт динамики порядка прорисовки
+		if (orientation >= 0) {
+			for (int i=0; i<interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
+				if ((frame >= interp.animTypes [type].animInfo [numb].rightOrderData [i].time) && (interp.animTypes [type].animInfo [numb].rightOrderData [i].order != mov.settings.spriteLayerValue))
+					sp.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].rightOrderData [i].order, mov.gameObject);
 		}
 		else 
 		{
-			for (int i=0; i<interp.animms[type].anims[realNumb].ltaos.Length; i++)
-				if ((frame >= interp.animms [type].anims [realNumb].ltaos [i].time) && (interp.animms [type].anims [realNumb].ltaos [i].order != mov.settings.spriteLayerValue))
-					sp.ChangeRenderOrder (interp.animms [type].anims [realNumb].ltaos [i].order, mov.gameObject);
+			for (int i=0; i<interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
+				if ((frame >= interp.animTypes [type].animInfo [numb].leftOrderData [i].time) && (interp.animTypes[type].animInfo [numb].leftOrderData [i].order != mov.settings.spriteLayerValue))
+					sp.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].leftOrderData [i].order, mov.gameObject);
 		}
 	}
+
+	//Функция вызываемая при создании части кодом, тогда автоматически должны создаваться подчинённые части, если они есть. С подчинёнными частями - своя морока. 
+	/*public int InstantiateParts(PartConroller parentPart)
+	{
+		GameObject part;
+		for (int i = 0; i < parentPart.prefabParts.Count; i++) {
+			part = Instantiate (parentPart.prefabParts [i], Vector3.zero, Quaternion.identity) as GameObject;
+			part.transform.parent = parentPart.gameObject.transform;
+		}
+	}*/
+	//Но так как эта функция не нужна, я не буду её дописывать.
+
 }
+	

@@ -402,7 +402,7 @@ public class ActionTypes : MonoBehaviour
 		while (j<item.parametres1.Length) {
 			if (item.parametres1 [j] != 0)
 				break;
-			anim.allParts [item.parametres2 [j]].parts.Add (weapon.GetComponent<PartConroller> ());
+			anim.parts [item.parametres2 [j]].parts.Add (weapon.GetComponent<PartConroller> ());
 			j++;
 		}
 		for (i=2; i<equip.bag[numb].GetComponent<ItemClass>().objects.Length; i++) {
@@ -415,11 +415,11 @@ public class ActionTypes : MonoBehaviour
 			                                                     listOfObjects [i-2].transform.localScale.y,
 			                                                     listOfObjects [i-2].transform.localScale.z);
 			listOfObjects [i-2].transform.SetParent (equip.gameObject.transform);
-			listOfObjects[i-2].GetComponent<PartConroller>().right=(right==true? 1: -1);
+			listOfObjects[i-2].GetComponent<PartConroller>().orientation=(right==true? 1: -1);
 			while (j<item.parametres1.Length) {
 				if (item.parametres1 [j] != i)
 					break;
-				anim.allParts [item.parametres2 [j]].parts.Add (listOfObjects [i-2].GetComponent<PartConroller> ());
+				anim.parts [item.parametres2 [j]].parts.Add (listOfObjects [i-2].GetComponent<PartConroller> ());
 				j++;
 			}
 		}
@@ -452,19 +452,19 @@ public class ActionTypes : MonoBehaviour
 		while (j<item.parametres1.Length) {
 			if (item.parametres1 [j] != 0)
 				break;
-			anim.allParts [item.parametres2 [j]].parts.Remove (weapon.GetComponent<PartConroller> ());
+			anim.parts [item.parametres2 [j]].parts.Remove (weapon.GetComponent<PartConroller> ());
 			j++;
 		}
 		Destroy (weapon);
 		for (i=2; i<item.objects.Length; i++) 
 		{
-			obj=sp.FindPart(anim.allParts, item.objects[i].name);
+			obj=sp.FindPart(anim.parts, item.objects[i].name);
 			s=item.objects[i].name;
 			listOfObjects.Add (obj);
 			while (j<item.parametres1.Length) {
 				if (item.parametres1 [j] != i)
 					break;
-				anim.allParts [item.parametres2 [j]].parts.Remove (listOfObjects [i-2].GetComponent<PartConroller> ());
+				anim.parts [item.parametres2 [j]].parts.Remove (listOfObjects [i-2].GetComponent<PartConroller> ());
 				j++;
 			}
 		}

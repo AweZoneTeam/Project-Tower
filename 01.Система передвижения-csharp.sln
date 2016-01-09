@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 20008
+# Visual Studio 2008
 
 Project("{BFAE4A56-1DD3-3B6D-B7AF-E0B96E25EE19}") = "01.Система передвижения", "Assembly-CSharp-vs.csproj", "{584D7400-E014-55E6-932C-94D2F892E0A6}"
 EndProject
