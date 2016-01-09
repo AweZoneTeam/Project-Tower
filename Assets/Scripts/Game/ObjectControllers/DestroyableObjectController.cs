@@ -6,6 +6,7 @@ public class DestroyableObjectController : NMoveableObjectController {
 
 	public Organism stats;
 	public OrgActivityClass.activities[] whatToEmploy;
+	public OrgActivityClass[] whatToKek;
 	public List<ActionClass.act> whatToDo; 
 	public List<animClass.anim> whatToPerform;
 

@@ -1,19 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LeverActivityClass : MonoBehaviour 
+public class LeverActivityClass : PreActivityClass
 {
-	[System.Serializable]
-	public struct activities
-	{
-		public string name;
-		public ActionClass.act[] what;
-		public int timeToReverse;
-		public int actMode;
-		public bool chosen;
-		public int timeOfAction;
-		public animatClass.animat[] howLook;
-		public ComparativeClass.compr activated;
-	}
-
+	public ComparativeClass.compr activated;
 }
