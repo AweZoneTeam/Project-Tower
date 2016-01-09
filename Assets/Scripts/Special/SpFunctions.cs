@@ -77,39 +77,10 @@ public class SpFunctions : MonoBehaviour {
 		return new Vector2 (vect.x, vect.y);
 	}
 
-	public int AddAction(ActionClass.act[] actions, ActionClass.act action, int numb)
-	{
-		actions [numb] = action;
-		numb++;
-		return numb;
-	}
-
-	public int DeleteAction(ActionClass.act[] actions, int del, int numb)
-	{
-		for (int i=del+1;i<numb;i++)
-			actions[i-1]=actions[i];
-		numb--;
-		return numb;
-	}
-
-	public int AddAnimation(animClass.anim[] animats, animClass.anim animat, int numb)
-	{
-		animats [numb] = animat;
-		numb++;
-		return numb;
-	}
-	
-	public int DeleteAnimation(animClass.anim[] animats, int del, int numb)
-	{
-		for (int i=del+1;i<numb;i++)
-			animats[i-1]=animats[i];
-		numb--;
-		return numb;
-	}
-
-	public int SortAnimation(animClass.anim[] anims, int numb)
+	public int SortAnimation(List<animClass.anim> anims)
 	{
 		int i, j;
+		int numb = anims.Count;
 		animClass.anim x;
 		for (i=0;i<numb-1; i++)
 			for (j=i+1;j<numb;j++)
@@ -198,11 +169,12 @@ public class SpFunctions : MonoBehaviour {
 		return vect1 - vect3;
 	}
 
-	public int DoActions(ActionClass.act[] actions, int numb)
+	public int DoActions(List<ActionClass.act> actions)
 	{
 		ActionTypes actTypes = GetComponent<ActionTypes> ();
 		InfoGetTypes infTypes = GetComponent<InfoGetTypes> ();
 		clavisher clavi = GetComponent<clavisher> ();
+		int numb = actions.Count;
 		int j;
 		for (int i=0;i<numb;i++)
 		{
@@ -449,8 +421,8 @@ public class SpFunctions : MonoBehaviour {
 				actTypes.Experimental();
 			}
 		}
-		numb = 0;
-		return numb;
+		actions.Clear ();
+		return 0;
 	}
 
 	public void AnalyseSituation(StatsClass.stats stats1, StatsClass.stats stats2)
@@ -780,12 +752,6 @@ public class SpFunctions : MonoBehaviour {
 			if (j<kk.clv[i].but.Length) k[i]=true;
 		}
 		return k[0]&&k[1]&&k[2]&&k[3];
-	}
-
-	public int ExperimentFunction(int kk)
-	{
-		kk++;
-		return kk;
 	}
 
 	public void Flip(Transform trans, int x)

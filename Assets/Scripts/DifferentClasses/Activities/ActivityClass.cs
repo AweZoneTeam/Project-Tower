@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ActivityClass : MonoBehaviour 
+public class ActivityClass
 {
 	[System.Serializable]
 	public struct activites
@@ -26,3 +26,4 @@ public class ActivityClass : MonoBehaviour
 	}
 	
 }
+

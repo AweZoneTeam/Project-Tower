@@ -5,10 +5,9 @@ using System.Collections.Generic;
 public class RootCharacterController : NAAObjectController {
 
 	public List<ActivityClass.activites> whatToEmploy;
-	public ActionClass.act[] whatToDo; 
-	public animClass.anim[] whatToPerform;
-	public int actNumb;
-	public int animNumb;
+	public List<ActionClass.act> whatToDo; 
+	public List<animClass.anim> whatToPerform;
+	//public int animNumb;
 	public float kk;
 	public int jj1;
 	public int jj2;
@@ -27,8 +26,7 @@ public class RootCharacterController : NAAObjectController {
 
 	void Awake () 
 	{
-		actNumb = 0;
-
+		whatToDo.Clear ();
 		rigid = gameObject.GetComponent<Rigidbody2D> ();
 		stats = gameObject.GetComponent<Stats> ();
 		animator = GetComponent<CharacterAnimator> ();
@@ -101,19 +99,22 @@ public class RootCharacterController : NAAObjectController {
 				{
 					for (j=0; j<act.whatIf.Length;j++)
 					{
-						if (act.whatIf[j].actType==0)
+						if (act.whatIf [j].actType == 0) {
+							whatToDo.Add (act.whatIf [j]);
+							//actNumb=Sp.AddAction(whatToDo,act.whatIf[j],actNumb);
 						
-							actNumb=Sp.AddAction(whatToDo,act.whatIf[j],actNumb);
-						else 
+						} else 
 						{
 							e=0;
-							while ((whatToDo[e].actType!=act.whatIf[j].actType)&&(e<actNumb))
+							while ((whatToDo[e].actType!=act.whatIf[j].actType)&&(e<whatToDo.Count))
 								e++;
-							if (e!=actNumb)
-								Sp.ChangeAction(whatToDo,act.whatIf[j],e);
+							if (e!=whatToDo.Count)
+								//Sp.ChangeAction(whatToDo,act.whatIf[j],e);
+								whatToDo[e] = act.whatIf[j];
 							else
 							{
-								actNumb=Sp.AddAction(whatToDo,act.whatIf[j],actNumb);
+								whatToDo.Add (act.whatIf [j]);
+								//actNumb=Sp.AddAction(whatToDo,act.whatIf[j],actNumb);
 							}
 						}
 					}
@@ -121,17 +122,22 @@ public class RootCharacterController : NAAObjectController {
 				else if (!((act.actMode==3)&&(act.timer<=act.timeToReverse)))
 					for (j=0; j<act.what.Length;j++)
 					{
-						if (act.what[j].actType==0)
-							actNumb=Sp.AddAction(whatToDo,act.what[j],actNumb);
-						else 
+						if (act.what [j].actType == 0) {
+							//actNumb = Sp.AddAction (whatToDo, act.what [j], actNumb);
+							whatToDo.Add(act.what[j]);
+						
+						} else 
 						{
 							e=0;
-						while ((whatToDo[e].actType!=act.what[j].actType)&&(e<actNumb))
+							while ((e<whatToDo.Count)&&(whatToDo[e].actType!=act.what[j].actType))
 							e++;
-						if (e!=actNumb)
-							Sp.ChangeAction(whatToDo,act.what[j],e);
-						else
-							actNumb=Sp.AddAction(whatToDo,act.what[j],actNumb);
+							if (e != whatToDo.Count)
+								whatToDo [e] = act.what [j];	
+							//Sp.ChangeAction(whatToDo,act.what[j],e);
+							else {
+								//actNumb = Sp.AddAction (whatToDo, act.what [j], actNumb);
+								whatToDo.Add (act.what [j]);
+							}
 					}
 				}
 				
@@ -169,13 +175,14 @@ public class RootCharacterController : NAAObjectController {
 				    		//	((whatToEmploy[i].howLook[j].weaponInRightHand)&&(gameObject.GetComponent<Equipment>().rightWeapon.type==whatToEmploy[i].howLook[j].weaponType))||
 				    		//	((!whatToEmploy[i].howLook[j].weaponInRightHand)&&(gameObject.GetComponent<Equipment>().leftWeapon.type==whatToEmploy[i].howLook[j].weaponType))||
 				    		//	(whatToEmploy[i].howLook[j].weaponType==0)){
-									animNumb=Sp.AddAnimation(whatToPerform, act.howLook[j].anim, animNumb);
+						whatToPerform.Add(act.howLook[j].anim);
+						//animNumb = whatToPerform.Count;
+									//animNumb=Sp.AddAnimation(whatToPerform, act.howLook[j].anim, animNumb);
 									break;
 							//	}
 						}
 		}
-		Sp.SortAnimation (whatToPerform, animNumb);
-	
+		Sp.SortAnimation (whatToPerform);
 	}
 
 	public void AnimateIt()
@@ -239,12 +246,12 @@ public class RootCharacterController : NAAObjectController {
 		LearnActivities ();
 		PrepareEquipment ();
 		LearnActions ();
-		actNumb=Sp.DoActions (whatToDo, actNumb);
+		Sp.DoActions (whatToDo);
 		LearnAnimations ();
 		AnimateIt ();
 		CoordinateActivities ();
 		Sp.GetInformation (infoGets);
-		animNumb = 0;
+		whatToPerform.Clear ();
 		OrientateIt ();
 	}
 
