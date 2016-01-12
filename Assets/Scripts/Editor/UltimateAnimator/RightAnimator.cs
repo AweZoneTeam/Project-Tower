@@ -173,4 +173,6 @@ public class RightAnimator : EditorWindow
 		AddAnimationWindow animScreen = (AddAnimationWindow)EditorWindow.GetWindow (typeof(AddAnimationWindow));
 		animScreen.Initialize (this,leftAnim,character);
 	}
+
+	//Комментарий для нормальной работы гит хаба.
 }
