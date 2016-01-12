@@ -50,6 +50,8 @@ public class LeftAnimator : EditorWindow
 				SaveChanges ();
 			EditorGUILayout.Space ();
 			EditorGUILayout.TextField(characterName);
+			EditorGUILayout.TextField(partName);
+			EditorGUILayout.TextField(animationName);
 			EditorGUILayout.TextField("Animation Name");
 			EditorGUILayout.Space();
 			PartParamWindow();
@@ -137,7 +139,7 @@ public class LeftAnimator : EditorWindow
 		else {
 			character = PrefabUtility.InstantiatePrefab (asset.visual) as GameObject;
 			character.transform.position=animEditor.gameObject.transform.position;
-			CharacterAnimator cAnim = character.AddComponent<CharacterAnimator> ();
+			CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
 			for (int i = 0; i < cAnim.parts.Count; i++) {
 				cAnim.parts [i].interp = new AnimationInterpretator (" ");
 				cAnim.parts [i].interp.setInterp(cAnim.visualData.animInterpretators [i]);

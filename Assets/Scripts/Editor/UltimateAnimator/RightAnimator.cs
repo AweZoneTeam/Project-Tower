@@ -20,8 +20,10 @@ public class RightAnimator : EditorWindow
 	public AnimationEditorData animScene;
 	public GameObject character;//Персонаж, что сейчас в поле зрения всего редактора анимаций
 
-
+	//Каждый из векторов обеспечивает независимость трёх списков со слайдером правого редактора
 	private Vector2 scrollPosition=Vector2.zero;
+	private Vector2 scrollPosition1=Vector2.zero;
+	private Vector2 scrollPosition2=Vector2.zero;
 
 	//Инициализация
 	public void Initialize(AnimationEditorData aed, LeftAnimator la,List<string> ac, GameObject c)
@@ -34,22 +36,23 @@ public class RightAnimator : EditorWindow
 
 	void OnGUI () 
 	{
-		CharactersList();
+		CharactersList();/*
 		if (character != null) {
 			PartList ();
 			AnimationList ();
 		}
+		*/
 	}
 
 	//Вывести список анимируемых частей, из которых состоит персонаж
 	void PartList() 
 	{
 		parts = character.GetComponent<CharacterAnimator> ().parts;
-		EditorGUILayout.BeginVertical ();
+		GUILayout.BeginVertical ();
 		{
-			scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,200f),scrollPosition,new Rect(0,0,300,400));
+			scrollPosition1=GUI.BeginScrollView(new Rect(0f,140f,300f,100f),scrollPosition1,new Rect(0,20,300,400));
 			{
-				for (int i = 0; i < aCharacters.Count; i++) {
+				for (int i = 0; i<parts.Count; i++) {
 					if (GUILayout.Button (parts [i].gameObject.name)) {
 						if (!string.Equals (parts [i].gameObject.name, leftAnim.partName)) {
 							leftAnim.partName = parts [i].gameObject.name;
@@ -58,63 +61,78 @@ public class RightAnimator : EditorWindow
 					}
 				}
 			}
-			GUI.EndScrollView();		
-			GUILayout.Space (210-(parts.Count>11 ? 11: parts.Count)*22);
+			GUI.EndScrollView();	
+		}
+		GUILayout.EndVertical();
+		GUILayout.BeginArea(new Rect(0f,260f,300f,15f));
+		{
 			if(GUILayout.Button("+Add"))
 			{
 				AddPart ();
 			}
-
 		}
-		EditorGUILayout.EndVertical();
+		GUILayout.EndArea();
+		GUILayout.Space (10);
 	}
 
 	//Вывести список всех анимаций данного персонажа
 	void AnimationList () 
 	{
-		EditorGUILayout.BeginVertical ();
+		
+		GUILayout.BeginVertical ();
 		{
-			EditorGUILayout.TextField("Animations");
-			EditorGUILayout.Space ();
+			GUILayout.TextField("Animations");
+			GUILayout.Space (5);
 			animTypes = character.GetComponent<CharacterAnimator> ().animTypes;
-			for (int i = 0; i < animTypes.Count; i++) {
-				EditorGUILayout.LabelField (animTypes [i].typeName);
-				for (int j = 0; j < animTypes [i].animations.Count; j++) {
-					EditorGUILayout.LabelField (" "+animTypes [i].animations [j]);
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,40,300,800));
+			{
+				for (int i = 0; i < animTypes.Count; i++) {
+					GUILayout.TextField (animTypes [i].typeName);
+					for (int j = 0; j < animTypes [i].animations.Count; j++) {
+						if (GUILayout.Button (animTypes [i].animations [j])) {
+							if (!string.Equals (animTypes [i].animations [j], leftAnim.animationName)&& (!string.Equals (leftAnim.partName, "Part"))) {
+								leftAnim.animationName = animTypes [i].animations [j];
+								leftAnim.characterAnimation = leftAnim.characterPart.interp.animTypes [i].animInfo [j];
+							}
+						}
+					}
 				}
 			}
+			GUILayout.EndScrollView ();
 		}
-		EditorGUILayout.Space ();
-		if(GUILayout.Button("+Add"))
+		GUILayout.EndVertical();
+		GUILayout.Space (5);
+		GUILayout.BeginArea (new Rect(0f,400f,300f,15f));
 		{
-			AddAnimation ();
+			if (GUILayout.Button ("+Add")) {
+				AddAnimation ();
+			}
 		}
-		EditorGUILayout.EndVertical();	
+		GUILayout.EndArea ();	
 	}
 
 	//Вывести список персонажей, с которыми мы работаем в данный момент
 	void CharactersList () 
 	{
+		
 		aCharacters = animScene.animBase.usedCharacters;
-		GUILayout.BeginVertical ();
+		scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,100f),scrollPosition,new Rect(0,0,300,400));
 		{
-			scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,200f),scrollPosition,new Rect(0,0,300,400));
-			{
-				for (int i = 0; i < aCharacters.Count; i++) {
-					if (GUILayout.Button (aCharacters [i])) {
-						if (!string.Equals (aCharacters [i], leftAnim.characterName))
-							SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
+			for (int i = 0; i < aCharacters.Count; i++) {
+				if (GUILayout.Button (aCharacters [i])) {
+					if (!string.Equals (aCharacters [i], leftAnim.characterName)) {
+						//SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
 					}
 				}
 			}
-			GUI.EndScrollView();		
-			GUILayout.Space (210-(aCharacters.Count>11 ? 11: aCharacters.Count)*22);
+		}
+		GUI.EndScrollView();	
+		GUILayout.BeginArea (new Rect(0f,110f,300f,15f));
+		{
 			if (GUILayout.Button ("+Add"))
 				AddCharacter ();
-
-
 		}
-		GUILayout.EndVertical ();
+		GUILayout.EndArea ();
 	}
 
 	//Открыть окно добавления персонажа для работы с ним

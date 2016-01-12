@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterAnimator : MonoBehaviour 
+public class CharacterAnimator : BaseAnimator
 {
 	public List<PartController> parts=new List<PartController>();
 	public VisualData visualData;
