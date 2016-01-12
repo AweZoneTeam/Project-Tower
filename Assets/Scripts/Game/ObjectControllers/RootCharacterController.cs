@@ -11,7 +11,7 @@ public class RootCharacterController : NAAObjectController {
 	public float kk;
 	public int jj1;
 	public int jj2;
-	public PartConroller kkPart;
+	public PartController kkPart;
 	
 	private Rigidbody2D rigid;
 	private Stats stats;

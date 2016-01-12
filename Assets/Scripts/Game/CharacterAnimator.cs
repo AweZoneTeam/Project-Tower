@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CharacterAnimator : MonoBehaviour 
 {
-	public List<PartConroller> parts=new List<PartConroller>();
+	public List<PartController> parts=new List<PartController>();
 	public VisualData visualData;
 
 	public List<animList> animTypes=new List<animList>();

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class RightAnimator : EditorWindow
 {
 	public List<animList> animTypes=new List<animList>();
-	public List<PartConroller> parts = new List<PartConroller>();
+	public List<PartController> parts = new List<PartController>();
 	public List<string> aCharacters = new List<string>();
 	public Rect windowRect1 = new Rect(100f, 100f, 200f, 200f);
 	public Rect windowRect2 = new Rect(100f, 100f, 200f, 200f);
@@ -47,10 +47,19 @@ public class RightAnimator : EditorWindow
 		parts = character.GetComponent<CharacterAnimator> ().parts;
 		EditorGUILayout.BeginVertical ();
 		{
-			EditorGUILayout.TextField("Parts");
-			EditorGUILayout.Space ();
-			for (int i=0;i<parts.Count;i++)
-				EditorGUILayout.LabelField(parts[i].gameObject.name);
+			scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,200f),scrollPosition,new Rect(0,0,300,400));
+			{
+				for (int i = 0; i < aCharacters.Count; i++) {
+					if (GUILayout.Button (parts [i].gameObject.name)) {
+						if (!string.Equals (parts [i].gameObject.name, leftAnim.partName)) {
+							leftAnim.partName = parts [i].gameObject.name;
+							leftAnim.characterPart = parts [i];
+						}
+					}
+				}
+			}
+			GUI.EndScrollView();		
+			GUILayout.Space (210-(parts.Count>11 ? 11: parts.Count)*22);
 			if(GUILayout.Button("+Add"))
 			{
 				AddPart ();
@@ -91,11 +100,12 @@ public class RightAnimator : EditorWindow
 		{
 			scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,200f),scrollPosition,new Rect(0,0,300,400));
 			{
-				for (int i = 0; i < aCharacters.Count; i++)
+				for (int i = 0; i < aCharacters.Count; i++) {
 					if (GUILayout.Button (aCharacters [i])) {
 						if (!string.Equals (aCharacters [i], leftAnim.characterName))
-							SaveAndCreate(aCharacters [i], "", animScene.FindData (aCharacters [i]+".asset"));
+							SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
 					}
+				}
 			}
 			GUI.EndScrollView();		
 			GUILayout.Space (210-(aCharacters.Count>11 ? 11: aCharacters.Count)*22);

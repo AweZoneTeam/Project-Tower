@@ -69,11 +69,11 @@ public class AddPartWindow : EditorWindow
 		asset.partPath = partPath;
 		asset.animTypes = new List<animationInfoTypes> ();
 		AssetDatabase.CreateAsset (asset, partPath + name + ".asset");
-		PartConroller cPart = part.AddComponent<PartConroller> ();
+		PartController cPart = part.AddComponent<PartController> ();
 		cPart.interp=new AnimationInterpretator(asset.partPath);
 		cPart.mov = partMov.GetComponent<GAF.Core.GAFMovieClip> ();
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
-		cAnim.parts.Add (part.GetComponent<PartConroller>());
+		cAnim.parts.Add (part.GetComponent<PartController>());
 		GameObject asset1 = part;
 		asset1=PrefabUtility.CreatePrefab(partPath + name + ".prefab",asset1);
 		AssetDatabase.SaveAssets ();
@@ -96,10 +96,10 @@ public class AddPartWindow : EditorWindow
 		AnimationInterpretator asset = ScriptableObject.CreateInstance<AnimationInterpretator>();
 		asset.partPath = partPath;
 		asset.animTypes = new List<animationInfoTypes> ();
-		PartConroller cPart = part.GetComponent<PartConroller> ();
+		PartController cPart = part.GetComponent<PartController> ();
 		cPart.interp=new AnimationInterpretator(asset.partPath);
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
-		cAnim.parts.Add (part.GetComponent<PartConroller>());
+		cAnim.parts.Add (part.GetComponent<PartController>());
 		GameObject asset1 = part;
 		asset1=PrefabUtility.CreatePrefab(partPath + name + ".prefab",asset1);
 		AssetDatabase.SaveAssets ();

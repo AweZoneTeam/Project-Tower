@@ -14,15 +14,20 @@ public class LeftAnimator : EditorWindow
 	public int sound, layer=0;
 	public bool loop=false;
 	public int numb=0, type=0, number=0;
-	public string animName="anim name";
 	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёть false, когда научишься отлеживать эти изменения
-	public GameObject character;
+	public GameObject character;//Какой персонаж сейчас интересует левый редактор
+	public PartController characterPart;//Какая часть тела в центре внимация всего редактора анимаций
+	public animationInfo characterAnimation; // Какая анимация сейчас обрабаытвается редактором
+
 
 	[HideInInspector]
 	public RightAnimator rightAnim;
 	public AnimationEditorData animEditor;
 
+	//Строки, которые обозначают, с чем мы сейчас работаем
 	public string characterName="Name";
+	public string partName="Part";
+	public string animationName="Animation";
 	public string savePath;//Путь, по которому будет сохраняться созданный персонаж 
 
 	//Инициализация
@@ -88,7 +93,7 @@ public class LeftAnimator : EditorWindow
 			loop=EditorGUILayout.Toggle("loop",loop);
 			number=EditorGUILayout.IntField("number", number);
 			type=EditorGUILayout.IntField("type", type);
-			animName=EditorGUILayout.TextField(animName);
+			characterName=EditorGUILayout.TextField(characterName);
 		}
 		EditorGUILayout.EndVertical();
 

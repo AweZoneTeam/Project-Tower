@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 //Части - это основы управления любой анимации в Project Tower. 
-public class PartConroller : MonoBehaviour 
+public class PartController : MonoBehaviour 
 {
 	
 	
@@ -18,7 +18,7 @@ public class PartConroller : MonoBehaviour
 	[HideInInspector]
 	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
 	public bool inversed;//если правда, то все правые анимации меняются с левыми. Удобно использовать для одноручных оружий.
-	public List<PartConroller> parts;
+	public List<PartController> parts;
 	/*public List<GameObjecat> prefabParts;//Сюда запихиваются префабные части, а значит, они никуда не денутся, если мы, например, перейдём в новую сцену.
 	[HideInInspector]
 	public List<Vector2> partPositions; // Если у части еть зависимые части, то здесь будет список их относительного положения. Задаются эти положения в режакторе анимаций*/

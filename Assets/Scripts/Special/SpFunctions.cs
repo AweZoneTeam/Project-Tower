@@ -140,14 +140,14 @@ public class SpFunctions : MonoBehaviour {
 		return numb;
 	}
 
-	public int AddPart(PartConroller[] parts, PartConroller part, int numb)
+	public int AddPart(PartController[] parts, PartController part, int numb)
 	{
 		parts [numb] = part;
 		numb++;
 		return numb;
 	}
 	
-	public int DeletePart(PartConroller[] parts, int del, int numb)
+	public int DeletePart(PartController[] parts, int del, int numb)
 	{
 		for (int i=del+1;i<numb;i++)
 			parts[i-1]=parts[i];
@@ -612,7 +612,7 @@ public class SpFunctions : MonoBehaviour {
 		return 1;
 	}
 
-	public GameObject FindPart(List<PartConroller> parts, string name)
+	public GameObject FindPart(List<PartController> parts, string name)
 	{
 		GameObject obj=null;
 		int i;
@@ -661,7 +661,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 	}
 
-	public void ChangePartColor (List<PartConroller> parts, Color color)
+	public void ChangePartColor (List<PartController> parts, Color color)
 	{
 		int i;
 		for (i=0;i<parts.Count;i++)
@@ -672,7 +672,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 	}
 
-	public void BeginAnimateIt(List<PartConroller> parts)
+	public void BeginAnimateIt(List<PartController> parts)
 	{
 		int i;
 		for (i=0;i<parts.Count;i++)
@@ -682,7 +682,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 	}
 
-	public void AnimateIt(List<PartConroller> parts, animClass.anim anim)
+	public void AnimateIt(List<PartController> parts, animClass.anim anim)
 	{
 		int i;
 		for (i=0;i<parts.Count;i++)
@@ -697,7 +697,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 	}
 
-	public void FinallyAnimateIt(List<PartConroller> parts)
+	public void FinallyAnimateIt(List<PartController> parts)
 	{
 		int i;
 		for (i=0;i<parts.Count;i++)
@@ -707,7 +707,7 @@ public class SpFunctions : MonoBehaviour {
 		}
 	}
 
-	public void AnimateLedGafs(List<PartConroller> parts, int addictiveFrame)
+	public void AnimateLedGafs(List<PartController> parts, int addictiveFrame)
 	{
 		int i;
 		for (i=0; i<parts.Count; i++) {

@@ -11,7 +11,7 @@ public class WeaponClass : MonoBehaviour {
 	public bool active;
 	public int ready;
 
-	public PartConroller weaponFx;
+	public PartController weaponFx;
 
 	void Awake()
 	{

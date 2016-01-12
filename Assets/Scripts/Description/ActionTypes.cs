@@ -402,7 +402,7 @@ public class ActionTypes : MonoBehaviour
 		while (j<item.parametres1.Length) {
 			if (item.parametres1 [j] != 0)
 				break;
-			anim.parts [item.parametres2 [j]].parts.Add (weapon.GetComponent<PartConroller> ());
+			anim.parts [item.parametres2 [j]].parts.Add (weapon.GetComponent<PartController> ());
 			j++;
 		}
 		for (i=2; i<equip.bag[numb].GetComponent<ItemClass>().objects.Length; i++) {
@@ -415,11 +415,11 @@ public class ActionTypes : MonoBehaviour
 			                                                     listOfObjects [i-2].transform.localScale.y,
 			                                                     listOfObjects [i-2].transform.localScale.z);
 			listOfObjects [i-2].transform.SetParent (equip.gameObject.transform);
-			listOfObjects[i-2].GetComponent<PartConroller>().orientation=(right==true? 1: -1);
+			listOfObjects[i-2].GetComponent<PartController>().orientation=(right==true? 1: -1);
 			while (j<item.parametres1.Length) {
 				if (item.parametres1 [j] != i)
 					break;
-				anim.parts [item.parametres2 [j]].parts.Add (listOfObjects [i-2].GetComponent<PartConroller> ());
+				anim.parts [item.parametres2 [j]].parts.Add (listOfObjects [i-2].GetComponent<PartController> ());
 				j++;
 			}
 		}
@@ -452,7 +452,7 @@ public class ActionTypes : MonoBehaviour
 		while (j<item.parametres1.Length) {
 			if (item.parametres1 [j] != 0)
 				break;
-			anim.parts [item.parametres2 [j]].parts.Remove (weapon.GetComponent<PartConroller> ());
+			anim.parts [item.parametres2 [j]].parts.Remove (weapon.GetComponent<PartController> ());
 			j++;
 		}
 		Destroy (weapon);
@@ -464,7 +464,7 @@ public class ActionTypes : MonoBehaviour
 			while (j<item.parametres1.Length) {
 				if (item.parametres1 [j] != i)
 					break;
-				anim.parts [item.parametres2 [j]].parts.Remove (listOfObjects [i-2].GetComponent<PartConroller> ());
+				anim.parts [item.parametres2 [j]].parts.Remove (listOfObjects [i-2].GetComponent<PartController> ());
 				j++;
 			}
 		}
