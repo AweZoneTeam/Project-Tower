@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class animClass : MonoBehaviour 
+//Класс передаваемой анимации. Именно объект этого класса передаётся аниматору, 
+//чтобы он смог "сказать" своим анимационным частям, какие анимации проигрывать.
+[System.Serializable]
+public class animClass
 {	
-	[System.Serializable]
-	public struct anim
-	{
-		public int type;
-		public int mod;
-		public int numb;
-	}
-
+	public int type;
+	public int numb;
 }

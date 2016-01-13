@@ -5,8 +5,6 @@ Project("{61FCF0EC-5770-4726-A465-44F495622123}") = "Project Tower", "Assembly-C
 EndProject
 Project("{61FCF0EC-5770-4726-A465-44F495622123}") = "Project Tower", "Assembly-CSharp-Editor.csproj", "{BDB39B93-E9D6-3ED7-3061-B122DA4289CF}"
 EndProject
-Project("{61FCF0EC-5770-4726-A465-44F495622123}") = "Project Tower", "Assembly-UnityScript.unityproj", "{2A895735-1472-53B2-0490-AF0FEC94051A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,10 +19,6 @@ Global
 		{BDB39B93-E9D6-3ED7-3061-B122DA4289CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDB39B93-E9D6-3ED7-3061-B122DA4289CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDB39B93-E9D6-3ED7-3061-B122DA4289CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A895735-1472-53B2-0490-AF0FEC94051A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A895735-1472-53B2-0490-AF0FEC94051A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A895735-1472-53B2-0490-AF0FEC94051A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A895735-1472-53B2-0490-AF0FEC94051A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

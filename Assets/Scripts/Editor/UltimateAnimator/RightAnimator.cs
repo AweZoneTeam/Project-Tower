@@ -36,15 +36,16 @@ public class RightAnimator : EditorWindow
 
 	void OnGUI () 
 	{
-		CharactersList();/*
+		CharactersList();
 		if (character != null) {
 			PartList ();
 			AnimationList ();
 		}
-		*/
 	}
 
 	//Вывести список анимируемых частей, из которых состоит персонаж
+	//Список выводится в виде кнопок, нажав которые можно выбрать часть тела, с которой пользователь желает работать
+	//Также можно добавить новую анимационную часть
 	void PartList() 
 	{
 		parts = character.GetComponent<CharacterAnimator> ().parts;
@@ -75,16 +76,17 @@ public class RightAnimator : EditorWindow
 		GUILayout.Space (10);
 	}
 
-	//Вывести список всех анимаций данного персонажа
+	//Вывести список всех анимаций данного персонажа. 
+	//Анимации выводятся в виде кнопок, нажав которые, игрок выберет анимацию над которой он хочет работать
+	//Также можно добавить новую анимацию
 	void AnimationList () 
 	{
 		
 		GUILayout.BeginVertical ();
 		{
-			GUILayout.TextField("Animations");
 			GUILayout.Space (5);
 			animTypes = character.GetComponent<CharacterAnimator> ().animTypes;
-			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,40,300,800));
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,110,300,800));
 			{
 				for (int i = 0; i < animTypes.Count; i++) {
 					GUILayout.TextField (animTypes [i].typeName);
@@ -98,7 +100,7 @@ public class RightAnimator : EditorWindow
 					}
 				}
 			}
-			GUILayout.EndScrollView ();
+			GUI.EndScrollView ();
 		}
 		GUILayout.EndVertical();
 		GUILayout.Space (5);
@@ -121,7 +123,7 @@ public class RightAnimator : EditorWindow
 			for (int i = 0; i < aCharacters.Count; i++) {
 				if (GUILayout.Button (aCharacters [i])) {
 					if (!string.Equals (aCharacters [i], leftAnim.characterName)) {
-						//SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
+						SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
 					}
 				}
 			}

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
+using GAF.Core;
 
 //Часть редактора анимаций, которая находится слева. Отвественная за обработку каждого кадра анимации
 public class LeftAnimator : EditorWindow
@@ -9,9 +10,7 @@ public class LeftAnimator : EditorWindow
 	public Rect windowRect2 = new Rect(100f, 100f, 200f, 200f);
 	public Rect windowRect1 = new Rect(100f, 100f, 200f, 200f);
 	public string orientation = "Left";
-	public int index=0;
-	public bool depended=false;
-	public int sound, layer=0;
+	public int layer=0;
 	public bool loop=false;
 	public int numb=0, type=0, number=0;
 	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёть false, когда научишься отлеживать эти изменения
@@ -19,6 +18,7 @@ public class LeftAnimator : EditorWindow
 	public PartController characterPart;//Какая часть тела в центре внимация всего редактора анимаций
 	public animationInfo characterAnimation; // Какая анимация сейчас обрабаытвается редактором
 
+	public float frame;//На каком фрейме мы находимся в данный момент?
 
 	[HideInInspector]
 	public RightAnimator rightAnim;
@@ -52,7 +52,6 @@ public class LeftAnimator : EditorWindow
 			EditorGUILayout.TextField(characterName);
 			EditorGUILayout.TextField(partName);
 			EditorGUILayout.TextField(animationName);
-			EditorGUILayout.TextField("Animation Name");
 			EditorGUILayout.Space();
 			PartParamWindow();
 			EditorGUILayout.Space();
@@ -63,10 +62,6 @@ public class LeftAnimator : EditorWindow
 			}
 		}
 		EditorGUILayout.EndVertical ();
-		if (GUI.changed) 
-		{
-
-		}
 	}
 		
 	//Настраиваемые параметры частей
@@ -79,8 +74,6 @@ public class LeftAnimator : EditorWindow
 			{
 				ChangeAnimaionOrientation();
 			}
-			depended=EditorGUILayout.Toggle("depend",depended);
-			sound=EditorGUILayout.IntField("sound",sound);
 			layer=EditorGUILayout.IntField("layer",layer);
 		}
 		EditorGUILayout.EndVertical ();
@@ -93,9 +86,7 @@ public class LeftAnimator : EditorWindow
 		{
 			EditorGUILayout.TextField("Animation parametres");
 			loop=EditorGUILayout.Toggle("loop",loop);
-			number=EditorGUILayout.IntField("number", number);
-			type=EditorGUILayout.IntField("type", type);
-			characterName=EditorGUILayout.TextField(characterName);
+			EditorGUILayout.Slider(frame,characterPart.mov.GetComponent<>)
 		}
 		EditorGUILayout.EndVertical();
 
@@ -168,4 +159,15 @@ public class LeftAnimator : EditorWindow
 		cAnim.visualData.visual=PrefabUtility.ReplacePrefab (character,cAnim.visualData.visual);
 		saved = true;
 	}
+
+	//Функция, которая ставит в даннном кадре данной анимации часть тела на указанный слой
+	void SetLayerInFrame()
+	{
+	}
+
+	//Функция, которая ставит во всех начальных кадрах всех анимаций часть тела на какой-то дефолтный слой
+	void SetLayerInAllFrames()
+	{
+	}
+
 }

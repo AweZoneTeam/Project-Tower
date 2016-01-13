@@ -77,7 +77,6 @@ public class AddPartWindow : EditorWindow
 		GameObject asset1 = part;
 		asset1=PrefabUtility.CreatePrefab(partPath + name + ".prefab",asset1);
 		AssetDatabase.SaveAssets ();
-		Selection.activeObject = asset1;
 		cPart.interp = new AnimationInterpretator (asset);
 		if (character.GetComponent<CharacterAnimator> ().parts.Count > 0) {
 			cPart.interp.setInterp (character.GetComponent<CharacterAnimator> ().parts [0].interp);
