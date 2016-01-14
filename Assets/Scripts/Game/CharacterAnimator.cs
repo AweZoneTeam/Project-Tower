@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Аниматор главного героя. Он говорит частям тела персонажа, как им надо двигаться.
+/// </summary>
 public class CharacterAnimator : BaseAnimator
 {
 	public List<PartController> parts=new List<PartController>();
@@ -9,17 +12,10 @@ public class CharacterAnimator : BaseAnimator
 
 	public List<animList> animTypes=new List<animList>();
 
-	private SpFunctions sp;
-
-	public void Awake()
-	{
-		sp=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SpFunctions> ();
-	}
-
 	public void Update()
 	{
-		sp.AnimateLedGafs (parts, 
-		                   (int)parts [0].mov.getCurrentFrameNumber () - (int)parts [0].mov.currentSequence.startFrame);
+		SpFunctions.AnimateIt (parts, 
+		                   anim);
 	}
 
 

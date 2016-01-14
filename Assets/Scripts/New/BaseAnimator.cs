@@ -4,7 +4,8 @@ using System.Collections;
 public class BaseAnimator : MonoBehaviour
 {
 
-	// Use this for initialization
+	public AnimClass anim;
+
 	void Start ()
 	{
 	

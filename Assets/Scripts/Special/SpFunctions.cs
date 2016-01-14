@@ -42,7 +42,7 @@ public static class SpFunctions {
 	/// Запрашивает 2 клавиши, и в зависимости от того, какая из них зажата дольше,
 	///  направляет действие (например, движение) либо влево, либо вправо
 	/// </summary>
-	public static int ChooseDirection(ButtonClass.button b1, ButtonClass.button b2)
+	public static int ChooseDirection(ButtonClass b1, ButtonClass b2)
 	{
 		if (b1.timer>b2.timer)
 			return 1;
@@ -68,29 +68,7 @@ public static class SpFunctions {
 	{
 		return new Vector2 (vect.x, vect.y);
 	}
-
-	/// <summary>
-	/// Функция, следящая за временем исполнения деятельности - вызов функции уменьшает это время
-	/// </summary>
-	public static void ChangeTimer(int timer, ActivityClass.activites act, ActivityClass.activites[] acts)
-	{
-		if (act.weapon == null)
-			acts [act.numb].timer = timer;
-		else 
-			act.weapon.moveset [act.numb].timer = timer;
-	}
-
-	/// <summary>
-	/// Функция, которая позволяет узнать, сколько времени уже длится деятельность
-	/// </summary>
-	public static int EmployTime(ActivityClass.activites act, ActivityClass.activites[] acts)
-	{
-		if (act.weapon == null)
-			return acts [act.numb].timer;
-		else 
-			return act.weapon.moveset [act.numb].timer;
-	}
-
+		
 	/// <summary>
 	/// Узнаёт проекцию vect1 по vect2 и отнимает её от vect1.
 	/// </summary>
@@ -148,22 +126,6 @@ public static class SpFunctions {
 	}
 
 	/// <summary>
-	/// Функция, узнающая, в какой руке персонаж держит интересующее нас оружие, и ставящая в этом оружии соответствуюший мувсет
-	/// </summary>
-	public static void SetMoveset (GameObject obj, WeaponClass weapon)
-	{
-		for (int i=0; i<weapon.moveset.Length; i++)
-		{
-			for (int j=0; j<weapon.moveset[i].what.Length; j++)
-				for (int k=0; k<weapon.moveset[i].what[j].OBJDescription.Length; k++)
-					weapon.moveset [i].what [j].OBJ [k] = FindObject (obj, weapon.moveset [i].what [j].OBJDescription[k]);
-			for (int j=0; j<weapon.moveset[i].whatIf.Length; j++)
-				for (int k=0; k<weapon.moveset[i].whatIf[j].OBJDescription.Length; k++)
-					weapon.moveset [i].whatIf [j].OBJ [k] = FindObject (obj, weapon.moveset [i].whatIf [j].OBJDescription[k]);
-		}
-	}
-
-	/// <summary>
 	/// Функция, меняющая цвет персонажа, состоящего из анимационных частей.
 	/// </summary>
 	public static void ChangePartColor (List<PartController> parts, Color color)
@@ -181,7 +143,7 @@ public static class SpFunctions {
 	/// Функция, вызываемая аниматором, которая принимает на вход два числа, 
 	/// а потом передаёт их всем анимационным частям данного персонажа 
 	/// </summary>
-	public static void AnimateIt(List<PartController> parts, animClass anim)
+	public static void AnimateIt(List<PartController> parts, AnimClass anim)
 	{
 		for (int i=0;i<parts.Count;i++)
 		{

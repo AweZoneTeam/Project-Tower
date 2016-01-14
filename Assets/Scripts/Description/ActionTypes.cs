@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-//Ранее из функций этого скрипта составлялись действия - то, что происходит в результате деятельностей.
+/// <summary>
+///Ранее из функций этого скрипта составлялись действия - то, что происходит в результате деятельностей.
+/// </summary>
 public static class ActionTypes
 {
 
@@ -106,7 +108,7 @@ public static class ActionTypes
 	/// Функция, обеспечивающая попадание на верёвку, лестницу.
 	/// (Можно находится неподалёку от верёвки, нажать Е и сразу же оказаться на верёвке)
 	/// </summary>
-	public static void MoveToClimb(Rigidbody2D rigid, Stats stats, InfoGets inf, int numb, SpFunctions sp)
+	public static void MoveToClimb(Rigidbody2D rigid, Stats stats, InfoGets inf, int numb)
 	{
 		RaycastHit2D hit;
 		rigid.velocity = new Vector2 (0f, 0f);

@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Класс, ранее исользовавшийся для подбираемых предметов... 
+/// Какие игровые объекты получит персонаж, если он подберёт его.
+/// </summary>
 public class ItemClass : MonoBehaviour 
 {
 	public string name;
 	public string type;
-	public  GameObject[] objects;
-	public int[] parametres1;
-	public int[] parametres2;
-	public float[] coordinates;
-
+	public List<GameObject> objects;
 }

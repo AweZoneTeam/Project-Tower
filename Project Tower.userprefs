@@ -1,8 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DifferentClasses\ComparativeClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\CollisionRegulation.cs">
     <Files>
-      <File FileName="Assets\Scripts\DifferentClasses\ComparativeClass.cs" Line="10" Column="17" />
+      <File FileName="Assets\Scripts\DifferentClasses\ItemClass.cs" Line="13" Column="34" />
+      <File FileName="Assets\Scripts\DifferentClasses\Stats\Stats.cs" Line="15" Column="20" />
+      <File FileName="Assets\Scripts\Game\ArrowScript.cs" Line="26" Column="42" />
+      <File FileName="Assets\Scripts\Game\CharacterAnimator.cs" Line="10" Column="63" />
+      <File FileName="Assets\Scripts\New\BaseAnimator.cs" Line="8" Column="2" />
+      <File FileName="Assets\Scripts\DifferentClasses\animClass.cs" Line="9" Column="15" />
+      <File FileName="Assets\Scripts\Special\SpFunctions.cs" Line="147" Column="3" />
+      <File FileName="Assets\Scripts\DifferentClasses\ClaveNoteClass.cs" Line="11" Column="27" />
+      <File FileName="Assets\Scripts\DifferentClasses\animatClass.cs" Line="11" Column="10" />
+      <File FileName="Assets\Scripts\DifferentClasses\ActionClass.cs" Line="15" Column="82" />
+      <File FileName="Assets\Scripts\Game\clavisher.cs" Line="122" Column="37" />
+      <File FileName="Assets\Scripts\Game\CollisionRegulation.cs" Line="17" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
