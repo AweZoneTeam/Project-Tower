@@ -92,15 +92,14 @@ public static class ActionTypes
 	/// <summary>
 	/// Функция, обеспечивающая передвижение по таким поверхностям, как заросли, верёвка лестница и тп.)
 	/// </summary>
-	public static void Climb(Rigidbody2D rigid, Stats stats, InfoGetTypes IGT, InfoGets inf, int numb, int targetSpeedX, int targetSpeedY)
+	public static void Climb(Rigidbody2D rigid, Stats stats, InfoGetClass inf, Vector2 speed)
 	{
 		rigid.gravityScale = 0f;
-		if (IGT.Raycaster(inf,numb,new Vector2(targetSpeedX*1f,targetSpeedY*1f),sp))
-		    rigid.velocity=new Vector2(targetSpeedX*1f,targetSpeedY*1f);
+		if (InfoGetTypes.Raycaster(inf,speed))
+		    rigid.velocity=speed;
 		else
 			rigid.velocity=new Vector2(0f,0f);
-		stats.stats.targetSpeedX = targetSpeedX;
-		stats.stats.targetSpeedY = targetSpeedY;
+        stats.SetTargetSpeed(speed);
 	}
 
 	//тип 1 номер 7
@@ -354,17 +353,6 @@ public static class ActionTypes
 		hitControl.actTime= actTime;
 		hitControl.GetComponent<BoxCollider2D> ().enabled = true;
 		hitControl.direction = direction;
-	}
-		
-	//тип 3 номер 0
-	/// <summary>
-	/// Достать оружие и встать в боевую стойку
-	/// </summary>
-	public static void PrepareWeapon(WeaponClass weapon, SmartObjectController obj, int ready, bool b)
-	{
-		obj.battleStance = b;
-		weapon.active = b;
-		weapon.ready = ready;
 	}
 
 	//тип 4 номер 0

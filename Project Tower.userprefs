@@ -1,20 +1,49 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\CollisionRegulation.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DifferentClasses\InfoGetClass.cs">
     <Files>
-      <File FileName="Assets\Scripts\DifferentClasses\ItemClass.cs" Line="13" Column="34" />
-      <File FileName="Assets\Scripts\DifferentClasses\Stats\Stats.cs" Line="15" Column="20" />
-      <File FileName="Assets\Scripts\Game\ArrowScript.cs" Line="26" Column="42" />
-      <File FileName="Assets\Scripts\Game\CharacterAnimator.cs" Line="10" Column="63" />
-      <File FileName="Assets\Scripts\New\BaseAnimator.cs" Line="8" Column="2" />
-      <File FileName="Assets\Scripts\DifferentClasses\animClass.cs" Line="9" Column="15" />
-      <File FileName="Assets\Scripts\Special\SpFunctions.cs" Line="147" Column="3" />
-      <File FileName="Assets\Scripts\DifferentClasses\ClaveNoteClass.cs" Line="11" Column="27" />
-      <File FileName="Assets\Scripts\DifferentClasses\animatClass.cs" Line="11" Column="10" />
-      <File FileName="Assets\Scripts\DifferentClasses\ActionClass.cs" Line="15" Column="82" />
-      <File FileName="Assets\Scripts\Game\clavisher.cs" Line="122" Column="37" />
-      <File FileName="Assets\Scripts\Game\CollisionRegulation.cs" Line="17" Column="3" />
+      <File FileName="Assets\Scripts\DifferentClasses\ItemClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DifferentClasses\Stats\Stats.cs" Line="32" Column="10" />
+      <File FileName="Assets\Scripts\Game\ArrowScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\CharacterAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\New\BaseAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DifferentClasses\animClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Special\SpFunctions.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DifferentClasses\ClaveNoteClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DifferentClasses\animatClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DifferentClasses\ActionClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\clavisher.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\CollisionRegulation.cs" Line="30" Column="87" />
+      <File FileName="Assets\Scripts\Special\SoundManager.cs" Line="23" Column="59" />
+      <File FileName="Assets\Scripts\HitController.cs" Line="60" Column="6" />
+      <File FileName="Assets\Scripts\Special\Tags.cs" Line="5" Column="45" />
+      <File FileName="Assets\Scripts\Description\ActionTypes.cs" Line="357" Column="3" />
+      <File FileName="Assets\Scripts\DifferentClasses\InfoGetClass.cs" Line="2" Column="26" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Project Tower" expanded="True">
+            <Node name="Assembly-CSharp" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Description" expanded="True" />
+                <Node name="DifferentClasses" expanded="True">
+                  <Node name="Stats" expanded="True" />
+                  <Node name="InfoGetClass.cs" selected="True" />
+                </Node>
+                <Node name="Game" expanded="True" />
+                <Node name="Special" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="Project Tower" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 public class InfoGetClass
 {
 	public string name;//Какую информацию мы хотим подтвердить
-	public StatsClass.stats stats, elseStats; //Какие должны стать параметры персонажа, если проверяемая информация подтвердилась
+	public Stats stats, elseStats; //Какие должны стать параметры персонажа, если проверяемая информация подтвердилась
 	public int typeOfInfo;//Тип информации
 	public int numbOfInfo;//Номер информации
 	public List<GameObject> indicators;//Объекты, используемы для сбора информации (индикаторы)

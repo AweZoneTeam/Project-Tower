@@ -26,6 +26,12 @@ public class Organism: Prestats
 	protected int pDefence, fDefence, dDefence, aDefence;//Постоянная надбавка к защите от физ, огн, тен и яд урона
 	protected int addPDefence, addFDefence, addDDefence, addADefence;//Временная надбавка к защите от тех же видов урона
 	protected int stability;//Устойчивость, способность персонажа не сбиваться от атак
+
+	public void SetHealth(float _health)
+	{
+		health=_health;
+	}
+
 }
 
 /// <summary>
@@ -43,5 +49,10 @@ public class Stats : Organism
 	protected int maxInteraction;//Какой максимальный номер приоритетности среди объектов, 
 								//с которыми персонаж может взаимодействовать
 	protected int hitted;//Насколько "сбит" персонаж с ног влетевшей атакой. 
-						//0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
+                         //0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
+
+    public void SetTargetSpeed(Vector2 speed)
+    {
+        targetSpeed = speed;
+    }
 }
