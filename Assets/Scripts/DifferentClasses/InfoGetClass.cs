@@ -13,7 +13,7 @@ public class InfoGetClass
 	public Stats stats, elseStats; //Какие должны стать параметры персонажа, если проверяемая информация подтвердилась
 	public int typeOfInfo;//Тип информации
 	public int numbOfInfo;//Номер информации
-	public List<GameObject> indicators;//Объекты, используемы для сбора информации (индикаторы)
+	public GameObject indicator;//Объект, используемый для сбора информации (индикатор)
 	public List<int> intParametres;//Параметры сбора информации типа int (не самый нужеый параметр, здесь он на всякий случай) 
 	public List<float> floatParametres;//Параметры сбора информации типа float (например, радиус просматриваемой области)
 	public List<Vector2> infoVectors;//Куда надо "смотреть", чтобы подтвердить информацию

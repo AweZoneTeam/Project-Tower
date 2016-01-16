@@ -8,62 +8,19 @@ using System.Collections.Generic;
 public static class ActionTypes
 {
 
-	//тип 1 номер 1
-	/// <summary>
-	/// Функция, обеспечивающая достижение персонажем заданной скорости по оси X, используя ускорение.
-	/// </summary>
-	public static void AchieveSpeedX (Rigidbody2D rigid, Stats stats, int targetSpeed, int acceleration)
-	{
-		//rigid.gravityScale = 1f;
-		if (Mathf.Abs(targetSpeed*1f)!=1f)
-		{
-			if (Mathf.Abs(rigid.velocity.x-targetSpeed*1f)>0.5f) 
-				stats.stats.currentSpeed = Vector2.Lerp (stats.stats.currentSpeed, new Vector2 (targetSpeed * 1f, rigid.velocity.y), acceleration * Time.deltaTime);
-			else
-				stats.stats.currentSpeed=new Vector2(targetSpeed*1f,rigid.velocity.y);
-			//возможно, придётся просто использовать acceleration без time.deltaTime
-			rigid.velocity = new Vector2 (stats.stats.currentSpeed.x, rigid.velocity.y);
-		}
-		stats.stats.targetSpeedX = targetSpeed;
-		/*		rigid.gravityScale = 1f;
-		if (Mathf.Abs(rigid.velocity.x-targetSpeed*1f)>0.5f) 
-			rigid.velocity = Vector2.Lerp (rigid.velocity, new Vector2 (targetSpeed * 1f, rigid.velocity.y), acceleration * Time.deltaTime);
-		else
-			rigid.velocity=new Vector2(targetSpeed*1f,rigid.velocity.y);
-		//возможно, придётся просто использовать acceleration без time.deltaTime
-		stats.stats.targetSpeedX = targetSpeed;*/
-	}
-
-	//тип 1 номер 2
-	/// <summary>
-	/// Достичь заданной скорости по оси Y, используя ускорение.
-	/// </summary>
-	public static void AchieveSpeedY (Rigidbody2D rigid, Stats stats, int targetSpeed, int acceleration)
-	{
-		//rigid.gravityScale = 1f;
-		if (Mathf.Abs(rigid.velocity.y-targetSpeed*1f)>0.5f) 
-			rigid.velocity = Vector2.Lerp (rigid.velocity, new Vector2 (rigid.velocity.x, targetSpeed * 1f), acceleration * Time.deltaTime);
-		else
-			rigid.velocity=new Vector2(rigid.velocity.x,targetSpeed*1f);
-		//возможно, придётся просто использовать acceleration без time.deltaTime
-		stats.stats.targetSpeedY = targetSpeed;
-	}
-
 	//тип 1 номер 3
 	/// <summary>
 	/// Достичь заданной скорости (здесь скорость - двумерный вектор), используя ускорение
 	/// </summary>
-	public static void AchieveSpeed (Rigidbody2D rigid, Stats stats, int targetSpeedX, int targetSpeedY, int acceleration)
+	public static void AchieveSpeed (Rigidbody2D rigid, Stats stats, Vector2 targetSpeed, int acceleration)
 	{
 		//rigid.gravityScale = 1f;
-		Vector2 targetSpeed = new Vector2 (targetSpeedX * 1f, targetSpeedY * 1f);
 		if (Mathf.Abs(rigid.velocity.sqrMagnitude-targetSpeed.sqrMagnitude)>0.25f) 
 			rigid.velocity = Vector2.Lerp (rigid.velocity, targetSpeed, acceleration * Time.deltaTime);
 		else
 			rigid.velocity=targetSpeed;
 		//возможно, придётся просто использовать acceleration без time.deltaTime
-		stats.stats.targetSpeedX = targetSpeedX;
-		stats.stats.targetSpeedY = targetSpeedY;
+		stats.SetTargetSpeed(targetSpeed);
 	}
 
 	//тип 1 номер 4
@@ -107,7 +64,7 @@ public static class ActionTypes
 	/// Функция, обеспечивающая попадание на верёвку, лестницу.
 	/// (Можно находится неподалёку от верёвки, нажать Е и сразу же оказаться на верёвке)
 	/// </summary>
-	public static void MoveToClimb(Rigidbody2D rigid, Stats stats, InfoGets inf, int numb)
+	public static void MoveToClimb(Rigidbody2D rigid, Stats stats, InfoGetClass inf)
 	{
 		RaycastHit2D hit;
 		rigid.velocity = new Vector2 (0f, 0f);
@@ -117,22 +74,17 @@ public static class ActionTypes
 			koof2=1;
 		else
 			koof2=-1;
-		bool k = Physics2D.Raycast (inf.infoGets [numb].OBJ [0].transform.position,
-		                            new Vector2(inf.infoGets [numb].VCT [0].x*sp.realSign(stats.direction),
-		            							inf.infoGets [numb].VCT [0].y*koof2).normalized,
-		                      inf.infoGets [numb].PRM2 [0],
-		                      inf.infoGets [numb].LYR);
-		hit=Physics2D.Raycast (inf.infoGets [numb].OBJ [0].transform.position,
-		                       new Vector2(inf.infoGets [numb].VCT [0].x*sp.realSign(stats.direction),
-		            					   inf.infoGets [numb].VCT [0].y*koof2).normalized,
-		                       inf.infoGets [numb].PRM2 [0],
-		                       inf.infoGets [numb].LYR);
-		float koof = -1*sp.realSign (hit.normal.x);
-		if (k) 
+		hit=Physics2D.Raycast (inf.indicator.transform.position,
+		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign(stats.GetDirection()),
+		            					   inf.infoVectors [0].y*koof2).normalized,
+		                       inf.floatParametres [0],
+		                       inf.whatToCheck);
+		float koof = -1*SpFunctions.realSign (hit.normal.x);
+		if (hit) 
 		{
 				rigid.velocity=new Vector2(0f,0f);
 				float length = hit.distance;
-				Vector2 vect = inf.infoGets [numb].VCT [0].normalized;
+				Vector2 vect = inf.infoVectors[0].normalized;
 				vect = new Vector2 (vect.x *koof* length, vect.y *koof2* length); 
 				rigid.gameObject.transform.position = new Vector3 (rigid.gameObject.transform.position.x + vect.x,
 		                                                		   rigid.gameObject.transform.position.y + vect.y,
@@ -284,7 +236,8 @@ public static class ActionTypes
 			hitControl.GetComponent<BoxCollider2D> ().enabled = false;
 		hitControl.direction = direction;
 	}
-		
+
+/*		
 	//тип 2 номер 3
 	/// <summary>
 	/// Настраивает указанный хитбокс, задаёт ему параметры удара, а также время исполнения удара
@@ -327,6 +280,7 @@ public static class ActionTypes
 				rigid.AddForce(fVect);
 		}
 	}
+*/
 		
 	//тип 2 номер 4
 	/// <summary>

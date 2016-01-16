@@ -25,7 +25,7 @@ public class ArrowScript : MonoBehaviour {
 		transform.Rotate (0f, 0f, SpFunctions.RealAngle (SpFunctions.VectorConvert(transform.right),
 		                                      rigid.velocity));
 		hitControl.actTime++;
-		if (col.detector [0])
+		if (col.collisionInfos[0].detected)
 		{
 			hitControl.col.enabled=false;
 			Destroy (gameObject,1f);

@@ -27,7 +27,6 @@ public class PartController : MonoBehaviour
 	public List<animationSoundData> soundData;
 	
 	public AnimationInterpretator interp;
-	private SpFunctions sp;
 	private SoundManager sManager;
 	public AudioSource efxSource;
 	private uint k = 1;
@@ -38,7 +37,6 @@ public class PartController : MonoBehaviour
 	public void Awake () 
 	{
 		partsNumb = 0;
-		sp = GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SpFunctions> ();
 		sManager=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SoundManager> ();
 	}
 
@@ -105,13 +103,13 @@ public class PartController : MonoBehaviour
 		if (orientation >= 0) {
 			for (int i=0; i<interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
 				if ((frame >= interp.animTypes [type].animInfo [numb].rightOrderData [i].time) && (interp.animTypes [type].animInfo [numb].rightOrderData [i].order != mov.settings.spriteLayerValue))
-					sp.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].rightOrderData [i].order, mov.gameObject);
+					SpFunctions.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].rightOrderData [i].order, mov.gameObject);
 		}
 		else 
 		{
 			for (int i=0; i<interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
 				if ((frame >= interp.animTypes [type].animInfo [numb].leftOrderData [i].time) && (interp.animTypes[type].animInfo [numb].leftOrderData [i].order != mov.settings.spriteLayerValue))
-					sp.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].leftOrderData [i].order, mov.gameObject);
+					SpFunctions.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].leftOrderData [i].order, mov.gameObject);
 		}
 	}
 

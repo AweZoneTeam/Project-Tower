@@ -55,4 +55,14 @@ public class Stats : Organism
     {
         targetSpeed = speed;
     }
+
+    public void SetCurrentSpeed(Vector2 speed)
+    {
+        currentSpeed = speed;
+    }
+
+    public Vector2 GetCurrentSpeed()
+    {
+        return currentSpeed;
+    }
 }

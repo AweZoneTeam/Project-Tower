@@ -86,7 +86,6 @@ public class LeftAnimator : EditorWindow
 		{
 			EditorGUILayout.TextField("Animation parametres");
 			loop=EditorGUILayout.Toggle("loop",loop);
-			EditorGUILayout.Slider(frame,characterPart.mov.GetComponent<>)
 		}
 		EditorGUILayout.EndVertical();
 
