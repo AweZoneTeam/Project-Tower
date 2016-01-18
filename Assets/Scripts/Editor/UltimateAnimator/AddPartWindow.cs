@@ -72,15 +72,19 @@ public class AddPartWindow : EditorWindow
 		PartController cPart = part.AddComponent<PartController> ();
 		cPart.interp=new AnimationInterpretator(asset.partPath);
 		cPart.mov = partMov.GetComponent<GAF.Core.GAFMovieClip> ();
-		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
-		cAnim.parts.Add (part.GetComponent<PartController>());
+        cPart.interp = new AnimationInterpretator(asset);
+        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        if (cAnim.parts.Count > 0)
+        {
+            cPart.interp.setInterp(cAnim.parts[0].interp);
+        }
+        else {
+            cPart.interp.setInterp(cAnim.animTypes);
+        }
+        cAnim.parts.Add (part.GetComponent<PartController>());
 		GameObject asset1 = part;
 		asset1=PrefabUtility.CreatePrefab(partPath + name + ".prefab",asset1);
 		AssetDatabase.SaveAssets ();
-		cPart.interp = new AnimationInterpretator (asset);
-		if (character.GetComponent<CharacterAnimator> ().parts.Count > 0) {
-			cPart.interp.setInterp (character.GetComponent<CharacterAnimator> ().parts [0].interp);
-		}
 	}
 
 	//Добавление уже созданной части в базу визуальных данных персонажа. Добавляемая часть должна находиться в указанном в movPart пути 

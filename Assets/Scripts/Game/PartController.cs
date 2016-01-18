@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[ExecuteInEditMode]
 //Части - это основы управления любой анимации в Project Tower. 
 public class PartController : MonoBehaviour 
 {
 	
 	
-	public int numb, type, mod, animationMod, frame, addictiveFrame;
+	public int numb, type, frame, addictiveFrame;
 	public GAF.Core.GAFMovieClip mov;
 	
 	public string currentState, nextState;
@@ -113,8 +114,8 @@ public class PartController : MonoBehaviour
 		}
 	}
 
-	//Функция вызываемая при создании части кодом, тогда автоматически должны создаваться подчинённые части, если они есть. С подчинёнными частями - своя морока. 
-	/*public int InstantiateParts(PartConroller parentPart)
+    //Функция вызываемая при создании части кодом, тогда автоматически должны создаваться подчинённые части, если они есть. С подчинёнными частями - своя морока. 
+    /*public int InstantiateParts(PartConroller parentPart)
 	{
 		GameObject part;
 		for (int i = 0; i < parentPart.prefabParts.Count; i++) {
@@ -122,7 +123,30 @@ public class PartController : MonoBehaviour
 			part.transform.parent = parentPart.gameObject.transform;
 		}
 	}*/
-	//Но так как эта функция не нужна, я не буду её дописывать.
+    //Но так как эта функция не нужна, я не буду её дописывать.
 
+    void LateUpdate()
+    {
+#if UNITY_EDITOR
+        //Пусть части тела будут менять свой порядок прорисовки непосредственно в редакторе
+        if (interp != null)
+        {
+            orientation = SpFunctions.realSign(gameObject.transform.lossyScale.x);
+            frame = (int)mov.getCurrentFrameNumber();
+            if (orientation >= 0)
+            {
+                for (int i = 0; i < interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
+                    if ((frame >= interp.animTypes[type].animInfo[numb].rightOrderData[i].time) && (interp.animTypes[type].animInfo[numb].rightOrderData[i].order != mov.settings.spriteLayerValue))
+                        SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].rightOrderData[i].order, mov.gameObject);
+            }
+            else
+            {
+                for (int i = 0; i < interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
+                    if ((frame >= interp.animTypes[type].animInfo[numb].leftOrderData[i].time) && (interp.animTypes[type].animInfo[numb].leftOrderData[i].order != mov.settings.spriteLayerValue))
+                        SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].leftOrderData[i].order, mov.gameObject);
+            }
+        }
+    #endif //UNITY_EDITOR
+    }
 }
 	

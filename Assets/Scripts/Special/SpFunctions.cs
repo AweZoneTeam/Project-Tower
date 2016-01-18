@@ -208,8 +208,7 @@ public static class SpFunctions {
 	/// </summary>
 	public static void ChangeRenderOrder(int order, GameObject obj)
 	{
-		GAF.Objects.GAFRenderProcessor rend;
-		rend = new GAF.Objects.GAFRenderProcessor ();
+        GAF.Objects.GAFRenderProcessor rend = new GAF.Objects.GAFRenderProcessor ();
 		obj.GetComponent<GAF.Core.GAFMovieClip>().settings.spriteLayerValue = order;
 		rend.init(obj.GetComponent<GAF.Core.GAFMovieClip>(),
 		          obj.GetComponent<MeshFilter>(),

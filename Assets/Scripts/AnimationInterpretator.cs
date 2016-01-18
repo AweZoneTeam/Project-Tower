@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using System;
 
 //Интерпретатор анимаций - своеобразная матрица, в которое паре числе (тип и номер) ставится в соответствие какая анимация проигрывается, а также какие у неё 
 //параметры (зацикливание, озвучивание, порядок отрисовки). Используется анимационными частями
@@ -38,11 +39,50 @@ public class AnimationInterpretator : ScriptableObject
 		}
 	}
 
+    //Функция, которая обеспечивает сохранение анимационных матриц
+    public void setInterp(List<animList> aList)
+    {
+        animTypes.Clear();
+        for (int i = 0; i < aList.Count; i++)
+        {
+            animTypes.Add(new animationInfoTypes(aList[i].animations, aList[i].typeName));
+        }
+    }
+
 	//Функция, которая возвращает интерпретатор по заданному пути
 	public AnimationInterpretator FindInterp(string path)
 	{
 		return AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
 	}
+
+    /// <summary>
+    /// Во всех анимациях часть тела будет прорисовываться сначала в выбранном дефолтном слое
+    /// </summary>
+    /// <param name="слой"></param>
+    public void SetDefaultLayer(int layer, bool right)
+    {
+        animationInfo animInfo;
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animInfo.Count; j++)
+            {
+                int kk = right ? 1 : 2;
+                animInfo = animTypes[i].animInfo[j];
+                for (int k = 0; k < kk; k++)
+                {
+                    List<animationLayerOrderData> orderData = (k == 0) ? animInfo.leftOrderData : animInfo.rightOrderData;
+                    if (orderData.Count > 0)
+                    {
+                        if (orderData[0].time == 0)
+                        {
+                            orderData.RemoveAt(0);
+                        }
+                    }
+                    orderData.Insert(0, new animationLayerOrderData(0, layer));
+                }
+            }
+        }
+    }
 }
 
 [System.Serializable]
@@ -58,6 +98,15 @@ public class animationInfoTypes //Здесь собирается вся инф�
 		name = type.name;
 		for (int i = 0; i < type.animInfo.Count; i++) {
 			animInfo.Add(new animationInfo (type.animInfo[i]));
+		}
+	}
+
+    public animationInfoTypes (List<string> sList, string _name)
+	{
+		animInfo=new List<animationInfo>();
+		name = _name;
+		for (int i = 0; i < sList.Count; i++) {
+			animInfo.Add(new animationInfo (sList[i]));
 		}
 	}
 
@@ -91,12 +140,6 @@ public class animationInfo //Здесь собирается вся информ
 		rightOrderData=new List<animationLayerOrderData>();
 		rsequence = new animationPartString (info.rsequence);
 		lsequence = new animationPartString (info.lsequence);
-		for (int i = 0; i < info.soundData.Count; i++)
-			soundData.Add (new animationSoundData (info.soundData [i]));
-		for (int i = 0; i < info.leftOrderData.Count; i++)
-			leftOrderData.Add (new animationLayerOrderData (info.leftOrderData [i]));
-		for (int i = 0; i < info.rightOrderData.Count; i++)
-			rightOrderData.Add (new animationLayerOrderData (info.rightOrderData [i]));
 		loop = info.loop;
 		stepByStep = info.stepByStep;
 		stopStepByStep = info.stopStepByStep;
@@ -120,7 +163,7 @@ public class animationSoundData
 {
 	public bool played;//была ли эта запись уже сыграна?
 	public int time;//Кадр анимации, при котором проигрывается звук
-	public AudioClip[] audios;//Какой звук проигрывается (если звуков несколько, то случайно выбирается один их них)
+	public List<AudioClip> audios;//Какой звук проигрывается (если звуков несколько, то случайно выбирается один их них)
 
 	//Конструктор
 	public animationSoundData(animationSoundData soundData)
@@ -129,11 +172,18 @@ public class animationSoundData
 		time = soundData.time;
 		audios = soundData.audios;
 	}
+
+    public animationSoundData(bool _played, int _time)
+    {
+        played = _played;
+        time = _time;
+        audios = new List<AudioClip>();
+    }
 }
 
 //Эта штука способна задать, в каком порядке и как именно прорисовывается часть тела при проигрывании анимации в зависимости от кадра анимации
 [System.Serializable]
-public class animationLayerOrderData
+public class animationLayerOrderData: IComparable<animationLayerOrderData>
 {
 	public int time;//кадр анимации, в котором надо поменять порядок прорисовки
 	public int order;//Порядок прорисовки
@@ -144,6 +194,24 @@ public class animationLayerOrderData
 		time = orderData.time;
 		order = orderData.order;
 	}
+
+    public animationLayerOrderData(int _time, int _order)
+    {
+        time = _time;
+        order = _order;
+    }
+
+    public int CompareTo(animationLayerOrderData other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+
+        return time - other.time;
+    }
+
+
 }
 
 //Если у части есть родительская часть, то она может задать ей, какую она должна проигрывать анимацию. Если ничего она не задаёт, то надо оставить строку

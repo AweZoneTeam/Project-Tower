@@ -58,7 +58,9 @@ public class RightAnimator : EditorWindow
 						if (!string.Equals (parts [i].gameObject.name, leftAnim.partName)) {
 							leftAnim.partName = parts [i].gameObject.name;
 							leftAnim.characterPart = parts [i];
-						}
+                            leftAnim.defaultLayer = parts[i].mov.settings.spriteLayerValue;
+
+                        }
 					}
 				}
 			}
@@ -86,7 +88,7 @@ public class RightAnimator : EditorWindow
 		{
 			GUILayout.Space (5);
 			animTypes = character.GetComponent<CharacterAnimator> ().animTypes;
-			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,110,300,800));
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,10,300,800));
 			{
 				for (int i = 0; i < animTypes.Count; i++) {
 					GUILayout.TextField (animTypes [i].typeName);
@@ -95,6 +97,8 @@ public class RightAnimator : EditorWindow
 							if (!string.Equals (animTypes [i].animations [j], leftAnim.animationName)&& (!string.Equals (leftAnim.partName, "Part"))) {
 								leftAnim.animationName = animTypes [i].animations [j];
 								leftAnim.characterAnimation = leftAnim.characterPart.interp.animTypes [i].animInfo [j];
+                                character.GetComponent<CharacterAnimator>().setPartAnimations(i, j);
+                                leftAnim.currentSequence = leftAnim.characterPart.mov.currentSequence.name;
 							}
 						}
 					}
@@ -116,7 +120,7 @@ public class RightAnimator : EditorWindow
 	//Вывести список персонажей, с которыми мы работаем в данный момент
 	void CharactersList () 
 	{
-		
+        character = leftAnim.character;
 		aCharacters = animScene.animBase.usedCharacters;
 		scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,100f),scrollPosition,new Rect(0,0,300,400));
 		{

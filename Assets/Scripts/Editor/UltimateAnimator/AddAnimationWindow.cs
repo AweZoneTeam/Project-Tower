@@ -61,16 +61,21 @@ public class AddAnimationWindow : EditorWindow
 	{
 		//Сначала говорим аниматору, что него появилась новая анимация
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        List<animList> animTypes = cAnim.animTypes;
+        Dictionary<string, AnimClass> animBase = cAnim.animBase;
 		if (type == cAnim.animTypes.Count) {
-			cAnim.animTypes.Add (new animList (typeName, animName));
-		} 
+			animTypes.Add (new animList (typeName, animName));
+            AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+        } 
 		else {
 			if (numb != cAnim.animTypes [type].animations.Count) {
-				cAnim.animTypes [type].animations.Insert (numb, animName);
-			} 
+				animTypes [type].animations.Insert (numb, animName);
+                AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+            } 
 			else {
-				cAnim.animTypes [type].animations.Add (animName);
-			}
+				animTypes [type].animations.Add (animName);
+                AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+            }
 		}
 		rightAnim.animTypes = cAnim.animTypes;
 		//Потом говорим это всем частям персонажа
@@ -88,5 +93,33 @@ public class AddAnimationWindow : EditorWindow
 			}
 		}
 	}
+
+    void AddAnimBase(Dictionary<string,AnimClass> animBase, List<animList> animTypes,List<string> animNames, string animName, int type, int numb)
+    {
+        if (animBase == null)
+        {
+            animBase = new Dictionary<string, AnimClass>();
+        }
+        if (animNames == null)
+        {
+            animNames = new List<string>();
+        }
+        animBase.Add(animName, new AnimClass(type, numb));
+        animNames.Add(animName);
+        RefreshAnimBase(animBase, animTypes);
+    }
+
+    void RefreshAnimBase(Dictionary<string, AnimClass> animBase, List<animList> animTypes)
+    {
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animations.Count; j++)
+            {
+                string anim = animTypes[i].animations[j];
+                animBase[anim].type = i;
+                animBase[anim].numb = j;
+            }
+        }
+    }
 
 }

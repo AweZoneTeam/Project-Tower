@@ -10,4 +10,10 @@ public class AnimClass
 {	
 	public int type;
 	public int numb;
+
+    public AnimClass(int _type, int _numb)
+    {
+        type = _type;
+        numb = _numb;
+    }
 }

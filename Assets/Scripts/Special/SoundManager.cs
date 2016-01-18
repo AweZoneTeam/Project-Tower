@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Прикрепите этот скрипт к объекту, и он будет отвечать за все звуки в игре.
@@ -22,9 +23,9 @@ public class SoundManager :  MonoBehaviour
 	/// <summary>
 	/// Проиграть случайный клип из данного списка и изменить его случайным образом
 	/// </summary>
-	public void RandomizeSfx(AudioSource efxSource, params AudioClip[] clips)
+	public void RandomizeSfx(AudioSource efxSource, List<AudioClip> clips)
 	{
-		int randomIndex = Random.Range (0, clips.Length);
+		int randomIndex = Random.Range (0, clips.Count);
 		float randomPitch = Random.Range (lowPitchRange, highPitchRange);
 		efxSource.pitch = randomPitch;
 		efxSource.clip = clips [randomIndex];
