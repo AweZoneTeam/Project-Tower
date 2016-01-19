@@ -7,7 +7,7 @@ public class CreateNewAnimWindow :EditorWindow
 {
 	public static int number = 0;
 	public string name="New Visual Data";
-	public string characterPath="Assets/Animations/Visuals/";
+	public string characterPath="Assets/Animations/";
 	[HideInInspector]
 	public RightAnimator rightAnim;
 	[HideInInspector]

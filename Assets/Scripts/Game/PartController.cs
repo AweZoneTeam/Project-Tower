@@ -137,9 +137,10 @@ public class PartController : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR
-        AnimationEngine();
-    }
+        // AnimationEngine();
 #endif //UNITY_EDITOR
+        Work();
+    }
     void LateUpdate()
     {
 #if UNITY_EDITOR
@@ -165,10 +166,11 @@ public class PartController : MonoBehaviour
             }
         }
 
+        /*
         if (play)
         {
             Work(); 
-        }
+        }*/
 
     #endif //UNITY_EDITOR
     }

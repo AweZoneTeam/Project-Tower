@@ -316,7 +316,7 @@ public class LeftAnimator : EditorWindow
                         animationTurnTo = "Stop";
                         cAnim.play = true;
                         cAnim.stop = true;
-                        cAnim.anim = cAnim.animBase[animationName];
+                        cAnim.anim = cAnim.FindAnimData(animationName);
                     }
                     else if (string.Equals(animationTurnTo, "Stop"))
                     {
@@ -542,7 +542,7 @@ public class LeftAnimator : EditorWindow
     void SetFPS(int _FPS)
     {
         CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
-        AnimClass anim = cAnim.animBase[animationName];
+        AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
             cAnim.parts[i].interp.animTypes[anim.type].animInfo[anim.numb].FPS = _FPS;
@@ -556,7 +556,7 @@ public class LeftAnimator : EditorWindow
     void SetStepByStep(bool _stepByStep)
     {
         CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
-        AnimClass anim = cAnim.animBase[animationName];
+        AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
             if (_stepByStep)
@@ -577,7 +577,7 @@ public class LeftAnimator : EditorWindow
     void SetLoop(bool _loop)
     {
         CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
-        AnimClass anim = cAnim.animBase[animationName];
+        AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
             cAnim.parts[i].interp.animTypes[anim.type].animInfo[anim.numb].loop = _loop;

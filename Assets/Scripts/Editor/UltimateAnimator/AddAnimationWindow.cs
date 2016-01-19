@@ -62,19 +62,19 @@ public class AddAnimationWindow : EditorWindow
 		//Сначала говорим аниматору, что него появилась новая анимация
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
         List<animList> animTypes = cAnim.animTypes;
-        Dictionary<string, AnimClass> animBase = cAnim.animBase;
+        List<NamedAnimClass> animBase = cAnim.animBase;
 		if (type == cAnim.animTypes.Count) {
 			animTypes.Add (new animList (typeName, animName));
-            AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+            animBase.Add(new NamedAnimClass(animName, type, 0));
         } 
 		else {
 			if (numb != cAnim.animTypes [type].animations.Count) {
 				animTypes [type].animations.Insert (numb, animName);
-                AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+                animBase.Add(new NamedAnimClass(animName, type, numb));
             } 
 			else {
 				animTypes [type].animations.Add (animName);
-                AddAnimBase(animBase, animTypes, cAnim.animNames, animName, type, numb);
+                animBase.Add(new NamedAnimClass(animName, type, numb));
             }
 		}
 		rightAnim.animTypes = cAnim.animTypes;
@@ -93,21 +93,6 @@ public class AddAnimationWindow : EditorWindow
 			}
 		}
 	}
-
-    void AddAnimBase(Dictionary<string,AnimClass> animBase, List<animList> animTypes,List<string> animNames, string animName, int type, int numb)
-    {
-        if (animBase == null)
-        {
-            animBase = new Dictionary<string, AnimClass>();
-        }
-        if (animNames == null)
-        {
-            animNames = new List<string>();
-        }
-        animBase.Add(animName, new AnimClass(type, numb));
-        animNames.Add(animName);
-        RefreshAnimBase(animBase, animTypes);
-    }
 
     void RefreshAnimBase(Dictionary<string, AnimClass> animBase, List<animList> animTypes)
     {

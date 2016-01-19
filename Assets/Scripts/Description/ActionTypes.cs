@@ -20,7 +20,7 @@ public static class ActionTypes
 		else
 			rigid.velocity=targetSpeed;
 		//возможно, придётся просто использовать acceleration без time.deltaTime
-		stats.SetTargetSpeed(targetSpeed);
+		stats.targetSpeed=targetSpeed;
 	}
 
 	//тип 1 номер 4
@@ -56,7 +56,7 @@ public static class ActionTypes
 		    rigid.velocity=speed;
 		else
 			rigid.velocity=new Vector2(0f,0f);
-        stats.SetTargetSpeed(speed);
+        stats.targetSpeed=speed;
 	}
 
 	//тип 1 номер 7
@@ -75,7 +75,7 @@ public static class ActionTypes
 		else
 			koof2=-1;
 		hit=Physics2D.Raycast (inf.indicator.transform.position,
-		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign(stats.GetDirection()),
+		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign(stats.direction),
 		            					   inf.infoVectors [0].y*koof2).normalized,
 		                       inf.floatParametres [0],
 		                       inf.whatToCheck);
