@@ -83,6 +83,109 @@ public class AnimationInterpretator : ScriptableObject
             }
         }
     }
+
+    /// <summary>
+    /// Функция, используемая для изменения анимационных последовательностей в аниматоре таким образом, чтобы в rSequence
+    /// анимации начинались с Right, а в lsequence - с left.
+    /// </summary>
+    public void OrientateSequences()
+    {
+        animationInfo animInfo;
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animInfo.Count; j++)
+            {
+                animInfo = animTypes[i].animInfo[j];
+                animationPartString s= animInfo.rsequence;
+                if (!s.sequence.Contains("Right") && !s.sequence.Contains("Left"))
+                {
+                    animInfo.rsequence.sequence = "Right" + animInfo.rsequence.sequence;
+                }
+                if (s.parentSequence.Length > 1)
+                {
+                    if (!s.parentSequence.Contains("Right") && !s.parentSequence.Contains("Left"))
+                    {
+                        animInfo.rsequence.parentSequence = "Right" + animInfo.rsequence.parentSequence;
+                    }
+                }
+                s = animInfo.lsequence;
+                if (!s.sequence.Contains("Right") && !s.sequence.Contains("Left"))
+                {
+                    animInfo.lsequence.sequence = "Left" + animInfo.lsequence.sequence;
+                }
+                if (s.parentSequence.Length > 1)
+                {
+                    if (!s.parentSequence.Contains("Right") && !s.parentSequence.Contains("Left"))
+                    {
+                        animInfo.rsequence.parentSequence = "Left" + animInfo.rsequence.parentSequence;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Функция, которая меняет местами все левые и правые анимации.
+    /// </summary>
+    public void InverseSequeces()
+    {
+        animationInfo animInfo;
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animInfo.Count; j++)
+            {
+                animInfo = animTypes[i].animInfo[j];
+                string s = animInfo.rsequence.sequence;
+                animInfo.rsequence.sequence = animInfo.lsequence.sequence;
+                animInfo.lsequence.sequence = s;
+                s = animInfo.rsequence.parentSequence;
+                animInfo.rsequence.parentSequence = animInfo.lsequence.parentSequence;
+                animInfo.lsequence.parentSequence = s;
+            }
+        }
+    }
+
+    public void AddOrientatedSequences()
+    {
+
+        animationInfo animInfo;
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animInfo.Count; j++)
+            {
+                animInfo = animTypes[i].animInfo[j];
+                #region sequences
+                if (animInfo.rsequence.sequence.Contains("Right") && !animInfo.lsequence.sequence.Contains("Left"))
+                {
+                    animInfo.lsequence.sequence = "Left" + animInfo.lsequence.sequence;
+                }
+                else if (animInfo.rsequence.sequence.Contains("Left") && !animInfo.lsequence.sequence.Contains("Right"))
+                {
+                    animInfo.lsequence.sequence = "Right" + animInfo.lsequence.sequence;
+                }
+                else
+                {
+                    animInfo.lsequence.sequence = animInfo.rsequence.sequence;
+                }
+                #endregion //sequences
+
+                #region parentSequences
+                if (animInfo.rsequence.parentSequence.Contains("Right") && !animInfo.lsequence.parentSequence.Contains("Left"))
+                {
+                    animInfo.lsequence.parentSequence = "Left" + animInfo.lsequence.parentSequence;
+                }
+                else if (animInfo.rsequence.parentSequence.Contains("Left") && !animInfo.lsequence.parentSequence.Contains("Right"))
+                {
+                    animInfo.lsequence.parentSequence = "Right" + animInfo.lsequence.parentSequence;
+                }
+                else
+                {
+                    animInfo.lsequence.parentSequence = animInfo.rsequence.parentSequence;
+                }
+                #endregion //parentSequences
+            }
+        }
+    }
 }
 
 [System.Serializable]
@@ -154,6 +257,7 @@ public class animationInfo //Здесь собирается вся информ
 		rightOrderData=new List<animationLayerOrderData> ();
 		rsequence=new animationPartString (name);
 		lsequence=new animationPartString (name);
+        FPS = 30;
 	}
 }
 

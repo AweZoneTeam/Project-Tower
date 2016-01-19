@@ -96,7 +96,7 @@ public static class SpFunctions {
 				obj=parts[i].gameObject;
 				break;
 			}
-			obj=FindPart(parts[i].parts, name);
+			obj=FindPart(parts[i].childParts, name);
 			if (obj!=null) break;
 		}
 		return obj;
@@ -135,7 +135,7 @@ public static class SpFunctions {
 		{
 			if (parts[i].mov.individualMaterials[0]!=null)
 				parts[i].mov.setMaterialColor(color);
-			ChangePartColor(parts[i].parts, color);
+			ChangePartColor(parts[i].childParts, color);
 		}
 	}
 
@@ -149,7 +149,7 @@ public static class SpFunctions {
 		{
 			parts[i].type=anim.type;
 			parts[i].numb=anim.numb;
-			AnimateIt(parts[i].parts,anim);
+			AnimateIt(parts[i].childParts,anim);
 		}
 	}
 

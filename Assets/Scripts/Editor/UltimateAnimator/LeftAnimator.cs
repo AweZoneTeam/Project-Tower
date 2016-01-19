@@ -7,11 +7,14 @@ using GAF.Core;
 //Часть редактора анимаций, которая находится слева. Отвественная за обработку каждого кадра анимации
 public class LeftAnimator : EditorWindow
 {
-	public Rect windowRect2 = new Rect(100f, 100f, 200f, 200f);
+    #region fields
+    public Rect windowRect2 = new Rect(100f, 100f, 200f, 200f);
 	public Rect windowRect1 = new Rect(100f, 100f, 200f, 200f);
-	public string orientation = "Left";
-    public string leftSequence, rightSequence;//Последовательности, которые мы задаём для данной части тела в данной анимации
-    public int rCurrentIndex=0, lCurrentIndex=0;//Числа, которые нужны для выбора той или иной последовательности из предложеных в GAFMovieClip
+	public string orientation = "Right";
+    public string leftSequence, rightSequence, leftPSequence, rightPSequence;//Последовательности, которые мы задаём для данной части 
+                                                                           //тела в данной анимации
+    public int rCurrentIndex=0, lCurrentIndex=0, rPCurrentIndex = 0, lPCurrentIndex = 0;//Числа, которые нужны для выбора той или иной 
+                                                                                       //последовательности из предложеных в GAFMovieClip
     public Object audioClip;//Один из аудиоклипов, проигрываемых в данной частью в данном фрейме данной анимации
 	public int layer=0;//layer - порядок прорисовки анимационной части персонажа начиная с данного кадра данной анимации
     public int defaultLayer=0;//defaultLayer - порядок прорисовки анимационной части по дефолту, тот порядок, который используется обычно
@@ -24,7 +27,9 @@ public class LeftAnimator : EditorWindow
 	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёт false, когда научишься отлеживать эти изменения
 	public GameObject character;//Какой персонаж сейчас интересует левый редактор
 	public PartController characterPart;//Какая часть тела в центре внимация всего редактора анимаций
+    public PartController parentPart;//Какая часть тела является родительской по отношению к characterPart
 	public animationInfo characterAnimation; // Какая анимация сейчас обрабаытвается редактором
+    public string animationTurnTo = "Play";//Строка, которая будет находится на кнопке, включающую/выключающую проигрывание анимации в редакторе
 
 	[HideInInspector]
 	public RightAnimator rightAnim;
@@ -36,9 +41,10 @@ public class LeftAnimator : EditorWindow
 	public string animationName="Animation";
     public string currentSequence = "Default";
 	public string savePath;//Путь, по которому будет сохраняться созданный персонаж 
+    #endregion //fields
 
-	//Инициализация
-	public void Initialize(RightAnimator ra, AnimationEditorData aed, GameObject c, bool s)
+    //Инициализация
+    public void Initialize(RightAnimator ra, AnimationEditorData aed, GameObject c, bool s)
 	{
 		rightAnim = ra;
 		animEditor = aed;
@@ -72,7 +78,11 @@ public class LeftAnimator : EditorWindow
             }
 			if(GUILayout.Button("Reverse"))
 			{
-				Debug.Log ("Reverse");
+                if (character != null)
+                {
+                    character.GetComponent<CharacterAnimator>().Flip();
+                    orientation = SpFunctions.realSign(character.transform.localScale.x) > 0 ? "Right" : "Left";
+                }
 			}
 		}
 		EditorGUILayout.EndVertical ();
@@ -97,7 +107,23 @@ public class LeftAnimator : EditorWindow
                 }
             }
             EditorGUILayout.EndHorizontal();
-		}
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Orientate Sequences"))
+            {
+                characterPart.interp.OrientateSequences();
+            }
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Inverse Sequences"))
+            {
+                characterPart.interp.InverseSequeces();
+            }
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Add Reversed Sequences"))
+            {
+                characterPart.interp.AddOrientatedSequences();
+            }
+
+        }
 		EditorGUILayout.EndVertical ();
 	}
 
@@ -109,11 +135,14 @@ public class LeftAnimator : EditorWindow
 		{
 			EditorGUILayout.TextField("Animation parametres");
             if (characterPart != null)
-            {   
+            {
                 GAFMovieClip mov = characterPart.mov;
                 currentSequence = mov.sequenceIndexToName(mov.getCurrentSequenceIndex());
                 AnimationInterpretator interp = characterPart.interp;
                 List<string> sequenceNames = mov.asset.getSequences(mov.timelineID).ConvertAll(_sequence => _sequence.name);
+                
+                #region setSequences
+                #region setRightSequence
                 EditorGUILayout.BeginHorizontal();
                 {
                     EditorGUILayout.LabelField("Right Sequence");
@@ -122,31 +151,84 @@ public class LeftAnimator : EditorWindow
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
                 {
+                    rightSequence = sequenceNames[rCurrentIndex];
+                    EditorGUILayout.LabelField(rightSequence);
+                    if (GUILayout.Button("SetRightSequence"))
+                    {
+                        SetSequence(rightSequence, true, false);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+                #endregion //SetRightSequence
+
+                #region setLeftSequence
+                EditorGUILayout.BeginHorizontal();
+                {
                     EditorGUILayout.LabelField("Left Sequence");
                     lCurrentIndex = EditorGUILayout.Popup(lCurrentIndex, sequenceNames.ToArray());
                 }
                 EditorGUILayout.EndHorizontal();
-                leftSequence = sequenceNames[lCurrentIndex];
-                rightSequence = sequenceNames[rCurrentIndex];
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(rightSequence);
-                    if (GUILayout.Button("SetRightSequence"))
-                    {
-                        SetSequence(rightSequence, true);
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                {
+                    leftSequence = sequenceNames[lCurrentIndex];
                     EditorGUILayout.LabelField(leftSequence);
                     if (GUILayout.Button("SetLeftSequence"))
                     {
-                        SetSequence(leftSequence, false);
+                        SetSequence(leftSequence, false,false);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                #endregion //setLeftSequence
+                #endregion //SetSequences
+
+                #region SetParentSequences
+                if (parentPart != null)
+                {
+                    GAFMovieClip pMov = parentPart.mov ;
+                    List<string> pSequenceNames = mov.asset.getSequences(mov.timelineID).ConvertAll(_sequence => _sequence.name);
+                    #region setRightPSequence
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        EditorGUILayout.LabelField("Right Parent Sequence");
+                        rPCurrentIndex = EditorGUILayout.Popup(rCurrentIndex, pSequenceNames.ToArray());
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        rightPSequence = pSequenceNames[rPCurrentIndex];
+                        EditorGUILayout.LabelField(rightPSequence);
+                        if (GUILayout.Button("SetRightPSequence"))
+                        {
+                            SetSequence(rightPSequence, true,true);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    #endregion //setRightPSequence
+
+                    #region setLeftPSequence
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        EditorGUILayout.LabelField("Left Parent Sequence");
+                        lPCurrentIndex = EditorGUILayout.Popup(lCurrentIndex, pSequenceNames.ToArray());
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        leftPSequence = pSequenceNames[lPCurrentIndex];
+                        EditorGUILayout.LabelField(leftPSequence);
+                        if (GUILayout.Button("SetLeftPSequence"))
+                        {
+                            SetSequence(leftPSequence, false, true);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    #endregion //setLeftPSequence
+                }
+                #endregion //SetParentSequences
+
                 EditorGUILayout.LabelField("Current Sequence is "+currentSequence);
+
+                #region setLayer
                 EditorGUILayout.BeginHorizontal();
                 {
                     layer = EditorGUILayout.IntField(layer);
@@ -156,6 +238,9 @@ public class LeftAnimator : EditorWindow
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                #endregion //setLayer
+
+                #region setFPS
                 EditorGUILayout.BeginHorizontal();
                 {
                     FPS = EditorGUILayout.IntField(FPS);
@@ -165,6 +250,9 @@ public class LeftAnimator : EditorWindow
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                #endregion //setFPS
+
+                #region setAudio
                 EditorGUILayout.BeginHorizontal();
                 {
                     audioClip = EditorGUILayout.ObjectField(audioClip, typeof(AudioClip),true);
@@ -174,6 +262,9 @@ public class LeftAnimator : EditorWindow
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                #endregion //setAudio
+
+                #region setLoop
                 EditorGUILayout.BeginHorizontal();
                 {
                     loop = EditorGUILayout.Toggle("loop", loop);
@@ -183,6 +274,9 @@ public class LeftAnimator : EditorWindow
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                #endregion //loop
+
+                #region setStepByStep
                 EditorGUILayout.BeginHorizontal();
                 {
                     stepByStep = EditorGUILayout.Toggle("stepByStep", stepByStep);
@@ -192,7 +286,10 @@ public class LeftAnimator : EditorWindow
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                currentFrame =EditorGUILayout.IntSlider(currentFrame,
+                #endregion //setStepByStep
+
+                #region sliders
+                currentFrame = EditorGUILayout.IntSlider(currentFrame,
                                         (int)mov.currentSequence.startFrame,
                                         (int)mov.currentSequence.endFrame);
                 mainFrame = EditorGUILayout.IntSlider(mainFrame,
@@ -208,8 +305,29 @@ public class LeftAnimator : EditorWindow
                         part.mov.gotoAndStop((uint)mainFrame);
                     }
                 }
+                #endregion //sliders
+
+                #region turnAnimation
+                EditorGUILayout.Space();
+                if (GUILayout.Button(animationTurnTo))
+                {
+                    if (string.Equals(animationTurnTo, "Play"))
+                    {
+                        animationTurnTo = "Stop";
+                        cAnim.play = true;
+                        cAnim.stop = true;
+                        cAnim.anim = cAnim.animBase[animationName];
+                    }
+                    else if (string.Equals(animationTurnTo, "Stop"))
+                    {
+                        animationTurnTo = "Play";
+                        cAnim.stop = true;
+                        cAnim.play = false;
+                    }
+                } 
+                #endregion //turnAnimation
             }
-		}
+        }
 		EditorGUILayout.EndVertical();
 
 	}
@@ -222,6 +340,25 @@ public class LeftAnimator : EditorWindow
 		else 
 			orientation="Right";
 	}
+
+    /// <summary>
+    /// Функция, для инициализации части, с которой работает левый аниматор
+    /// </summary>
+    /// <param name="part"></param>
+    public void SetPart(PartController part)
+    {
+        characterPart = part;
+        parentPart = null;
+        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        for (int i = 0; i < cAnim.parts.Count; i++)
+        {
+            for (int j = 0; j < cAnim.parts[i].childParts.Count; j++)
+            {
+                if (cAnim.parts[i].childParts[j] == part)
+                    parentPart = cAnim.parts[i];
+            }
+        }
+    }
 
 	//Окно создания нового персонажа
 	void CreateNew()
@@ -268,22 +405,49 @@ public class LeftAnimator : EditorWindow
 		//saved = false;
 	}
 
-	//Сохранить изменения, проделанные в ходе работы над персонажем
-	//Пока что я не научил саму программу отслеживать эти изменения, поэтому надо не забывать нажимать SaveChange, если надо чтобы эти изменения сохранились
+    /// <summary>
+    ///Сохранить изменения, проделанные в ходе работы над персонажем
+    ///Пока что я не научил саму программу отслеживать эти изменения, 
+    ///поэтому надо не забывать нажимать SaveChange, если надо чтобы эти изменения сохранились 
+    /// </summary>
 	public void SaveChanges()
 	{
 		AnimationInterpretator changeInterp;
 		AnimationInterpretator saveInterp;
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
-		cAnim.visualData.animInterpretators.Clear ();
-		for (int i = 0; i < cAnim.parts.Count; i++) {
+        VisualData vis = cAnim.visualData;
+        vis.animInterpretators.Clear ();
+        List<PartController> dependedParts = new List<PartController>();
+        for (int i = 0; i < cAnim.parts.Count; i++) //Сохраняются все AnimationInterpretators.
+        {
+            if (cAnim.parts[i].childParts != null)
+            {
+                for (int j = 0; j < cAnim.parts[i].childParts.Count; j++)
+                {
+                    dependedParts.Add(cAnim.parts[i].childParts[j]);
+                }
+                cAnim.parts[i].childParts.Clear();
+            }
+            saveInterp = cAnim.parts[i].interp;
+            changeInterp = saveInterp.FindInterp(saveInterp.partPath + cAnim.parts[i].gameObject.name + ".asset");
+            changeInterp.setInterp(saveInterp);
+            cAnim.parts[i].interp = changeInterp;
+            EditorUtility.SetDirty(changeInterp);
+        }
+        for (int i = 0; i < dependedParts.Count; i++)
+        {
+            cAnim.parts.Remove(dependedParts[i]);
+            DestroyImmediate(dependedParts[i].gameObject);
+        }
+        for (int i = 0; i < cAnim.parts.Count; i++) {
 			saveInterp = cAnim.parts [i].interp;
 			changeInterp = saveInterp.FindInterp (saveInterp.partPath + cAnim.parts [i].gameObject.name + ".asset");
-			changeInterp.setInterp (saveInterp);
 			cAnim.parts [i].interp = changeInterp;
-			cAnim.visualData.animInterpretators.Add(changeInterp);
+            EditorUtility.SetDirty(changeInterp);
+            vis.animInterpretators.Add(changeInterp);
 		}
-		cAnim.visualData.visual=PrefabUtility.ReplacePrefab (character,cAnim.visualData.visual);
+		vis.visual=PrefabUtility.ReplacePrefab (character,vis.visual);
+        EditorUtility.SetDirty(vis);
 		saved = true;
 	}
 
@@ -314,26 +478,40 @@ public class LeftAnimator : EditorWindow
     /// </summary>
     /// <param name="последовательность"></param>
     /// <param name="в какую сторону должен быть повёрнут персонаж при проигрывании анимации"></param>
-    void SetSequence(string sequence, bool right)
+    void SetSequence(string sequence, bool right, bool parent)
     {
-        if (right)
+        if (!parent)
         {
-            characterAnimation.rsequence.sequence = sequence;
+            if (right)
+            {
+                characterAnimation.rsequence.sequence = sequence;
+            }
+            else
+            {
+                characterAnimation.lsequence.sequence = sequence;
+            }
+            if ((string.Equals(orientation, "Right")) == right)
+            {
+                characterPart.mov.setSequence(sequence, true);
+            }
         }
         else
         {
-            characterAnimation.lsequence.sequence = sequence;
-        }
-        if ((string.Equals(orientation, "right")) == right)
-        {
-            characterPart.mov.setSequence(sequence, true);
+            if (right)
+            {
+                characterAnimation.rsequence.parentSequence = sequence;
+            }
+            else
+            {
+                characterAnimation.lsequence.parentSequence = sequence;
+            }
         }
     }
 
 	//Функция, которая ставит в даннном кадре данной анимации часть тела на указанный слой
 	void SetLayerInFrame(int _layer)
 	{
-        if (string.Equals(orientation, "right"))
+        if (string.Equals(orientation, "Right"))
         {
             characterAnimation.rightOrderData.Add(new animationLayerOrderData(currentFrame, _layer));
             characterAnimation.rightOrderData.Sort();
@@ -354,7 +532,7 @@ public class LeftAnimator : EditorWindow
     void SetLayerInAllFrames(int _layer, PartController part)
 	{
         SpFunctions.ChangeRenderOrder(_layer, part.mov.gameObject);
-        part.interp.SetDefaultLayer(_layer, string.Equals(orientation, "right"));
+        part.interp.SetDefaultLayer(_layer, string.Equals(orientation, "Right"));
 	}
 
     /// <summary>

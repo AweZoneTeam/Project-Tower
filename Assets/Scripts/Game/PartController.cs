@@ -11,33 +11,28 @@ public class PartController : MonoBehaviour
 	public int numb, type, frame, addictiveFrame;
 	public GAF.Core.GAFMovieClip mov;
 	
-	public string currentState, nextState;
+	public string currentState="default", nextState="default";
 	public bool loop;
 	[HideInInspector]
 	public bool isWeaponFx;
 	public int FPS;
 	[HideInInspector]
 	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
-	public bool inversed;//если правда, то все правые анимации меняются с левыми. Удобно использовать для одноручных оружий.
-	public List<PartController> parts;
-	/*public List<GameObjecat> prefabParts;//Сюда запихиваются префабные части, а значит, они никуда не денутся, если мы, например, перейдём в новую сцену.
-	[HideInInspector]
-	public List<Vector2> partPositions; // Если у части еть зависимые части, то здесь будет список их относительного положения. Задаются эти положения в режакторе анимаций*/
+	public List<PartController> childParts;//Подчинённые части. Проигрываемые зависимыми частями анимации также влияют на анимацию родительской части.
 		
-	public int partsNumb;
 	public List<animationSoundData> soundData;
-	
+    public List<animationLayerOrderData> rOrderData, lOrderData;
+
 	public AnimationInterpretator interp;
 	private SoundManager sManager;
 	public AudioSource efxSource;
 	private uint k = 1;
-	
-	public int jj;
+
+    private bool play;//Делать ли части тела свою работу (функцию Work) непосредственно в редакторе?
 
 	//Инициализация
 	public void Awake () 
 	{
-		partsNumb = 0;
 		sManager=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SoundManager> ();
 	}
 
@@ -45,31 +40,41 @@ public class PartController : MonoBehaviour
 	public void Work()
 	{
 		orientation = Mathf.Sign(transform.lossyScale.x);
-		if (inversed) {
-			orientation *= -1;
-		}
-		animationInfo animInfo=interp.animTypes [type].animInfo[numb];
-		//Зависимые части способны задавать анимации, так как руку надо сжимать, чтобы держать меч
-		if (parts.Count != 0) {
-			if (((orientation >= 0) && (parts [parts.Count - 1].interp.animTypes [type].animInfo [numb].rsequence.parentSequence.Length > 1))||
-				((orientation <= 0) && (parts [parts.Count - 1].interp.animTypes [type].animInfo [numb].lsequence.parentSequence.Length > 1))) 
-			{
-				animInfo = parts [parts.Count - 1].interp.animTypes [type].animInfo [numb];
-			} 
-		}
-		//Анимации могут зависеть от ориентации персонажа
-		if (orientation >= 0)
-			nextState = interp.animTypes [type].animInfo[numb].rsequence.sequence;
-		else
-			nextState = interp.animTypes [type].animInfo[numb].lsequence.sequence;
+        frame = (int)mov.getCurrentFrameNumber();
+        animationInfo animInfo=interp.animTypes [type].animInfo[numb];
+        //Анимации могут зависеть от ориентации персонажа
+        if (orientation >= 0)
+            nextState = animInfo.rsequence.sequence;
+        else
+            nextState = animInfo.lsequence.sequence;
+        //Зависимые части способны задавать анимации, так как руку надо сжимать, чтобы держать меч
+        if (childParts.Count != 0)
+        {
+            if (((orientation >= 0) && (childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].rsequence.parentSequence.Length > 1)) ||
+                ((orientation <= 0) && (childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].lsequence.parentSequence.Length > 1)))
+            {
+                animationInfo cAnimInfo = childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb];
+                if (orientation > 0)
+                {
+                    nextState = cAnimInfo.rsequence.parentSequence;
+                }
+                else
+                {
+                    nextState = cAnimInfo.lsequence.parentSequence;
+                }
+            }
+        }
 		//Здесь происходит смена анимации
 		if ((nextState!=currentState)&&(!interp.animTypes [type].animInfo [numb].stopStepByStep))
 		{	
 			currentState=nextState;
 			loop=interp.animTypes[type].animInfo[numb].loop;
 			FPS=interp.animTypes[type].animInfo[numb].FPS;
-			soundData=interp.animTypes [type].animInfo [numb].soundData;
+            rOrderData = interp.animTypes[type].animInfo[numb].rightOrderData;
+            lOrderData = interp.animTypes[type].animInfo[numb].leftOrderData;
+            soundData =interp.animTypes [type].animInfo [numb].soundData;
 			mov.setSequence(currentState,true);
+            mov.gotoAndPlay(mov.currentSequence.startFrame);
 			mov.settings.targetFPS=k*(uint)FPS;
 			if (loop)
 				mov.settings.wrapMode=GAF.Core.GAFWrapMode.Loop;
@@ -84,69 +89,112 @@ public class PartController : MonoBehaviour
 			mov.setPlaying(true);
 		if (interp.animTypes [type].animInfo [numb].stopStepByStep)
 			mov.gotoAndStop(mov.getCurrentFrameNumber());
-		//Здесь происходит озвучивание анимации
-		for (int i=0;i< interp.animTypes [type].animInfo [numb].soundData.Count;i++)
-		{
-			if ((interp.animTypes [type].animInfo [numb].soundData[i].time<=frame)&&
-				(!interp.animTypes [type].animInfo [numb].soundData[i].played))
-			{
-				sManager.RandomizeSfx(efxSource, interp.animTypes [type].animInfo [numb].soundData[i].audios);
-				interp.animTypes [type].animInfo [numb].soundData[i].played=true;
-			}
-			else if ((interp.animTypes [type].animInfo [numb].soundData[i].time >frame)&&
-				(interp.animTypes [type].animInfo [numb].soundData[i].played))
-			{
-				interp.animTypes [type].animInfo [numb].soundData[i].played=false;					
-			}
-		}
-
+        //Здесь происходит озвучивание анимации
+        if (soundData != null)
+        {
+            for (int i = 0; i < soundData.Count; i++)
+            {
+                if ((soundData[i].time <= frame) && (soundData[i].played))
+                {
+                    sManager.RandomizeSfx(efxSource, soundData[i].audios);
+                    soundData[i].played = true;
+                }
+                else if ((soundData[i].time > frame) &&
+                    (soundData[i].played))
+                {
+                    soundData[i].played = false;
+                }
+            }
+        }
 		//Здесь происходит учёт динамики порядка прорисовки
 		if (orientation >= 0) {
-			for (int i=0; i<interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
-				if ((frame >= interp.animTypes [type].animInfo [numb].rightOrderData [i].time) && (interp.animTypes [type].animInfo [numb].rightOrderData [i].order != mov.settings.spriteLayerValue))
-					SpFunctions.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].rightOrderData [i].order, mov.gameObject);
+            if (rOrderData != null)
+            {
+                for (int i = 0; i < rOrderData.Count; i++)
+                {
+                    if ((frame >= rOrderData[i].time) && (rOrderData[i].order != mov.settings.spriteLayerValue))
+                    {
+                        SpFunctions.ChangeRenderOrder(rOrderData[i].order, mov.gameObject);
+                    }
+                }
+            }
 		}
 		else 
 		{
-			for (int i=0; i<interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
-				if ((frame >= interp.animTypes [type].animInfo [numb].leftOrderData [i].time) && (interp.animTypes[type].animInfo [numb].leftOrderData [i].order != mov.settings.spriteLayerValue))
-					SpFunctions.ChangeRenderOrder (interp.animTypes [type].animInfo [numb].leftOrderData [i].order, mov.gameObject);
+            if (lOrderData != null)
+            {
+                for (int i = 0; i < lOrderData.Count; i++)
+                {
+                    if ((frame >= lOrderData[i].time) && (lOrderData[i].order != mov.settings.spriteLayerValue))
+                    {
+                        SpFunctions.ChangeRenderOrder(lOrderData[i].order, mov.gameObject);
+                    }
+                }
+            }
 		}
 	}
 
-    //Функция вызываемая при создании части кодом, тогда автоматически должны создаваться подчинённые части, если они есть. С подчинёнными частями - своя морока. 
-    /*public int InstantiateParts(PartConroller parentPart)
-	{
-		GameObject part;
-		for (int i = 0; i < parentPart.prefabParts.Count; i++) {
-			part = Instantiate (parentPart.prefabParts [i], Vector3.zero, Quaternion.identity) as GameObject;
-			part.transform.parent = parentPart.gameObject.transform;
-		}
-	}*/
-    //Но так как эта функция не нужна, я не буду её дописывать.
-
+    void Update()
+    {
+#if UNITY_EDITOR
+        AnimationEngine();
+    }
+#endif //UNITY_EDITOR
     void LateUpdate()
     {
 #if UNITY_EDITOR
         //Пусть части тела будут менять свой порядок прорисовки непосредственно в редакторе
         if (interp != null)
         {
-            orientation = SpFunctions.realSign(gameObject.transform.lossyScale.x);
-            frame = (int)mov.getCurrentFrameNumber();
-            if (orientation >= 0)
+            if ((interp.animTypes.Count != 0)&&(!play))
             {
-                for (int i = 0; i < interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
-                    if ((frame >= interp.animTypes[type].animInfo[numb].rightOrderData[i].time) && (interp.animTypes[type].animInfo[numb].rightOrderData[i].order != mov.settings.spriteLayerValue))
-                        SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].rightOrderData[i].order, mov.gameObject);
-            }
-            else
-            {
-                for (int i = 0; i < interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
-                    if ((frame >= interp.animTypes[type].animInfo[numb].leftOrderData[i].time) && (interp.animTypes[type].animInfo[numb].leftOrderData[i].order != mov.settings.spriteLayerValue))
-                        SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].leftOrderData[i].order, mov.gameObject);
+                orientation = SpFunctions.realSign(gameObject.transform.lossyScale.x);
+                frame = (int)mov.getCurrentFrameNumber();
+                if (orientation >= 0)
+                {
+                    for (int i = 0; i < interp.animTypes[type].animInfo[numb].rightOrderData.Count; i++)
+                        if ((frame >= interp.animTypes[type].animInfo[numb].rightOrderData[i].time) && (interp.animTypes[type].animInfo[numb].rightOrderData[i].order != mov.settings.spriteLayerValue))
+                            SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].rightOrderData[i].order, mov.gameObject);
+                }
+                else
+                {
+                    for (int i = 0; i < interp.animTypes[type].animInfo[numb].leftOrderData.Count; i++)
+                        if ((frame >= interp.animTypes[type].animInfo[numb].leftOrderData[i].time) && (interp.animTypes[type].animInfo[numb].leftOrderData[i].order != mov.settings.spriteLayerValue))
+                            SpFunctions.ChangeRenderOrder(interp.animTypes[type].animInfo[numb].leftOrderData[i].order, mov.gameObject);
+                }
             }
         }
+
+        if (play)
+        {
+            Work(); 
+        }
+
     #endif //UNITY_EDITOR
     }
+
+    /// <summary>
+    /// Функция, обеспечивающая смену кадров, рассматривая ФПС и течение времени.
+    /// </summary>
+    void AnimationEngine()
+    {
+        addictiveFrame = Mathf.RoundToInt(Time.deltaTime * FPS);
+        frame += addictiveFrame;
+        if ((loop)&&(frame>(int)mov.currentSequence.endFrame))
+            frame -= (int)mov.currentSequence.endFrame;
+        if (frame <= (int)mov.currentSequence.endFrame)
+        {
+            mov.gotoAndPlay((uint)frame);
+        }
+    }
+
+    /// <summary>
+    /// Функция, запускающая работу части в редакторе
+    /// </summary>
+    /// <param name="_play"></param>
+    public void SetPlay(bool _play)
+    {
+        play = _play;
+    }
 }
-	
+    

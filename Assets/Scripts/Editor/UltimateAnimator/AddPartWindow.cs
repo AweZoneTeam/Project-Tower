@@ -14,7 +14,9 @@ public class AddPartWindow : EditorWindow
 	public RightAnimator rightAnim;
 	public LeftAnimator leftAnim;
 	public GameObject character;
-	public Object movPart;
+	public Object movPart;//GAF анимация, которая поставиться в поле mov экземпляра класса PartController
+    public int currentIndex=0;//Вспомогательное число
+    public bool setDepended = false;//Ставить ли создаваемую часть в зависимость от уже существующей части?
 
 	public string name;//Имя части
 	public string movPath;//Путь, по которому надо искать начинку - саму анимацию
@@ -38,16 +40,24 @@ public class AddPartWindow : EditorWindow
 		movPath = EditorGUILayout.TextField (movPath);
 		partPath = EditorGUILayout.TextField (partPath);
 		movPart=EditorGUILayout.ObjectField (movPart, typeof(Object), true);
+        List<string> partNames = character.GetComponent<CharacterAnimator>().parts.ConvertAll(_part => _part.gameObject.name);
+        setDepended = EditorGUILayout.Toggle(setDepended);
+        EditorGUILayout.BeginHorizontal();
+        {
+            EditorGUILayout.LabelField("Parent part");
+            currentIndex = EditorGUILayout.Popup(currentIndex, partNames.ToArray());
+        }
+        EditorGUILayout.EndHorizontal();
 		if (GUILayout.Button ("Create New Part"))
 		{
 			CreateNewPart ();
 		}
+        if (GUILayout.Button("Add Created Part"))
+        {
+            AddPart();
+        }
 		EditorGUILayout.Space ();
-		if (GUILayout.Button ("Add Created Part"))
-		{
-			AddPart ();
-		}
-	}
+    }
 
 	//Создание новой части и добавление её в базу визуальных данных персонажа, 
 	//а также создание ассетов и сохранение их в базе данных игры
@@ -56,6 +66,7 @@ public class AddPartWindow : EditorWindow
 		GameObject partMov;
 		partMov = Instantiate ((GameObject)movPart) as GameObject;
 		partMov.transform.localScale *= animScale;
+
 		partMov.transform.position = new Vector3(character.transform.position.x+xOffset,
 												 character.transform.position.y+yOffset,
 												 character.transform.position.z);
@@ -65,6 +76,9 @@ public class AddPartWindow : EditorWindow
 			character.transform.position.z);
 		partMov.transform.parent = part.transform;
 		part.transform.parent = character.transform;
+        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.realSign(character.transform.localScale.x),
+                                              part.transform.localScale.y,
+                                              part.transform.localScale.z);
 		AnimationInterpretator asset = ScriptableObject.CreateInstance<AnimationInterpretator>();
 		asset.partPath = partPath;
 		asset.animTypes = new List<animationInfoTypes> ();
@@ -85,7 +99,11 @@ public class AddPartWindow : EditorWindow
 		GameObject asset1 = part;
 		asset1=PrefabUtility.CreatePrefab(partPath + name + ".prefab",asset1);
 		AssetDatabase.SaveAssets ();
-	}
+        if (setDepended)
+        {
+            AddDependedPart(cPart, character.GetComponent<CharacterAnimator>().parts[currentIndex]);
+        }
+    }
 
 	//Добавление уже созданной части в базу визуальных данных персонажа. Добавляемая часть должна находиться в указанном в movPart пути 
 	void AddPart()
@@ -95,7 +113,10 @@ public class AddPartWindow : EditorWindow
 			character.transform.position.y+yOffset,
 			character.transform.position.z);
 		part.transform.parent = character.transform;
-		part.name = name;
+        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.realSign(character.transform.localScale.x),
+                                                part.transform.localScale.y,
+                                                part.transform.localScale.z);
+        part.name = name;
 		AnimationInterpretator asset = ScriptableObject.CreateInstance<AnimationInterpretator>();
 		asset.partPath = partPath;
 		asset.animTypes = new List<animationInfoTypes> ();
@@ -111,6 +132,21 @@ public class AddPartWindow : EditorWindow
 		if (character.GetComponent<CharacterAnimator> ().parts.Count > 0) {
 			cPart.interp.setInterp (character.GetComponent<CharacterAnimator> ().parts [0].interp);
 		}
+        if (setDepended)
+        {
+            AddDependedPart(cPart, character.GetComponent<CharacterAnimator>().parts[currentIndex]);
+        }
 	}
+
+    /// <summary>
+    ///Функция, добавляющая новую часть, а также связывает её с родительской частью. 
+    /// </summary>
+    /// <param name="часть-родитель"></param>
+    void AddDependedPart(PartController part, PartController parentPart)
+    {
+        if (parentPart.childParts == null)
+            parentPart.childParts = new List<PartController>();
+        parentPart.childParts.Add(part);
+    }
 
 }

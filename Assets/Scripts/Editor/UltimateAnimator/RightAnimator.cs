@@ -97,7 +97,7 @@ public class RightAnimator : EditorWindow
 							if (!string.Equals (animTypes [i].animations [j], leftAnim.animationName)&& (!string.Equals (leftAnim.partName, "Part"))) {
 								leftAnim.animationName = animTypes [i].animations [j];
 								leftAnim.characterAnimation = leftAnim.characterPart.interp.animTypes [i].animInfo [j];
-                                character.GetComponent<CharacterAnimator>().setPartAnimations(i, j);
+                                character.GetComponent<CharacterAnimator>().setPartAnimations(i, j,true);
                                 leftAnim.currentSequence = leftAnim.characterPart.mov.currentSequence.name;
 							}
 						}

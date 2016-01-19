@@ -12,5 +12,6 @@ public class AnimatorScreen : SceneView
 		if (focusObject!=null)
 			AlignViewToObject (focusObject.transform);
 		in2DMode = true;
+        size = 20f;
 	}
 }
