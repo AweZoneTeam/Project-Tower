@@ -5,11 +5,17 @@ using System.Collections;
 /// Actor orientation. As usual, MAX is last and used to determine enum count.
 /// </summary>
 
+#region enums
+
 public enum OrientationEnum {
 	Left,
 	Right,
 	MAX
 }
+
+public enum groundness { grounded = 1, crouch, preGround, inAir };
+
+#endregion //enums
 
 public class HumanoidActorActions : BaseActorActions
 {
@@ -21,8 +27,11 @@ public class HumanoidActorActions : BaseActorActions
 	public int MovingSpeed;
 	public float MovingAcceleration;
 	public Rigidbody2D RigBody;
-	public int JumpSpeed;
+	public float JumpForce;
 
+    private CharacterAnimator cAnim;//Визуальная часть персонажа
+    private Stats stats;//Параметры персонажа
+     
 	public void OnCollisionEnter2D(Collision2D col) {
 		TouchingGround = true;
 	}
@@ -31,8 +40,13 @@ public class HumanoidActorActions : BaseActorActions
 		TouchingGround = false;
 	}
 
-	override public void Start () {
+    /// <summary>
+    /// Инициализация полей и переменных
+    /// </summary>
+    override public void Start ()
+    {
 		base.Start ();
+        cAnim=transform.FindChild("Body").gameObject.GetComponent<CharacterAnimator>();
 	}
 
 	override public void Update () {
@@ -47,9 +61,26 @@ public class HumanoidActorActions : BaseActorActions
 					RigBody.velocity = new Vector2 (MovingSpeed, RigBody.velocity.y);
 				}
 			}
-		} else if (RigBody.velocity.x != 0) {
-			RigBody.drag = 0.1f;
+            if (stats.groundness == (int)groundness.grounded)
+            {
+                cAnim.GroundMove();
+            }
 		}
+        else 
+        {
+            if ((stats.groundness == (int)groundness.grounded)&& (RigBody.velocity.x != 0))
+            {
+                RigBody.drag = 0.1f;
+            }
+            if (stats.groundness == (int)groundness.grounded)
+            {
+                cAnim.GroundStand();
+            }
+        }
+        if (stats.groundness == (int)groundness.inAir)
+        {
+            cAnim.AirMove();
+        }
 	}
 
 	public virtual void Turn(OrientationEnum Direction) {
@@ -73,9 +104,18 @@ public class HumanoidActorActions : BaseActorActions
 	}
 
 	public virtual void Jump() {
-		if (TouchingGround) {
-			RigBody.velocity = new Vector2 (RigBody.velocity.x, JumpSpeed);
+		if (stats.groundness==(int)groundness.grounded) {
+			RigBody.AddForce(new Vector2 (0f,JumpForce));
 		}
 	}
+
+    /// <summary>
+    /// Задать поле статов
+    /// </summary>
+    /// <param name="задаваемые параметры"></param>
+    public void SetStats(Stats _stats)
+    {
+        stats = _stats;
+    }
 }
 

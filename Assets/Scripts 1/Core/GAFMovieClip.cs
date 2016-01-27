@@ -30,7 +30,7 @@ namespace GAF.Core
 		, IGAFMovieClip
 	{
 		#region Movie clip interface
-
+        
 		public void play()
 		{
 			m_ContiniousPlaying = true;

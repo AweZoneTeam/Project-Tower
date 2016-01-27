@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class RightAnimator : EditorWindow
 {
 	public List<animList> animTypes=new List<animList>();
-	public List<PartConroller> parts = new List<PartConroller>();
+	public List<PartController> parts = new List<PartController>();
 	public List<string> aCharacters = new List<string>();
 	public Rect windowRect1 = new Rect(100f, 100f, 200f, 200f);
 	public Rect windowRect2 = new Rect(100f, 100f, 200f, 200f);
@@ -20,8 +20,10 @@ public class RightAnimator : EditorWindow
 	public AnimationEditorData animScene;
 	public GameObject character;//Персонаж, что сейчас в поле зрения всего редактора анимаций
 
-
+	//Каждый из векторов обеспечивает независимость трёх списков со слайдером правого редактора
 	private Vector2 scrollPosition=Vector2.zero;
+	private Vector2 scrollPosition1=Vector2.zero;
+	private Vector2 scrollPosition2=Vector2.zero;
 
 	//Инициализация
 	public void Initialize(AnimationEditorData aed, LeftAnimator la,List<string> ac, GameObject c)
@@ -42,69 +44,101 @@ public class RightAnimator : EditorWindow
 	}
 
 	//Вывести список анимируемых частей, из которых состоит персонаж
+	//Список выводится в виде кнопок, нажав которые можно выбрать часть тела, с которой пользователь желает работать
+	//Также можно добавить новую анимационную часть
 	void PartList() 
 	{
 		parts = character.GetComponent<CharacterAnimator> ().parts;
-		EditorGUILayout.BeginVertical ();
+		GUILayout.BeginVertical ();
 		{
-			EditorGUILayout.TextField("Parts");
-			EditorGUILayout.Space ();
-			for (int i=0;i<parts.Count;i++)
-				EditorGUILayout.LabelField(parts[i].gameObject.name);
+			scrollPosition1=GUI.BeginScrollView(new Rect(0f,140f,300f,100f),scrollPosition1,new Rect(0,20,300,400));
+			{
+				for (int i = 0; i<parts.Count; i++) {
+					if (GUILayout.Button (parts [i].gameObject.name)) {
+						if (!string.Equals (parts [i].gameObject.name, leftAnim.partName)) {
+							leftAnim.partName = parts [i].gameObject.name;
+							leftAnim.characterPart = parts [i];
+                            leftAnim.defaultLayer = parts[i].mov.settings.spriteLayerValue;
+
+                        }
+					}
+				}
+			}
+			GUI.EndScrollView();	
+		}
+		GUILayout.EndVertical();
+		GUILayout.BeginArea(new Rect(0f,260f,300f,15f));
+		{
 			if(GUILayout.Button("+Add"))
 			{
 				AddPart ();
 			}
-
 		}
-		EditorGUILayout.EndVertical();
+		GUILayout.EndArea();
+		GUILayout.Space (10);
 	}
 
-	//Вывести список всех анимаций данного персонажа
+	//Вывести список всех анимаций данного персонажа. 
+	//Анимации выводятся в виде кнопок, нажав которые, игрок выберет анимацию над которой он хочет работать
+	//Также можно добавить новую анимацию
 	void AnimationList () 
 	{
-		EditorGUILayout.BeginVertical ();
+		
+		GUILayout.BeginVertical ();
 		{
-			EditorGUILayout.TextField("Animations");
-			EditorGUILayout.Space ();
+			GUILayout.Space (5);
 			animTypes = character.GetComponent<CharacterAnimator> ().animTypes;
-			for (int i = 0; i < animTypes.Count; i++) {
-				EditorGUILayout.LabelField (animTypes [i].typeName);
-				for (int j = 0; j < animTypes [i].animations.Count; j++) {
-					EditorGUILayout.LabelField (" "+animTypes [i].animations [j]);
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,10,300,800));
+			{
+				for (int i = 0; i < animTypes.Count; i++) {
+					GUILayout.TextField (animTypes [i].typeName);
+					for (int j = 0; j < animTypes [i].animations.Count; j++) {
+						if (GUILayout.Button (animTypes [i].animations [j])) {
+							if (!string.Equals (animTypes [i].animations [j], leftAnim.animationName)&& (!string.Equals (leftAnim.partName, "Part"))) {
+								leftAnim.animationName = animTypes [i].animations [j];
+								leftAnim.characterAnimation = leftAnim.characterPart.interp.animTypes [i].animInfo [j];
+                                character.GetComponent<CharacterAnimator>().setPartAnimations(i, j,true);
+                                leftAnim.currentSequence = leftAnim.characterPart.mov.currentSequence.name;
+							}
+						}
+					}
 				}
 			}
+			GUI.EndScrollView ();
 		}
-		EditorGUILayout.Space ();
-		if(GUILayout.Button("+Add"))
+		GUILayout.EndVertical();
+		GUILayout.Space (5);
+		GUILayout.BeginArea (new Rect(0f,400f,300f,15f));
 		{
-			AddAnimation ();
+			if (GUILayout.Button ("+Add")) {
+				AddAnimation ();
+			}
 		}
-		EditorGUILayout.EndVertical();	
+		GUILayout.EndArea ();	
 	}
 
 	//Вывести список персонажей, с которыми мы работаем в данный момент
 	void CharactersList () 
 	{
+        character = leftAnim.character;
 		aCharacters = animScene.animBase.usedCharacters;
-		GUILayout.BeginVertical ();
+		scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,100f),scrollPosition,new Rect(0,0,300,400));
 		{
-			scrollPosition=GUI.BeginScrollView(new Rect(0f,0f,300f,200f),scrollPosition,new Rect(0,0,300,400));
-			{
-				for (int i = 0; i < aCharacters.Count; i++)
-					if (GUILayout.Button (aCharacters [i])) {
-						if (!string.Equals (aCharacters [i], leftAnim.characterName))
-							SaveAndCreate(aCharacters [i], "", animScene.FindData (aCharacters [i]+".asset"));
+			for (int i = 0; i < aCharacters.Count; i++) {
+				if (GUILayout.Button (aCharacters [i])) {
+					if (!string.Equals (aCharacters [i], leftAnim.characterName)) {
+						SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
 					}
+				}
 			}
-			GUI.EndScrollView();		
-			GUILayout.Space (210-(aCharacters.Count>11 ? 11: aCharacters.Count)*22);
+		}
+		GUI.EndScrollView();	
+		GUILayout.BeginArea (new Rect(0f,110f,300f,15f));
+		{
 			if (GUILayout.Button ("+Add"))
 				AddCharacter ();
-
-
 		}
-		GUILayout.EndVertical ();
+		GUILayout.EndArea ();
 	}
 
 	//Открыть окно добавления персонажа для работы с ним
@@ -136,7 +170,7 @@ public class RightAnimator : EditorWindow
 	public void AddPart()//Открыть окно добавления новой части персонажу
 	{
 		AddPartWindow animScreen = (AddPartWindow)EditorWindow.GetWindow (typeof(AddPartWindow));
-		animScreen.Initialize(this,leftAnim,character,"Assets/Animations/","Assets/Animations/Parts/");
+		animScreen.Initialize(this,leftAnim,character,"Assets/Animations/");
 	}
 
 
@@ -145,4 +179,6 @@ public class RightAnimator : EditorWindow
 		AddAnimationWindow animScreen = (AddAnimationWindow)EditorWindow.GetWindow (typeof(AddAnimationWindow));
 		animScreen.Initialize (this,leftAnim,character);
 	}
+
+	//Комментарий для нормальной работы гит хаба.
 }

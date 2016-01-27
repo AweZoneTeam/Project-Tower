@@ -61,16 +61,21 @@ public class AddAnimationWindow : EditorWindow
 	{
 		//Сначала говорим аниматору, что него появилась новая анимация
 		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        List<animList> animTypes = cAnim.animTypes;
+        List<NamedAnimClass> animBase = cAnim.animBase;
 		if (type == cAnim.animTypes.Count) {
-			cAnim.animTypes.Add (new animList (typeName, animName));
-		} 
+			animTypes.Add (new animList (typeName, animName));
+            animBase.Add(new NamedAnimClass(animName, type, 0));
+        } 
 		else {
 			if (numb != cAnim.animTypes [type].animations.Count) {
-				cAnim.animTypes [type].animations.Insert (numb, animName);
-			} 
+				animTypes [type].animations.Insert (numb, animName);
+                animBase.Add(new NamedAnimClass(animName, type, numb));
+            } 
 			else {
-				cAnim.animTypes [type].animations.Add (animName);
-			}
+				animTypes [type].animations.Add (animName);
+                animBase.Add(new NamedAnimClass(animName, type, numb));
+            }
 		}
 		rightAnim.animTypes = cAnim.animTypes;
 		//Потом говорим это всем частям персонажа
@@ -88,5 +93,18 @@ public class AddAnimationWindow : EditorWindow
 			}
 		}
 	}
+
+    void RefreshAnimBase(Dictionary<string, AnimClass> animBase, List<animList> animTypes)
+    {
+        for (int i = 0; i < animTypes.Count; i++)
+        {
+            for (int j = 0; j < animTypes[i].animations.Count; j++)
+            {
+                string anim = animTypes[i].animations[j];
+                animBase[anim].type = i;
+                animBase[anim].numb = j;
+            }
+        }
+    }
 
 }

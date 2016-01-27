@@ -2,18 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class clavisher : MonoBehaviour
+/// <summary>
+/// Прикрепите к объекту, и он будет следить за нажатием всех нужных вам клавиш.
+/// </summary>
+public class Clavisher : MonoBehaviour
 {
-	public ButtonClass.button[] buttons;
-	public bool k1, k2;
-	public bool[] numbK1, numbK2;
-	public int addLength;
-	public int minTimer;
-	public int averageTimer;
-	public int releaseTimer;
-	public int endTimer;
-	public Organism stats;
-	
+	public List<ButtonClass> buttons;//Массив рассматриваемых клавиш
+	public bool k1, k2;//Два bool'а проверяющие, как именно нажаты клавиши
+	public bool[] numbK1, numbK2;//Два bool'а проверяющие, как именно нажаты клавиши, обозначающие цифры
+	public int addLength;//Кол-во вспомогательных элементов массива button, которые нужны для группирования клавиш и анализа этих групп
+	public int minTimer;//Минимальное значение таймера, которое присваивается, как бы быстро не нажали на клавишу. 
+	public int averageTimer;//Сколько времени нужно жать клавишу, чтобы push из 1 перешёл в 2
+	public int releaseTimer;//Сколько времени нужно жать клавишу, чтобы push из 2 перешёл в 3
+	public int endTimer;//Максимальное значение таймера
+
 
 	void FixedUpdate()
 	{
@@ -22,8 +24,8 @@ public class clavisher : MonoBehaviour
 			numbK1[j]=false;
 			numbK2[j]=false;
 		}
-		for (int i=0; i<buttons.Length-addLength; i++) {
-			switch (buttons [i].s) {
+		for (int i=0; i<buttons.Count-addLength; i++) {
+			switch (buttons [i].button) {
 			case "LeftShift":
 				k1 = Input.GetKeyDown (KeyCode.LeftShift);
 				k2 = Input.GetKey (KeyCode.LeftShift);
@@ -89,25 +91,15 @@ public class clavisher : MonoBehaviour
 				k2 = Input.GetKey (KeyCode.Alpha9);
 				break;
 			default:
-				k1 = Input.GetKeyDown (buttons [i].s);
-				k2 = Input.GetKey (buttons [i].s);
+				k1 = Input.GetKeyDown (buttons [i].button);
+				k2 = Input.GetKey (buttons [i].button);
 				break;
 			}
-			if (k1) {
-				if ((i >= 12) && (i < 22))
-					numbK1 [0] = true;
-				else if ((i * 2 - 5) * stats.direction == -1)
-					numbK1 [1] = true;
-				else if ((i * 2 - 5) * stats.direction == 1)
-					numbK1 [2] = true;
+			if (k1) 
+			{
 				buttons [i].timer = minTimer;
-			} else if (k2) {
-				if ((i >= 12) && (i < 22))
-					numbK2 [0] = true;
-				else if ((i * 2 - 5) * stats.direction == -1)
-					numbK2 [1] = true;
-				else if ((i * 2 - 5) * stats.direction == 1)
-					numbK2 [2] = true;
+			} 
+			else if (k2) {
 				if (buttons [i].timer < endTimer)
 					buttons [i].timer++;
 				if (buttons [i].timer < averageTimer)
@@ -130,30 +122,30 @@ public class clavisher : MonoBehaviour
 		for (int  j=0; j<addLength; j++) {
 			if (numbK1[j]) 
 			{
-				buttons [buttons.Length - addLength+j].timer = minTimer;
+				buttons [buttons.Count - addLength+j].timer = minTimer;
 			} 
 			else if (numbK2[j]) 
 			{
-				if (buttons [buttons.Length - addLength+j].timer < endTimer)
-					buttons [buttons.Length - addLength+j].timer++;
-				if (buttons [buttons.Length - addLength+j].timer < averageTimer)
-					buttons [buttons.Length - addLength+j].push = 1;
-				else if ((buttons [buttons.Length - addLength+j].timer < releaseTimer) && (buttons [buttons.Length - addLength+j].timer >= averageTimer))
-					buttons [buttons.Length - addLength+j].push = 2;
-				else if (buttons [buttons.Length - addLength+j].timer >= releaseTimer)
-					buttons [buttons.Length - addLength+j].push = 3;
+				if (buttons [buttons.Count - addLength+j].timer < endTimer)
+					buttons [buttons.Count - addLength+j].timer++;
+				if (buttons [buttons.Count - addLength+j].timer < averageTimer)
+					buttons [buttons.Count - addLength+j].push = 1;
+				else if ((buttons [buttons.Count - addLength+j].timer < releaseTimer) && (buttons [buttons.Count - addLength+j].timer >= averageTimer))
+					buttons [buttons.Count - addLength+j].push = 2;
+				else if (buttons [buttons.Count - addLength+j].timer >= releaseTimer)
+					buttons [buttons.Count - addLength+j].push = 3;
 			}
 			else 
 			{
-				if (buttons [buttons.Length - addLength+j].push >= 2) 
+				if (buttons [buttons.Count - addLength+j].push >= 2) 
 				{
-					buttons [buttons.Length - addLength+j].push = 0;
-					buttons [buttons.Length - addLength+j].timer = 0;
+					buttons [buttons.Count - addLength+j].push = 0;
+					buttons [buttons.Count - addLength+j].timer = 0;
 				}
-				if (buttons [buttons.Length - addLength+j].timer > 0)
-					buttons [buttons.Length - addLength+j].timer--;
+				if (buttons [buttons.Count - addLength+j].timer > 0)
+					buttons [buttons.Count - addLength+j].timer--;
 				else
-					buttons [buttons.Length - addLength+j].push = 0;
+					buttons [buttons.Count - addLength+j].push = 0;
 			}
 		}
 	}

@@ -59,7 +59,6 @@ namespace GAFEditor.Core
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
-
 			drawAsset();
 			drawResourcesState();
 			drawSettings();
@@ -165,7 +164,8 @@ namespace GAFEditor.Core
 					}
 
 					var assetProperty = serializedObject.FindProperty("m_GAFAsset");
-					if (!assetProperty.hasMultipleDifferentValues &&
+
+                    if (!assetProperty.hasMultipleDifferentValues &&
 						 assetProperty.objectReferenceValue != null)
 					{
 						drawScales(assetProperty);
@@ -236,7 +236,7 @@ namespace GAFEditor.Core
 								var style = currentSequenceIndex.isInstantiatedPrefab && currentSequenceIndex.prefabOverride ? EditorStyles.boldLabel : EditorStyles.label;
 
 								EditorGUILayout.LabelField(new GUIContent("Sequence:", "You can use frame labels to define different parts of animations (in your *.fla). Than you can select corresponding sequence to play it.​"), style);
-								var index = EditorGUILayout.Popup(currentIndex, sequenceNames.ToArray());
+                                var index = EditorGUILayout.Popup(currentIndex, sequenceNames.ToArray());
 								if (index != currentIndex)
 								{
 									index = currentSequenceIndex.hasMultipleDifferentValues ? index - 1 : index;

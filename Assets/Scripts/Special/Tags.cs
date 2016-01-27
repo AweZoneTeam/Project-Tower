@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Использовать сокращённые названия тегов.
+/// </summary>
 public class Tags : MonoBehaviour {
 
 	public const string player = "Player";

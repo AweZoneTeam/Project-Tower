@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Класс, который может управлять стрелой.
+/// Он уничтожает стрелу, если она столкнулась с чем-нибудь твёрдым.
+/// Он поворачивает стрелу по направлению скорости.
+/// </summary>
 public class ArrowScript : MonoBehaviour {
 
 	private Rigidbody2D rigid;
-	private SpFunctions sp;
 	private CollisionRegulation col;
 	private HitController hitControl;
 
 	public void Awake () 
 	{
 		rigid = gameObject.GetComponent<Rigidbody2D>();
-		sp = GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SpFunctions> ();
 		col=GetComponentInChildren<CollisionRegulation>();
 		hitControl = GetComponentInChildren<HitController> ();
 	}
@@ -19,10 +22,10 @@ public class ArrowScript : MonoBehaviour {
 
 	public void FixedUpdate () 
 	{  
-		transform.Rotate (0f, 0f, sp.RealAngle (sp.VectorConvert(transform.right),
+		transform.Rotate (0f, 0f, SpFunctions.RealAngle (SpFunctions.VectorConvert(transform.right),
 		                                      rigid.velocity));
 		hitControl.actTime++;
-		if (col.detector [0])
+		if (col.collisionInfos[0].detected)
 		{
 			hitControl.col.enabled=false;
 			Destroy (gameObject,1f);

@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class animatClass : MonoBehaviour 
+/// <summary>
+/// Этот класс ранее использовался для описания совершаемых анимаций и условия совершения этих анимаций
+/// </summary>
+[System.Serializable]
+public class AnimConditionClass
 {	
-	[System.Serializable]
-	public struct animat
-	{
-		public animClass.anim anim;
-		public StatsClass.stats stats;
-		public int direction;
-		public float speedX;
-		public float nSpeedX;
-		public float speedY;
-		public float nSpeedY;
-		public int weaponType;
-		public bool weaponInRightHand;
-	}
+	public AnimClass anim;
+	public Stats stats;
+	public int direction;
+	public float speedX;
+	public float nSpeedX;
+	public float speedY;
+	public float nSpeedY;
+	public int weaponType;
+	public bool weaponInRightHand;
 }
