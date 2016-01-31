@@ -225,4 +225,9 @@ public static class SpFunctions {
 		else 
 			return true;
 	}
+
+    public static AreaClass GetCurrentArea()
+    {
+        return GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>().currentArea;
+    }
 }
