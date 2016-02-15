@@ -182,6 +182,15 @@ public static class SpFunctions {
 			                             trans.localScale.z);
 	}
 
+    /// <summary>
+    /// Изменить данные о комнатах, а также о своём текущем местоположении при переходе в другую комнату.
+    /// </summary>
+    public static void ChangeRoomData(AreaClass room)
+    {
+        GameStatisics gameStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>();
+        gameStats.currentArea = room;
+    }
+
 	/// <summary>
 	/// Функция, которая работает, как Mathf.Sign, но возвращает 0 при аргументе=0
 	/// </summary>

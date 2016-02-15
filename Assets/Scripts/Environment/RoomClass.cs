@@ -42,23 +42,5 @@ public class WallClass
     }
 }
 
-/// <summary>
-/// Точно так же, как и стены, двери тож не могут располагаться где попало, 
-/// и, кроме того, они ведут в из одной комнаты в другую, если провзаимодействовать с ними
-/// </summary>
-[System.Serializable]
-public class DoorClass
-{
-    public GameObject door;//сама дверь с её текстуркой
-    public enum doorTypes { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа
-    public int doorType;//Тип двери
-    public AreaClass pass;//Куда ведёт данная дверь
-    public Vector3 nextPosition;//Где будет находитmся персонаж при переходе в следующую комнату
-    public LockScript locker;//Какой замок стоит на двери
 
-    public DoorClass(GameObject _door, int _type, AreaClass _pass, LockScript _locker)
-    {
-        door = _door; doorType = _type; pass = _pass; locker = _locker;
-    }
-}
 

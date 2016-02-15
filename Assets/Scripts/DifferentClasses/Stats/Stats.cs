@@ -10,8 +10,6 @@ using System.Collections;
 public class Prestats
 {
 	public int direction;
-
-
 }
 
 /// <summary>

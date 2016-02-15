@@ -13,6 +13,7 @@ public class AreaClass : MonoBehaviour
     public List<AreaClass> subAreas = new List<AreaClass>();//какие пространства являются подчинёнными
     public List<AreaClass> neigbAreas = new List<AreaClass>();//какие пространства соседствуют с этим
     public List<GameObject> container=new List<GameObject>();//Что содержит в себе это пространство. Содержание подпространств не учитывается.
+    public List<LightSource> lightSources = new List<LightSource>();//Источники света в данном пространстве.
     public Vector3 position;//координаты центра пространства (пространство по форме обязательно представляет собой параллелепипед)
     public Vector3 size;//Каковы размеры пространства: длина, глубина и высота
 }
