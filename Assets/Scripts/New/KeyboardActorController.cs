@@ -7,12 +7,14 @@ public class KeyboardActorController : MonoBehaviour
     #region parametres
     private const float groundRadius = 0.2f;
     private const float preGroundRadius = 0.7f;
+    private const float doorDistance = 4.5f;
     #endregion //parametres
 
     #region fields
     public Stats stats;//Параметры персонажа
 
 	public HumanoidActorActions Actions;
+    public CharacterAnimator cAnim;
 
     private Transform groundCheck; //Индикатор, оценивающий расстояние до земли
     #endregion //fields
@@ -20,6 +22,7 @@ public class KeyboardActorController : MonoBehaviour
     #region variables
 
     public LayerMask whatIsGround;
+    public bool direction;
 
     #endregion //variables
 
@@ -45,7 +48,7 @@ public class KeyboardActorController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(KeyCode.D)) {
 			print ("kek");
 			Actions.Turn (OrientationEnum.Right);
 			Actions.StartWalking (OrientationEnum.Right);
@@ -65,8 +68,56 @@ public class KeyboardActorController : MonoBehaviour
 			Actions.Jump();
 		}
 
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Interact();
+        }
+
+        direction = Input.GetKey(KeyCode.W);
+
         AnalyzeSituation();
 	}
+
+    #region Interact
+
+    /// <summary>
+    /// Здесь описаны все взаимодействия, что могут пройзойти между персонажем и окружающим миром
+    /// </summary>
+    void Interact()
+    {
+        DoorInteraction();
+    }
+
+    void DoorInteraction()
+    {
+        Transform trans = gameObject.transform;
+        AreaClass area = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>().currentArea;
+        float zDistance = Mathf.Abs(area.position.z + area.size.z / 2 - trans.position.z) - 0.5f;
+        RaycastHit hit = new RaycastHit();
+        if (Physics.Raycast(new Ray(trans.position, stats.direction * trans.right), out hit, doorDistance))
+        {
+            if (string.Equals(hit.collider.gameObject.tag, Tags.door))
+            {
+                if (hit.collider.gameObject.GetComponent<DoorClass>().locker.opened)
+                {
+                    Actions.GoThroughTheDoor(hit.collider.gameObject.GetComponent<DoorClass>());
+                }
+            }
+        }
+
+        if (Physics.Raycast(new Ray(trans.position, Input.GetKey(KeyCode.W)?new Vector3(0f,0f,-1f): new Vector3(0f, 0f, 1f)), out hit, zDistance))
+        {
+            if (string.Equals(hit.collider.gameObject.tag, Tags.door))
+            {
+                if (hit.collider.gameObject.GetComponent<DoorClass>().locker.opened)
+                {
+                    Actions.GoThroughTheDoor(hit.collider.gameObject.GetComponent<DoorClass>());
+                }
+            }
+        }
+    }
+
+    #endregion //Interact
 
     #region Analyze
 

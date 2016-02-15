@@ -22,7 +22,7 @@ public class CharacterAnimator : BaseAnimator
 
     public enum groundness { grounded = 1, crouch, preGround, inAir };
 
-    private enum speedY{fastUp=30, medUp=10, slowUp=7, slowDown=-1, medDown=-6, fastDown=-10};//Скорости, при которых меняется анимация прыжка
+    private enum speedY { fastUp = 30, medUp = 10, slowUp = 7, slowDown = -1, medDown = -6, fastDown = -10 };//Скорости, при которых меняется анимация прыжка
 
     #endregion //enums
 
@@ -35,16 +35,18 @@ public class CharacterAnimator : BaseAnimator
     #region fields
 
     public AnimClass anim;//Идентификатор проигрываемой в данный момент анимации.
-	public List<PartController> parts=new List<PartController>();//Части тела, управляемых аниматором
+    public List<PartController> parts = new List<PartController>();//Части тела, управляемых аниматором
     public VisualData visualData;//Визуальная база данных, в которую мы будем вносить изменения по создаваемому персонажу
+    public ShadowScript shadow;//Тень, что отбрасывает персонаж
+    private LayerMask whatIsGround;//На какие поверхности отбрасывается тень
 
-	public List<animList> animTypes=new List<animList>();//База данный по анимациям, проигрываемых аниматором, которые отсортированы по типам
-    public List<NamedAnimClass> animBase=new List<NamedAnimClass>();//база данных по анимациям, используемых аниматором. 
-                                                                                     //В отличие от пердыдущего списка - это одномерный массив. 
-                                                                                     //Нужен для удобного написания скриптов.
-    public bool play=false, stop=true;//два весёлых була, обеспечивающие проигрывание анимации непосредственно в самом редакторе.
+    public List<animList> animTypes = new List<animList>();//База данный по анимациям, проигрываемых аниматором, которые отсортированы по типам
+    public List<NamedAnimClass> animBase = new List<NamedAnimClass>();//база данных по анимациям, используемых аниматором. 
+                                                                      //В отличие от пердыдущего списка - это одномерный массив. 
+                                                                      //Нужен для удобного написания скриптов.
+    public bool play = false, stop = true;//два весёлых була, обеспечивающие проигрывание анимации непосредственно в самом редакторе.
 
-    private Rigidbody2D rigid;//Физика персонажа. Нужен для расчёта скорости, так как они влияют на анимации.
+    private Rigidbody rigid;//Физика персонажа. Нужен для расчёта скорости, так как они влияют на анимации.
     private Stats stats;//Параметры персонажа
 
     #endregion //fields
@@ -61,12 +63,26 @@ public class CharacterAnimator : BaseAnimator
 
     public void Start()
     {
-        rigid = gameObject.GetComponentInParent<Rigidbody2D>();
+        rigid = gameObject.GetComponentInParent<Rigidbody>();
+        whatIsGround = GetComponentInParent<KeyboardActorController>().whatIsGround;
+    }
+
+    public void FixedUpdate()
+    {
+        if (stats.groundness == (int)groundness.inAir)
+        {
+            RaycastHit ray;
+            if (Physics.Raycast(new Ray(transform.parent.position, new Vector3(0f, -1f, 0f)), out ray, 40f, whatIsGround))
+        {
+                shadow.SetY(ray.point.y);
+            }
+        }    
     }
 
 	public void Update()
 	{
         Sinchronize();
+
         /*
 #if UNITY_EDITOR
         if (play && !stop)//Пусть продолжается работа частей

@@ -26,7 +26,7 @@ public class HumanoidActorActions : BaseActorActions
 	public BoxCollider2D GroundCol;
 	public int MovingSpeed;
 	public float MovingAcceleration;
-	public Rigidbody2D RigBody;
+	private Rigidbody RigBody;
 	public float JumpForce;
 
     private CharacterAnimator cAnim;//Визуальная часть персонажа
@@ -47,6 +47,7 @@ public class HumanoidActorActions : BaseActorActions
     {
 		base.Start ();
         cAnim=transform.FindChild("Body").gameObject.GetComponent<CharacterAnimator>();
+        RigBody = GetComponent<Rigidbody>();
 	}
 
 	override public void Update () {
@@ -54,11 +55,13 @@ public class HumanoidActorActions : BaseActorActions
 		if (Moving) {
 			if (MovingDirection == OrientationEnum.Left) {
 				if (MovingSpeed > RigBody.velocity.x) {
-					RigBody.velocity = new Vector2 (-MovingSpeed, RigBody.velocity.y);
+					RigBody.velocity = new Vector3 (-MovingSpeed, RigBody.velocity.y, RigBody.velocity.z);
+                    stats.direction = -1;
 				}
 			} else {
 				if (MovingSpeed > -RigBody.velocity.x) {
-					RigBody.velocity = new Vector2 (MovingSpeed, RigBody.velocity.y);
+					RigBody.velocity = new Vector3 (MovingSpeed, RigBody.velocity.y, RigBody.velocity.z);
+                    stats.direction = 1;
 				}
 			}
             if (stats.groundness == (int)groundness.grounded)
@@ -104,10 +107,19 @@ public class HumanoidActorActions : BaseActorActions
 	}
 
 	public virtual void Jump() {
-		if (stats.groundness==(int)groundness.grounded) {
-			RigBody.AddForce(new Vector2 (0f,JumpForce));
+		if (stats.groundness==(int)groundness.grounded)
+        {
+            RigBody.AddForce(new Vector3(0f, JumpForce, 0f));
 		}
 	}
+
+    public virtual void GoThroughTheDoor(DoorClass door)
+    {
+        
+        transform.position = door.nextPosition;
+        SpFunctions.ChangeRoomData(door.roomPath); 
+        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
+    } 
 
     /// <summary>
     /// Задать поле статов

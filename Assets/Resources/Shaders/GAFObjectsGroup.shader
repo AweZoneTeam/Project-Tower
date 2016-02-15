@@ -10,11 +10,11 @@ Shader "GAF/GAFObjectsGroup"
 	{
 		Tags 
 		{ 
-			"Queue"="Transparent"
+			"Queue"="Geometry-5000"
 			"IgnoreProjector"="True"
-			"RenderType"="Transparent"
+			"RenderType"="Opaque"
 		}
-
+		LOD 0
 		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off
 		Zwrite Off
