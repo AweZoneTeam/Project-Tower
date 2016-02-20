@@ -8,17 +8,28 @@ public class CreateNewAnimWindow :EditorWindow
 	public static int number = 0;
 	public string name="New Visual Data";
 	public string characterPath="Assets/Animations/";
-	[HideInInspector]
+
+    public string[] animatorTypes = { "character", "interactive" };
+    public string animatorType="character";
+    private int currentIndex=0;
+
+    [HideInInspector]
 	public RightAnimator rightAnim;
 	[HideInInspector]
 	public LeftAnimator leftAnim;
 
-
-	void OnGUI()
+    void OnGUI()
 	{
 		name = EditorGUILayout.TextField (name);
 		characterPath = EditorGUILayout.TextField (characterPath);
-		if (GUILayout.Button ("Create New"))
+        EditorGUILayout.BeginHorizontal();
+        {
+            EditorGUILayout.LabelField("Animator type");
+            currentIndex = EditorGUILayout.Popup(currentIndex, animatorTypes);
+            animatorType = animatorTypes[currentIndex];
+        }
+        EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button ("Create New"))
 		{
 			CreateNew();
 		}
@@ -37,6 +48,7 @@ public class CreateNewAnimWindow :EditorWindow
 		{
 			VisualData asset = ScriptableObject.CreateInstance<VisualData>();
 			asset.name = name;
+            asset.type = animatorType;
 			asset.SetEmpty ();
 			AssetDatabase.CreateAsset (asset, "Assets/Database/Visual Data Base/" + name + ((number > 0 &&
 				(string.Equals ("New Visual Data", name))) ? number.ToString () : "") + ".asset");

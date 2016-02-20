@@ -37,7 +37,7 @@ public class AddPartWindow : EditorWindow
 		name = EditorGUILayout.TextField (name);
 		partPath = EditorGUILayout.TextField (partPath);
 		movPart=EditorGUILayout.ObjectField (movPart, typeof(Object), true);
-        List<string> partNames = character.GetComponent<CharacterAnimator>().parts.ConvertAll(_part => _part.gameObject.name);
+        List<string> partNames = character.GetComponent<InterObjAnimator>().parts.ConvertAll(_part => _part.gameObject.name);
         setDepended = EditorGUILayout.Toggle(setDepended);
         EditorGUILayout.BeginHorizontal();
         {
@@ -85,7 +85,7 @@ public class AddPartWindow : EditorWindow
 		cPart.mov = partMov.GetComponent<GAF.Core.GAFMovieClip> ();
         cPart.interp = new AnimationInterpretator(asset);
         cPart.path = partPath + name + ".asset";
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
         if (cAnim.parts.Count > 0)
         {
             cPart.interp.setInterp(cAnim.parts[0].interp);
@@ -99,7 +99,7 @@ public class AddPartWindow : EditorWindow
 		AssetDatabase.SaveAssets ();
         if (setDepended)
         {
-            AddDependedPart(cPart, character.GetComponent<CharacterAnimator>().parts[currentIndex]);
+            AddDependedPart(cPart, character.GetComponent<InterObjAnimator>().parts[currentIndex]);
         }
     }
 
@@ -120,19 +120,19 @@ public class AddPartWindow : EditorWindow
 		asset.animTypes = new List<animationInfoTypes> ();
 		PartController cPart = part.GetComponent<PartController> ();
 		cPart.interp=new AnimationInterpretator(asset.partPath);
-		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
 		cAnim.parts.Add (part.GetComponent<PartController>());
 		cPart.interp = new AnimationInterpretator (asset);
         cPart.path = partPath + name + ".asset";
-        if (character.GetComponent<CharacterAnimator> ().parts.Count > 0) {
-			cPart.interp.setInterp (character.GetComponent<CharacterAnimator> ().parts [0].interp);
+        if (character.GetComponent<InterObjAnimator> ().parts.Count > 0) {
+			cPart.interp.setInterp (character.GetComponent<InterObjAnimator> ().parts [0].interp);
 		}
         GameObject asset1 = part;
         asset1 = PrefabUtility.CreatePrefab(partPath + name + ".prefab", asset1);
         AssetDatabase.SaveAssets();
         if (setDepended)
         {
-            AddDependedPart(cPart, character.GetComponent<CharacterAnimator>().parts[currentIndex]);
+            AddDependedPart(cPart, character.GetComponent<InterObjAnimator>().parts[currentIndex]);
         }
 	}
 

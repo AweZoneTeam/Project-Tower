@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-Tower.CSharp.Plugin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-Tower.CSharp", "Project-Tower.CSharp.csproj", "{F71ED981-FCB9-0728-D0A7-9B971A15264D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-Tower.CSharp.Editor.Plugins", "Project-Tower.CSharp.Editor.Plugins.csproj", "{39C02342-D404-F936-B24B-DA3EC4DEB80C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-Tower.CSharp.Editor", "Project-Tower.CSharp.Editor.csproj", "{3560EB9F-FBB7-6481-6F45-393DD3045E9E}"
 EndProject
 Global
@@ -21,6 +23,10 @@ Global
 		{F71ED981-FCB9-0728-D0A7-9B971A15264D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F71ED981-FCB9-0728-D0A7-9B971A15264D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F71ED981-FCB9-0728-D0A7-9B971A15264D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39C02342-D404-F936-B24B-DA3EC4DEB80C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C02342-D404-F936-B24B-DA3EC4DEB80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C02342-D404-F936-B24B-DA3EC4DEB80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C02342-D404-F936-B24B-DA3EC4DEB80C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3560EB9F-FBB7-6481-6F45-393DD3045E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3560EB9F-FBB7-6481-6F45-393DD3045E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3560EB9F-FBB7-6481-6F45-393DD3045E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU

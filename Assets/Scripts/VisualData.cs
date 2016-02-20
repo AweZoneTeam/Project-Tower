@@ -11,6 +11,7 @@ using System.Collections.Generic;
 public class VisualData : ScriptableObject 
 {
 	public string name;
+    public string type;//тип аниматора, который должен быть у соответствующего данным объекта
 	public GameObject visual;//Ссылка на префаб в редакторе, которому соответстует данная база визуальных данных
 	public List<AnimationInterpretator> animInterpretators= new List<AnimationInterpretator>();
 

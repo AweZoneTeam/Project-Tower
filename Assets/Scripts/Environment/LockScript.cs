@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Класс, который характеризует счобой замок. Замки - это специальные запреты на использование того или иного предмета,
@@ -22,6 +23,27 @@ public class LockScript{
     {
         lockType = _type;
         opened = _opened;
+    }
+
+    /// <summary>
+    /// Произвести попытку открыть замок, если в заданной экипировке есть подходящий ключ
+    /// </summary>
+    public virtual bool TryToOpen(EquipmentClass equip)
+    {
+        bool k=true;
+        if (lockType != 0)
+        {
+            if (equip.GetKeysNumber(lockType - 1) > 0)
+            {
+                k = false;
+                if (!opened)
+                {
+                    equip.UseKey(lockType-1);
+                    k=true;
+                }
+            }
+        }
+        return k;
     }
 }
 
@@ -56,5 +78,22 @@ public class SpecialLockScript: LockScript
     public void SetKeyID(string _keyID)
     {
         keyID = _keyID;
+    }
+
+    /// <summary>
+    /// Произвести попытку открыть замок, если в заданной экипировке есть подходящий ключ
+    /// </summary>
+    public override bool TryToOpen(EquipmentClass equip)
+    {
+        List<ItemClass> items = equip.GetItems();
+        bool k = false;
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (string.Equals(keyID, items[i].name))
+            {
+                k = true;
+            }
+        }
+        return k;
     }
 }

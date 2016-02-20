@@ -80,7 +80,7 @@ public class LeftAnimator : EditorWindow
 			{
                 if (character != null)
                 {
-                    character.GetComponent<CharacterAnimator>().Flip();
+                    character.GetComponent<InterObjAnimator>().Flip();
                     orientation = SpFunctions.realSign(character.transform.localScale.x) > 0 ? "Right" : "Left";
                 }
 			}
@@ -130,7 +130,7 @@ public class LeftAnimator : EditorWindow
 	//Параметры анимаций
 	void AnimationParamWindow () 
 	{
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
         EditorGUILayout.BeginVertical ();
 		{
 			EditorGUILayout.TextField("Animation parametres");
@@ -308,7 +308,7 @@ public class LeftAnimator : EditorWindow
                 #endregion //sliders
 
                 #region turnAnimation
-                EditorGUILayout.Space();
+                /*EditorGUILayout.Space();
                 if (GUILayout.Button(animationTurnTo))
                 {
                     if (string.Equals(animationTurnTo, "Play"))
@@ -324,7 +324,7 @@ public class LeftAnimator : EditorWindow
                         cAnim.stop = true;
                         cAnim.play = false;
                     }
-                } 
+                } */
                 #endregion //turnAnimation
             }
         }
@@ -349,7 +349,7 @@ public class LeftAnimator : EditorWindow
     {
         characterPart = part;
         parentPart = null;
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
             for (int j = 0; j < cAnim.parts[i].childParts.Count; j++)
@@ -385,7 +385,15 @@ public class LeftAnimator : EditorWindow
 		if (asset.visual == null) {
 			character = new GameObject (_name);
 			character.transform.position = animEditor.gameObject.transform.position;
-			CharacterAnimator cAnim = character.AddComponent<CharacterAnimator> ();
+            if (string.Equals("character", asset.type))
+            {
+                character.AddComponent<CharacterAnimator>();
+            }
+            else if (string.Equals("interactive", asset.type))
+            {
+                character.AddComponent<InterObjAnimator>();
+            }
+            InterObjAnimator cAnim= character.GetComponent<InterObjAnimator>();
             cAnim.SetDefaultAnimator();
             cAnim.visualData = asset;
 			asset.visual = PrefabUtility.CreatePrefab (path + _name + ".prefab", character);
@@ -394,7 +402,7 @@ public class LeftAnimator : EditorWindow
 		else {
 			character = PrefabUtility.InstantiatePrefab (asset.visual) as GameObject;
 			character.transform.position=animEditor.gameObject.transform.position;
-			CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+			InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
 			for (int i = 0; i < cAnim.parts.Count; i++) {
 				cAnim.parts [i].interp = new AnimationInterpretator (" ");
 				cAnim.parts [i].interp.setInterp(cAnim.visualData.animInterpretators [i]);
@@ -414,7 +422,7 @@ public class LeftAnimator : EditorWindow
 	{
 		AnimationInterpretator changeInterp;
 		AnimationInterpretator saveInterp;
-		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
         VisualData vis = cAnim.visualData;
         vis.animInterpretators.Clear ();
         List<PartController> dependedParts = new List<PartController>();
@@ -541,7 +549,7 @@ public class LeftAnimator : EditorWindow
     /// <param name="Кадры в секунду"></param>
     void SetFPS(int _FPS)
     {
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
         AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
@@ -555,7 +563,7 @@ public class LeftAnimator : EditorWindow
     /// <param name="stepByStep"></param>
     void SetStepByStep(bool _stepByStep)
     {
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
         AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
@@ -576,7 +584,7 @@ public class LeftAnimator : EditorWindow
     /// <param name="loop"></param>
     void SetLoop(bool _loop)
     {
-        CharacterAnimator cAnim = character.GetComponent<CharacterAnimator>();
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
         AnimClass anim = cAnim.FindAnimData(animationName);
         for (int i = 0; i < cAnim.parts.Count; i++)
         {

@@ -28,7 +28,7 @@ public class AddAnimationWindow : EditorWindow
 			typeName = EditorGUILayout.TextField (typeName);
 			animName = EditorGUILayout.TextField (animName);
 			type = EditorGUILayout.IntField (type);
-			CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+            InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
 			numb = EditorGUILayout.IntField (numb);
 			if (type < 0) {
 				type *= -1;
@@ -60,7 +60,7 @@ public class AddAnimationWindow : EditorWindow
 	public void AddAnimation()
 	{
 		//Сначала говорим аниматору, что него появилась новая анимация
-		CharacterAnimator cAnim = character.GetComponent<CharacterAnimator> ();
+		InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
         List<animList> animTypes = cAnim.animTypes;
         List<NamedAnimClass> animBase = cAnim.animBase;
 		if (type == cAnim.animTypes.Count) {

@@ -48,7 +48,7 @@ public class RightAnimator : EditorWindow
 	//Также можно добавить новую анимационную часть
 	void PartList() 
 	{
-		parts = character.GetComponent<CharacterAnimator> ().parts;
+		parts = character.GetComponent<InterObjAnimator> ().parts;
 		GUILayout.BeginVertical ();
 		{
 			scrollPosition1=GUI.BeginScrollView(new Rect(0f,140f,300f,100f),scrollPosition1,new Rect(0,20,300,400));
@@ -87,7 +87,7 @@ public class RightAnimator : EditorWindow
 		GUILayout.BeginVertical ();
 		{
 			GUILayout.Space (5);
-			animTypes = character.GetComponent<CharacterAnimator> ().animTypes;
+			animTypes = character.GetComponent<InterObjAnimator> ().animTypes;
 			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,10,300,800));
 			{
 				for (int i = 0; i < animTypes.Count; i++) {
@@ -97,7 +97,7 @@ public class RightAnimator : EditorWindow
 							if (!string.Equals (animTypes [i].animations [j], leftAnim.animationName)&& (!string.Equals (leftAnim.partName, "Part"))) {
 								leftAnim.animationName = animTypes [i].animations [j];
 								leftAnim.characterAnimation = leftAnim.characterPart.interp.animTypes [i].animInfo [j];
-                                character.GetComponent<CharacterAnimator>().setPartAnimations(i, j,true);
+                                character.GetComponent<InterObjAnimator>().setPartAnimations(i, j,true);
                                 leftAnim.currentSequence = leftAnim.characterPart.mov.currentSequence.name;
 							}
 						}

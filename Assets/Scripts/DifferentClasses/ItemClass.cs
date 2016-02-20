@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Класс, ранее исользовавшийся для подбираемых предметов... 
-/// Какие игровые объекты получит персонаж, если он подберёт его.
+/// Класс, представляющий собой игровой предмет, который можно засунуть в инвентарь.
 /// </summary>
-public class ItemClass : MonoBehaviour 
+[System.Serializable]
+public class ItemClass
 {
 	public string name;
 	public string type;
-	public List<GameObject> objects;
+    public int quantity;//Количество предметов
+    public Sprite image;//Иконка предмета  
 }
