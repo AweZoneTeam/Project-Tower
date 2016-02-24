@@ -23,7 +23,7 @@ class ProjectTowerWindow : Editor
         rAnimScreen.minSize = new Vector2(300f, 750f);
         lAnimScreen.maxSize = new Vector2(300f, 750f);
         lAnimScreen.minSize = new Vector2(300f, 750f);
-        lAnimScreen.Initialize(rAnimScreen, animData, null, true);
+        lAnimScreen.Initialize(rAnimScreen, animScreen, animData, null, true);
         rAnimScreen.Initialize(animData, lAnimScreen, animData.animBase.usedCharacters, null);
         animScreen.focusObject = animData.gameObject;
     }
@@ -41,6 +41,18 @@ class ProjectTowerWindow : Editor
         auxScreen.minSize = new Vector2(300f, 750f);
         //auxScreen.Initialize();
         //animScreen.focusObject = animData.gameObject;
+    }
+
+    [MenuItem("Project Tower/Item Creator/Create Item")]
+    public static void CreateItem()
+    {
+        ItemCreateWindow itemWindow = (ItemCreateWindow)EditorWindow.GetWindow(typeof(ItemCreateWindow));
+    }
+
+    [MenuItem("Project Tower/Item Creator/Create Weapon")]
+    public static void CreateWeapon()
+    {
+        WeaponCreateWindow weaponWindow = (WeaponCreateWindow)EditorWindow.GetWindow(typeof(WeaponCreateWindow));
     }
 
     void OnGUI()

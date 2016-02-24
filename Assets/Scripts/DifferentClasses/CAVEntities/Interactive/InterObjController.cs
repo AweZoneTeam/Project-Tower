@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
 /// <summary>
 /// Контроллер простейших интерактивных объектов. Они могут стоять на месте и принимать сигналы взаимодействия. 
@@ -13,21 +14,9 @@ public class InterObjController : MonoBehaviour
     //protected InterObjVisual anim;
     #endregion //fields
 
-    public bool k = false;
-
     public virtual void Awake()
     {
         Initialize();
-    }
-
-    [ExecuteInEditMode]
-    public void Update()
-    {
-        if (k)
-        {
-            What();
-            k = false;
-        }
     }
 
     public void What()
@@ -55,4 +44,31 @@ public class InterObjController : MonoBehaviour
             actions.Interact();
     }
 
+    public virtual Prestats GetStats()
+    {
+        if (stats == null)
+        {
+            stats = new Prestats();
+        }
+        return stats;
+    }
+
+}
+
+/// <summary>
+/// Редактор контроллеров интерактивных объектов
+/// </summary>
+[CustomEditor(typeof(InterObjController))]
+public class InterObjEditor : Editor
+{
+    private Prestats stats;
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        InterObjController obj = (InterObjController)target;
+        stats = obj.GetStats();
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Parametres");
+        EditorGUILayout.IntField("direction", stats.direction);
+    }
 }

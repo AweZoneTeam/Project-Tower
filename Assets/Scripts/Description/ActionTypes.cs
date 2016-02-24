@@ -215,7 +215,7 @@ public static class ActionTypes
 	/// (описывает длительность 3-ёх стадий: подготовку, удар и восстановление)
 	/// По сути - здесь совершается удар
 	/// </summary>
-	public static void WeaponHit(HitController hitControl, 
+	/*public static void WeaponHit(HitController hitControl, 
 	                      float pDamage,float fDamage,float dDamage,float aDamage,
 	                      int attack,
 	                      bool backStab,
@@ -235,7 +235,7 @@ public static class ActionTypes
 		else if (hitControl.actTime >beginTime)
 			hitControl.GetComponent<BoxCollider2D> ().enabled = false;
 		hitControl.direction = direction;
-	}
+	}*/
 
 /*		
 	//тип 2 номер 3
@@ -287,7 +287,7 @@ public static class ActionTypes
 	/// Производит выстрел, посредством создания предмета, которому задаются скорость, 
 	/// местоположение, а также параметры хитбокса
 	/// </summary>
-	public static void Shoot(float pDamage,float fDamage,float dDamage,float aDamage,
+	/*public static void Shoot(float pDamage,float fDamage,float dDamage,float aDamage,
 	                  int attack,
 	                  bool backStab,
 	                  float backStabKoof, int actTime, int direction,
@@ -307,7 +307,7 @@ public static class ActionTypes
 		hitControl.actTime= actTime;
 		hitControl.GetComponent<BoxCollider2D> ().enabled = true;
 		hitControl.direction = direction;
-	}
+	}*/
 
 	//тип 4 номер 0
 	/// <summary>

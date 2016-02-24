@@ -10,6 +10,11 @@ using System.Collections;
 public class Prestats
 {
 	public int direction;
+
+    public Prestats()
+    {
+        direction = 1;
+    }
 }
 
 /// <summary>
@@ -18,11 +23,38 @@ public class Prestats
 [System.Serializable]
 public class Organism: Prestats 
 {
+
+    #region timers
+    public float stunTimer;
+    #endregion //timers 
+
     public float health;//Здоровье
     public float maxHealth;//Максимальное кол-во здоровья, которое может быть у персонажа
     public int pDefence, fDefence, dDefence, aDefence;//Постоянная надбавка к защите от физ, огн, тен и яд урона
     public int addPDefence, addFDefence, addDDefence, addADefence;//Временная надбавка к защите от тех же видов урона
 	public int stability;//Устойчивость, способность персонажа не сбиваться от атак
+    public int hitted;//Насколько "сбит" персонаж с ног влетевшей атакой. 
+                      //0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
+    public float microStun, macroStun;//Как долго персонаж бездействует при hitted=1 и hitted>1 соотвественно
+
+    public Organism()
+    {
+        maxHealth = 100f;
+        health = 100f;
+        stability = 1;
+    }
+
+    public IEnumerator Stunned(float time)//Процесс стана
+    {
+        float _time = time;
+        while (stunTimer > 0f)
+        {
+            yield return new WaitForSeconds(_time);
+            stunTimer -= _time;
+            _time = stunTimer;
+        }
+        hitted = 0;
+    }
 
 }
 
@@ -41,6 +73,11 @@ public class Stats : Organism
     public int interaction;//Взаимодействует ли персонаж с чем-либо в данный момент
     public int maxInteraction;//Какой максимальный номер приоритетности среди объектов, 
                               //с которыми персонаж может взаимодействовать
-    public int hitted;//Насколько "сбит" персонаж с ног влетевшей атакой. 
-                         //0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
+
+    public Stats()
+    {
+        maxHealth = 100f;
+        health = 100f;
+        stability = 1;
+    }
 }

@@ -10,18 +10,11 @@ public class LeverVisual : InterObjVisual
     #endregion //consts
 
     #region fields
-    private InterObjAnimator cAnim;
     #endregion //fields
-
-
-    public override void Initialize()
-    {
-        cAnim = GetComponent<InterObjAnimator>();
-    }
 
     public override void Awake()
     {
-        Initialize();
+        base.Awake();
     }
 
     #region AnimatedActions

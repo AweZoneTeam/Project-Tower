@@ -39,11 +39,11 @@ public class InterfaceExchangeWindow : InterfaceWindow
     {
         for (int i = 0; i < leftBag.bag.Count; i++)
         {
-            leftBagObj[i].GetComponent<Image>().sprite = leftBag.bag[i].image;
+            leftBagObj[i].GetComponent<Image>().sprite = leftBag.bag[i].item.image;
         }
         for (int i = 0; i < rightBag.bag.Count; i++)
         {
-            rightBagObj[i].GetComponent<Image>().sprite = rightBag.bag[i].image;
+            rightBagObj[i].GetComponent<Image>().sprite = rightBag.bag[i].item.image;
         }
     }
 

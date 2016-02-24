@@ -38,7 +38,7 @@ public class AddSomethingWindow : EditorWindow {
 					if (j)
 					{
 						animBase.usedCharacters.Add (animBase.allCharacters[i]);
-							rightAnim.SaveAndCreate(animBase.allCharacters[i], "", animEditor.FindData(animBase.allCharacters[i]+".asset"));
+							rightAnim.SaveAndCreate(animBase.allCharacters[i], "", animEditor.FindData(animBase.allCharacters[i]+".asset"),"");
 					}
 					this.Close();
 				}

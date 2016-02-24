@@ -85,11 +85,11 @@ public class SpecialLockScript: LockScript
     /// </summary>
     public override bool TryToOpen(EquipmentClass equip)
     {
-        List<ItemClass> items = equip.GetItems();
+        List<ItemBunch> items = equip.GetItems();
         bool k = false;
         for (int i = 0; i < items.Count; i++)
         {
-            if (string.Equals(keyID, items[i].name))
+            if (string.Equals(keyID, items[i].item.name))
             {
                 k = true;
             }

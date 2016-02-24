@@ -43,7 +43,7 @@ public class InterObjActions : MonoBehaviour
     { }
 
     /// <summary>
-    /// Установить, кто ызаимодействуетс интерактивным объектом в данный момент
+    /// Установить, кто взаимодействуетс интерактивным объектом в данный момент
     /// </summary>
     public virtual void SetInteractor(InterObjController _interactor)
     {}

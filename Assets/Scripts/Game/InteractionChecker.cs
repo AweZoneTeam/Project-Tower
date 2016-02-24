@@ -6,7 +6,7 @@ public class InteractionChecker : MonoBehaviour {
 
     public List<InterObjController> interactions;
 
-
+    public List<DropClass> dropList=new List<DropClass>();
 
     public void OnTriggerEnter(Collider other)
     {
@@ -25,6 +25,30 @@ public class InteractionChecker : MonoBehaviour {
             if (k)
             {
                 interactions.Add(interaction);
+            }
+        }
+        else if (string.Equals(other.gameObject.tag, Tags.drop))
+        {
+            DropClass drop = other.gameObject.GetComponent<DropClass>();
+            bool k = true;
+            for (int i = 0; i < dropList.Count; i++)
+            {
+                if (dropList[i] == drop)
+                {
+                    k = false;
+                    break;
+                }
+            }
+            if (k)
+            {
+                if (drop.autoPick)
+                {
+                    dropList.Insert(0, drop);
+                }
+                else
+                {
+                    dropList.Add(drop);
+                }
             }
         }
     }
@@ -46,6 +70,23 @@ public class InteractionChecker : MonoBehaviour {
             if (k)
             {
                 interactions.Remove(interaction);
+            }
+        }
+        else if (string.Equals(other.gameObject.tag, Tags.drop))
+        {
+            DropClass drop = other.gameObject.GetComponent<DropClass>();
+            bool k = false;
+            for (int i = 0; i < dropList.Count; i++)
+            {
+                if (dropList[i] == drop)
+                {
+                    k = true;
+                    break;
+                }
+            }
+            if (k)
+            {
+                dropList.Remove(drop);
             }
         }
     }

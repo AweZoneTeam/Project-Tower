@@ -23,6 +23,10 @@ public class HumanoidActorActions : PersonActions
     #region fields
     private CharacterVisual cAnim;//Визуальная часть персонажа
     private Stats stats;//Параметры персонажа
+
+    private WeaponClass rightWeapon;//Какое оружие персонаж носит в правой руке
+    private HitController rightHitBox;//Хитбокс оружия в правой руке
+    private HitClass hitData=null;//Какими параметрами атаки персонаж пользуется в данный момент
     #endregion //fields
 
     public void OnCollisionEnter2D(Collision2D col) {
@@ -80,6 +84,8 @@ public class HumanoidActorActions : PersonActions
     {
         cAnim = transform.FindChild("Body").gameObject.GetComponent<CharacterVisual>();
         RigBody = GetComponent<Rigidbody>();
+        rightHitBox = GetComponentInChildren<HitController>();
+        hitData = null;
     }
 
 	public override void Turn(OrientationEnum Direction) {
@@ -109,20 +115,73 @@ public class HumanoidActorActions : PersonActions
 		}
 	}
 
+    /// <summary>
+    /// Функция прохода через двери
+    /// </summary>
     public virtual void GoThroughTheDoor(DoorClass door)
     { 
         transform.position = door.nextPosition;
         SpFunctions.ChangeRoomData(door.roomPath); 
         GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
-    } 
+    }
+
+    /// <summary>
+    /// Учёт ситуации и произведение нужной в данный момент атаки
+    /// </summary>
+    public virtual void Attack()
+    {
+        if ((hitData == null)&&(rightWeapon!=null))
+        {
+            if (stats.groundness == (int)groundness.grounded)
+            {
+                Debug.Log("Kek");
+                hitData = rightWeapon.groundHit;
+                if (cAnim != null)
+                {
+                    cAnim.Attack("Hit", hitData.hitTime);
+                }
+                StartCoroutine(AttackProcess()); 
+            }
+            else if (stats.groundness == (int)groundness.inAir)
+            {
+                hitData = rightWeapon.airHit;
+                if (cAnim != null)
+                {
+                    cAnim.Attack("Hit", hitData.hitTime);
+                }
+                StartCoroutine(AttackProcess());
+            }
+        }
+    }
+
+    IEnumerator AttackProcess()//Процесс атаки
+    {
+        if (rightHitBox != null)
+        {
+            GameObject hitBox = rightHitBox.gameObject;
+            hitBox.transform.localPosition = hitData.hitPosition;
+            hitBox.GetComponent<BoxCollider>().size = hitData.hitSize;
+            yield return new WaitForSeconds(hitData.hitTime-hitData.beginTime);
+            rightHitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
+            yield return new WaitForSeconds(hitData.beginTime);
+            hitData = null;
+        }
+    }
 
     /// <summary>
     /// Задать поле статов
     /// </summary>
-    /// <param name="задаваемые параметры"></param>
     public void SetStats(Stats _stats)
     {
         stats = _stats;
+    }
+
+    /// <summary>
+    /// Установить в правой руке нужное оружие
+    /// </summary>
+    public void SetWeapon(WeaponClass _weapon)
+    {
+        rightWeapon = _weapon;
     }
 }
 

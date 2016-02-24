@@ -57,7 +57,7 @@ public class ChestActions : InterObjActions, ILeverActivated
         {
             GameObject controller = GameObject.FindGameObjectWithTag(Tags.gameController);
             BagClass rightBag = chestContent;
-            if (interactor is KeyboardActorController)
+            if (interactor is PersonController)
             {
                 PersonController bInteractor = (PersonController)interactor;
                 BagClass leftBag = bInteractor.GetEquipment();
@@ -67,9 +67,9 @@ public class ChestActions : InterObjActions, ILeverActivated
         else
         {
             EquipmentClass equip;
-            if (interactor is KeyboardActorController)
+            if (interactor is PersonController)
             {
-                KeyboardActorController keyControl = (KeyboardActorController)interactor;
+                PersonController keyControl = (PersonController)interactor;
                 equip = keyControl.GetEquipment();
                 if (chestLock is SpecialLockScript)
                 {

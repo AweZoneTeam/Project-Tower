@@ -7,7 +7,7 @@ public class AnimatorScreen : SceneView
 	public GameObject focusObject;
 
 	[ExecuteInEditMode]
-	void Update()
+	public void FocusToPoint()
 	{
 		if (focusObject!=null)
 			AlignViewToObject (focusObject.transform);

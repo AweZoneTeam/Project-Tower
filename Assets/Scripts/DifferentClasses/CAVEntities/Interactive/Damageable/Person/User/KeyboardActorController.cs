@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
+using System.Collections.Generic;
 
 public class KeyboardActorController : PersonController
 {
@@ -12,7 +14,6 @@ public class KeyboardActorController : PersonController
 
     #region fields
     private Stats stats;//Параметры персонажа
-    private EquipmentClass equip;//Экипировка персонажа
     private HumanoidActorActions actions;
 
     private Transform groundCheck; //Индикатор, оценивающий расстояние до земли
@@ -22,7 +23,6 @@ public class KeyboardActorController : PersonController
     #region variables
 
     public LayerMask whatIsGround;
-    public bool direction;
 
     #endregion //variables
 
@@ -49,6 +49,7 @@ public class KeyboardActorController : PersonController
         if (actions != null)
         {
             actions.SetStats(stats);
+            actions.SetWeapon(equip.rightWeapon);
         }
         transform.GetComponentInChildren<CharacterVisual>().SetStats(stats);
         transform.GetComponentInChildren<CharacterAnimator>().SetStats(stats);
@@ -84,12 +85,24 @@ public class KeyboardActorController : PersonController
                 actions.Jump();
             }
         }
+
+        if (interactions.dropList.Count > 0)
+        {
+            if (interactions.dropList[0].autoPick)
+            {
+                TakeDrop();
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             Interact(this);
         }
 
-        direction = Input.GetKey(KeyCode.W);
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            actions.Attack();
+        }
 
         AnalyzeSituation();
 	}
@@ -106,6 +119,10 @@ public class KeyboardActorController : PersonController
             if (interactions.interactions.Count > 0)
             {
                 interactions.interactions[0].Interact(this);
+            }
+            else if (interactions.dropList.Count > 0)
+            {
+                TakeDrop();
             }
             else
             {
@@ -143,6 +160,18 @@ public class KeyboardActorController : PersonController
         }
     }
 
+    void TakeDrop()
+    {
+        DropClass drop = interactions.dropList[0];
+        List<ItemBunch> items = drop.drop;
+        for (int i = 0; i < items.Count; i++)
+        {
+            equip.bag.Add(items[i]);
+        }
+        interactions.dropList.RemoveAt(0);
+        Destroy(drop.gameObject);
+    }
+
     #endregion //Interact
 
     #region Analyze
@@ -178,4 +207,25 @@ public class KeyboardActorController : PersonController
 
 
 }
+
+/// <summary>
+/// Редактор клавиатурного контроллера
+/// </summary>
+[CustomEditor(typeof(KeyboardActorController))]
+public class KeyboardActorEditor : Editor
+{
+    private Stats stats;
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        KeyboardActorController obj = (KeyboardActorController)target;
+        stats = (Stats)obj.GetStats();
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Parametres");
+        EditorGUILayout.IntField("direction", stats.direction);
+        stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
+        EditorGUILayout.FloatField("Health", stats.health);
+    }
+}
+
 

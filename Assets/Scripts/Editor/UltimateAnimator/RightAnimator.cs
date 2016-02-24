@@ -25,14 +25,26 @@ public class RightAnimator : EditorWindow
 	private Vector2 scrollPosition1=Vector2.zero;
 	private Vector2 scrollPosition2=Vector2.zero;
 
-	//Инициализация
-	public void Initialize(AnimationEditorData aed, LeftAnimator la,List<string> ac, GameObject c)
+    //Данные, что используются для создания шаблонных аниматоров. В данном окне использование шаблона подразумевает собой использование шаблонного аниматора и используемых им анимаций.
+    private string stencilPath = "Assets/Animations/Stencils/";//В этом пути находятся шаблоны, уже созданные объекты, используемые для быстрого старта создания нового аниматора.
+    public List<string> stencils=new List<string>();
+    public string chosenStencil = "";
+    private int stencilIndex = 0;
+
+    //Инициализация
+    public void Initialize(AnimationEditorData aed, LeftAnimator la,List<string> ac, GameObject c)
 	{
 		animScene = aed;
 		leftAnim = la;
 		aCharacters = ac;
 		character = c;
-	}
+        stencils.Clear();
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(stencilPath);
+        for (int i = 0; i < assets.Length; i++)
+        {
+            stencils.Add(assets[i].name);
+        }
+    }
 
 	void OnGUI () 
 	{
@@ -73,6 +85,22 @@ public class RightAnimator : EditorWindow
 			{
 				AddPart ();
 			}
+
+            if (stencils.Count > 1)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField("Stencil");
+                    stencilIndex = EditorGUILayout.Popup(stencilIndex, stencils.ToArray());
+                    chosenStencil = stencils[stencilIndex];
+                }
+                if (GUILayout.Button("Use Stencil"))
+                {
+                    InterObjAnimator sAnim = AssetDatabase.LoadAssetAtPath(stencilPath + chosenStencil, typeof(InterObjAnimator)) as InterObjAnimator;
+                    UseStencil(sAnim);
+                }
+            }
 		}
 		GUILayout.EndArea();
 		GUILayout.Space (10);
@@ -127,7 +155,7 @@ public class RightAnimator : EditorWindow
 			for (int i = 0; i < aCharacters.Count; i++) {
 				if (GUILayout.Button (aCharacters [i])) {
 					if (!string.Equals (aCharacters [i], leftAnim.characterName)) {
-						SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"));
+						SaveAndCreate (aCharacters [i], "", animScene.FindData (aCharacters [i] + ".asset"),"");
 					}
 				}
 			}
@@ -153,18 +181,34 @@ public class RightAnimator : EditorWindow
 		animScreen.minSize=new Vector2(400f,400f);
 	}
 
-	//Этим методом мы сохраняем все сделанные изменения в нашем персонаже и начинаем работать с новым персонажем
-	public void SaveAndCreate(string characterName, string path, VisualData characterData)
+    /// <summary>
+    /// Сохранить произведённые над персонажем изменения и, если указано, создать нового
+    /// </summary>
+    /// <param name="Имя персонажа"></param>
+    /// <param name="Путь, по которому сохраняем персонажа"></param>
+    /// <param name="Визуальные данные персонажа, с которым мы работаем"></param>
+    /// <param name="Путь, ведущий к шаблону"></param>
+	public void SaveAndCreate(string characterName, string path, VisualData characterData, string stencilName)
 	{
-		if (leftAnim.saved)
-			leftAnim.CreateNewInstance (characterName, path, characterData);
-		else 
-		{
-			SaveWindow saveScreen = (SaveWindow)EditorWindow.GetWindow (typeof(SaveWindow));
-			saveScreen.leftAnim = leftAnim;
-			saveScreen.characterName = characterName;
-			saveScreen.characterData = characterData;
-		}
+        if (leftAnim.saved)
+        {
+            if (string.Equals(stencilName, ""))
+            {
+                leftAnim.CreateNewInstance(characterName, path, characterData);
+            }
+            else
+            {
+                InterObjAnimator sAnim = AssetDatabase.LoadAssetAtPath(stencilPath+stencilName, typeof(InterObjAnimator)) as InterObjAnimator;
+                leftAnim.CreateNewInstance(characterName, path, characterData, sAnim);
+            }
+        }
+        else
+        {
+            SaveWindow saveScreen = (SaveWindow)EditorWindow.GetWindow(typeof(SaveWindow));
+            saveScreen.leftAnim = leftAnim;
+            saveScreen.characterName = characterName;
+            saveScreen.characterData = characterData;
+        }
 	}
 
 	public void AddPart()//Открыть окно добавления новой части персонажу
@@ -173,6 +217,29 @@ public class RightAnimator : EditorWindow
 		animScreen.Initialize(this,leftAnim,character,"Assets/Animations/");
 	}
 
+    void UseStencil(InterObjAnimator stencil)
+    {
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
+        cAnim.animTypes.Clear();
+        for (int i = 0; i < stencil.animTypes.Count; i++)
+        {
+            cAnim.animTypes.Add(new animList(stencil.animTypes[i].typeName));
+            for (int j = 0; j < stencil.animTypes[i].animations.Count; j++)
+            {
+                cAnim.animTypes[i].animations.Add(stencil.animTypes[i].animations[j]);
+            }
+        }
+        cAnim.animBase.Clear();
+        for (int i = 0; i < stencil.animBase.Count; i++)
+        {
+            cAnim.animBase.Add(new NamedAnimClass(stencil.animBase[i]));
+        }
+        for (int i = 0; i < cAnim.parts.Count; i++)
+        {
+            cAnim.parts[i].interp.animTypes.Clear();
+            cAnim.parts[i].interp.setInterp(cAnim.animTypes);
+        }
+    }
 
 	public void AddAnimation()//Открыть окно добавления анимации
 	{

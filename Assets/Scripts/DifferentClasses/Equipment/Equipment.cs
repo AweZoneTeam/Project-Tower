@@ -8,14 +8,14 @@ using System.Collections.Generic;
 [System.Serializable]
 public class BagClass
 {
-    public List<ItemClass> bag;
+    public List<ItemBunch> bag;
 
     public BagClass()
     {
-        bag = new List<ItemClass>();
+        bag = new List<ItemBunch>();
     }
 
-    public List<ItemClass> GetItems()
+    public List<ItemBunch> GetItems()
     {
         return bag;
     }
@@ -28,6 +28,8 @@ public class BagClass
 public class EquipmentClass: BagClass
 {
     public int[] keys={0,0,0};// Сколько ключей каждого типа есть у персонажа?
+
+    public WeaponClass rightWeapon;
 
     public int GetKeysNumber(int index)
     {

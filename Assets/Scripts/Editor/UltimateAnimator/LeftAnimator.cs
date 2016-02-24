@@ -24,7 +24,7 @@ public class LeftAnimator : EditorWindow
     public int numb = 0, type = 0;//Идентификационные номера анимации
     public int currentFrame;//С каким кадром анимации мы сейчас работаем
     public int mainFrame=0, prevMainFrame=0;//Какой кадр анимации должны иметь все остальные части тела
-	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёт false, когда научишься отлеживать эти изменения
+	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёт false, когда научишься отслеживать эти изменения
 	public GameObject character;//Какой персонаж сейчас интересует левый редактор
 	public PartController characterPart;//Какая часть тела в центре внимация всего редактора анимаций
     public PartController parentPart;//Какая часть тела является родительской по отношению к characterPart
@@ -33,6 +33,7 @@ public class LeftAnimator : EditorWindow
 
 	[HideInInspector]
 	public RightAnimator rightAnim;
+    public AnimatorScreen animatorScreen;
 	public AnimationEditorData animEditor;
 
 	//Строки, которые обозначают, с чем мы сейчас работаем
@@ -41,16 +42,20 @@ public class LeftAnimator : EditorWindow
 	public string animationName="Animation";
     public string currentSequence = "Default";
 	public string savePath;//Путь, по которому будет сохраняться созданный персонаж 
+
+    private string stencilPath = "Assets/Animations/Stencils/";//В этом пути находятся шаблоны, уже созданные объекты, используемые для быстрого старта создания нового аниматора
+    
     #endregion //fields
 
     //Инициализация
-    public void Initialize(RightAnimator ra, AnimationEditorData aed, GameObject c, bool s)
+    public void Initialize(RightAnimator ra, AnimatorScreen ans, AnimationEditorData aed, GameObject c, bool s)
 	{
 		rightAnim = ra;
 		animEditor = aed;
 		character = c;
         characterPart = null;
         characterAnimation = null;
+        animatorScreen = ans;
 		saved = s;
 	}
 
@@ -59,16 +64,29 @@ public class LeftAnimator : EditorWindow
 	{
 		EditorGUILayout.BeginVertical ();
         {
+            if (GUILayout.Button("Focus"))
+            {
+                animatorScreen.FocusToPoint();
+            }
+            EditorGUILayout.Space();
             if (GUILayout.Button("Create New Character"))
                 CreateNew();
             if (GUILayout.Button("Save Changes"))
                 SaveChanges();
+            if (GUILayout.Button("Make a Stencil"))
+            {
+                if (character!=null)
+                {
+                    MakeStencil();
+                }
+            }
             EditorGUILayout.Space();
             EditorGUILayout.TextField(characterName);
             EditorGUILayout.TextField(partName);
             EditorGUILayout.TextField(animationName);
             EditorGUILayout.Space();
-            if (characterPart != null) {
+            if (characterPart != null)
+            {
                  PartParamWindow();
             }
 			EditorGUILayout.Space();
@@ -364,11 +382,14 @@ public class LeftAnimator : EditorWindow
 	void CreateNew()
 	{
 		CreateNewAnimWindow animScreen=(CreateNewAnimWindow)EditorWindow.GetWindow(typeof(CreateNewAnimWindow));
+        animScreen.Initialize();
 		animScreen.rightAnim = rightAnim;
 		animScreen.leftAnim = this;
 	}
 
-	//Создаём на сцене редактора экземпляр того персонажа, которого зададим
+	/// <summary>
+    /// Создать новый объект или загрузить из базы данных старый, для дальнейшей работы
+    /// </summary>
 	public void CreateNewInstance(string _name, string path, VisualData asset)
 	{
 		rightAnim.parts.Clear();
@@ -412,6 +433,64 @@ public class LeftAnimator : EditorWindow
 		rightAnim.character = character;
 		//saved = false;
 	}
+
+    /// <summary>
+    /// Создать новый объект или загрузить из базы данных старый, для дальнейшей работы
+    /// </summary>
+    public void CreateNewInstance(string _name, string path, VisualData asset,InterObjAnimator stencil)
+    {
+        rightAnim.parts.Clear();
+        rightAnim.animTypes.Clear();
+        if (!string.Equals(characterName, "Name"))
+        {
+            DestroyImmediate(GameObject.Find(characterName));
+        }
+        character = null;
+        characterPart = null;
+        characterAnimation = null;
+        partName = "Part";
+        animationName = "Animation";
+        characterName = _name;
+        character = PrefabUtility.InstantiatePrefab(stencil.visualData.visual) as GameObject;
+        character.name = _name;
+        character.transform.position = animEditor.gameObject.transform.position;
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
+        PartController cPart;
+        for (int i = 0; i < cAnim.parts.Count; i++)
+        {
+            cPart = cAnim.parts[i];
+            cPart.interp = new AnimationInterpretator(" ");
+            cPart.interp.setInterp(cAnim.visualData.animInterpretators[i]);
+            AnimationInterpretator interp = ScriptableObject.CreateInstance<AnimationInterpretator>();
+            interp.setInterp(cPart.interp);
+            interp.partPath = path+"Parts";
+            AssetDatabase.CreateAsset(asset, path + cPart.gameObject.name + ".asset");
+            cPart.path = path + cPart.gameObject.name + ".asset";
+            GameObject asset1 = cPart.gameObject;
+            asset1 = PrefabUtility.CreatePrefab(path + name + ".prefab", asset1);
+            AssetDatabase.SaveAssets();
+        }
+        cAnim.animTypes.Clear();
+        for (int i = 0; i < stencil.animTypes.Count;i++)
+        {
+            cAnim.animTypes.Add(new animList(stencil.animTypes[i].typeName));
+            for (int j = 0; j < stencil.animTypes[i].animations.Count;j++)
+            {
+                cAnim.animTypes[i].animations.Add(stencil.animTypes[i].animations[j]);
+            }
+        }
+        cAnim.animBase.Clear();
+        for (int i = 0; i < stencil.animBase.Count; i++)
+        {
+            cAnim.animBase.Add(new NamedAnimClass(stencil.animBase[i]));
+        }
+        cAnim.visualData = asset;
+        asset.visual = PrefabUtility.CreatePrefab(path +"Visuals/"+ _name + ".prefab", character);
+        SaveChanges();
+        rightAnim.animTypes = cAnim.animTypes;
+        rightAnim.character = character;
+        //saved = false;
+    }
 
     /// <summary>
     ///Сохранить изменения, проделанные в ходе работы над персонажем
@@ -458,6 +537,13 @@ public class LeftAnimator : EditorWindow
         EditorUtility.SetDirty(vis);
 		saved = true;
 	}
+
+    void MakeStencil()
+    {
+        SaveChanges();
+        PrefabUtility.CreatePrefab(stencilPath + character.name + ".prefab", character);
+
+    }
 
     /// <summary>
     /// Функция, которая ставит в данном интерпретаторе в данном кадре на проигрывание данный звук

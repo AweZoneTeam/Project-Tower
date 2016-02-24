@@ -194,6 +194,12 @@ public class animList
     public string typeName;
     public List<string> animations = new List<string>();
 
+    public animList(string name)
+    {
+        animations = new List<string>();
+        typeName = name;
+    }
+
     public animList(string name, string animName)
     {
         animations = new List<string>();
@@ -213,6 +219,13 @@ public class NamedAnimClass : AnimClass
         animName = _name;
         type = _type;
         numb = _numb;
+    }
+
+    public NamedAnimClass(NamedAnimClass origin)
+    {
+        animName = origin.animName;
+        type = origin.type;
+        numb = origin.numb;
     }
 }
 #endregion //AuxillaryClasses

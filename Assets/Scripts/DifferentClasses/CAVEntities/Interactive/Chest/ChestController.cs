@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
 public class ChestController : InterObjController
 {
 
     #region fields
-    public BagClass chestContent;
-    [SerializeField]private Prestats stats;
-    [SerializeField]private ChestActions actions;
+    [SerializeField]private BagClass chestContent;
+    private Prestats stats;
+    private ChestActions actions;
     #endregion //fields
 
     public override void Initialize()
@@ -27,5 +28,23 @@ public class ChestController : InterObjController
             actions.SetInteractor(interactor);
             actions.Interact();
         }
+    }
+}
+
+/// <summary>
+/// Редактор сундуков и их содержимого
+/// </summary>
+[CustomEditor(typeof(ChestController))]
+public class ChestEditor : InterObjEditor
+{
+    private Prestats stats;
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        ChestController obj = (ChestController)target;
+        stats = obj.GetStats();
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Parametres");
+        EditorGUILayout.IntField("direction", stats.direction);
     }
 }

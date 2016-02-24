@@ -26,8 +26,11 @@ public class CharacterVisual : PersonVisual
 
     #endregion //timers
 
+    #region parametres
+    private bool attack=false;
+    #endregion //parametres
+
     #region fields
-    private CharacterAnimator cAnim;
     private Stats stats;
     private Rigidbody rigid;
     #endregion //fields
@@ -41,7 +44,7 @@ public class CharacterVisual : PersonVisual
 
     public override void Awake()
     {
-        Initialize();
+        base.Awake();
     }
 
     #region AnimatedActions
@@ -50,7 +53,7 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public void GroundStand()
     {
-        if (cAnim != null)
+        if ((cAnim != null)&&(!attack))
         {
             beginRunTimer = -1f;
             if (Mathf.Abs(rigid.velocity.x) > dragSpeed)
@@ -85,7 +88,7 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public void GroundMove()
     {
-        if (cAnim != null)
+        if ((cAnim != null)&&(!attack))
         {
             stopDragTimer = -1f;
             if (!cAnim.CompareAnimation("Run"))
@@ -113,7 +116,7 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public void AirMove()
     {
-        if (cAnim != null)
+        if ((cAnim != null)&&(!attack))
         {
             if (stats.groundness == (int)groundness.preGround) { cAnim.Animate("Fallen"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.fastDown) { cAnim.Animate("FallEnd"); }
@@ -126,6 +129,23 @@ public class CharacterVisual : PersonVisual
             beginRunTimer = -1f;
         }
     }
+
+    public void Attack(string attackName, float time)
+    {
+        if (cAnim != null)
+        {
+            cAnim.Animate(attackName);
+            StartCoroutine(AttackProcess(time));
+        }
+    }
+
+    IEnumerator AttackProcess(float time)//Процесс атаки
+    {
+        attack = true;
+        yield return new WaitForSeconds(time);
+        attack = false; 
+    }
+
     #endregion //AnimatedActions
 
     public void SetStats(Stats _stats)
