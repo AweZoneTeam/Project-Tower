@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 
 //Часть аниматора ProjectTower, расположенная справа
@@ -39,10 +40,14 @@ public class RightAnimator : EditorWindow
 		aCharacters = ac;
 		character = c;
         stencils.Clear();
-        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(stencilPath);
-        for (int i = 0; i < assets.Length; i++)
+        DirectoryInfo dInfo = new DirectoryInfo(stencilPath);
+        FileInfo[] fList = dInfo.GetFiles();
+        for (int i = 0; i < fList.Length; i++)
         {
-            stencils.Add(assets[i].name);
+            if (!fList[i].Name.EndsWith("meta"))
+            {
+                stencils.Add(fList[i].Name);
+            }
         }
     }
 
@@ -79,14 +84,14 @@ public class RightAnimator : EditorWindow
 			GUI.EndScrollView();	
 		}
 		GUILayout.EndVertical();
-		GUILayout.BeginArea(new Rect(0f,260f,300f,15f));
+		GUILayout.BeginArea(new Rect(0f,260f,300f,60f));
 		{
 			if(GUILayout.Button("+Add"))
 			{
 				AddPart ();
 			}
 
-            if (stencils.Count > 1)
+            if (stencils.Count > 0)
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginHorizontal();
@@ -97,7 +102,8 @@ public class RightAnimator : EditorWindow
                 }
                 if (GUILayout.Button("Use Stencil"))
                 {
-                    InterObjAnimator sAnim = AssetDatabase.LoadAssetAtPath(stencilPath + chosenStencil, typeof(InterObjAnimator)) as InterObjAnimator;
+                    VisualData stencilVis= AssetDatabase.LoadAssetAtPath(stencilPath + chosenStencil, typeof(VisualData)) as VisualData;
+                    InterObjAnimator sAnim = stencilVis.visual.GetComponent<InterObjAnimator>();
                     UseStencil(sAnim);
                 }
             }
@@ -116,7 +122,7 @@ public class RightAnimator : EditorWindow
 		{
 			GUILayout.Space (5);
 			animTypes = character.GetComponent<InterObjAnimator> ().animTypes;
-			scrollPosition2=GUI.BeginScrollView(new Rect(0f,280f,300f,100f),scrollPosition2,new Rect(0,10,300,800));
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,340f,300f,100f),scrollPosition2,new Rect(0f,50f,300f,800f));
 			{
 				for (int i = 0; i < animTypes.Count; i++) {
 					GUILayout.TextField (animTypes [i].typeName);
@@ -136,7 +142,7 @@ public class RightAnimator : EditorWindow
 		}
 		GUILayout.EndVertical();
 		GUILayout.Space (5);
-		GUILayout.BeginArea (new Rect(0f,400f,300f,15f));
+		GUILayout.BeginArea (new Rect(0f,450f,300f,20f));
 		{
 			if (GUILayout.Button ("+Add")) {
 				AddAnimation ();
@@ -197,9 +203,9 @@ public class RightAnimator : EditorWindow
                 leftAnim.CreateNewInstance(characterName, path, characterData);
             }
             else
-            {
-                InterObjAnimator sAnim = AssetDatabase.LoadAssetAtPath(stencilPath+stencilName, typeof(InterObjAnimator)) as InterObjAnimator;
-                leftAnim.CreateNewInstance(characterName, path, characterData, sAnim);
+            {      
+                VisualData stencilVis = AssetDatabase.LoadAssetAtPath(stencilName, typeof(VisualData)) as VisualData;
+                leftAnim.CreateNewInstance(characterName, path, characterData, stencilVis);
             }
         }
         else

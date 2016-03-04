@@ -55,6 +55,12 @@ class ProjectTowerWindow : Editor
         WeaponCreateWindow weaponWindow = (WeaponCreateWindow)EditorWindow.GetWindow(typeof(WeaponCreateWindow));
     }
 
+    [MenuItem("Project Tower/AI/Create Behaviour")]
+    public static void CreateBehaviour()
+    {
+        BehaviourCreateWindow behaviourWindow = (BehaviourCreateWindow)EditorWindow.GetWindow(typeof(BehaviourCreateWindow));
+    }
+
     void OnGUI()
     {
 

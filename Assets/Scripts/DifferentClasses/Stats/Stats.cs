@@ -9,11 +9,11 @@ using System.Collections;
 [System.Serializable]
 public class Prestats
 {
-	public int direction;
+	public orientationEnum direction;
 
     public Prestats()
     {
-        direction = 1;
+        direction = orientationEnum.right;
     }
 }
 
@@ -33,7 +33,7 @@ public class Organism: Prestats
     public int pDefence, fDefence, dDefence, aDefence;//Постоянная надбавка к защите от физ, огн, тен и яд урона
     public int addPDefence, addFDefence, addDDefence, addADefence;//Временная надбавка к защите от тех же видов урона
 	public int stability;//Устойчивость, способность персонажа не сбиваться от атак
-    public int hitted;//Насколько "сбит" персонаж с ног влетевшей атакой. 
+    public hittedEnum hitted;//Насколько "сбит" персонаж с ног влетевшей атакой. 
                       //0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
     public float microStun, macroStun;//Как долго персонаж бездействует при hitted=1 и hitted>1 соотвественно
 
@@ -53,7 +53,7 @@ public class Organism: Prestats
             stunTimer -= _time;
             _time = stunTimer;
         }
-        hitted = 0;
+        hitted = hittedEnum.noHit;
     }
 
 }
@@ -68,10 +68,10 @@ public class Stats : Organism
     public Vector2 targetSpeed;//Какую скорость персонаж стремится достичь
     public int employment;//Насколько персонаж "занят" - этим параметром можно 
                           //охарактеризовать, сколько ещё действий персонаж способен совершить
-    public int groundness;//Положение персонажа относительно земли: 0 - стоит, 1-почти приземлился, 2-присел, 3-прыгнул
-    public int obstacleness;//Какие твёрдые препятствия окружают персонажа?
-    public int interaction;//Взаимодействует ли персонаж с чем-либо в данный момент
-    public int maxInteraction;//Какой максимальный номер приоритетности среди объектов, 
+    public groundnessEnum groundness;//Положение персонажа относительно земли: 0 - стоит, 1-почти приземлился, 2-присел, 3-прыгнул
+    public obstaclenessEnum obstacleness;//Какие твёрдые препятствия окружают персонажа?
+    public interactionEnum interaction;//Взаимодействует ли персонаж с чем-либо в данный момент
+    public interactionEnum maxInteraction;//Какой максимальный номер приоритетности среди объектов, 
                               //с которыми персонаж может взаимодействовать
 
     public Stats()

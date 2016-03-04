@@ -75,7 +75,7 @@ public static class ActionTypes
 		else
 			koof2=-1;
 		hit=Physics2D.Raycast (inf.indicator.transform.position,
-		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign(stats.direction),
+		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign((int)stats.direction),
 		            					   inf.infoVectors [0].y*koof2).normalized,
 		                       inf.floatParametres [0],
 		                       inf.whatToCheck);

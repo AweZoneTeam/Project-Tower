@@ -18,4 +18,29 @@ public class PersonVisual : DmgObjVisual
     {
         base.Initialize();
     }
+
+    #region interface
+
+    /// <summary>
+    /// Анимировать отсутствие активности
+    /// </summary>
+    public virtual void GroundStand()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать передвижение по земле
+    /// </summary>
+    public virtual void GroundMove()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать передвижение в воздухе
+    /// </summary>
+    public virtual void AirMove()
+    {
+    }
+
+    #endregion //interface
 }

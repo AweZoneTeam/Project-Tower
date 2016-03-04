@@ -20,9 +20,10 @@ public class PartController : MonoBehaviour
 	public int FPS;
 	[HideInInspector]
 	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
-	public List<PartController> childParts;//Подчинённые части. Проигрываемые зависимыми частями анимации также влияют на анимацию родительской части.		
-	public List<animationSoundData> soundData;
-    public List<animationLayerOrderData> rOrderData, lOrderData;
+	public List<PartController> childParts=new List<PartController>();//Подчинённые части. Проигрываемые зависимыми частями анимации также влияют на анимацию родительской части.		
+	public List<animationSoundData> soundData=new List<animationSoundData>();
+    public List<animationLayerOrderData> rOrderData = new List<animationLayerOrderData>();
+    public List<animationLayerOrderData> lOrderData = new List<animationLayerOrderData>();
 
 	private SoundManager sManager;//К этому объекту обращаются с целью проиграть тот или иной звук
 	public AudioSource efxSource;//По идее у каждой части тела есть собственный аудиопроигрыватель

@@ -11,38 +11,38 @@ public static class SpFunctions {
 	/// простейшие операции сравнения int c int'ом.
 	/// Зачем это нужно? Да чтобы можно было операции сравнения с нужным числом задавать в самом редакторе.
 	/// </summary>
-	public static bool ComprFunctionality(int f, ComparativeClass cpr)
+	public static bool ComprFunctionality(int arg1, string opr, int arg2)
 	{
-		return ((f < cpr.val) && (cpr.oper == "<") ||
-						(f <= cpr.val) && (cpr.oper == "<=") ||
-						(f == cpr.val) && (cpr.oper == "=") ||
-						(f >= cpr.val) && (cpr.oper == ">") ||
-						(f >= cpr.val) && (cpr.oper == ">=") ||
-						(f != cpr.val) && (cpr.oper == "!=")||
-		        		(cpr.oper=="!"));
+		return ((arg1 < arg2) && (string.Equals(opr,"<")) ||
+						(arg1 <= arg2) && (string.Equals(opr,"<=")) ||
+						(arg1 == arg2) && (string.Equals(opr,"=")) ||
+						(arg1 > arg2) && (string.Equals(opr,">")) ||
+						(arg1 >= arg2) && (string.Equals(opr,">=")) ||
+						(arg1 != arg2) && (string.Equals(opr,"!="))||
+		        		(string.Equals(opr,"!")));
 	}
 
-	/// <summary>
-	/// Функция, которая позволяет использовать ComparativeClass и по сути ей можно заменять 
-	/// простейшие операции сравнения float c float'ом.
-	/// Зачем это нужно? Да чтобы можно было операции сравнения с нужным числом задавать в самом редакторе.
-	/// </summary>
-	public static bool ComprFunctionality(float f, FComparativeClass cpr)
-	{
-		return ((f < cpr.val) && (cpr.oper == "<") ||
-		        (f <= cpr.val) && (cpr.oper == "<=") ||
-		        (f == cpr.val) && (cpr.oper == "=") ||
-		        (f >= cpr.val) && (cpr.oper == ">") ||
-		        (f >= cpr.val) && (cpr.oper == ">=") ||
-		        (f != cpr.val) && (cpr.oper == "!=")||
-		        (cpr.oper=="!"));
-	}
+    /// <summary>
+    /// Функция, которая позволяет использовать ComparativeClass и по сути ей можно заменять 
+    /// простейшие операции сравнения float c float'ом.
+    /// Зачем это нужно? Да чтобы можно было операции сравнения с нужным числом задавать в самом редакторе.
+    /// </summary>
+    public static bool ComprFunctionality(float arg1, string opr, float arg2)
+    {
+        return ((arg1 < arg2) && (string.Equals(opr, "<")) ||
+                        (arg1 <= arg2) && (string.Equals(opr, "<=")) ||
+                        (arg1 == arg2) && (string.Equals(opr, "=")) ||
+                        (arg1 > arg2) && (string.Equals(opr, ">")) ||
+                        (arg1 >= arg2) && (string.Equals(opr, ">=")) ||
+                        (arg1 != arg2) && (string.Equals(opr, "!=")) ||
+                        (string.Equals(opr, "!")));
+    }
 
-	/// <summary>
-	/// Запрашивает 2 клавиши, и в зависимости от того, какая из них зажата дольше,
-	///  направляет действие (например, движение) либо влево, либо вправо
-	/// </summary>
-	public static int ChooseDirection(ButtonClass b1, ButtonClass b2)
+    /// <summary>
+    /// Запрашивает 2 клавиши, и в зависимости от того, какая из них зажата дольше,
+    ///  направляет действие (например, движение) либо влево, либо вправо
+    /// </summary>
+    public static int ChooseDirection(ButtonClass b1, ButtonClass b2)
 	{
 		if (b1.timer>b2.timer)
 			return 1;

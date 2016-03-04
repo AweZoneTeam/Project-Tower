@@ -6,30 +6,15 @@ using System.Collections.Generic;
 public class KeyboardActorController : PersonController
 {
 
-    #region parametres
-    private const float groundRadius = 0.2f;
-    private const float preGroundRadius = 0.7f;
+    #region consts
     private const float doorDistance = 4.5f;
-    #endregion //parametres
+    #endregion //consts
 
     #region fields
-    private Stats stats;//Параметры персонажа
     private HumanoidActorActions actions;
-
-    private Transform groundCheck; //Индикатор, оценивающий расстояние до земли
+    
     private InteractionChecker interactions;
     #endregion //fields
-
-    #region variables
-
-    public LayerMask whatIsGround;
-
-    #endregion //variables
-
-    #region enums
-    public enum groundness {grounded=1,crouch,preGround,inAir};
-    public enum maxInteraction { noInter, stairs, rope, thicket, margin, tMargin, edge, mech, NPC };
-    #endregion //enums
 
     //Инициализация полей и переменных
     public override void Awake ()
@@ -64,8 +49,8 @@ public class KeyboardActorController : PersonController
         {
             if (Input.GetKey(KeyCode.D))
             {
-                actions.Turn(OrientationEnum.Right);
-                actions.StartWalking(OrientationEnum.Right);
+                actions.Turn(orientationEnum.right);
+                actions.StartWalking(orientationEnum.right);
             }
             if (Input.GetKeyUp(KeyCode.D))
             {
@@ -73,8 +58,8 @@ public class KeyboardActorController : PersonController
             }
             if (Input.GetKey(KeyCode.A))
             {
-                actions.Turn(OrientationEnum.Left);
-                actions.StartWalking(OrientationEnum.Left);
+                actions.Turn(orientationEnum.left);
+                actions.StartWalking(orientationEnum.left);
             }
             if (Input.GetKeyUp(KeyCode.A))
             {
@@ -137,7 +122,7 @@ public class KeyboardActorController : PersonController
         AreaClass area = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>().currentArea;
         float zDistance = Mathf.Abs(area.position.z + area.size.z / 2 - trans.position.z) - 0.5f;
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(new Ray(trans.position, stats.direction * trans.right), out hit, doorDistance))
+        if (Physics.Raycast(new Ray(trans.position, (int)stats.direction * trans.right), out hit, doorDistance))
         {
             if (string.Equals(hit.collider.gameObject.tag, Tags.door))
             {
@@ -179,28 +164,9 @@ public class KeyboardActorController : PersonController
     /// <summary>
     /// Оценивает окружающую персонажа обстановку
     /// </summary>
-    void AnalyzeSituation()
+    protected override void AnalyzeSituation()
     {
-        CheckGroundness();
-    }
-
-    /// <summary>
-    /// Функция, определяющая, где персонаж находится по отношению к твёрдой поверхности 
-    /// </summary>
-    void CheckGroundness()
-    {
-        if (Physics2D.OverlapCircle(SpFunctions.VectorConvert(groundCheck.position), groundRadius, whatIsGround))
-        {
-            stats.groundness = (int)groundness.grounded;
-        }
-        else if (Physics2D.OverlapCircle(SpFunctions.VectorConvert(groundCheck.position), preGroundRadius, whatIsGround))
-        {
-            stats.groundness = (int)groundness.preGround;
-        }
-        else
-        {
-            stats.groundness = (int)groundness.inAir;
-        }
+        base.AnalyzeSituation();
     }
 
     #endregion //Analyze
@@ -222,7 +188,7 @@ public class KeyboardActorEditor : Editor
         stats = (Stats)obj.GetStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", stats.direction);
+        EditorGUILayout.IntField("direction", (int)stats.direction);
         stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
         EditorGUILayout.FloatField("Health", stats.health);
     }

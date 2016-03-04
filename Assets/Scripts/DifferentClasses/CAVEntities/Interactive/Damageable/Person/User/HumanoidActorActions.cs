@@ -1,23 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Actor orientation. As usual, MAX is last and used to determine enum count.
-/// </summary>
-
 public class HumanoidActorActions : PersonActions
 {
 
     #region parametres
-    public bool Moving;
-	public OrientationEnum MovingDirection;
-	public bool TouchingGround;
-	public OrientationEnum Orientation;
-	public BoxCollider2D GroundCol;
-	public int MovingSpeed;
-	public float MovingAcceleration;
-	private Rigidbody RigBody;
-	public float JumpForce;
+	public bool touchingGround;
+	public BoxCollider2D groundCol;
+	public int movingSpeed;
+	public float movingAcceleration;
+	private Rigidbody rigBody;
+	public float jumpForce;
     #endregion //parametres
 
     #region fields
@@ -30,11 +23,11 @@ public class HumanoidActorActions : PersonActions
     #endregion //fields
 
     public void OnCollisionEnter2D(Collision2D col) {
-		TouchingGround = true;
+		touchingGround = true;
 	}
 
 	public void OnCollisionExit2D(Collision2D col) {
-		TouchingGround = false;
+		touchingGround = false;
 	}
 
     /// <summary>
@@ -46,35 +39,34 @@ public class HumanoidActorActions : PersonActions
 	}
 
     public void Update () {
-		if (Moving) {
-			if (MovingDirection == OrientationEnum.Left) {
-				if (MovingSpeed > RigBody.velocity.x) {
-					RigBody.velocity = new Vector3 (-MovingSpeed, RigBody.velocity.y, RigBody.velocity.z);
-                    stats.direction = -1;
-				}
-			} else {
-				if (MovingSpeed > -RigBody.velocity.x) {
-					RigBody.velocity = new Vector3 (MovingSpeed, RigBody.velocity.y, RigBody.velocity.z);
-                    stats.direction = 1;
-				}
+		if (moving) {
+			if (movingDirection == orientationEnum.left)
+            {
+			    rigBody.velocity = new Vector3 (-movingSpeed, rigBody.velocity.y, rigBody.velocity.z);
+                stats.direction =orientationEnum.left;
 			}
-            if ((stats.groundness == (int)groundness.grounded)&&(cAnim!=null))
+            else
+            { 
+                rigBody.velocity = new Vector3 (movingSpeed, rigBody.velocity.y, rigBody.velocity.z);
+                stats.direction = orientationEnum.right;
+			}
+            if ((stats.groundness == groundnessEnum.grounded)&&(cAnim!=null))
             {
                 cAnim.GroundMove();
             }
 		}
         else 
         {
-            if ((stats.groundness == (int)groundness.grounded)&& (RigBody.velocity.x != 0))
+            if ((stats.groundness == groundnessEnum.grounded)&& (rigBody.velocity.x != 0))
             {
-                RigBody.drag = 0.1f;
+                rigBody.drag = 0.1f;
             }
-            if ((stats.groundness == (int)groundness.grounded)&&(cAnim!=null))
+            if ((stats.groundness == groundnessEnum.grounded)&&(cAnim!=null))
             {
                 cAnim.GroundStand();
             }
         }
-        if ((stats.groundness == (int)groundness.inAir)&&(cAnim!=null))
+        if ((stats.groundness == groundnessEnum.inAir)&&(cAnim!=null))
         {
             cAnim.AirMove();
         }
@@ -82,13 +74,14 @@ public class HumanoidActorActions : PersonActions
 
     public override void Initialize()
     {
+        orientation = orientationEnum.right;
         cAnim = transform.FindChild("Body").gameObject.GetComponent<CharacterVisual>();
-        RigBody = GetComponent<Rigidbody>();
+        rigBody = GetComponent<Rigidbody>();
         rightHitBox = GetComponentInChildren<HitController>();
         hitData = null;
     }
 
-	public override void Turn(OrientationEnum Direction) {
+/*	public override void Turn(OrientationEnum Direction) {
 		Vector3 newScale = this.gameObject.transform.localScale;
 		newScale.x *= -1;
 		if (Orientation != Direction) {
@@ -102,16 +95,12 @@ public class HumanoidActorActions : PersonActions
 			Moving = true;
 			MovingDirection = Direction;
 		}
-	}
-
-	public override void StopWalking() {
-		Moving = false;
-	}
+	}*/
 
 	public override void Jump() {
-		if (stats.groundness==(int)groundness.grounded)
+		if (stats.groundness==groundnessEnum.grounded)
         {
-            RigBody.AddForce(new Vector3(0f, JumpForce, 0f));
+            rigBody.AddForce(new Vector3(0f, jumpForce, 0f));
 		}
 	}
 
@@ -132,7 +121,7 @@ public class HumanoidActorActions : PersonActions
     {
         if ((hitData == null)&&(rightWeapon!=null))
         {
-            if (stats.groundness == (int)groundness.grounded)
+            if (stats.groundness == groundnessEnum.grounded)
             {
                 Debug.Log("Kek");
                 hitData = rightWeapon.groundHit;
@@ -142,7 +131,7 @@ public class HumanoidActorActions : PersonActions
                 }
                 StartCoroutine(AttackProcess()); 
             }
-            else if (stats.groundness == (int)groundness.inAir)
+            else if (stats.groundness == groundnessEnum.inAir)
             {
                 hitData = rightWeapon.airHit;
                 if (cAnim != null)
@@ -171,7 +160,7 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Задать поле статов
     /// </summary>
-    public void SetStats(Stats _stats)
+    public override void SetStats(Stats _stats)
     {
         stats = _stats;
     }

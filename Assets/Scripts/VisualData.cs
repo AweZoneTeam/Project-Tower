@@ -21,6 +21,14 @@ public class VisualData : ScriptableObject
 		visual = _data.visual;
 	}
 
+    public void SetData(VisualData _data)
+    {
+        name = _data.name;
+        type = _data.type;
+        visual = _data.visual;
+        animInterpretators = _data.animInterpretators;
+    }
+
 	public VisualData (string _name)
 	{
 		name = _name;

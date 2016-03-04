@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.IO;
 using System.Collections.Generic;
 
 public class CreateNewAnimWindow :EditorWindow  
@@ -26,10 +27,14 @@ public class CreateNewAnimWindow :EditorWindow
     public void Initialize()
     {
         stencils.Clear();
-        Object[] assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(stencilPath);
-        for (int i = 0; i < assets.Length; i++)
+        DirectoryInfo dInfo=new DirectoryInfo(stencilPath);
+        FileInfo[] fList= dInfo.GetFiles();
+        for (int i = 0; i < fList.Length; i++)
         {
-            stencils.Add(assets[i].name);
+            if (!fList[i].Name.EndsWith("meta"))
+            {
+                stencils.Add(fList[i].Name);
+            }
         }
     }
 
@@ -102,9 +107,10 @@ public class CreateNewAnimWindow :EditorWindow
                 j = false;
         if (j)
         {
-            string visString = AssetDatabase.CreateFolder(characterPath, "Visuals");
-            AssetDatabase.CreateFolder(characterPath, "Parts");
-            AssetDatabase.CreateFolder(characterPath, "GAFs");
+            DirectoryInfo dInfo = new DirectoryInfo(characterPath);
+            dInfo.CreateSubdirectory("Visuals/");
+            dInfo.CreateSubdirectory("Parts/");
+            dInfo.CreateSubdirectory("GAFs/");
             VisualData asset = ScriptableObject.CreateInstance<VisualData>();
             asset.name = dataName;
             asset.type = animatorType;
@@ -114,7 +120,7 @@ public class CreateNewAnimWindow :EditorWindow
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = asset;
-            rightAnim.SaveAndCreate(dataName, visString, asset, characterPath+chosenStencil);
+            rightAnim.SaveAndCreate(dataName, characterPath, asset, stencilPath+chosenStencil);
             animEditor.GetComponent<AnimationEditorData>().RefreshCharacterList();
             animBase.usedCharacters.Add(dataName);
 

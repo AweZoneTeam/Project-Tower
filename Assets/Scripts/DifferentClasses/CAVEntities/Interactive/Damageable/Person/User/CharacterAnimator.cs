@@ -28,17 +28,20 @@ public class CharacterAnimator : InterObjAnimator
 
     public virtual void Start()
     {
-        whatIsGround = GetComponentInParent<KeyboardActorController>().whatIsGround;
+        whatIsGround = GetComponentInParent<PersonController>().whatIsGround;
     }
 
     public virtual void FixedUpdate()
     {
-        if (stats.groundness == (int)groundness.inAir)
+        if (stats.groundness == groundnessEnum.inAir)
         {
             RaycastHit ray;
-            if (Physics.Raycast(new Ray(transform.parent.position, new Vector3(0f, -1f, 0f)), out ray, 40f, whatIsGround))
-        {
-                shadow.SetY(ray.point.y);
+            if (shadow != null)
+            {
+                if (Physics.Raycast(new Ray(transform.parent.position, new Vector3(0f, -1f, 0f)), out ray, 40f, whatIsGround))
+                {
+                    shadow.SetY(ray.point.y);
+                }
             }
         }    
     }
@@ -123,4 +126,5 @@ public class CharacterAnimatorEditor : BaseAnimatorEditor
             part.path = part.interp.partPath + part.gameObject.name + ".asset";
         }
     }*/
+
 }

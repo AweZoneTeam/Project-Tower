@@ -8,11 +8,24 @@ using UnityEditor;
 public class PersonController : DmgObjController
 {
 
+    #region consts
+    protected const float groundRadius = 0.2f;
+    protected const float preGroundRadius = 0.7f;
+    #endregion //consts
+
     #region fields
-    private Stats stats;
+    /*private*/protected Stats stats;
     [SerializeField]protected EquipmentClass equip;//Экипировка персонажа
     private PersonController actions;
+
+    protected Transform groundCheck; //Индикатор, оценивающий расстояние до земли
     #endregion //fields
+
+    #region parametres
+
+    public LayerMask whatIsGround;
+
+    #endregion //parametres
 
     #region Interface
 
@@ -29,6 +42,32 @@ public class PersonController : DmgObjController
         }
         return stats;
     }
+    
+    //Функция, что анализирует обстановку, окружающую персонажа
+    protected virtual void AnalyzeSituation()
+    {
+        DefineGroundness();
+    }
+
+    /// <summary>
+    /// Функция, определяющая, где персонаж находится по отношению к твёрдой поверхности 
+    /// </summary>
+    protected virtual void DefineGroundness()
+    {
+        if (Physics2D.OverlapCircle(SpFunctions.VectorConvert(groundCheck.position), groundRadius, whatIsGround))
+        {
+            stats.groundness = groundnessEnum.grounded;
+        }
+        else if (Physics2D.OverlapCircle(SpFunctions.VectorConvert(groundCheck.position), preGroundRadius, whatIsGround))
+        {
+            stats.groundness = groundnessEnum.preGround;
+        }
+        else
+        {
+            stats.groundness = groundnessEnum.inAir;
+        }
+    }
+
     #endregion //Interface
 }
 
@@ -46,7 +85,7 @@ public class PersonEditor : DmgObjEditor
         stats = (Stats)obj.GetStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", stats.direction);
+        EditorGUILayout.IntField("direction", (int)stats.direction);
         stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
         EditorGUILayout.FloatField("Health", stats.health);
     }

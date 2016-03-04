@@ -29,10 +29,10 @@ public class InterfaceController : MonoBehaviour
 
     public void Initialize()
     {
+        cam = GameObject.FindGameObjectWithTag(Tags.cam);
         allWindows = GameObject.FindGameObjectWithTag(Tags.interfaceWindows);
         exchWindow = allWindows.GetComponentInChildren<InterfaceExchangeWindow>();
         exchWindow.gameObject.GetComponent<Canvas>().enabled=false;
-        cam = GameObject.FindGameObjectWithTag(Tags.cam);
     }
 
     public void OpenExchangeWindow(BagClass leftBag, BagClass rightBag)

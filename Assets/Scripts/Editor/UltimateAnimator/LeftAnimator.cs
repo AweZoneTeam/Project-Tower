@@ -437,7 +437,7 @@ public class LeftAnimator : EditorWindow
     /// <summary>
     /// Создать новый объект или загрузить из базы данных старый, для дальнейшей работы
     /// </summary>
-    public void CreateNewInstance(string _name, string path, VisualData asset,InterObjAnimator stencil)
+    public void CreateNewInstance(string _name, string path, VisualData asset,VisualData stencilVis)
     {
         rightAnim.parts.Clear();
         rightAnim.animTypes.Clear();
@@ -451,24 +451,30 @@ public class LeftAnimator : EditorWindow
         partName = "Part";
         animationName = "Animation";
         characterName = _name;
-        character = PrefabUtility.InstantiatePrefab(stencil.visualData.visual) as GameObject;
+        character = PrefabUtility.InstantiatePrefab(stencilVis.visual) as GameObject;
         character.name = _name;
         character.transform.position = animEditor.gameObject.transform.position;
         InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
+        InterObjAnimator stencil = stencilVis.visual.GetComponent<InterObjAnimator>();
         PartController cPart;
+        AnimationInterpretator cInterp;
         for (int i = 0; i < cAnim.parts.Count; i++)
         {
             cPart = cAnim.parts[i];
-            cPart.interp = new AnimationInterpretator(" ");
-            cPart.interp.setInterp(cAnim.visualData.animInterpretators[i]);
+            cInterp = new AnimationInterpretator(" ");
+            cInterp.animTypes = new List<animationInfoTypes>();
+            cInterp.setInterp(cAnim.visualData.animInterpretators[i]);
+            cPart.interp = cInterp;
             AnimationInterpretator interp = ScriptableObject.CreateInstance<AnimationInterpretator>();
-            interp.setInterp(cPart.interp);
-            interp.partPath = path+"Parts";
-            AssetDatabase.CreateAsset(asset, path + cPart.gameObject.name + ".asset");
+            interp.animTypes = new List<animationInfoTypes>();
+            interp.setInterp(cInterp);
+            interp.partPath = path+"Parts/";
+            AssetDatabase.CreateAsset(interp, interp.partPath + cPart.gameObject.name + ".asset");
             cPart.path = path + cPart.gameObject.name + ".asset";
             GameObject asset1 = cPart.gameObject;
-            asset1 = PrefabUtility.CreatePrefab(path + name + ".prefab", asset1);
+            asset1 = PrefabUtility.CreatePrefab(interp.partPath + cPart.gameObject.name + ".prefab", asset1);
             AssetDatabase.SaveAssets();
+            cPart.interp = new AnimationInterpretator(cInterp);
         }
         cAnim.animTypes.Clear();
         for (int i = 0; i < stencil.animTypes.Count;i++)
@@ -541,8 +547,12 @@ public class LeftAnimator : EditorWindow
     void MakeStencil()
     {
         SaveChanges();
-        PrefabUtility.CreatePrefab(stencilPath + character.name + ".prefab", character);
-
+        VisualData asset = ScriptableObject.CreateInstance<VisualData>();
+        asset.SetData(character.GetComponent<InterObjAnimator>().visualData);
+        AssetDatabase.CreateAsset(asset, stencilPath + character.name + ".asset");
+        AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = asset;
     }
 
     /// <summary>

@@ -43,7 +43,7 @@ public class HitController : MonoBehaviour
         hitData = _hitData;
         col.enabled = true;
     }
-
+    
 	//Cмотрим, попал ли хитбокс по врагу, и, если попал, то идёт расчёт урона
 	void OnTriggerEnter(Collider other)
 	{
@@ -65,7 +65,7 @@ public class HitController : MonoBehaviour
 				{
                     if (target.stability <= hitData.attack - 2)
                     {
-                        target.hitted = 1+hitData.direction;
+                        target.hitted = (hittedEnum)(1 + hitData.direction);
                         if (target.stunTimer <= 0f)
                         {
                             target.stunTimer = target.macroStun;
@@ -89,13 +89,13 @@ public class HitController : MonoBehaviour
                             rigid.AddForce(new Vector3(0f, -2000f, 0f));
                         }
                     }
-                    else if ((target.stability <= hitData.attack)&&(target.hitted<1))
+                    else if ((target.stability <= hitData.attack)&&((int)target.hitted<1))
                     {
                         target.stunTimer=target.microStun;
                         StartCoroutine(target.Stunned(target.microStun));
-                        target.hitted = 1;
+                        target.hitted = (hittedEnum)1;
                     }
-                    else if (target.hitted<1)
+                    else if ((int)target.hitted<1)
                     {
                         target.hitted=0;
                     }

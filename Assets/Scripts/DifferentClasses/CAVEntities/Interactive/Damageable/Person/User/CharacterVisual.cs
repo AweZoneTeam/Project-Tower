@@ -51,7 +51,7 @@ public class CharacterVisual : PersonVisual
     /// <summary>
     /// Анимировать отсутствие активности
     /// </summary>
-    public void GroundStand()
+    public override void GroundStand()
     {
         if ((cAnim != null)&&(!attack))
         {
@@ -86,7 +86,7 @@ public class CharacterVisual : PersonVisual
     /// <summary>
     /// Анимировать передвижение по земле
     /// </summary>
-    public void GroundMove()
+    public override void GroundMove()
     {
         if ((cAnim != null)&&(!attack))
         {
@@ -114,11 +114,11 @@ public class CharacterVisual : PersonVisual
     /// <summary>
     /// Анимировать движения, происходящие в воздухе
     /// </summary>
-    public void AirMove()
+    public override void AirMove()
     {
         if ((cAnim != null)&&(!attack))
         {
-            if (stats.groundness == (int)groundness.preGround) { cAnim.Animate("Fallen"); }
+            if (stats.groundness == groundnessEnum.preGround) { cAnim.Animate("Fallen"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.fastDown) { cAnim.Animate("FallEnd"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.medDown) { cAnim.Animate("FallContinue"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.slowDown) { cAnim.Animate("FallBegin"); }

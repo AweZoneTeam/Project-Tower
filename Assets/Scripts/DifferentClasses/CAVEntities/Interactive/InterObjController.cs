@@ -69,6 +69,6 @@ public class InterObjEditor : Editor
         stats = obj.GetStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", stats.direction);
+        EditorGUILayout.IntField("direction", (int)stats.direction);
     }
 }

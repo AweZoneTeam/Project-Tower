@@ -7,6 +7,12 @@ using System.Collections;
 public class PersonActions : DmgObjActions
 {
 
+    #region parametres
+    protected orientationEnum movingDirection;
+    protected orientationEnum orientation;
+    protected bool moving;
+    #endregion //parametres
+
     public override void Awake()
     {
         base.Awake();
@@ -18,25 +24,42 @@ public class PersonActions : DmgObjActions
     }
 
     #region Interface
-    
+
     /// <summary>
     /// Повернуть персонажа 
     /// </summary>
-    /// <param name="Direction"></param>
-    public virtual void Turn(OrientationEnum Direction)
-    {}
+    /// <param name="direction"></param>
+    public virtual void Turn(orientationEnum direction)
+    {
+        if (orientation != direction)
+        {
+            Vector3 newScale = this.gameObject.transform.localScale;
+            newScale.x *= -1;
+            orientation = direction;
+            this.gameObject.transform.localScale = newScale;
+        }
+    }
 
     /// <summary>
     /// Начать передвижение
     /// </summary>
-    public virtual void StartWalking(OrientationEnum Direction)
-    { }
+    public virtual void StartWalking(orientationEnum direction)
+    {
+        if (!moving)
+        {
+            moving = true;
+            movingDirection = direction;
+        }
+    }
 
     /// <summary>
     /// Прекратить передвижение
     /// </summary>
     public virtual void StopWalking()
-    { }
+    {
+        moving = false;
+    }
+
 
     /// <summary>
     /// Совершить прыжок
@@ -46,5 +69,12 @@ public class PersonActions : DmgObjActions
     }
 
     #endregion //Interface
+
+    /// <summary>
+    /// Задать поле статов
+    /// </summary>
+    public virtual void SetStats(Stats _stats)
+    {
+    }
 
 }

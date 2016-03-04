@@ -103,12 +103,12 @@ public class DmgObjEditor : InterObjEditor
         stats = (Organism)obj.GetStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", stats.direction);
+        EditorGUILayout.IntField("direction", (int)stats.direction);
         stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
         stats.health=EditorGUILayout.FloatField("Health", stats.health);
         stats.stability = EditorGUILayout.IntField("Stability", stats.stability);
         EditorGUILayout.Space();
-        EditorGUILayout.IntField("Hitted", stats.hitted);
+        EditorGUILayout.IntField("Hitted", (int)stats.hitted);
         stats.microStun = EditorGUILayout.FloatField("MicroStun", stats.microStun);
         stats.macroStun = EditorGUILayout.FloatField("MacroStun", stats.macroStun);
         stats.pDefence = EditorGUILayout.IntField("Physic Defence", stats.pDefence);

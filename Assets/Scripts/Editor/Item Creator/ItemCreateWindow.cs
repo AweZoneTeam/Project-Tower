@@ -18,7 +18,7 @@ public class ItemCreateWindow : EditorWindow
         }
     }
 
-    //Создаём визуальную часть нашего персонажа.
+    //Создаём новый предмет.
     private void CreateNewItem()
     {
         ItemClass asset = ScriptableObject.CreateInstance<ItemClass>();
@@ -47,7 +47,7 @@ public class WeaponCreateWindow : EditorWindow
         }
     }
 
-    //Создаём визуальную часть нашего персонажа.
+    //Создаём новое оружие.
     private void CreateNewWeapon()
     {
         WeaponClass asset = ScriptableObject.CreateInstance<WeaponClass>();
