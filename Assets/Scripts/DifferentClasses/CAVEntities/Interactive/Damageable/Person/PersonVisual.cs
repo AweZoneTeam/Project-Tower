@@ -7,6 +7,9 @@ using System.Collections;
 public class PersonVisual : DmgObjVisual
 {
     #region fields
+
+    protected CharacterAnimator cAnim;//Объекты, которых можно с полной уверенностью назвать персонажами, обзавелись более сложной версией аниматора
+
     #endregion //fields
 
     public override void Awake()
@@ -19,7 +22,7 @@ public class PersonVisual : DmgObjVisual
         base.Initialize();
     }
 
-    #region interface
+    #region AnimatedActionsInterface
 
     /// <summary>
     /// Анимировать отсутствие активности
@@ -41,6 +44,36 @@ public class PersonVisual : DmgObjVisual
     public virtual void AirMove()
     {
     }
+    
+    /// <summary>
+    /// Анимировать процесс атаки
+    /// </summary>
+    public virtual void Attack(string attackName, float time)
+    {
+    }
 
-    #endregion //interface
+    /// <summary>
+    /// Вызвать процесс смерти
+    /// </summary>
+    public override void Death()
+    {
+         StartCoroutine(DeathProcess());
+    }
+
+    /// <summary>
+    /// Процесс смерти
+    /// </summary>
+    protected override IEnumerator DeathProcess()
+    {
+        if (cAnim != null)
+        {
+            death = true;
+            cAnim.Animate("Death");
+            yield return new WaitForSeconds(deathTime);
+            cAnim.Animate("Dead");
+        }
+    }
+
+    #endregion //AnimatedActionsInterface
+
 }

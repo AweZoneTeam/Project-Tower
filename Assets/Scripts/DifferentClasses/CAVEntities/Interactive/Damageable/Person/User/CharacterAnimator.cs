@@ -38,7 +38,7 @@ public class CharacterAnimator : InterObjAnimator
             RaycastHit ray;
             if (shadow != null)
             {
-                if (Physics.Raycast(new Ray(transform.parent.position, new Vector3(0f, -1f, 0f)), out ray, 40f, whatIsGround))
+                if (Physics.Raycast(new Ray(transform.parent.position, new Vector3(0f, -1f, 0f)), out ray, 200f, whatIsGround))
                 {
                     shadow.SetY(ray.point.y);
                 }

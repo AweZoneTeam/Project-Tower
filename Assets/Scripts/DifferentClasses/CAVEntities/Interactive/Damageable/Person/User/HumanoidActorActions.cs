@@ -5,21 +5,16 @@ public class HumanoidActorActions : PersonActions
 {
 
     #region parametres
+
 	public bool touchingGround;
 	public BoxCollider2D groundCol;
-	public int movingSpeed;
-	public float movingAcceleration;
-	private Rigidbody rigBody;
-	public float jumpForce;
+
     #endregion //parametres
 
     #region fields
-    private CharacterVisual cAnim;//Визуальная часть персонажа
     private Stats stats;//Параметры персонажа
 
-    private WeaponClass rightWeapon;//Какое оружие персонаж носит в правой руке
-    private HitController rightHitBox;//Хитбокс оружия в правой руке
-    private HitClass hitData=null;//Какими параметрами атаки персонаж пользуется в данный момент
+    private WeaponClass mainWeapon;//Какое оружие персонаж носит в правой руке
     #endregion //fields
 
     public void OnCollisionEnter2D(Collision2D col) {
@@ -39,36 +34,41 @@ public class HumanoidActorActions : PersonActions
 	}
 
     public void Update () {
-		if (moving) {
-			if (movingDirection == orientationEnum.left)
+
+        if (!death)
+        {
+            if (moving)
             {
-			    rigBody.velocity = new Vector3 (-movingSpeed, rigBody.velocity.y, rigBody.velocity.z);
-                stats.direction =orientationEnum.left;
-			}
+                if (movingDirection == orientationEnum.left)
+                {
+                    rigid.velocity = new Vector3(-maxSpeed, rigid.velocity.y, rigid.velocity.z);
+                    stats.direction = orientationEnum.left;
+                }
+                else
+                {
+                    rigid.velocity = new Vector3(maxSpeed, rigid.velocity.y, rigid.velocity.z);
+                    stats.direction = orientationEnum.right;
+                }
+                if ((stats.groundness == groundnessEnum.grounded) && (cAnim != null))
+                {
+                    cAnim.GroundMove();
+                }
+            }
             else
-            { 
-                rigBody.velocity = new Vector3 (movingSpeed, rigBody.velocity.y, rigBody.velocity.z);
-                stats.direction = orientationEnum.right;
-			}
-            if ((stats.groundness == groundnessEnum.grounded)&&(cAnim!=null))
             {
-                cAnim.GroundMove();
+                if ((stats.groundness == groundnessEnum.grounded) && (rigid.velocity.x != 0))
+                {
+                    rigid.drag = 0.1f;
+                }
+                if ((stats.groundness == groundnessEnum.grounded) && (cAnim != null))
+                {
+                    cAnim.GroundStand();
+                }
             }
-		}
-        else 
-        {
-            if ((stats.groundness == groundnessEnum.grounded)&& (rigBody.velocity.x != 0))
+            if ((stats.groundness == groundnessEnum.inAir) && (cAnim != null))
             {
-                rigBody.drag = 0.1f;
+                cAnim.AirMove();
             }
-            if ((stats.groundness == groundnessEnum.grounded)&&(cAnim!=null))
-            {
-                cAnim.GroundStand();
-            }
-        }
-        if ((stats.groundness == groundnessEnum.inAir)&&(cAnim!=null))
-        {
-            cAnim.AirMove();
         }
 	}
 
@@ -76,8 +76,8 @@ public class HumanoidActorActions : PersonActions
     {
         orientation = orientationEnum.right;
         cAnim = transform.FindChild("Body").gameObject.GetComponent<CharacterVisual>();
-        rigBody = GetComponent<Rigidbody>();
-        rightHitBox = GetComponentInChildren<HitController>();
+        rigid = GetComponent<Rigidbody>();
+        hitBox = GetComponentInChildren<HitController>();
         hitData = null;
     }
 
@@ -100,32 +100,22 @@ public class HumanoidActorActions : PersonActions
 	public override void Jump() {
 		if (stats.groundness==groundnessEnum.grounded)
         {
-            rigBody.AddForce(new Vector3(0f, jumpForce, 0f));
+            rigid.velocity =new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y+jumpForce,Mathf.NegativeInfinity,jumpForce), rigid.velocity.z);
 		}
 	}
 
     /// <summary>
-    /// Функция прохода через двери
-    /// </summary>
-    public virtual void GoThroughTheDoor(DoorClass door)
-    { 
-        transform.position = door.nextPosition;
-        SpFunctions.ChangeRoomData(door.roomPath); 
-        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
-    }
-
-    /// <summary>
     /// Учёт ситуации и произведение нужной в данный момент атаки
     /// </summary>
-    public virtual void Attack()
+    public override void Attack()
     {
-        if ((hitData == null)&&(rightWeapon!=null))
+        if ((hitData == null)&&(mainWeapon!=null))
         {
             if (stats.groundness == groundnessEnum.grounded)
             {
                 Debug.Log("Kek");
-                hitData = rightWeapon.groundHit;
-                if (cAnim != null)
+                hitData = mainWeapon.GetHit("groundHit");
+                if ((cAnim != null)&&(hitData!=null))
                 {
                     cAnim.Attack("Hit", hitData.hitTime);
                 }
@@ -133,8 +123,8 @@ public class HumanoidActorActions : PersonActions
             }
             else if (stats.groundness == groundnessEnum.inAir)
             {
-                hitData = rightWeapon.airHit;
-                if (cAnim != null)
+                hitData = mainWeapon.GetHit("airHit");
+                if ((cAnim != null)&&(hitData!=null))
                 {
                     cAnim.Attack("Hit", hitData.hitTime);
                 }
@@ -143,18 +133,32 @@ public class HumanoidActorActions : PersonActions
         }
     }
 
-    IEnumerator AttackProcess()//Процесс атаки
+    protected override IEnumerator AttackProcess()//Процесс атаки
     {
-        if (rightHitBox != null)
+        if (hitBox != null)
         {
-            GameObject hitBox = rightHitBox.gameObject;
-            hitBox.transform.localPosition = hitData.hitPosition;
-            hitBox.GetComponent<BoxCollider>().size = hitData.hitSize;
+            GameObject hBox = hitBox.gameObject;
+            hBox.transform.localPosition = hitData.hitPosition;
+            hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             yield return new WaitForSeconds(hitData.hitTime-hitData.beginTime);
-            rightHitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
+            this.hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
             yield return new WaitForSeconds(hitData.beginTime);
             hitData = null;
         }
+    }
+
+    public override void GoThroughTheDoor(DoorClass door)
+    {
+        base.GoThroughTheDoor(door);
+        SpFunctions.ChangeRoomData(door.roomPath);
+        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
+    }
+
+    public override void Death()
+    {
+        Drop();
+        death = true;
+        cAnim.Death();
     }
 
     /// <summary>
@@ -168,9 +172,9 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Установить в правой руке нужное оружие
     /// </summary>
-    public void SetWeapon(WeaponClass _weapon)
+    public override void SetWeapon(WeaponClass _weapon)
     {
-        rightWeapon = _weapon;
+        mainWeapon = _weapon;
     }
 }
 

@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class HitClass
 {
+    public string hitName;
     public float pDamage, fDamage, dDamage, aDamage; //физический, огненный, тёмный, ядовитый уроны соответственно
     public int attack;//насколько данная атака пробивает стабилити
     public float backStabKoof;//во сколько увеличивается урон, если удар нанесён со спины? 

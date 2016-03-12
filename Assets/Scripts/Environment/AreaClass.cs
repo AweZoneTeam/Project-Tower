@@ -10,12 +10,32 @@ using System.Collections.Generic;
 public class AreaClass : MonoBehaviour
 {
     public AreaID id=new AreaID();
-    public List<AreaClass> subAreas = new List<AreaClass>();//какие пространства являются подчинёнными
-    public List<AreaClass> neigbAreas = new List<AreaClass>();//какие пространства соседствуют с этим
+    public List<RoomConnection> subAreas = new List<RoomConnection>();//какие пространства являются подчинёнными
+    public List<RoomConnection> neigbAreas = new List<RoomConnection>();//какие пространства соседствуют с этим
     public List<GameObject> container=new List<GameObject>();//Что содержит в себе это пространство. Содержание подпространств не учитывается.
     public List<LightSource> lightSources = new List<LightSource>();//Источники света в данном пространстве.
     public Vector3 position;//координаты центра пространства (пространство по форме обязательно представляет собой параллелепипед)
     public Vector3 size;//Каковы размеры пространства: длина, глубина и высота
+
+    public GameObject GetDoor(AreaClass room)
+    {
+        for (int i = 0; i < subAreas.Count; i++)
+        {
+            if (subAreas[i].room == room)
+            {
+                return subAreas[i].door;
+
+            }
+        }
+        for (int i = 0; i < neigbAreas.Count; i++)
+        {
+            if (neigbAreas[i].room == room)
+            {
+                return neigbAreas[i].door;
+            }
+        }
+        return null;
+    }
 }
 
 /// <summary>

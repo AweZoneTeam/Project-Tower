@@ -8,21 +8,16 @@ public class EnemyActions : PersonActions
     #endregion //epsilons
 
     #region parametres
-    public float maxSpeed=30f;
-    public float acceleration = 1f;
-    public float jumpForce = 4000f;
+
+    protected bool jumped;
+
     #endregion //parametres
 
     #region fields
-    private Rigidbody rigid;
-    private EnemyVisual cAnim;
     private Stats stats;
 
     public WeaponClass weapon;//Это поле соддержит данные по атакам персонажа
-    protected HitController hitBox;//хитбокс оружия персонажа
-    protected HitClass hitData = null;//Какими параметрами атаки персонаж пользуется в данный момент
 
-    public Transform target;
     #endregion //fields
 
     public override void Awake()
@@ -32,15 +27,25 @@ public class EnemyActions : PersonActions
 
     public void Update()
     {
-        if (cAnim != null)
+        if (!death)
         {
-            if (moving)
+            if (cAnim != null)
             {
-                cAnim.GroundMove();
-            }
-            else
-            {
-                cAnim.GroundStand();
+                if (stats.groundness == groundnessEnum.inAir)
+                {
+                    cAnim.AirMove();
+                }
+                else if (stats.groundness == groundnessEnum.grounded)
+                {
+                    if (moving)
+                    {
+                        cAnim.GroundMove();
+                    }
+                    else
+                    {
+                        cAnim.GroundStand();
+                    }
+                }
             }
         }
     }
@@ -54,18 +59,44 @@ public class EnemyActions : PersonActions
     }
 
     #region interface
+
     /// <summary>
-    /// Функция преследования противника
+    /// Функция преследования цели
     /// </summary>
-    public virtual void Pursue()
+    public override void Pursue()
     {
         if (target.position.x < transform.position.x)
         {
-            StartWalking(orientationEnum.left);
+            Turn(orientationEnum.left);
         }
         else if (target.position.x > transform.position.x)
         {
-            StartWalking(orientationEnum.right);
+            Turn(orientationEnum.right);
+        }
+        if (!precipiceIsForward)
+        {
+            if (target.position.x < transform.position.x)
+            {
+                StartWalking(orientationEnum.left);
+            }
+            else if (target.position.x > transform.position.x)
+            {
+                StartWalking(orientationEnum.right);
+            }
+        }
+        if (precipiceIsForward)
+        {
+            if (jumpIsPossible)
+            {
+                if ((stats.groundness == groundnessEnum.grounded) && (!jumped))
+                {
+                    Jump();
+                }
+            }
+            else
+            {
+                StopWalking();
+            }
         }
     }
 
@@ -75,7 +106,7 @@ public class EnemyActions : PersonActions
     public override void StartWalking(orientationEnum direction)
     {
         base.StartWalking(direction);
-        Turn(direction);
+        stats.direction = direction;
         Vector3 targetVelocity=new Vector3(0f,0f,0f);
         if (direction == orientationEnum.left)
         {
@@ -95,7 +126,76 @@ public class EnemyActions : PersonActions
         }
     }
 
+    /// <summary>
+    /// Остановить передвижение
+    /// </summary>
+    public override void StopWalking()
+    {
+        base.StopWalking();
+        Vector3 targetVelocity = new Vector3(0f, rigid.velocity.y, rigid.velocity.z);
+        if (Vector3.Distance(rigid.velocity, targetVelocity) < velEps)
+        {
+            rigid.velocity = targetVelocity;
+        }
+        else
+        {
+            rigid.velocity = Vector3.Lerp(rigid.velocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+        }
+    }
+
+    /// <summary>
+    /// Совершить прыжок
+    /// </summary>
+    public override void Jump()
+    {
+        rigid.velocity = new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y + jumpForce, Mathf.NegativeInfinity, jumpForce), rigid.velocity.z);
+        StartCoroutine(JumpProcess());
+    }
+
+    protected IEnumerator JumpProcess()//Процесс прыжка
+    {
+        jumped = true;
+        yield return new WaitForSeconds(0.1f);
+        jumped = false;
+    }
     #endregion //interface
+
+    public override void Attack()
+    {
+        if ((hitData != null) && (weapon != null))
+        {
+            if (cAnim != null)
+            {
+                cAnim.Attack(hitData.hitName, hitData.hitTime);
+            }
+            StartCoroutine(AttackProcess());
+        }
+    }
+
+    protected override IEnumerator AttackProcess()//Процесс атаки
+    {
+        if (hitBox != null)
+        {
+            GameObject hBox = hitBox.gameObject;
+            hBox.transform.localPosition = hitData.hitPosition;
+            hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
+            yield return new WaitForSeconds(hitData.hitTime - hitData.beginTime);
+            this.hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
+            yield return new WaitForSeconds(hitData.beginTime);
+            hitData = null;
+        }
+    }
+
+    public override void SetHitData(string hitName)
+    {
+        for (int i = 0; i < weapon.hitData.Count; i++)
+        {
+            if (string.Equals(hitName, weapon.hitData[i].hitName))
+            {
+                hitData = weapon.hitData[i];
+            }
+        }
+    }
 
     /// <summary>
     /// Задать поле статов

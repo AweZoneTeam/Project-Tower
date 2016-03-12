@@ -11,7 +11,7 @@ public class InterObjAnimator : MonoBehaviour
 {
     #region fields
 
-    public AnimClass anim;//Идентификатор проигрываемой в данный момент анимации.
+    protected AnimClass anim=new AnimClass(0,0);//Идентификатор проигрываемой в данный момент анимации.
     public List<PartController> parts = new List<PartController>();//Части тела, управляемых аниматором
     public VisualData visualData;//Визуальная база данных, в которую мы будем вносить изменения по создаваемому персонажу
     //public ShadowScript shadow;//Тень, что отбрасывает персонаж
@@ -51,7 +51,7 @@ public class InterObjAnimator : MonoBehaviour
 
     public virtual void Update()
     {
-        Sinchronize();
+        //Sinchronize();
 
         /*
 #if UNITY_EDITOR
@@ -109,7 +109,7 @@ public class InterObjAnimator : MonoBehaviour
     /// <returns>тип и номер анимации</returns>
     public AnimClass FindAnimData(string animName)
     {
-        AnimClass a = null;
+        AnimClass a = anim;
         foreach (NamedAnimClass s in animBase)
         {
             if (string.Equals(s.animName, animName))
@@ -163,6 +163,7 @@ public class InterObjAnimator : MonoBehaviour
                     if (!aInfo.stepByStep || !aInfo.stopStepByStep)
                     {
                         parts[i].mov.gotoAndPlay((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
+                        parts[i].mov.setPlaying(true);
                     }
                     else if (aInfo.stepByStep)
                     {

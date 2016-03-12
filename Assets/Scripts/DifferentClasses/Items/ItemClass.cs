@@ -19,8 +19,19 @@ public class ItemClass: ScriptableObject
 [System.Serializable]
 public class WeaponClass : ItemClass
 {
-    public HitClass groundHit;
-    public HitClass airHit; 
+    public List<HitClass> hitData=new List<HitClass>();
+
+    public HitClass GetHit(string hitName)
+    {
+        for (int i=0;i<hitData.Count;i++)
+        {
+            if (string.Equals(hitData[i].hitName, hitName))
+            {
+                return hitData[i];
+            }
+        }
+        return null;
+    }
 }
 
 /// <summary>

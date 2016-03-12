@@ -42,5 +42,12 @@ public class WallClass
     }
 }
 
-
-
+/// <summary>
+/// Специальный класс, который показывает, в какую комнату какая дверь ведёт
+/// </summary>
+[System.Serializable]
+public class RoomConnection
+{
+    public GameObject door;
+    public AreaClass room;
+}

@@ -125,11 +125,13 @@ namespace Pathfinding {
 
 		#endregion
 
-		public byte[] GetData () {
+		public byte[] GetData ()
+        {
 			return data;
 		}
 
-		public void SetData (byte[] data) {
+		public void SetData (byte[] data) 
+{
 			this.data = data;
 		}
 

@@ -18,7 +18,7 @@ public class BehaviourClass : ScriptableObject
         activities = new List<AIActionData>();
         for (int i = 0; i < original.activities.Count; i++)
         {
-            activities.Add(original.activities[i]);
+            activities.Add(new AIActionData(original.activities[i]));
         }
     }
 }
@@ -114,38 +114,4 @@ public class AIConditionSign
     public AICondition aiCondition;//Ссылка на функцию
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
-}
-
-/// <summary>
-/// Класс, что связывает строку с элементарной функцией действия. Этот класс используется в контроллерах персонажей с искусственным интеллектом
-/// </summary>
-[System.Serializable]
-public class AIActionID
-{
-    public delegate void AIAction(string id, int argument);
-    public string actionName;
-    public AIAction aiAction;
-
-    public AIActionID(string _actionName, AIAction _funct)
-    {
-        actionName = _actionName;
-        aiAction = _funct;
-    }
-}
-
-/// <summary>
-/// Класс, что связывает строку с функцией условия
-/// </summary>
-[System.Serializable]
-public class AIConditionID
-{
-    public delegate bool AICondition(string id, int argument);
-    public string conditionName;
-    public AICondition aiCondition;
-
-    public AIConditionID(string _conditionName, AICondition _funct)
-    {
-        conditionName = _conditionName;
-        aiCondition = _funct;
-    }
 }

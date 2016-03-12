@@ -7,13 +7,15 @@ public class KeyboardActorController : PersonController
 {
 
     #region consts
+
     private const float doorDistance = 4.5f;
+    
     #endregion //consts
 
     #region fields
-    private HumanoidActorActions actions;
-    
+     
     private InteractionChecker interactions;
+
     #endregion //fields
 
     //Инициализация полей и переменных
@@ -26,6 +28,7 @@ public class KeyboardActorController : PersonController
 
     public override void Initialize()
     {
+        base.Initialize();
         actions = GetComponent<HumanoidActorActions>();
         if (stats == null)
         {
@@ -36,60 +39,71 @@ public class KeyboardActorController : PersonController
             actions.SetStats(stats);
             actions.SetWeapon(equip.rightWeapon);
         }
+        rigid = GetComponent<Rigidbody>();
         transform.GetComponentInChildren<CharacterVisual>().SetStats(stats);
         transform.GetComponentInChildren<CharacterAnimator>().SetStats(stats);
-        groundCheck = transform.FindChild("Indicators").FindChild("GroundCheck");
         interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<InteractionChecker>();
     }
 
-    // Update is called once per frame
-    void Update ()
+    public override void Update ()
 	{
+        if ((stats.hitted > 0f) && (stats.health > 0f))
+        {
+            Hitted();
+        }
+
+        if (stats.health <= 0f)
+        {
+            Death();
+        }
         if (actions != null)
         {
-            if (Input.GetKey(KeyCode.D))
+            if (!death)
             {
-                actions.Turn(orientationEnum.right);
-                actions.StartWalking(orientationEnum.right);
+                if (Input.GetKey(KeyCode.D))
+                {
+                    actions.Turn(orientationEnum.right);
+                    actions.StartWalking(orientationEnum.right);
+                }
+                if (Input.GetKeyUp(KeyCode.D))
+                {
+                    actions.StopWalking();
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    actions.Turn(orientationEnum.left);
+                    actions.StartWalking(orientationEnum.left);
+                }
+                if (Input.GetKeyUp(KeyCode.A))
+                {
+                    actions.StopWalking();
+                }
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    actions.Jump();
+                }
             }
-            if (Input.GetKeyUp(KeyCode.D))
-            {
-                actions.StopWalking();
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                actions.Turn(orientationEnum.left);
-                actions.StartWalking(orientationEnum.left);
-            }
-            if (Input.GetKeyUp(KeyCode.A))
-            {
-                actions.StopWalking();
-            }
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                actions.Jump();
-            }
-        }
 
-        if (interactions.dropList.Count > 0)
-        {
-            if (interactions.dropList[0].autoPick)
+            if (interactions.dropList.Count > 0)
             {
-                TakeDrop();
+                if (interactions.dropList[0].autoPick)
+                {
+                    TakeDrop();
+                }
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Interact(this);
-        }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Interact(this);
+            }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            actions.Attack();
-        }
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                actions.Attack();
+            }
 
-        AnalyzeSituation();
+            AnalyzeSituation();
+        }
 	}
 
     #region Interact
@@ -116,33 +130,38 @@ public class KeyboardActorController : PersonController
         }
     }
 
-    void DoorInteraction()
+    protected override void DoorInteraction()
     {
         Transform trans = gameObject.transform;
-        AreaClass area = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>().currentArea;
-        float zDistance = Mathf.Abs(area.position.z + area.size.z / 2 - trans.position.z) - 0.5f;
+        float zDistance = Mathf.Abs(currentRoom.position.z + currentRoom.size.z / 2 - trans.position.z) - 0.5f;
         RaycastHit hit = new RaycastHit();
+        DoorClass door;
         if (Physics.Raycast(new Ray(trans.position, (int)stats.direction * trans.right), out hit, doorDistance))
         {
-            if (string.Equals(hit.collider.gameObject.tag, Tags.door))
+            door = hit.collider.gameObject.GetComponent<DoorClass>();
+            if (door!=null)
             {
-                if (hit.collider.gameObject.GetComponent<DoorClass>().locker.opened)
+                if (door.locker.opened)
                 {
-                    actions.GoThroughTheDoor(hit.collider.gameObject.GetComponent<DoorClass>());
+                    currentRoom = door.roomPath;
+                    actions.GoThroughTheDoor(door);
                 }
             }
         }
 
         if (Physics.Raycast(new Ray(trans.position, Input.GetKey(KeyCode.W)?new Vector3(0f,0f,-1f): new Vector3(0f, 0f, 1f)), out hit, zDistance))
         {
-            if (string.Equals(hit.collider.gameObject.tag, Tags.door))
+            door = hit.collider.gameObject.GetComponent<DoorClass>();
+            if (door!=null)
             {
-                if (hit.collider.gameObject.GetComponent<DoorClass>().locker.opened)
+                if (door.locker.opened)
                 {
-                    actions.GoThroughTheDoor(hit.collider.gameObject.GetComponent<DoorClass>());
+                    currentRoom = door.roomPath;
+                    actions.GoThroughTheDoor(door);
                 }
             }
         }
+        base.DoorInteraction();
     }
 
     void TakeDrop()
@@ -155,6 +174,26 @@ public class KeyboardActorController : PersonController
         }
         interactions.dropList.RemoveAt(0);
         Destroy(drop.gameObject);
+    }
+
+    /// <summary>
+    /// Эта функция вызывается при нанесении урона
+    /// </summary>
+    public override void Hitted()
+    {
+        actions.Hitted();
+    }
+
+    /// <summary>
+    /// Эта функция вызывается при смерти персонажа
+    /// </summary>
+    public override void Death()
+    {
+        if (!death)
+        {
+            death = true;
+            actions.Death();
+        }
     }
 
     #endregion //Interact
@@ -170,7 +209,6 @@ public class KeyboardActorController : PersonController
     }
 
     #endregion //Analyze
-
 
 }
 

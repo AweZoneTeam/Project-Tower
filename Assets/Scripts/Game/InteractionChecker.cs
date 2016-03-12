@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Класс, что представляет собой объекты, которые детектируют объекты, готовые к взаимодействию.
+/// </summary>
 public class InteractionChecker : MonoBehaviour {
 
     public List<InterObjController> interactions;

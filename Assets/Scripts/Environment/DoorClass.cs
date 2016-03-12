@@ -7,13 +7,12 @@ using System.Collections;
 [System.Serializable]
 public class DoorClass: MonoBehaviour
 {
-    public enum doorTypes { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа
-    public int doorType;//Тип двери
+    public doorEnum doorType;//Тип двери
     public AreaClass roomPath;//Куда ведёт данная дверь
     public Vector3 nextPosition;//Где будет находитmся персонаж при переходе в следующую комнату
     public LockScript locker;//Какой замок стоит на двери
 
-    public DoorClass(int _type, AreaClass _path, LockScript _locker)
+    public DoorClass(doorEnum _type, AreaClass _path, LockScript _locker)
     {
         doorType = _type; roomPath = _path; locker = _locker;
     }

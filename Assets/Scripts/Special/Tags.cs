@@ -13,6 +13,7 @@ public static class Tags {
     
     public const string cam = "MainCamera";
     public const string door = "Door";
+    public const string enter = "Enter";
     public const string interactive = "Interactive";
     public const string drop = "Dropable";
 

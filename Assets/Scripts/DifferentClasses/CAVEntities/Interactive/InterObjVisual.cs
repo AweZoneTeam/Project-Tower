@@ -6,12 +6,12 @@ public class InterObjVisual : MonoBehaviour
 
     #region fields
     private Prestats stats;
-    protected InterObjAnimator cAnim;
+    protected InterObjAnimator iAnim;//Все простые объекты имеют простейшую версию аниматора
     #endregion fields
 
     public virtual void Initialize()
     {
-        cAnim = GetComponent<InterObjAnimator>();
+        iAnim = GetComponent<InterObjAnimator>();
     }
 
     public virtual void Awake()

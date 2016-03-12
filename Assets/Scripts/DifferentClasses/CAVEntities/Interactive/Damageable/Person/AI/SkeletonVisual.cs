@@ -87,7 +87,7 @@ public class SkeletonVisual : EnemyVisual
         }
     }
 
-    public void Attack(string attackName, float time)
+    public override void Attack(string attackName, float time)
     {
         if (cAnim != null)
         {

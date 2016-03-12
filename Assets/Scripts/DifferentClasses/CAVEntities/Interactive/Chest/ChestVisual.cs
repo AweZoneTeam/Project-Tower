@@ -23,9 +23,9 @@ public class ChestVisual : InterObjVisual
     /// </summary>
     public void ClosedCondition()
     {
-        if (cAnim != null)
+        if (iAnim != null)
         {
-            cAnim.Animate("Closed");
+            iAnim.Animate("Closed");
         }
     }
 
@@ -39,11 +39,11 @@ public class ChestVisual : InterObjVisual
 
     IEnumerator OpenChest()//Процесс открытия сундука
     {
-        if (cAnim != null)
+        if (iAnim != null)
         {
-            cAnim.Animate("Open");
+            iAnim.Animate("Open");
             yield return new WaitForSeconds(openTime);
-            cAnim.Animate("Opened");
+            iAnim.Animate("Opened");
         }
     }
     #endregion //AnimatedActions

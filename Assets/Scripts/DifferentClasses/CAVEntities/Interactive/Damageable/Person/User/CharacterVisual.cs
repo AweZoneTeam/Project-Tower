@@ -27,7 +27,9 @@ public class CharacterVisual : PersonVisual
     #endregion //timers
 
     #region parametres
+
     private bool attack=false;
+
     #endregion //parametres
 
     #region fields
@@ -130,7 +132,7 @@ public class CharacterVisual : PersonVisual
         }
     }
 
-    public void Attack(string attackName, float time)
+    public override void Attack(string attackName, float time)
     {
         if (cAnim != null)
         {

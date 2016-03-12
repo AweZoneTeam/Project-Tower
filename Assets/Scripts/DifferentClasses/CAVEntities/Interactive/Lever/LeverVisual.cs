@@ -23,9 +23,9 @@ public class LeverVisual : InterObjVisual
     /// </summary>
     public void ClosedCondition()
     {
-        if (cAnim != null)
+        if (iAnim != null)
         {
-            cAnim.Animate("Deactivated");
+            iAnim.Animate("Deactivated");
         }
     }
 
@@ -39,11 +39,11 @@ public class LeverVisual : InterObjVisual
 
     IEnumerator ActivationLever()//Процесс нажатия на рычаг
     {
-        if (cAnim != null)
+        if (iAnim != null)
         {
-            cAnim.Animate("Activation");
+            iAnim.Animate("Activation");
             yield return new WaitForSeconds(activationTime);
-            cAnim.Animate("Activated");
+            iAnim.Animate("Activated");
         }
     }
     #endregion //AnimatedActions

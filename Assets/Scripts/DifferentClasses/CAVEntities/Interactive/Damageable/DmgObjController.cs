@@ -21,7 +21,7 @@ public class DmgObjController : InterObjController
     private DmgObjVisual anim;
     private Organism stats=new Organism();
     public List<GameObject> dropList=new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
-    protected bool death=false;//умер ли персонаж
+    public bool death=false;//умер ли персонаж
     #endregion //fields
 
     public override void Initialize()
@@ -40,9 +40,9 @@ public class DmgObjController : InterObjController
 
     #region interface
 
-    public virtual void FixedUpdate()
+    public virtual void Update()
     {
-        if ((stats.hitted>0)&&(stats.health >0f))
+        if ((stats.hitted>0f)&&(stats.health >0f))
         {
             Hitted();
         }

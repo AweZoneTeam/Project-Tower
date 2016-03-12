@@ -16,8 +16,10 @@ public class DmgObjActions : InterObjActions
     #endregion //consts
 
     #region fields
+
     private Organism stats;
     private DmgObjVisual visual;
+
     #endregion //fields
 
     public List<GameObject> dropList = new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
@@ -65,7 +67,7 @@ public class DmgObjActions : InterObjActions
     /// <summary>
     /// Произвести взаимодействие
     /// </summary>
-    public virtual void Interact()
+    public override void Interact()
     {
         base.Interact();
     }

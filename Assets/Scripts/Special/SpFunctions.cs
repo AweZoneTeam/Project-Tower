@@ -13,12 +13,12 @@ public static class SpFunctions {
 	/// </summary>
 	public static bool ComprFunctionality(int arg1, string opr, int arg2)
 	{
-		return ((arg1 < arg2) && (string.Equals(opr,"<")) ||
-						(arg1 <= arg2) && (string.Equals(opr,"<=")) ||
-						(arg1 == arg2) && (string.Equals(opr,"=")) ||
-						(arg1 > arg2) && (string.Equals(opr,">")) ||
-						(arg1 >= arg2) && (string.Equals(opr,">=")) ||
-						(arg1 != arg2) && (string.Equals(opr,"!="))||
+		return (((arg1 < arg2) && (string.Equals(opr,"<"))) ||
+						((arg1 <= arg2) && (string.Equals(opr,"<="))) ||
+						((arg1 == arg2) && (string.Equals(opr,"="))) ||
+						((arg1 > arg2) && (string.Equals(opr,">"))) ||
+						((arg1 >= arg2) && (string.Equals(opr,">="))) ||
+						((arg1 != arg2) && (string.Equals(opr,"!=")))||
 		        		(string.Equals(opr,"!")));
 	}
 
