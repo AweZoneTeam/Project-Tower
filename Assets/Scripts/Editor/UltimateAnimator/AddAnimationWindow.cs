@@ -82,7 +82,7 @@ public class AddAnimationWindow : EditorWindow
 		for (int k = 0; k < cAnim.parts.Count; k++) {
 			if (type == cAnim.parts [k].interp.animTypes.Count) {
 				numb = 0;
-				cAnim.parts [k].interp.animTypes.Add (new animationInfoTypes (typeName, animName));
+				cAnim.parts [k].interp.animTypes.Add (new animationInfoType (typeName, animName));
 			}
 			else {
 				if (numb != cAnim.parts [k].interp.animTypes [type].animInfo.Count) {

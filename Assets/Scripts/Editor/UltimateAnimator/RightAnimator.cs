@@ -65,6 +65,8 @@ public class RightAnimator : EditorWindow
 	//Также можно добавить новую анимационную часть
 	void PartList() 
 	{
+        AnimClass anim=null;
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
 		parts = character.GetComponent<InterObjAnimator> ().parts;
 		GUILayout.BeginVertical ();
 		{
@@ -75,6 +77,12 @@ public class RightAnimator : EditorWindow
 						if (!string.Equals (parts [i].gameObject.name, leftAnim.partName)) {
 							leftAnim.partName = parts [i].gameObject.name;
 							leftAnim.characterPart = parts [i];
+                            if (leftAnim.characterAnimation!=null)
+                            {
+                                anim = cAnim.FindAnimData(leftAnim.animationName);
+                                if (anim!=null)
+                                leftAnim.characterAnimation = parts[i].interp.animTypes[anim.type].animInfo[anim.numb];           
+                            }
                             leftAnim.defaultLayer = parts[i].mov.settings.spriteLayerValue;
 
                         }
@@ -86,11 +94,18 @@ public class RightAnimator : EditorWindow
 		GUILayout.EndVertical();
 		GUILayout.BeginArea(new Rect(0f,260f,300f,60f));
 		{
-			if(GUILayout.Button("+Add"))
-			{
-				AddPart ();
-			}
-
+            EditorGUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("+Add"))
+                {
+                    AddPart();
+                }
+                if (GUILayout.Button("-Delete"))
+                {
+                    DeletePart();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
             if (stencils.Count > 0)
             {
                 EditorGUILayout.Space();
@@ -122,7 +137,7 @@ public class RightAnimator : EditorWindow
 		{
 			GUILayout.Space (5);
 			animTypes = character.GetComponent<InterObjAnimator> ().animTypes;
-			scrollPosition2=GUI.BeginScrollView(new Rect(0f,340f,300f,100f),scrollPosition2,new Rect(0f,50f,300f,800f));
+			scrollPosition2=GUI.BeginScrollView(new Rect(0f,340f,300f,100f),scrollPosition2,new Rect(0f,50f,300f,2000f));
 			{
 				for (int i = 0; i < animTypes.Count; i++) {
 					GUILayout.TextField (animTypes [i].typeName);
@@ -144,9 +159,18 @@ public class RightAnimator : EditorWindow
 		GUILayout.Space (5);
 		GUILayout.BeginArea (new Rect(0f,450f,300f,20f));
 		{
-			if (GUILayout.Button ("+Add")) {
-				AddAnimation ();
-			}
+            EditorGUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("+Add"))
+                {
+                    AddAnimation();
+                }
+                if (GUILayout.Button("-Delete"))
+                {
+                    DeleteAnimation();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
 		}
 		GUILayout.EndArea ();	
 	}
@@ -223,6 +247,15 @@ public class RightAnimator : EditorWindow
 		animScreen.Initialize(this,leftAnim,character,"Assets/Animations/");
 	}
 
+    /// <summary>
+    /// Открыть окно удаления анимационной части
+    /// </summary>
+    public void DeletePart()
+    {
+        DeletePartWindow animScreen = (DeletePartWindow)EditorWindow.GetWindow(typeof(DeletePartWindow));
+        animScreen.Initialize(character);
+    }
+
     void UseStencil(InterObjAnimator stencil)
     {
         InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
@@ -253,5 +286,12 @@ public class RightAnimator : EditorWindow
 		animScreen.Initialize (this,leftAnim,character);
 	}
 
-	//Комментарий для нормальной работы гит хаба.
+    /// <summary>
+    /// Открыть окно удаления анимации
+    /// </summary>
+    public void DeleteAnimation()
+    {
+        DeleteAnimationWindow animScreen = (DeleteAnimationWindow)EditorWindow.GetWindow(typeof(DeleteAnimationWindow));
+        animScreen.Initialize(character);
+    }
 }

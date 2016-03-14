@@ -85,19 +85,45 @@ public class InterObjAnimator : MonoBehaviour
     {
         GAFMovieClip mov;
         AnimationInterpretator interp;
+        List<PartController> childParts = new List<PartController>();
         foreach (PartController part in parts)
         {
+            childParts = null;
             part.type = type;
             part.numb = numb;
             mov = part.mov;
             interp = part.interp;
+            if (part.childParts!=null)
+            {
+                childParts = part.childParts;
+            }
             if (right)
             {
                 mov.setSequence(interp.animTypes[type].animInfo[numb].rsequence.sequence, true);
+                if (childParts != null)
+                {
+                    if (childParts.Count > 0)
+                    {
+                        if (childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].rsequence.parentSequence.Length > 1)
+                        {
+                            mov.setSequence(childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].rsequence.parentSequence, true);
+                        }
+                    }
+                }
             }
             else
             {
                 mov.setSequence(interp.animTypes[type].animInfo[numb].lsequence.sequence, true);
+                if (childParts != null)
+                {
+                    if (childParts.Count > 0)
+                    {
+                        if (childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].lsequence.parentSequence.Length > 1)
+                        {
+                            mov.setSequence(childParts[childParts.Count - 1].interp.animTypes[type].animInfo[numb].lsequence.parentSequence, true);
+                        }
+                    }
+                }
             }
         }
     }

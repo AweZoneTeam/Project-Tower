@@ -12,7 +12,8 @@ public class LeftAnimator : EditorWindow
 	public Rect windowRect1 = new Rect(100f, 100f, 200f, 200f);
 	public string orientation = "Right";
     public string leftSequence, rightSequence, leftPSequence, rightPSequence;//Последовательности, которые мы задаём для данной части 
-                                                                           //тела в данной анимации
+                                                                             //тела в данной анимации
+    public string sLeftSequence = "left sequence", sRightSequence = "right sequence", sLeftPSequence = "left parent sequence", sRightPSequence = "right parent sequence";//Строчки, нужные для ручного ввода анимаций
     public int rCurrentIndex=0, lCurrentIndex=0, rPCurrentIndex = 0, lPCurrentIndex = 0;//Числа, которые нужны для выбора той или иной 
                                                                                        //последовательности из предложеных в GAFMovieClip
     public Object audioClip;//Один из аудиоклипов, проигрываемых в данной частью в данном фрейме данной анимации
@@ -163,39 +164,55 @@ public class LeftAnimator : EditorWindow
                 #region setRightSequence
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Right Sequence");
                     rCurrentIndex = EditorGUILayout.Popup(rCurrentIndex, sequenceNames.ToArray());
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                {
                     rightSequence = sequenceNames[rCurrentIndex];
-                    EditorGUILayout.LabelField(rightSequence);
                     if (GUILayout.Button("SetRightSequence"))
                     {
                         SetSequence(rightSequence, true, false);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                {
+                    sRightSequence=EditorGUILayout.TextField(sRightSequence);
+                    if (GUILayout.Button("SetRightSequenceManually"))
+                    {
+                        SetSequence(sRightSequence, true, false);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+                if (GUILayout.Button("SetRSequenceInAllParts"))
+                {
+                    AnimClass animclass = cAnim.FindAnimData(animationName);
+                    SetSequenceToAllParts(sRightSequence, animclass.type, animclass.numb, true);
+                }
                 #endregion //SetRightSequence
 
                 #region setLeftSequence
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Left Sequence");
                     lCurrentIndex = EditorGUILayout.Popup(lCurrentIndex, sequenceNames.ToArray());
+                    leftSequence = sequenceNames[lCurrentIndex];
+                    if (GUILayout.Button("SetLeftSequence"))
+                    {
+                        SetSequence(leftSequence, false, false);
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
                 {
-                    leftSequence = sequenceNames[lCurrentIndex];
-                    EditorGUILayout.LabelField(leftSequence);
-                    if (GUILayout.Button("SetLeftSequence"))
+                    sLeftSequence=EditorGUILayout.TextField(sLeftSequence);
+                    if (GUILayout.Button("SetLeftSequenceManually"))
                     {
-                        SetSequence(leftSequence, false,false);
+                        SetSequence(sLeftSequence, false, false);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                if (GUILayout.Button("SetLSequenceInAllParts"))
+                {
+                    AnimClass animclass = cAnim.FindAnimData(animationName);
+                    SetSequenceToAllParts(sLeftSequence, animclass.type, animclass.numb, false);
+                }
                 #endregion //setLeftSequence
                 #endregion //SetSequences
 
@@ -207,17 +224,20 @@ public class LeftAnimator : EditorWindow
                     #region setRightPSequence
                     EditorGUILayout.BeginHorizontal();
                     {
-                        EditorGUILayout.LabelField("Right Parent Sequence");
                         rPCurrentIndex = EditorGUILayout.Popup(rCurrentIndex, pSequenceNames.ToArray());
+                        rightPSequence = pSequenceNames[rPCurrentIndex];
+                        if (GUILayout.Button("SetRightPSequence"))
+                        {
+                            SetSequence(rightPSequence, true, true);
+                        }
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     {
-                        rightPSequence = pSequenceNames[rPCurrentIndex];
-                        EditorGUILayout.LabelField(rightPSequence);
-                        if (GUILayout.Button("SetRightPSequence"))
+                        sRightPSequence=EditorGUILayout.TextField(sRightPSequence);
+                        if (GUILayout.Button("SetRightPSequenceManually"))
                         {
-                            SetSequence(rightPSequence, true,true);
+                            SetSequence(sRightPSequence, true, true);
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -226,17 +246,20 @@ public class LeftAnimator : EditorWindow
                     #region setLeftPSequence
                     EditorGUILayout.BeginHorizontal();
                     {
-                        EditorGUILayout.LabelField("Left Parent Sequence");
                         lPCurrentIndex = EditorGUILayout.Popup(lCurrentIndex, pSequenceNames.ToArray());
+                        leftPSequence = pSequenceNames[lPCurrentIndex];
+                        if (GUILayout.Button("SetLeftPSequence"))
+                        {
+                            SetSequence(leftPSequence, false, true);
+                        }
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     {
-                        leftPSequence = pSequenceNames[lPCurrentIndex];
-                        EditorGUILayout.LabelField(leftPSequence);
-                        if (GUILayout.Button("SetLeftPSequence"))
+                        sLeftPSequence=EditorGUILayout.TextField(leftPSequence);
+                        if (GUILayout.Button("SetLeftPSequenceManually"))
                         {
-                            SetSequence(leftPSequence, false, true);
+                            SetSequence(sLeftPSequence, false, true);
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -320,7 +343,7 @@ public class LeftAnimator : EditorWindow
                     currentFrame = mainFrame;
                     foreach (PartController part in cAnim.parts)
                     {
-                        part.mov.gotoAndStop((uint)mainFrame);
+                        part.mov.gotoAndStop(part.mov.currentSequence.startFrame+((uint)mainFrame-mov.currentSequence.startFrame));
                     }
                 }
                 #endregion //sliders
@@ -427,7 +450,8 @@ public class LeftAnimator : EditorWindow
 			for (int i = 0; i < cAnim.parts.Count; i++) {
 				cAnim.parts [i].interp = new AnimationInterpretator (" ");
 				cAnim.parts [i].interp.setInterp(cAnim.visualData.animInterpretators [i]);
-			}
+                cAnim.parts[i].interp.partPath = cAnim.visualData.animInterpretators[i].partPath;
+            }
 			rightAnim.animTypes = cAnim.animTypes;			
 		}
 		rightAnim.character = character;
@@ -462,11 +486,12 @@ public class LeftAnimator : EditorWindow
         {
             cPart = cAnim.parts[i];
             cInterp = new AnimationInterpretator(" ");
-            cInterp.animTypes = new List<animationInfoTypes>();
+            cInterp.animTypes = new List<animationInfoType>();
             cInterp.setInterp(cAnim.visualData.animInterpretators[i]);
+            cInterp.partPath = path + "Parts/";
             cPart.interp = cInterp;
             AnimationInterpretator interp = ScriptableObject.CreateInstance<AnimationInterpretator>();
-            interp.animTypes = new List<animationInfoTypes>();
+            interp.animTypes = new List<animationInfoType>();
             interp.setInterp(cInterp);
             interp.partPath = path+"Parts/";
             AssetDatabase.CreateAsset(interp, interp.partPath + cPart.gameObject.name + ".asset");
@@ -511,20 +536,23 @@ public class LeftAnimator : EditorWindow
         VisualData vis = cAnim.visualData;
         vis.animInterpretators.Clear ();
         List<PartController> dependedParts = new List<PartController>();
+        PartController part;
         for (int i = 0; i < cAnim.parts.Count; i++) //Сохраняются все AnimationInterpretators.
         {
-            if (cAnim.parts[i].childParts != null)
+            part = cAnim.parts[i];
+            if (part != null)
             {
-                for (int j = 0; j < cAnim.parts[i].childParts.Count; j++)
+                for (int j = 0; j < part.childParts.Count; j++)
                 {
-                    dependedParts.Add(cAnim.parts[i].childParts[j]);
+                    dependedParts.Add(part.childParts[j]);
                 }
-                cAnim.parts[i].childParts.Clear();
+                part.childParts.Clear();
             }
-            saveInterp = cAnim.parts[i].interp;
-            changeInterp = saveInterp.FindInterp(saveInterp.partPath + cAnim.parts[i].gameObject.name + ".asset");
+            saveInterp = new AnimationInterpretator(part.interp);
+            changeInterp = AnimationInterpretator.FindInterp(saveInterp.partPath + part.gameObject.name + ".asset");
             changeInterp.setInterp(saveInterp);
-            cAnim.parts[i].interp = changeInterp;
+            part.interp = changeInterp;
+            PrefabUtility.CreatePrefab(saveInterp.partPath + part.gameObject.name + ".prefab", cAnim.parts[i].gameObject);
             EditorUtility.SetDirty(changeInterp);
         }
         for (int i = 0; i < dependedParts.Count; i++)
@@ -533,9 +561,12 @@ public class LeftAnimator : EditorWindow
             DestroyImmediate(dependedParts[i].gameObject);
         }
         for (int i = 0; i < cAnim.parts.Count; i++) {
-			saveInterp = cAnim.parts [i].interp;
-			changeInterp = saveInterp.FindInterp (saveInterp.partPath + cAnim.parts [i].gameObject.name + ".asset");
-			cAnim.parts [i].interp = changeInterp;
+            part = cAnim.parts[i];
+			saveInterp = new AnimationInterpretator(part.interp);
+            changeInterp = AnimationInterpretator.FindInterp (saveInterp.partPath + part.gameObject.name + ".asset");
+            changeInterp.setInterp(saveInterp);
+            part.interp = new AnimationInterpretator(changeInterp);
+            PrefabUtility.CreatePrefab(saveInterp.partPath + part.gameObject.name + ".prefab", cAnim.parts[i].gameObject);
             EditorUtility.SetDirty(changeInterp);
             vis.animInterpretators.Add(changeInterp);
 		}
@@ -608,6 +639,25 @@ public class LeftAnimator : EditorWindow
             else
             {
                 characterAnimation.lsequence.parentSequence = sequence;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Всем частям тела установить одну и ту же анимацию в выбранном типе, выбранном номере и выбранной ориентации
+    /// </summary>
+    void SetSequenceToAllParts(string sequence, int type, int numb, bool right)
+    {
+        InterObjAnimator cAnim = character.GetComponent<InterObjAnimator>();
+        for (int i = 0; i < cAnim.parts.Count; i++)
+        {
+            if (right)
+            {
+                cAnim.parts[i].interp.animTypes[type].animInfo[numb].rsequence.sequence = sequence;
+            }
+            else
+            {
+                cAnim.parts[i].interp.animTypes[type].animInfo[numb].lsequence.sequence = sequence;
             }
         }
     }

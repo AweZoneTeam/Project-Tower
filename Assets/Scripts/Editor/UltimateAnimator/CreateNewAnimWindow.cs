@@ -19,6 +19,7 @@ public class CreateNewAnimWindow :EditorWindow
     public string chosenStencil = "";
     private int stencilIndex=0;
 
+
     [HideInInspector]
 	public RightAnimator rightAnim;
 	[HideInInspector]
@@ -40,33 +41,37 @@ public class CreateNewAnimWindow :EditorWindow
 
     void OnGUI()
 	{
-		dataName = EditorGUILayout.TextField (dataName);
-		characterPath =EditorGUILayout.TextField (characterPath);
-        EditorGUILayout.BeginHorizontal();
-        {
-            EditorGUILayout.LabelField("Animator type");
-            currentIndex = EditorGUILayout.Popup(currentIndex, animatorTypes);
-            animatorType = animatorTypes[currentIndex];
-        }
-        EditorGUILayout.EndHorizontal();
-        if (GUILayout.Button ("Create New"))
-		{
-			CreateNew();
-		}
-        if (stencils.Count > 0)
-        {
-            EditorGUILayout.Space();
+        EditorGUILayout.BeginVertical();
+        { 
+		    dataName = EditorGUILayout.TextField (dataName);
+            characterPath=EditorGUILayout.TextField(characterPath);        
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.LabelField("Stencil");
-                stencilIndex = EditorGUILayout.Popup(stencilIndex, stencils.ToArray());
-                chosenStencil = stencils[stencilIndex];
+                EditorGUILayout.LabelField("Animator type");
+                currentIndex = EditorGUILayout.Popup(currentIndex, animatorTypes);
+                animatorType = animatorTypes[currentIndex];
             }
-            if (GUILayout.Button("Create Stencil"))
+            EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button ("Create New"))
+		    {
+		    	CreateNew();
+		    }
+            if (stencils.Count > 0)
             {
-                CreateNew(chosenStencil);
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField("Stencil");
+                    stencilIndex = EditorGUILayout.Popup(stencilIndex, stencils.ToArray());
+                    chosenStencil = stencils[stencilIndex];
+                }
+                if (GUILayout.Button("Create Stencil"))
+                {
+                    CreateNew(chosenStencil);
+                }
             }
         }
+        EditorGUILayout.EndVertical();
     }
 
 	//Создаём визуальную часть нашего персонажа.

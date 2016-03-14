@@ -11,13 +11,13 @@ using System;
 public class AnimationInterpretator : ScriptableObject 
 {
 	public string partPath; //Где находится оригинал этой информации по анимированию
-	public List<animationInfoTypes> animTypes=new List<animationInfoTypes>(); //Здесь собраны все используемые частью типы анимаций
+	public List<animationInfoType> animTypes=new List<animationInfoType>(); //Здесь собраны все используемые частью типы анимаций
 
 	public AnimationInterpretator (AnimationInterpretator interp)
 	{
-		animTypes = new List<animationInfoTypes> ();
+		animTypes = new List<animationInfoType> ();
 		for (int i = 0; i < interp.animTypes.Count; i++) {
-			animTypes.Add (new animationInfoTypes (interp.animTypes [i]));
+			animTypes.Add (new animationInfoType (interp.animTypes [i]));
 		}
 		partPath = interp.partPath;
 	}
@@ -26,18 +26,18 @@ public class AnimationInterpretator : ScriptableObject
 	public AnimationInterpretator (string path)
 	{
 		partPath = path;
-		animTypes = new List<animationInfoTypes> ();
+		animTypes = new List<animationInfoType> ();
 	}
 
 	//Функция, которая обеспечивает сохранение анимационных матриц. Все нижеописанные конструкторы необходимы исключительно для этого
 	public void setInterp(AnimationInterpretator interp)
 	{
-		partPath = interp.partPath;
-		animTypes.Clear ();
-		for (int i = 0; i < interp.animTypes.Count; i++) {
-			animTypes.Add (new animationInfoTypes (interp.animTypes [i]));
-		}
-	}
+        animTypes = new List<animationInfoType>();
+        for (int i = 0; i < interp.animTypes.Count; i++)
+        {
+            animTypes.Add(new animationInfoType(interp.animTypes[i]));
+        }
+    }
 
     //Функция, которая обеспечивает сохранение анимационных матриц
     public void setInterp(List<animList> aList)
@@ -45,12 +45,12 @@ public class AnimationInterpretator : ScriptableObject
         animTypes.Clear();
         for (int i = 0; i < aList.Count; i++)
         {
-            animTypes.Add(new animationInfoTypes(aList[i].animations, aList[i].typeName));
+            animTypes.Add(new animationInfoType(aList[i].animations, aList[i].typeName));
         }
     }
 
 	//Функция, которая возвращает интерпретатор по заданному пути
-	public AnimationInterpretator FindInterp(string path)
+	public static AnimationInterpretator FindInterp(string path)
 	{
 		return AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
 	}
@@ -129,6 +129,7 @@ public class AnimationInterpretator : ScriptableObject
     /// </summary>
     public void InverseSequeces()
     {
+        List<animationLayerOrderData> layerData = new List<animationLayerOrderData>();
         animationInfo animInfo;
         for (int i = 0; i < animTypes.Count; i++)
         {
@@ -141,6 +142,9 @@ public class AnimationInterpretator : ScriptableObject
                 s = animInfo.rsequence.parentSequence;
                 animInfo.rsequence.parentSequence = animInfo.lsequence.parentSequence;
                 animInfo.lsequence.parentSequence = s;
+                layerData = animInfo.leftOrderData;
+                animInfo.leftOrderData = animInfo.rightOrderData;
+                animInfo.rightOrderData = layerData;
             }
         }
     }
@@ -157,11 +161,11 @@ public class AnimationInterpretator : ScriptableObject
                 #region sequences
                 if (animInfo.rsequence.sequence.Contains("Right") && !animInfo.lsequence.sequence.Contains("Left"))
                 {
-                    animInfo.lsequence.sequence = "Left" + animInfo.lsequence.sequence;
+                    animInfo.lsequence.sequence = "Left" + animInfo.rsequence.sequence.Substring(5);
                 }
                 else if (animInfo.rsequence.sequence.Contains("Left") && !animInfo.lsequence.sequence.Contains("Right"))
                 {
-                    animInfo.lsequence.sequence = "Right" + animInfo.lsequence.sequence;
+                    animInfo.lsequence.sequence = "Right" + animInfo.rsequence.sequence.Substring(4);
                 }
                 else
                 {
@@ -172,11 +176,11 @@ public class AnimationInterpretator : ScriptableObject
                 #region parentSequences
                 if (animInfo.rsequence.parentSequence.Contains("Right") && !animInfo.lsequence.parentSequence.Contains("Left"))
                 {
-                    animInfo.lsequence.parentSequence = "Left" + animInfo.lsequence.parentSequence;
+                    animInfo.lsequence.parentSequence = "Left" + animInfo.rsequence.parentSequence.Substring(5);
                 }
                 else if (animInfo.rsequence.parentSequence.Contains("Left") && !animInfo.lsequence.parentSequence.Contains("Right"))
                 {
-                    animInfo.lsequence.parentSequence = "Right" + animInfo.lsequence.parentSequence;
+                    animInfo.lsequence.parentSequence = "Right" + animInfo.rsequence.parentSequence.Substring(4);
                 }
                 else
                 {
@@ -189,35 +193,35 @@ public class AnimationInterpretator : ScriptableObject
 }
 
 [System.Serializable]
-public class animationInfoTypes //Здесь собирается вся информация об анимациях одного типа, например, анимации передвижения, или ударов мечом
+public class animationInfoType //Здесь собирается вся информация об анимациях одного типа, например, анимации передвижения, или ударов мечом
 {
-	public string name;
+	public string typeName;
 	public List<animationInfo> animInfo; 
 
 	//Конструктор, используемый при сохранении интерпретатора
-	public animationInfoTypes (animationInfoTypes type)
+	public animationInfoType (animationInfoType type)
 	{
-		animInfo=new List<animationInfo>();
-		name = type.name;
+		animInfo=new List<animationInfo>()  ;
+		typeName = type.typeName;
 		for (int i = 0; i < type.animInfo.Count; i++) {
 			animInfo.Add(new animationInfo (type.animInfo[i]));
 		}
 	}
 
-    public animationInfoTypes (List<string> sList, string _name)
+    public animationInfoType (List<string> sList, string _name)
 	{
 		animInfo=new List<animationInfo>();
-		name = _name;
+		typeName = _name;
 		for (int i = 0; i < sList.Count; i++) {
 			animInfo.Add(new animationInfo (sList[i]));
 		}
 	}
 
 	//Конструктор, используемый при добавлении новой анимации
-	public animationInfoTypes (string typeName, string animName)
+	public animationInfoType (string typeName, string animName)
 	{
 		animInfo=new List<animationInfo>();
-		name = typeName;
+		this.typeName = typeName;
 		animInfo.Add (new animationInfo (animName));
 	}
 }
@@ -225,6 +229,7 @@ public class animationInfoTypes //Здесь собирается вся инф�
 [System.Serializable]
 public class animationInfo //Здесь собирается вся информация об одной анимации (какую последовательность надо включить, если персонаж идёт?)
 {
+    public string animName;//Как называет эту анимацию аниматор?
 	public animationPartString rsequence;//Какая анимация проигрывается, если персонаж повёрнут вправо
 	public animationPartString lsequence;//А если влево?
 	public List<animationSoundData> soundData;//как анимация звучит
@@ -238,25 +243,56 @@ public class animationInfo //Здесь собирается вся информ
 	//Конструктор, используемый при сохранении интерпретатора
 	public animationInfo(animationInfo info)
 	{
+        animName = info.animName;
 		soundData=new List<animationSoundData>();
 		leftOrderData=new List<animationLayerOrderData>();
 		rightOrderData=new List<animationLayerOrderData>();
 		rsequence = new animationPartString (info.rsequence);
 		lsequence = new animationPartString (info.lsequence);
-		loop = info.loop;
+        for (int i = 0; i < info.soundData.Count; i++)
+        {
+            soundData.Add(new animationSoundData(info.soundData[i]));
+        }
+        for (int i = 0; i < info.leftOrderData.Count; i++)
+        {
+            leftOrderData.Add(new animationLayerOrderData(info.leftOrderData[i]));
+        }
+        for (int i = 0; i < info.rightOrderData.Count; i++)
+        {
+            rightOrderData.Add(new animationLayerOrderData(info.rightOrderData[i]));
+        }
+        loop = info.loop;
 		stepByStep = info.stepByStep;
 		stopStepByStep = info.stopStepByStep;
 		FPS = info.FPS;
 	}
 
-	//Конструктор, используемый при добавлении новой анимации
-	public animationInfo(string name)
+    //Конструктор, используемый при добавлении ранее редактируемой части
+    public animationInfo(animationInfo info, int rOrder, int lOrder)
+    {
+        animName = info.animName;
+        soundData = new List<animationSoundData>();
+        leftOrderData = new List<animationLayerOrderData>();
+        leftOrderData.Add(new animationLayerOrderData(0, lOrder));
+        rightOrderData = new List<animationLayerOrderData>();
+        rightOrderData.Add(new animationLayerOrderData(0, rOrder));
+        rsequence = new animationPartString(info.rsequence);
+        lsequence = new animationPartString(info.lsequence);
+        loop = info.loop;
+        stepByStep = info.stepByStep;
+        stopStepByStep = info.stopStepByStep;
+        FPS = info.FPS;
+    }
+
+    //Конструктор, используемый при добавлении новой анимации
+    public animationInfo(string _name)
 	{
+        animName = _name;
 		soundData=new List<animationSoundData>();
 		leftOrderData=new List<animationLayerOrderData> ();
 		rightOrderData=new List<animationLayerOrderData> ();
-		rsequence=new animationPartString (name);
-		lsequence=new animationPartString (name);
+		rsequence=new animationPartString (_name);
+		lsequence=new animationPartString (_name);
         FPS = 30;
 	}
 }
