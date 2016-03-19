@@ -78,7 +78,7 @@ public class HitController : MonoBehaviour
                         Rigidbody rigid = other.gameObject.GetComponent<Rigidbody>();
                         if (hitData.direction == 1)
                         {
-                            rigid.AddForce(new Vector3(SpFunctions.realSign(gameObject.transform.lossyScale.x) * 2000f, 0f, 0f));
+                            rigid.AddForce(new Vector3(SpFunctions.RealSign(gameObject.transform.lossyScale.x) * 2000f, 0f, 0f));
                         }
                         else if (hitData.direction == 2)
                         {
@@ -99,7 +99,7 @@ public class HitController : MonoBehaviour
                     {
                         target.hitted=0;
                     }
-                        if (SpFunctions.realSign(gameObject.transform.lossyScale.x * other.gameObject.transform.lossyScale.x) > 0f)
+                        if (SpFunctions.RealSign(gameObject.transform.lossyScale.x * other.gameObject.transform.lossyScale.x) > 0f)
                         {
                             target.health -= (hitData.pDamage * (100 - target.pDefence) / 100 + hitData.fDamage * (100 - target.fDefence) / 100 +
                                                  hitData.aDamage * (100 - target.aDefence) / 100 + hitData.dDamage * (100 - target.dDefence) / 100) * hitData.backStabKoof;

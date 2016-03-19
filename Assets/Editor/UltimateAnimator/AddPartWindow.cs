@@ -105,7 +105,7 @@ public class AddPartWindow : EditorWindow
 			character.transform.position.z);
 		partMov.transform.parent = part.transform;
 		part.transform.parent = character.transform;
-        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.realSign(character.transform.localScale.x),
+        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.RealSign(character.transform.localScale.x),
                                               part.transform.localScale.y,
                                               part.transform.localScale.z);
 		AnimationInterpretator asset = ScriptableObject.CreateInstance<AnimationInterpretator>();
@@ -144,7 +144,7 @@ public class AddPartWindow : EditorWindow
 			character.transform.position.y+yOffset,
 			character.transform.position.z);
 		part.transform.parent = character.transform;
-        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.realSign(character.transform.localScale.x),
+        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.RealSign(character.transform.localScale.x),
                                                 part.transform.localScale.y,
                                                 part.transform.localScale.z);
         part.name = partName;
@@ -197,7 +197,7 @@ public class AddPartWindow : EditorWindow
             character.transform.position.y + yOffset,
             character.transform.position.z);
         part.transform.parent = character.transform;
-        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.realSign(character.transform.localScale.x),
+        part.transform.localScale = new Vector3(part.transform.localScale.x * SpFunctions.RealSign(character.transform.localScale.x),
                                                 part.transform.localScale.y,
                                                 part.transform.localScale.z);
         PartController cPart = part.GetComponent<PartController>();

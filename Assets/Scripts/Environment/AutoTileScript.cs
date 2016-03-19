@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 /// <summary>
 /// Скрипт, прикрепляющийся к текстурируемым объектам, которым нужна коррекция масштаба текстуры.
@@ -39,11 +41,12 @@ public class AutoTileScript : MonoBehaviour {
     }
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// ПОзволяет в редакторе производить коррекии тектуры.
 /// </summary>
 [CustomEditor(typeof(AutoTileScript))]
-public class AutoTileEditor : BaseAnimatorEditor
+public class AutoTileEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -55,4 +58,4 @@ public class AutoTileEditor : BaseAnimatorEditor
         }
     }
 }
-
+#endif

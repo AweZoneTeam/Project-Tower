@@ -29,11 +29,11 @@ public enum hittedEnum {noHit, microStun, pushedForward, pushedUp, pushedDown, m
 /// <summary>
 /// Какой (самый "интересный") тип препятствия окружает персонажа 
 /// </summary>
-public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall, wallAbove};
+public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall};
 
 /// <summary>
 /// Номера приоритетности у взаимодействующих с персонажем объектов. Нужно ли это, покажет время
 /// </summary>
-public enum interactionEnum {noInter, stair, rope, thicket, margin, edge, interactive};
+public enum interactionEnum {noInter, stair, rope, thicket, margin, edge, lowEdge, interactive};
 
 public enum doorEnum { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа

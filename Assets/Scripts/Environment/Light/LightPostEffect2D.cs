@@ -7,6 +7,7 @@ public class LightPostEffect2D : MonoBehaviour
 {
     private Material lightScreen;
     private Camera lightCam;
+    public Shader fxShader;
 
     private Camera thisCam;
     public LayerMask lightLayers;
@@ -16,8 +17,10 @@ public class LightPostEffect2D : MonoBehaviour
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (!Init())
+        {
             return;
-
+        }
+        Debug.LogError("kek1");
         lightCam.CopyFrom(thisCam);
         lightCam.backgroundColor = Color.black;
         lightCam.clearFlags = CameraClearFlags.Color;
@@ -42,15 +45,24 @@ public class LightPostEffect2D : MonoBehaviour
             thisCam = GetComponent<Camera>();
 
             if (!thisCam)
+            {
+                Debug.LogError("Kek2");
                 return false;
+            }
         }
 
         if (!lightScreen)
         {
-            Shader shader = Shader.Find("Project Tower/LightPostEffectShader");
-            if (!shader)
+            if (!fxShader)
+            {
+                fxShader = Shader.Find("Project Tower/LightPostEffectShader");
+            }
+            if (!fxShader)
+            {
+                Debug.LogError("Kek3");
                 return false;
-            lightScreen = new Material(shader);
+            }
+            lightScreen = new Material(fxShader);
         }
 
         if (!lightCam)
@@ -58,6 +70,7 @@ public class LightPostEffect2D : MonoBehaviour
             lightCam = new GameObject().AddComponent<Camera>();
             lightCam.enabled = false;
             lightCam.gameObject.hideFlags = HideFlags.HideAndDontSave;
+            Debug.Log("Kek4");
         }
 
         return true;

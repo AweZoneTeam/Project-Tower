@@ -75,11 +75,11 @@ public static class ActionTypes
 		else
 			koof2=-1;
 		hit=Physics2D.Raycast (inf.indicator.transform.position,
-		                       new Vector2(inf.infoVectors [0].x*SpFunctions.realSign((int)stats.direction),
+		                       new Vector2(inf.infoVectors [0].x*SpFunctions.RealSign((int)stats.direction),
 		            					   inf.infoVectors [0].y*koof2).normalized,
 		                       inf.floatParametres [0],
 		                       inf.whatToCheck);
-		float koof = -1*SpFunctions.realSign (hit.normal.x);
+		float koof = -1*SpFunctions.RealSign (hit.normal.x);
 		if (hit) 
 		{
 				rigid.velocity=new Vector2(0f,0f);

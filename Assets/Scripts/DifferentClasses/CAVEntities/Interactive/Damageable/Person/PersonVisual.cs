@@ -6,6 +6,19 @@ using System.Collections;
 /// </summary>
 public class PersonVisual : DmgObjVisual
 {
+
+    #region consts
+
+    protected const int maxEmployment = 10;
+
+    #endregion //consts
+
+    #region parametres
+
+    protected int employment = maxEmployment;
+
+    #endregion //parametres
+
     #region fields
 
     protected CharacterAnimator cAnim;//Объекты, которых можно с полной уверенностью назвать персонажами, обзавелись более сложной версией аниматора
@@ -19,7 +32,7 @@ public class PersonVisual : DmgObjVisual
 
     public override void Initialize()
     {
-        base.Initialize();
+        employment = maxEmployment;
     }
 
     #region AnimatedActionsInterface
@@ -39,12 +52,47 @@ public class PersonVisual : DmgObjVisual
     }
 
     /// <summary>
+    /// Анимировать быстрое передвижение по земле
+    /// </summary>
+    public virtual void FastGroundMove()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать кувырок
+    /// </summary>
+    public virtual void Flip()
+    { }
+
+    /// <summary>
+    /// Анимировать прижатие к стене
+    /// </summary>
+    public virtual void WallInteraction(float _time)
+    {
+    }
+
+    /// <summary>
+    /// Анимировать висячее состояние на краю
+    /// </summary>
+    public virtual void Hanging(float _time)
+    {
+    }
+
+    /// <summary>
     /// Анимировать передвижение в воздухе
     /// </summary>
     public virtual void AirMove()
     {
     }
-    
+
+    /// <summary>
+    /// Анимировать движение в приседе
+    /// </summary>
+    public virtual void CrouchMove()
+    {
+
+    }
+       
     /// <summary>
     /// Анимировать процесс атаки
     /// </summary>
@@ -72,6 +120,13 @@ public class PersonVisual : DmgObjVisual
             yield return new WaitForSeconds(deathTime);
             cAnim.Animate("Dead");
         }
+    }
+
+    protected IEnumerator VisualRoutine(int _employment, float _time)
+    {
+        employment -= _employment;
+        yield return new WaitForSeconds(_time);
+        employment += _employment;
     }
 
     #endregion //AnimatedActionsInterface

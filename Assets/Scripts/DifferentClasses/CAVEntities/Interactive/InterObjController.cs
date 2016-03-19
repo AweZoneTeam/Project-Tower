@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 /// <summary>
 /// Контроллер простейших интерактивных объектов. Они могут стоять на месте и принимать сигналы взаимодействия. 
@@ -55,6 +57,7 @@ public class InterObjController : MonoBehaviour
 
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Редактор контроллеров интерактивных объектов
 /// </summary>
@@ -72,3 +75,4 @@ public class InterObjEditor : Editor
         EditorGUILayout.IntField("direction", (int)stats.direction);
     }
 }
+#endif

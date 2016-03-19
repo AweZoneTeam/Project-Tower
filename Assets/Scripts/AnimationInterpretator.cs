@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 //Интерпретатор анимаций - своеобразная матрица, в которое паре числе (тип и номер) ставится в соответствие какая анимация проигрывается, а также какие у неё 
 //параметры (зацикливание, озвучивание, порядок отрисовки). Используется анимационными частями
@@ -52,8 +54,11 @@ public class AnimationInterpretator : ScriptableObject
 	//Функция, которая возвращает интерпретатор по заданному пути
 	public static AnimationInterpretator FindInterp(string path)
 	{
-		return AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
-	}
+#if UNITY_EDITOR
+        return AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
+#endif
+        return null;
+    }
 
     /// <summary>
     /// Во всех анимациях часть тела будет прорисовываться сначала в выбранном дефолтном слое

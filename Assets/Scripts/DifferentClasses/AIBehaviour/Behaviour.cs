@@ -1,27 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
-/// <summary>
-/// таблица, в которой находятся все совершаемые ИИ действия, причины и вероятность  их совершения
-/// </summary>
-[System.Serializable]
-public class BehaviourClass : ScriptableObject
-{
-    public string behaviourName;
-    public List<AIActionData> activities=new List<AIActionData>();
 
-    public BehaviourClass(BehaviourClass original)
-    {
-        name = original.name;
-        behaviourName = original.behaviourName;
-        activities = new List<AIActionData>();
-        for (int i = 0; i < original.activities.Count; i++)
-        {
-            activities.Add(new AIActionData(original.activities[i]));
-        }
-    }
-}
 
 /// <summary>
 /// Класс, в котором содержится вся информация о совершаемом ИИ одном действии
@@ -114,4 +96,14 @@ public class AIConditionSign
     public AICondition aiCondition;//Ссылка на функцию
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
+}
+
+/// <summary>
+/// Класс, что используется при загрузке моделей поведения в персонажа с ИИ
+/// </summary>
+[System.Serializable]
+public class SBehaviourClass
+{
+    public string path;
+    public BehaviourClass behaviour;
 }

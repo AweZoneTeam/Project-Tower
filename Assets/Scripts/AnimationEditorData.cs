@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class AnimationEditorData : MonoBehaviour 
 {
@@ -29,10 +31,14 @@ public class AnimationEditorData : MonoBehaviour
 
 	public VisualData FindData(string name)
 	{
-		return AssetDatabase.LoadAssetAtPath(datapath+name, typeof(VisualData)) as VisualData;
-	}
+#if UNITY_EDITOR
+        return AssetDatabase.LoadAssetAtPath(datapath+name, typeof(VisualData)) as VisualData;
+#endif
+        return null;
+    }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(AnimationEditorData))]
 public class AnimDataEditorEditor : Editor 
 {
@@ -44,3 +50,4 @@ public class AnimDataEditorEditor : Editor
 			myTarget.RefreshCharacterList ();
 	}	
 }
+#endif

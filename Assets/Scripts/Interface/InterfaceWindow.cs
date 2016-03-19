@@ -6,5 +6,9 @@ using System.Collections;
 /// </summary>
 public class InterfaceWindow : MonoBehaviour
 {
-   
+    public virtual void Initialize()
+    {
+    }
+
+
 }

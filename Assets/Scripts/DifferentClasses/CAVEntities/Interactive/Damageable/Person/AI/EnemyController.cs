@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
-
+#endif
 /// <summary>
 /// Шаблонный контроллер, который я создаю для того, чтобы определит, как вообще искусственный интеллект будет работать
 /// Он может осуществлять некоторую деятельность в спокойствии, следовать за своей целью и атаковать её
@@ -14,8 +15,7 @@ public class EnemyController : PersonController, IPersonWatching
     protected const float hearingRadius = 10f;
 
     protected const float g = 100f;
-
-    protected const int maxEmployment = 10;//Персонажи могут совершать действия общей стоймостью в 10 ед.
+    
     #endregion //consts
 
     #region delegates
@@ -35,10 +35,10 @@ public class EnemyController : PersonController, IPersonWatching
     public List<string> enemies;//Какие типы игровых объектов этот ИИ считает за врагов (пока что я отслеживаю враг ли это по тегу.)
 
     //public behaviourEnum behaviour;//Какую модель поведения применяет ИИ в данный момент (Calm,Agressive) 
-    private Transform sight;//точка, что являутся глазами этого персонажа
 
     private EnemyVisual anim;
-    public List<BehaviourClass> behaviours = new List<BehaviourClass>();//Какие модели поведения используются ИИ
+    public string behaviourPath;//Путь, в котором находятся модели поведения данного персонажа
+    public List<SBehaviourClass> behaviours = new List<SBehaviourClass>();//Какие модели поведения используются ИИ
     public BehaviourClass currentBehaviour;
     protected Dictionary<string, AICondition> conditionBase = new Dictionary<string, AICondition>();//База данных, которая по строке возвращает функцию проверки условия, что прописана в контроллере
     protected Dictionary<string,AIAction> actionBase = new Dictionary<string, AIAction>();//База данных, которая по строке возвращает элементарную функцию действия
@@ -47,7 +47,6 @@ public class EnemyController : PersonController, IPersonWatching
     #region parametres
 
     protected float height = 15f;
-    protected int employment = maxEmployment;
     public LayerMask whatToSight;
 
     #endregion //parametres
@@ -102,30 +101,41 @@ public class EnemyController : PersonController, IPersonWatching
         actionBase.Add("stay", Stay);
         actionBase.Add("attack", Attack);
         actionBase.Add("test", TestFunction);
-        
+
+        BehaviourClass _behaviour;
         for (int i=0;i<behaviours.Count;i++)
         {
-            behaviours[i] = new BehaviourClass(behaviours[i]);
+            _behaviour = behaviours[i].behaviour;
+            if (_behaviour == null)
+            {
+#if UNITY_EDITOR
+                _behaviour = AssetDatabase.LoadAssetAtPath(behaviourPath + behaviours[i].path + ".asset", typeof(BehaviourClass)) as BehaviourClass;
+#endif
+            }
+            behaviours[i].behaviour = _behaviour;
+            behaviours[i].behaviour = new BehaviourClass(_behaviour);
         }
+
         string s;
         for (int i = 0; i < behaviours.Count; i++)
         {
-            for (int j=0; j < behaviours[i].activities.Count; j++)
+            _behaviour = behaviours[i].behaviour;
+            for (int j=0; j < _behaviour.activities.Count; j++)
             {
-                for (int k = 0; k < behaviours[i].activities[j].whyToDo.Count; k++)
+                for (int k = 0; k < _behaviour.activities[j].whyToDo.Count; k++)
                 {
-                    if (conditionBase.ContainsKey(behaviours[i].activities[j].whyToDo[k].conditionString))
+                    if (conditionBase.ContainsKey(_behaviour.activities[j].whyToDo[k].conditionString))
                     {
-                        s = behaviours[i].activities[j].whyToDo[k].conditionString;
-                        behaviours[i].activities[j].whyToDo[k].aiCondition = conditionBase[s].Invoke;
+                        s = _behaviour.activities[j].whyToDo[k].conditionString;
+                        _behaviour.activities[j].whyToDo[k].aiCondition = conditionBase[s].Invoke;
                     }
                 }
-                for (int k = 0; k < behaviours[i].activities[j].whatToDo.Count; k++)
+                for (int k = 0; k < _behaviour.activities[j].whatToDo.Count; k++)
                 {
-                    if (actionBase.ContainsKey(behaviours[i].activities[j].whatToDo[k].actionName))
+                    if (actionBase.ContainsKey(_behaviour.activities[j].whatToDo[k].actionName))
                     {
-                        s = behaviours[i].activities[j].whatToDo[k].actionName;
-                        behaviours[i].activities[j].whatToDo[k].aiAction = actionBase[s].Invoke;
+                        s = _behaviour.activities[j].whatToDo[k].actionName;
+                        _behaviour.activities[j].whatToDo[k].aiAction = actionBase[s].Invoke;
                     }
                 }
             }
@@ -139,7 +149,7 @@ public class EnemyController : PersonController, IPersonWatching
         FormBehaviourList();
         if (behaviours.Count > 0)
         {
-            currentBehaviour = behaviours[0];
+            currentBehaviour = behaviours[0].behaviour;
         }
         if (stats == null)
         {
@@ -232,11 +242,13 @@ public class EnemyController : PersonController, IPersonWatching
     /// </summary>
     public virtual void ChangeBehaviour(string id, int argument)
     {
+        BehaviourClass _behaviour;
         for (int i = 0; i < behaviours.Count; i++)
         {
-            if (string.Equals(id, behaviours[i].behaviourName))
+            _behaviour = behaviours[i].behaviour;
+            if (string.Equals(id, _behaviour.behaviourName))
             {
-                currentBehaviour = behaviours[i];
+                currentBehaviour = _behaviour;
                 break;
             }
         }
@@ -616,6 +628,7 @@ public class EnemyController : PersonController, IPersonWatching
     #endregion //getters
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Редактор контроллера искусственного интеллекта
 /// </summary>
@@ -636,4 +649,4 @@ public class EnemyEditor : Editor
         EditorGUILayout.FloatField("Health", stats.health);
     }
 }
-    
+#endif

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterVisual : PersonVisual
 {
@@ -8,7 +9,12 @@ public class CharacterVisual : PersonVisual
 
     private const float beginRunTime = 0.2f;//Сколько времени длится анимация "Начало бега"?
     private const float stopDragTime = 0.5f;//Сколько времени длится анимация "Конец скольжения"?
+    private const float crouchTime = 0.5f;//Сколько времени длится анимация "присесть"?
+    private const float flipTime = 0.8f;//Сколько времени персонаж кувыркается?
+    private const float hangTime = 0.4f;//Сколько времени длится анимация "Захватиться за уступ?"
+
     private const float dragSpeed = 5f;//до какой скорости считается, что персонаж ещё тормозится (когда его скорость уменьшается)?
+    private const float crouchSpeed = 5f;
 
     #endregion
 
@@ -22,7 +28,7 @@ public class CharacterVisual : PersonVisual
 
     #region timers
 
-    public float beginRunTimer, stopDragTimer;
+    public float beginRunTimer, stopDragTimer, crouchTimer;
 
     #endregion //timers
 
@@ -33,20 +39,61 @@ public class CharacterVisual : PersonVisual
     #endregion //parametres
 
     #region fields
+
     private Stats stats;
     private Rigidbody rigid;
+
+    public int k1 = 0;
+
+    private Dictionary<string,Timer> timers = new Dictionary<string, Timer>();
+    private List<string> timerNames = new List<string>();
+
     #endregion //fields
-
-
-    public override void Initialize()
-    {
-        cAnim = GetComponent<CharacterAnimator>();
-        rigid = gameObject.GetComponentInParent<Rigidbody>();
-    }
 
     public override void Awake()
     {
         base.Awake();
+    }
+
+        public override void Initialize()
+    {
+        base.Initialize();
+        cAnim = GetComponent<CharacterAnimator>();
+        rigid = gameObject.GetComponentInParent<Rigidbody>();
+        FormTimers();
+    }
+
+    /// <summary>
+    /// Сформировать список таймеров
+    /// </summary>
+    public virtual void FormTimers()
+    {
+        timerNames.Add("beginRunTimer");
+        timerNames.Add("stopDragTimer");
+        timerNames.Add("crouchTimer");
+        timerNames.Add("hangTimer");
+
+        timers.Add("beginRunTimer",new Timer(beginRunTime));
+        timers.Add("stopDragTimer", new Timer(stopDragTime));
+        timers.Add("crouchTimer", new Timer(crouchTime));
+        timers.Add("hangTimer", new Timer(hangTime));
+    }
+
+    /// <summary>
+    /// Сбросить все таймеры, кроме обозначенного
+    /// </summary>
+    public virtual void ResetAllTimersExcept(string _name)
+    {
+        for (int i = 0; i < timerNames.Count; i++)
+        {
+            if (!string.Equals(timerNames[i], _name))
+            {
+                if (timers.ContainsKey(timerNames[i]))
+                {
+                    timers[timerNames[i]].TimeReset();
+                }
+            }
+        }
     }
 
     #region AnimatedActions
@@ -55,33 +102,52 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public override void GroundStand()
     {
-        if ((cAnim != null)&&(!attack))
+        if ((cAnim != null)&&(!attack)&&!(employment<=4))
         {
-            beginRunTimer = -1f;
+            Timer timer = timers["stopDragTimer"];
+            ResetAllTimersExcept("stopDragTimer");
             if (Mathf.Abs(rigid.velocity.x) > dragSpeed)
             {
                 cAnim.Animate("DragBegin");
             }
             else
             {
-                if (!cAnim.CompareAnimation("Idle"))
+                if ((cAnim.CompareAnimation("DragBegin")) || (cAnim.CompareAnimation("DragStop")))
                 {
-                    if (stopDragTimer == -1f)
+                    if (timer == -1f)
                     {
-                        stopDragTimer = stopDragTime;
+                        timer.TimeStart();
                     }
                     if (stopDragTimer > 0f)
                     {
                         cAnim.Animate("DragStop");
-                        stopDragTimer -= Time.deltaTime;
+                        timer.value -= Time.deltaTime;
+                        stopDragTimer = timer.value;
                     }
                     else
                     {
                         cAnim.Animate("Idle");
-                        stopDragTimer = -1f;
+                        timer.TimeReset();
                     }
                 }
+                else
+                {
+                    cAnim.Animate("Idle");
+                    timer.TimeReset();
+                }
             }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать кувырок
+    /// </summary>
+    public override void Flip()
+    {
+        if ((cAnim != null) && (!attack) && !(employment <= 4))
+        {
+            cAnim.Animate("FlipForward");
+            StartCoroutine(VisualRoutine(10,flipTime));
         }
     }
 
@@ -90,25 +156,101 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public override void GroundMove()
     {
-        if ((cAnim != null)&&(!attack))
+        if ((cAnim != null)&&(!attack)&&!(employment<=4))
         {
-            stopDragTimer = -1f;
-            if (!cAnim.CompareAnimation("Run"))
+            Timer timer = timers["beginRunTimer"];
+            ResetAllTimersExcept("beginRunTimer");
+            if (!cAnim.CompareAnimation("Run")&& !cAnim.CompareAnimation("FastRun"))
             {
-                if (beginRunTimer == -1f)
+                if (timer == -1f)
                 {
-                    beginRunTimer = beginRunTime;
+                    timer.TimeStart();
                 }
-                if (beginRunTimer > 0f)
+                if (timer > 0f)
                 {
+                    beginRunTimer = timer.value;
                     cAnim.Animate("RunBegin");
-                    beginRunTimer -= Time.deltaTime;
+                    timer.value-= Time.deltaTime;
                 }
                 else
                 {
                     cAnim.Animate("Run");
-                    beginRunTimer = -1f;
+                    timer.TimeReset();
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение при быстром беге
+    /// </summary>
+    public override void FastGroundMove()
+    {
+        if ((cAnim != null) && (!attack) && !(employment <= 4))
+        {
+            Timer timer = timers["beginRunTimer"];
+            ResetAllTimersExcept("beginRunTimer");
+            if (!cAnim.CompareAnimation("Run") && !cAnim.CompareAnimation("FastRun"))
+            {
+                if (timer == -1f)
+                {
+                    timer.TimeStart();
+                }
+                if (timer > 0f)
+                {
+                    cAnim.Animate("FastRunBegin");
+                    timer.value -= Time.deltaTime;
+                }
+                else
+                {
+                    cAnim.Animate("FastRun");
+                    timer.TimeReset();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение в приседе
+    /// </summary>
+    public override void CrouchMove()
+    {
+        if ((cAnim != null) && (!attack) && !(employment <= 4))
+        {
+            Timer timer = timers["crouchTimer"];
+            ResetAllTimersExcept("crouchTimer");
+            if (cAnim != null)
+            {
+                if (Mathf.Abs(rigid.velocity.x) > crouchSpeed)
+                {
+                    timer.TimeReset();
+                    cAnim.Animate("CrouchMove");
+                }
+                else if (!cAnim.CompareAnimation("CrouchMove") && !cAnim.CompareAnimation("CrouchContinue") && !cAnim.CompareAnimation("FlipForward"))
+                {
+                    k1++;
+                    crouchTimer = timer.maxValue;
+                    if (timer == -1f)
+                    {
+                        timer.TimeStart();
+                    }
+                    if (crouchTimer > 0f)
+                    {
+                        cAnim.Animate("Crouch");
+                        timer.value -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        cAnim.Animate("CrouchContinue");
+                        timer.TimeReset();
+                    }
+                }
+                else
+                {
+                    cAnim.Animate("CrouchContinue");
+
+                }
+                
             }
         }
     }
@@ -118,7 +260,7 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public override void AirMove()
     {
-        if ((cAnim != null)&&(!attack))
+        if ((cAnim != null)&&(!attack)&&(employment>4))
         {
             if (stats.groundness == groundnessEnum.preGround) { cAnim.Animate("Fallen"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.fastDown) { cAnim.Animate("FallEnd"); }
@@ -128,10 +270,82 @@ public class CharacterVisual : PersonVisual
             else if (rigid.velocity.y <= 1f * (int)speedY.medUp) { cAnim.Animate("JumpContinue"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.fastUp) { cAnim.Animate("JumpBegin"); }
             else { cAnim.Animate("StartJump"); }
-            beginRunTimer = -1f;
+            ResetAllTimersExcept("");
         }
     }
 
+    /// <summary>
+    /// Анимировать взаимодейтсвие с препятствиями
+    /// </summary>
+    public override void WallInteraction(float _time)
+    {
+        if ((cAnim != null) && (!attack)&& (employment > 3))
+        {
+            if (_time > 0f)
+            {
+                cAnim.Animate("SmallClimb");
+                StartCoroutine(VisualRoutine(10, _time));
+            }
+            else
+            {
+                if (stats.groundness == groundnessEnum.grounded)
+                {
+                    cAnim.Animate("WallInFront");
+                }
+                else if (stats.groundness == groundnessEnum.crouch)
+                {
+                    cAnim.Animate("CrouchWall");
+                }
+                else
+                {
+                    cAnim.Animate("JumpWall");
+                }
+                StartCoroutine(VisualRoutine(6, Time.deltaTime));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать состояние захвата за уступ
+    /// </summary>
+    /// <param name="_time"></param>
+    public override void Hanging(float _time)
+    {
+        if ((cAnim != null) && (!attack) && (employment > 3))
+        {
+            if (_time > 0f)
+            {
+                cAnim.Animate("Climb");
+                StartCoroutine(VisualRoutine(10, _time));
+            }
+            else
+            {
+                Timer timer = timers["hangTimer"];
+                ResetAllTimersExcept("hangTimer");
+                if (!cAnim.CompareAnimation("Hanging"))
+                {
+                    if (timer == -1f)
+                    {
+                        timer.TimeStart();
+                    }
+                    if (timer > 0f)
+                    {
+                        cAnim.Animate("HangUp");
+                        timer.value -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        cAnim.Animate("Hanging");
+                        timer.TimeReset();
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать заданную атаку
+    /// </summary>
     public override void Attack(string attackName, float time)
     {
         if (cAnim != null)
@@ -154,5 +368,68 @@ public class CharacterVisual : PersonVisual
     {
         stats = _stats;
     }
+}
 
+//Класс таймеров
+public class Timer
+{
+    public float value;
+    public float maxValue;
+
+    public Timer(float _value)
+    {
+        value =-1f;
+        maxValue = _value;
+    }
+
+    public Timer(float _value, float _maxValue)
+    {
+        value = _value;
+        maxValue = _maxValue;
+    }
+
+    public static Timer operator -(Timer timer, float _value)
+    {
+        return new Timer(timer.value - _value, timer.maxValue);
+    }
+
+    public static bool operator ==(Timer timer, float _value)
+    {
+        return (timer.value==_value);
+    }
+
+    public static bool operator !=(Timer timer, float _value)
+    {
+        return (timer.value != _value);
+    }
+
+    public static bool operator >(Timer timer, float _value)
+    {
+        return (timer.value > _value);
+    }
+
+    public static bool operator <(Timer timer, float _value)
+    {
+        return (timer.value < _value);
+    }
+
+    public static bool operator >=(Timer timer, float _value)
+    {
+        return (timer.value >= _value);
+    }
+
+    public static bool operator <=(Timer timer, float _value)
+    {
+        return (timer.value <= _value);
+    }
+
+    public void TimeStart()
+    {
+        value = maxValue;
+    }
+
+    public void TimeReset()
+    {
+        value = -1f;
+    }
 }

@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Контроллер персонажей
@@ -17,6 +19,8 @@ public class PersonController : DmgObjController, IPersonWatching
     protected const float minDmgFallSpeed = 80f;
     protected const float dmgPerSpeed = 5f;
 
+    protected const int maxEmployment = 10;
+
     protected const float precipiceRadius = 0.2f;
     #endregion //consts
 
@@ -24,6 +28,7 @@ public class PersonController : DmgObjController, IPersonWatching
 
     protected Transform groundCheck; //Индикатор, оценивающий расстояние до земли
     protected Transform precipiceCheck;//Индикатор, проверяющий, находится ли впереди пропасть
+    protected Transform sight;//Откуда персонаж смотрит
 
     #endregion //indicators
 
@@ -45,6 +50,8 @@ public class PersonController : DmgObjController, IPersonWatching
     protected bool fallDamaged = false;
     protected float fallDamage = 0f;
 
+    protected int employment;
+
     public LayerMask whatIsGround;
 
     #endregion //parametres
@@ -55,6 +62,7 @@ public class PersonController : DmgObjController, IPersonWatching
     {
         groundCheck = transform.FindChild("Indicators").FindChild("GroundCheck");
         precipiceCheck = transform.FindChild("Indicators").FindChild("PrecipiceCheck");
+        sight= transform.FindChild("Indicators").FindChild("Sight");
     }
 
     public virtual AreaClass GetRoomPosition()
@@ -137,7 +145,10 @@ public class PersonController : DmgObjController, IPersonWatching
     {
         if (Physics.OverlapSphere(groundCheck.position,groundRadius,whatIsGround).Length>0)
         {
-            stats.groundness = groundnessEnum.grounded;
+            if (stats.groundness!=groundnessEnum.crouch)
+            {
+                stats.groundness = groundnessEnum.grounded;
+            }
         }
         else if (Physics.OverlapSphere(groundCheck.position, groundRadius, whatIsGround).Length > 0)
         {
@@ -183,6 +194,7 @@ public class PersonController : DmgObjController, IPersonWatching
     #endregion //Interface
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Редактор контроллеров персонажей
 /// </summary>
@@ -202,3 +214,4 @@ public class PersonEditor : DmgObjEditor
         EditorGUILayout.FloatField("Health", stats.health);
     }
 }
+#endif

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 /// <summary>
-/// Скрипт, которым я задаю поведение камеры, её эффекты, следование за персонажем и все механики движения
+/// Скрипт, который задаёт поведение камеры, её эффекты, следование за персонажем и все механики движения
 /// </summary>
 public class CameraController : MonoBehaviour
 {
@@ -32,8 +33,12 @@ public class CameraController : MonoBehaviour
     private Camera cam;
     public Rect roomCoords;
     public int movX = 0, movY=0;//Есть ли у камеры ограничения на передвижение вдоль направление движущегося персонажа
+    private float deltaX, deltaY;
     public GameObject g;
     public Vector3 vect;
+
+    public List<BackgroundClass> backgroundList=new List<BackgroundClass>();
+
     #endregion //parametres
 
     public void Start()
@@ -59,21 +64,20 @@ public class CameraController : MonoBehaviour
     {
         vect = cam.WorldToViewportPoint(g.transform.position);
         Vector2 spotPosition = new Vector2(transform.position.x + offsetX, transform.position.y + offsetY);
+        Vector3 newPosition;
         #region howToHorizontalMove 
+        movX = (int)camMovX.stop;
+        if ((character.transform.position.x > camWindow.position.x + camWindow.localScale.x / 2)
+            && (spotPosition.x < currentArea.position.x + (currentArea.size.x - camSize.x) / 2))
+        {
+            movX = (int)camMovX.movRight;
+        }
         if ((character.transform.position.x < camWindow.position.x - camWindow.localScale.x / 2)
             && (spotPosition.x > currentArea.position.x - (currentArea.size.x - camSize.x) / 2))
         {
             movX = (int)camMovX.movLeft;
         }
-        else if ((character.transform.position.x > camWindow.position.x + camWindow.localScale.x / 2)
-           && (spotPosition.x < currentArea.position.x + (currentArea.size.x - camSize.x) / 2))
-        {
-            movX = (int)camMovX.movRight;
-        }
-        else
-        {
-            movX = (int)camMovX.stop;
-        }
+        
         #endregion //howToHorizontalMove
 
         #region howToVerticalMove
@@ -96,9 +100,17 @@ public class CameraController : MonoBehaviour
         #region Move
         Vector2 distance = new Vector2 (Mathf.Abs(character.transform.position.x - spotPosition.x),
                                         Mathf.Abs(character.transform.position.y - spotPosition.y));
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x + movX * (distance.x - camWindow.localScale.x/2),roomCoords.xMin,roomCoords.xMax),
-                                         Mathf.Clamp(transform.position.y + movY * distance.y,roomCoords.yMin,roomCoords.yMax),
+        deltaX = Mathf.Clamp(transform.position.x + movX * (distance.x - camWindow.localScale.x/2-0.3f), roomCoords.xMin, roomCoords.xMax)-transform.position.x;
+        deltaY = Mathf.Clamp(transform.position.y + movY * distance.y, roomCoords.yMin, roomCoords.yMax)-transform.position.y;
+        if (movX * deltaX < 0f)
+        {
+            deltaX = 0f;
+        }
+        newPosition = new Vector3(transform.position.x + deltaX,
+                                         transform.position.y + deltaY,
                                          transform.position.z);
+        transform.position = Vector3.Lerp(transform.position, newPosition, camSpeed);
+        Parallax(deltaX, deltaY);
         /*transform.position = Vector3.Lerp(transform.position, newPosition, camSpeed*Time.deltaTime);
         transform.position=new Vector3(Mathf.Clamp(transform.position.x, roomCoords.xMin, roomCoords.xMax),
                                        Mathf.Clamp(transform.position.y, roomCoords.yMin, roomCoords.yMax),
@@ -117,4 +129,27 @@ public class CameraController : MonoBehaviour
                             currentArea.size.y-sizeY);
     }
 
+    void Parallax(float delX, float delY)
+    {
+        BackgroundClass background;
+        Vector3 pos;
+        for (int i = 0; i < backgroundList.Count; i++)
+        {
+            background = backgroundList[i];
+            pos = background.background.transform.position;
+            background.background.transform.position = new Vector3(pos.x - delX * background.prlxXScale, pos.y - delY * background.prlxYScale, pos.z);
+        }
+    }
+}
+
+
+/// <summary>
+/// Специальный класс, используемый для создания бэкграунда и эффекта параллакса
+/// </summary>
+[System.Serializable]
+public class BackgroundClass
+{
+    public string backgroundName;
+    public GameObject background;
+    public float prlxXScale, prlxYScale;//С какой относительной скоростью смещаются эти элементы при движении камеры (1 - с обычной скоростью, <1 - медленнее) 
 }

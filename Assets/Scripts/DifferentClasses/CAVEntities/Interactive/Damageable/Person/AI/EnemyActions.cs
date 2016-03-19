@@ -52,7 +52,6 @@ public class EnemyActions : PersonActions
 
     public override void Initialize()
     {
-        orientation = orientationEnum.right;
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
         cAnim = GetComponentInChildren<EnemyVisual>();

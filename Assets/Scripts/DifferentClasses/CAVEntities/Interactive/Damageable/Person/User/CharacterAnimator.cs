@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using GAF.Core;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Аниматор (разумного) персонажа. Он говорит частям тела персонажа, как им надо двигаться.
@@ -76,7 +78,7 @@ public class CharacterAnimator : InterObjAnimator
     }
 }
 
-
+#if UNITY_EDITOR
 /// <summary>
 /// Класс, необходимый для создания нужного нам отображения полей аниматора персонажа
 /// </summary>
@@ -128,3 +130,4 @@ public class CharacterAnimatorEditor : BaseAnimatorEditor
     }*/
 
 }
+#endif

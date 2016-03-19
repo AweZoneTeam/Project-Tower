@@ -22,7 +22,7 @@ public class DeleteAnimationWindow : EditorWindow
     {
         if (character != null)
         {
-            scrollPosition = GUI.BeginScrollView(new Rect(0f, 0f, 300f, 100f), scrollPosition, new Rect(0f, 0f, 300f, 800f));
+            scrollPosition = GUI.BeginScrollView(new Rect(0f, 0f, 300f, 100f), scrollPosition, new Rect(0f, 0f, 300f, 1800f));
             {
                 for (int i = 0; i < animTypes.Count; i++)
                 {

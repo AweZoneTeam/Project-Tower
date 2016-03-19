@@ -100,7 +100,7 @@ public class LeftAnimator : EditorWindow
                 if (character != null)
                 {
                     character.GetComponent<InterObjAnimator>().Flip();
-                    orientation = SpFunctions.realSign(character.transform.localScale.x) > 0 ? "Right" : "Left";
+                    orientation = SpFunctions.RealSign(character.transform.localScale.x) > 0 ? "Right" : "Left";
                 }
 			}
 		}
@@ -495,7 +495,7 @@ public class LeftAnimator : EditorWindow
             interp.setInterp(cInterp);
             interp.partPath = path+"Parts/";
             AssetDatabase.CreateAsset(interp, interp.partPath + cPart.gameObject.name + ".asset");
-            cPart.path = path + cPart.gameObject.name + ".asset";
+            cPart.path = path +"Parts/"+cPart.gameObject.name + ".asset";
             GameObject asset1 = cPart.gameObject;
             asset1 = PrefabUtility.CreatePrefab(interp.partPath + cPart.gameObject.name + ".prefab", asset1);
             AssetDatabase.SaveAssets();

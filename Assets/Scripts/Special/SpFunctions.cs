@@ -57,7 +57,7 @@ public static class SpFunctions {
 	public static float RealAngle(Vector2 vect1, Vector2 vect2)
 	{
 		return 180/Mathf.PI*
-			realSign(vect1.x*vect2.y-vect1.y*vect2.x)*
+			RealSign(vect1.x*vect2.y-vect1.y*vect2.x)*
 				(Mathf.Acos((vect1.x * vect2.x + vect1.y * vect2.y) /vect1.magnitude /vect2.magnitude));
 	}
 
@@ -191,15 +191,12 @@ public static class SpFunctions {
         gameStats.currentArea = room;
     }
 
-	/// <summary>
-	/// Функция, которая работает, как Mathf.Sign, но возвращает 0 при аргументе=0
-	/// </summary>
-	public static float realSign(float x)
-	{
-		if (x==0)
-			return 0f;
-		else return Mathf.Sign(x);
-	}
+    public static int RealSign(float x)
+    {
+        if (x == 0)
+            return 0;
+        else return Mathf.RoundToInt(Mathf.Sign(x));
+    }
 
 	/// <summary>
 	/// Функция, нормально округляющая число (Mathf.Round всегда возвращает число больше вводимого)

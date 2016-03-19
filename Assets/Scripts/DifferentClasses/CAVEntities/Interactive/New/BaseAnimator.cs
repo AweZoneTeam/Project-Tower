@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class BaseAnimator : MonoBehaviour
 {
@@ -19,6 +21,7 @@ public class BaseAnimator : MonoBehaviour
 	}
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Класс, необходимый для создания нужного нам отображения полей аниматора
 /// </summary>
@@ -30,3 +33,4 @@ public class BaseAnimatorEditor : Editor
         DrawDefaultInspector();
     }
 }
+#endif

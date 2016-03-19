@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class ChestController : InterObjController
 {
@@ -31,6 +33,7 @@ public class ChestController : InterObjController
     }
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Редактор сундуков и их содержимого
 /// </summary>
@@ -48,3 +51,4 @@ public class ChestEditor : InterObjEditor
         EditorGUILayout.IntField("direction", (int)stats.direction);
     }
 }
+#endif

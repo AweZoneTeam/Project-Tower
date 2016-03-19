@@ -7,6 +7,12 @@ using System.Collections;
 public class PersonActions : DmgObjActions
 {
 
+    #region consts
+
+    protected const int maxEmployment = 10;
+
+    #endregion //consts
+
     #region fields
 
     protected Rigidbody rigid;
@@ -22,12 +28,14 @@ public class PersonActions : DmgObjActions
 
     #region parametres
 
-    protected orientationEnum movingDirection;
-    protected orientationEnum orientation;
+    public orientationEnum movingDirection;
     protected bool moving;
     protected bool death=false;
 
-    public int maxSpeed;
+    public float maxSpeed;
+    public float currentMaxSpeed;
+    public float fastRunSpeed=0f;
+
     public float acceleration;
     public float jumpForce;
 
@@ -36,6 +44,8 @@ public class PersonActions : DmgObjActions
 
     protected bool jumpIsPossible = true;
     public bool JumpIsPossible { set { jumpIsPossible = value; } }
+
+    public int employment=maxEmployment;
 
     #endregion //parametres
 
@@ -57,11 +67,10 @@ public class PersonActions : DmgObjActions
     /// <param name="direction"></param>
     public virtual void Turn(orientationEnum direction)
     {
-        if (orientation != direction)
+        Vector3 newScale = this.gameObject.transform.localScale;
+        if (SpFunctions.RealSign(newScale.x) != (int)direction)
         {
-            Vector3 newScale = this.gameObject.transform.localScale;
             newScale.x *= -1;
-            orientation = direction;
             this.gameObject.transform.localScale = newScale;
         }
     }
@@ -74,8 +83,8 @@ public class PersonActions : DmgObjActions
         if (!moving)
         {
             moving = true;
-            movingDirection = direction;
         }
+        movingDirection = direction;
     }
 
     /// <summary>
@@ -84,6 +93,27 @@ public class PersonActions : DmgObjActions
     public virtual void StopWalking()
     {
         moving = false;
+    }
+
+    /// <summary>
+    /// Присесть (либо выйти из состояния приседа)
+    /// </summary>
+    public virtual void Crouch(bool yes)
+    {
+    }
+    
+    /// <summary>
+    /// Совершить кувырок
+    /// </summary>
+    public virtual void Flip()
+    { }
+
+    /// <summary>
+    /// Установить максимальную скорость персонажа
+    /// </summary>
+    public virtual void SetMaxSpeed(float _speed)
+    {
+        currentMaxSpeed = _speed;
     }
 
     /// <summary>
@@ -114,6 +144,36 @@ public class PersonActions : DmgObjActions
     public virtual void SetWeapon(WeaponClass _weapon)
     {
    
+    }
+
+    /// <summary>
+    /// Функция зацепления за высокое препятствие
+    /// </summary>
+    public virtual void HangHighObstacle()
+    {
+    }
+
+    /// <summary>
+    /// Функция обхода высокого препятствия
+    /// </summary>
+    public virtual void AvoidHighObstacle(float height)
+    {
+    }
+
+    /// <summary>
+    /// Функция обхода низкого препятствия
+    /// </summary>
+    public virtual void AvoidLowObstacle(float height)
+    {
+
+    }
+
+    /// <summary>
+    /// Функция взаимодействия со стеной
+    /// </summary>
+    public virtual void WallInteraction()
+    {
+
     }
 
     /// <summary>

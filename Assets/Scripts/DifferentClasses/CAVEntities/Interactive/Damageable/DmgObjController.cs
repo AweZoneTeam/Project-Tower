@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Контроллер объекта со здоровьем
@@ -89,6 +91,7 @@ public class DmgObjController : InterObjController
     }
 }
 
+#if UNITY_EDITOR
 /// <summary>
 /// Редактор контроллеров объектов со здоровьем
 /// </summary>
@@ -117,3 +120,4 @@ public class DmgObjEditor : InterObjEditor
         stats.dDefence = EditorGUILayout.IntField("Dark Defence", stats.dDefence);
     }
 }
+#endif

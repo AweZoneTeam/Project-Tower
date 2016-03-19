@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 //Части - это основы управления любой анимации в Project Tower. 
@@ -17,6 +19,7 @@ public class PartController : MonoBehaviour
     //Данные об анимации проигрываемой в данный момент
     public string currentState="default", nextState="default";
 	public bool loop;
+    public int k1 = 0;
 	public int FPS;
 	[HideInInspector]
 	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
@@ -37,7 +40,10 @@ public class PartController : MonoBehaviour
 	public void Awake () 
 	{
 		sManager=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SoundManager> ();
-        interp=AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
+#if UNITY_EDITOR
+        k1++;
+        interp =AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
+#endif
     }
 
 	//Работа части заключается в том, чтобы интерпретировать полученные 2 числа от аниматора в анимацию, которую должен проигрывать подчинённый гаф.
@@ -153,7 +159,7 @@ public class PartController : MonoBehaviour
         {
             if ((interp.animTypes.Count != 0)&&(!play))
             {
-                orientation = SpFunctions.realSign(gameObject.transform.lossyScale.x);
+                orientation = SpFunctions.RealSign(gameObject.transform.lossyScale.x);
                 frame = (int)mov.getCurrentFrameNumber();
                 if (orientation >= 0)
                 {

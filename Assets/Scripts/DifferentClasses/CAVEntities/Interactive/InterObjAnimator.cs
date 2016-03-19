@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using GAF.Core;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Простейший аниматор CAV-объекта
@@ -51,7 +53,7 @@ public class InterObjAnimator : MonoBehaviour
 
     public virtual void Update()
     {
-        //Sinchronize();
+        Sinchronize();
 
         /*
 #if UNITY_EDITOR
