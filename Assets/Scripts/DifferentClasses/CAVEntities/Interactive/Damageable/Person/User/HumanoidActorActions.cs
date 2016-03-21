@@ -7,19 +7,22 @@ public class HumanoidActorActions : PersonActions
     #region consts
 
     const float flipTime = 0.8f;
+
     const float lowObstacleTime = 0.5f;
-    const float highObstacleTime = 0.8f;
-
-    const float lowObstacleSpeed = 30f;
-    const float highObstacleSpeed = 30f;
-
     const float maxLowObstacleHeight = 8f;
+    const float lowObstacleSpeed = 30f;
+
+    const float highObstacleTime = 0.8f;
+    const float highObstacleSpeed = 30f;
     const float maxHighObstacleHeight = 17f;
 
     const float highWallPosition1 = 12f;
     const float highWallPosition2 = -2.5f;
     const float frontWallPosition1 =2.5f;
     const float frontWallPosition2 = -2.5f;
+
+    const float platformClimbTime = 0.85f;
+    const float platformClimbSpeed = 18f;
 
     #endregion //consts
 
@@ -130,19 +133,80 @@ public class HumanoidActorActions : PersonActions
 
             #region EdgeActions
 
-            if (stats.interaction ==interactionEnum.edge)
+            else if (stats.interaction == interactionEnum.edge)
             {
                 cAnim.Hanging(0f);
             }
 
             #endregion //EdgeActions
 
+            #region SpecialMovement
+            else if (stats.interaction != interactionEnum.interactive)
+            {
+
+                #region DefineMovement
+
+                if (employment<4)
+                {
+                    return;
+                }
+                if (stats.interaction == interactionEnum.thicket)
+                {
+                    SetMaxSpeed(thicketSpeed);
+                    if (cAnim != null)
+                    {
+                        cAnim.ThicketMove();
+                    }
+                }
+                else if (stats.interaction == interactionEnum.stair)
+                {
+                    SetMaxSpeed(stairSpeed);
+                    if (cAnim != null)
+                    {
+                        cAnim.StairMove();
+                    }
+                }
+                else if (stats.interaction == interactionEnum.rope)
+                {
+                    SetMaxSpeed(ropeSpeed);
+                    if (cAnim != null)
+                    {
+                        cAnim.RopeMove();
+                    }
+                }
+                else
+                {
+                    SetMaxSpeed(ledgeSpeed);
+                    if (cAnim != null)
+                    {
+                        cAnim.LedgeMove(-1f);
+                    }
+                }
+
+                #endregion //DefineMovement
+
+                #region Move
+
+                if (moving)
+                {
+                    rigid.velocity = new Vector3(currentMaxSpeed * climbingDirection.x, currentMaxSpeed * climbingDirection.y, 0f);
+                }
+                else
+                {
+                    rigid.velocity = new Vector3(0f, 0f, 0f);
+                }
+
+                #endregion //Move
+
+            }
+            #endregion //SpecialMovement
+
         }
     }
 
     public override void Initialize()
     {
-        cAnim = transform.FindChild("Body").gameObject.GetComponent<CharacterVisual>();
+        base.Initialize();
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
         hitData = null;
@@ -155,6 +219,9 @@ public class HumanoidActorActions : PersonActions
         employment = maxEmployment;
     }
 
+    /// <summary>
+    /// Совершить поворот
+    /// </summary>
 	public override void Turn(orientationEnum Direction) {
         if (employment <= 4)
         {
@@ -163,6 +230,9 @@ public class HumanoidActorActions : PersonActions
         base.Turn(Direction);
 	}
 
+    /// <summary>
+    /// Начать обыкновенное перемещение
+    /// </summary>
 	public override void StartWalking(orientationEnum Direction)
     {
         if (employment <= 3)
@@ -172,17 +242,32 @@ public class HumanoidActorActions : PersonActions
         base.StartWalking(Direction);
 	}
 
+    /// <summary>
+    /// Совершить прыжок
+    /// </summary>
 	public override void Jump()
     {
         if (employment <= 5)
         {
             return;
         }
-		if (stats.groundness==groundnessEnum.grounded)
+        if (stats.groundness == groundnessEnum.grounded)
         {
-                rigid.velocity =new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y+jumpForce,Mathf.NegativeInfinity,jumpForce), rigid.velocity.z);
-		}
+            rigid.velocity = new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y + jumpForce, Mathf.NegativeInfinity, jumpForce), rigid.velocity.z);
+        }
+        else if (stats.groundness == groundnessEnum.crouch)
+        {
+            JumpDown();
+        }
 	}
+
+    /// <summary>
+    /// Спрыгнуть с платформы
+    /// </summary>
+    public override void JumpDown()
+    {
+        base.JumpDown();
+    }
 
     /// <summary>
     /// Присесть (или выйти из состояния приседа)
@@ -284,6 +369,9 @@ public class HumanoidActorActions : PersonActions
         }
     }
 
+    /// <summary>
+    /// Обойти высокое препятствие
+    /// </summary>
     public override void AvoidHighObstacle(float height)
     {
         if (employment == maxEmployment)
@@ -304,6 +392,67 @@ public class HumanoidActorActions : PersonActions
             rigid.velocity= new Vector3((int)stats.direction*highObstacleSpeed/2, 5f, rigid.velocity.z);
             rigid.useGravity = true;
         }
+    }
+
+    /// <summary>
+    /// Зацепиться за (заросли, верёвку, уступ...)
+    /// </summary>
+    /// <param name="yes"></param>
+    public override void Hang(bool yes)
+    {
+        if (yes)
+        {
+            rigid.useGravity = false;
+        }
+        else
+        {
+            rigid.useGravity = true;
+            stats.interaction = interactionEnum.noInter;
+            SetMaxSpeed(maxSpeed);
+            moving = false;
+        }
+    }
+
+    /// <summary>
+    /// Начать особое перемещение
+    /// </summary>
+    /// <param name="_climbDirection"></param>
+    public override void StartClimbing(Vector2 _climbDirection)
+    {
+        if (employment <= 5)
+        {
+            return;
+        }
+        climbingDirection = _climbDirection;
+        if (climbingDirection != Vector2.zero)
+        {
+            base.StartClimbing(_climbDirection);
+        }
+    }
+
+    /// <summary>
+    /// Взобраться на платформу
+    /// </summary>
+    public override void ClimbOntoThePlatform()
+    {
+        if (employment == maxEmployment)
+        {
+            StartCoroutine(ClimbingOnPlatform(platformClimbTime, 10));
+        }
+        if (cAnim != null)
+        {
+            cAnim.LedgeMove(1f);
+        }
+    }
+
+    IEnumerator ClimbingOnPlatform(float _time, int _employment)
+    {
+        moving = false;
+        rigid.velocity = new Vector3(0f, platformClimbSpeed, rigid.velocity.z);
+        employment -= _employment;
+        yield return new WaitForSeconds(_time);
+        employment += _employment;
+        Hang(false);
     }
 
     IEnumerator ActionRoutine(float _time, int _employment)

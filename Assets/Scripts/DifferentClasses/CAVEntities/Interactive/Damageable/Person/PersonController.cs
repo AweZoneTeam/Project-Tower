@@ -16,6 +16,8 @@ public class PersonController : DmgObjController, IPersonWatching
     protected const float groundRadius = 0.2f;
     protected const float preGroundRadius = 0.7f;
 
+    protected const float interRadius = 1f;
+
     protected const float minDmgFallSpeed = 80f;
     protected const float dmgPerSpeed = 5f;
 
@@ -28,6 +30,7 @@ public class PersonController : DmgObjController, IPersonWatching
 
     protected Transform groundCheck; //Индикатор, оценивающий расстояние до земли
     protected Transform precipiceCheck;//Индикатор, проверяющий, находится ли впереди пропасть
+    protected Transform interCheck;//Индикатор, определяющий, где находятся средства особого перемещения (заросли, верёвки...)
     protected Transform sight;//Откуда персонаж смотрит
 
     #endregion //indicators
@@ -53,6 +56,7 @@ public class PersonController : DmgObjController, IPersonWatching
     protected int employment;
 
     public LayerMask whatIsGround;
+    public LayerMask whatIsInteractable;
 
     #endregion //parametres
 
@@ -61,6 +65,7 @@ public class PersonController : DmgObjController, IPersonWatching
     public override void Initialize()
     {
         groundCheck = transform.FindChild("Indicators").FindChild("GroundCheck");
+        interCheck = transform.FindChild("Indicators").FindChild("InterCheck");
         precipiceCheck = transform.FindChild("Indicators").FindChild("PrecipiceCheck");
         sight= transform.FindChild("Indicators").FindChild("Sight");
     }
@@ -188,6 +193,28 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     protected virtual void DefinePrecipice()
     {
+    }
+
+    /// <summary>
+    /// Определить, с каким особым перемещением персонаж имеет дело
+    /// </summary>
+    protected virtual void DefineInteractable()
+    {
+    }
+
+    /// <summary>
+    /// Поменять коллайдеру z-координатам.
+    /// </summary>
+    public virtual void ChangeColliderZCordinate(float z)
+    {
+        BoxCollider[] cols = GetComponents<BoxCollider>();
+        Vector3 center;
+        for (int i = 0; i < cols.Length; i++)
+        {
+            center = cols[i].center;
+            cols[i].center = new Vector3(center.x, center.y, z);
+        }
+        groundCheck.position = new Vector3(groundCheck.position.x, groundCheck.position.y, z);
     }
 
 

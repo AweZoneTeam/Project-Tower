@@ -7,42 +7,77 @@ using System.Collections.Generic;
 /// </summary>
 public class InteractionChecker : MonoBehaviour {
 
+    #region consts
+
+    protected const float platformOffsetY =0.5f;
+
+    #endregion //consts
+
+    private PersonController person;
+
     public List<InterObjController> interactions;
 
     public List<DropClass> dropList=new List<DropClass>();
 
+    public List<PlatformClass> platforms=new List<PlatformClass>();
+    private Transform platformCheck;
+    private float zCoordinateOffset = -0.5f;
+    private float zCoordinate = 0f;
+
+    public void Awake()
+    {
+        SetZCoordinate();
+        platforms = new List<PlatformClass>();
+        platformCheck = transform.parent.FindChild("PlatformCheck");
+        person = GetComponentInParent<PersonController>();
+        person.ChangeColliderZCordinate(zCoordinate + zCoordinateOffset);
+    }
+
+    public void FixedUpdate()
+    {
+        if (platforms.Count>0)
+        {
+            if ((platformCheck.position.y >= platforms[0].transform.position.y+platformOffsetY) && (zCoordinate != platforms[0].zCoordinate))
+            {
+                zCoordinate = platforms[0].zCoordinate;
+                person.ChangeColliderZCordinate(zCoordinate + zCoordinateOffset);
+            }
+            else if ((platformCheck.position.y+platformOffsetY < platforms[0].transform.position.y) && (zCoordinate == platforms[0].zCoordinate))
+            {
+                zCoordinate = 0f;
+                person.ChangeColliderZCordinate(zCoordinate + zCoordinateOffset);
+            }
+        }
+    }
+
     public void OnTriggerEnter(Collider other)
     {
+        #region GeneralInteractions
+
         if (string.Equals(other.gameObject.tag, Tags.interactive))
         {
             InterObjController interaction = other.gameObject.GetComponent<InterObjController>();
-            bool k = true;
-            for (int i = 0; i < interactions.Count; i++)
+            if (!interactions.Contains(interaction))
             {
-                if (interactions[i] == interaction)
+                if (other.gameObject.layer == LayerMask.NameToLayer("ledge"))
                 {
-                    k = false;
-                    break;
+                    interactions.Insert(0, interaction);
+                }
+                else
+                {
+                    interactions.Add(interaction);
                 }
             }
-            if (k)
-            {
-                interactions.Add(interaction);
-            }
         }
+
+        #endregion //GeneralInteractions
+
+        #region DropInteractions
+
         else if (string.Equals(other.gameObject.tag, Tags.drop))
         {
             DropClass drop = other.gameObject.GetComponent<DropClass>();
-            bool k = true;
-            for (int i = 0; i < dropList.Count; i++)
-            {
-                if (dropList[i] == drop)
-                {
-                    k = false;
-                    break;
-                }
-            }
-            if (k)
+            if (!dropList.Contains(drop))
             {
                 if (drop.autoPick)
                 {
@@ -54,44 +89,73 @@ public class InteractionChecker : MonoBehaviour {
                 }
             }
         }
+
+        #endregion //DropInteractions
+
+        #region PlatformInteractions
+
+        else if (string.Equals(other.gameObject.tag, Tags.platform))
+        {
+            PlatformClass platform = other.gameObject.GetComponent<PlatformClass>();
+            if (!platforms.Contains(platform))
+            {
+                platforms.Add(platform);
+            }
+        }
+
+        #endregion //PlatformInteractions
+
     }
 
     public void OnTriggerExit(Collider other)
     {
+
+        #region GeneralInteractions
+
         if (string.Equals(other.gameObject.tag, Tags.interactive))
         {
             InterObjController interaction = other.gameObject.GetComponent<InterObjController>();
-            bool k = false;
-            for (int i = 0; i < interactions.Count; i++)
-            {
-                if (interactions[i] == interaction)
-                {
-                    k = true;
-                    break;
-                }
-            }
-            if (k)
+            if (interactions.Contains(interaction))
             {
                 interactions.Remove(interaction);
             }
         }
+
+        #endregion //GeneralInteractions
+
+        #region DropInteractions
+
         else if (string.Equals(other.gameObject.tag, Tags.drop))
         {
             DropClass drop = other.gameObject.GetComponent<DropClass>();
-            bool k = false;
-            for (int i = 0; i < dropList.Count; i++)
-            {
-                if (dropList[i] == drop)
-                {
-                    k = true;
-                    break;
-                }
-            }
-            if (k)
+            if (dropList.Contains(drop))
             {
                 dropList.Remove(drop);
             }
         }
+
+        #endregion //DropInteractions
+
+        #region PlatformInteractions
+
+        else if (string.Equals(other.gameObject.tag, Tags.platform))
+        {
+            PlatformClass platform = other.gameObject.GetComponent<PlatformClass>();
+            if (platforms.Contains(platform))
+            {
+                platforms.Remove(platform);
+                zCoordinate = 0f;
+                person.ChangeColliderZCordinate(zCoordinate + zCoordinateOffset);
+            }
+        }
+
+        #endregion //PlatformInteractions
+
+    }
+
+    public void SetZCoordinate()
+    {
+        zCoordinate = transform.position.z;
     }
 
 }

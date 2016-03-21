@@ -52,9 +52,9 @@ public class EnemyActions : PersonActions
 
     public override void Initialize()
     {
+        base.Initialize();
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
-        cAnim = GetComponentInChildren<EnemyVisual>();
     }
 
     #region interface

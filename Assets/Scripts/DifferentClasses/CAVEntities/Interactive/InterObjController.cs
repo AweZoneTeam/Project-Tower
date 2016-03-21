@@ -43,7 +43,10 @@ public class InterObjController : MonoBehaviour
     public virtual void Interact(InterObjController interactor)
     {
         if (actions != null)
+        {
+            actions.SetInteractor(interactor);
             actions.Interact();
+        }
     }
 
     public virtual Prestats GetStats()

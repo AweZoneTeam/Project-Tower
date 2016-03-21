@@ -308,7 +308,6 @@ public class CharacterVisual : PersonVisual
     /// <summary>
     /// Анимировать состояние захвата за уступ
     /// </summary>
-    /// <param name="_time"></param>
     public override void Hanging(float _time)
     {
         if ((cAnim != null) && (!attack) && (employment > 3))
@@ -339,6 +338,115 @@ public class CharacterVisual : PersonVisual
                         timer.TimeReset();
                     }
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение по зарослям
+    /// </summary>
+    public override void ThicketMove()
+    {
+        if (cAnim != null)
+        {
+            if (!cAnim.CompareAnimation("ThicketMove"))
+            {
+                cAnim.Animate("Thicket");
+            }
+
+            if (rigid.velocity.magnitude > 5f)
+            {
+                cAnim.Animate("ThicketMove");
+            }
+            else if (cAnim.CompareAnimation("ThicketMove"))
+            {
+                cAnim.Pause();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение на лестнице
+    /// </summary>
+    public override void StairMove()
+    {
+        if (cAnim != null)
+        {
+            if (!cAnim.CompareAnimation("StairUp")&& !cAnim.CompareAnimation("StairDown"))
+            {
+                cAnim.Animate("Stair");
+            }
+
+            if (rigid.velocity.y > 5f)
+            {
+                cAnim.Animate("StairUp");
+            }
+            else if (rigid.velocity.y < -5f)
+            {
+                cAnim.Animate("StairDown");
+            }
+            else if (cAnim.CompareAnimation("StairUp") || cAnim.CompareAnimation("StairDown"))
+            {
+                cAnim.Pause();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение на верёвке
+    /// </summary>
+    public override void RopeMove()
+    {
+        if (cAnim != null)
+        {
+            if (!cAnim.CompareAnimation("RopeUp") && !cAnim.CompareAnimation("RopeDown"))
+            {
+                cAnim.Animate("Rope");
+            }
+
+            if (rigid.velocity.y > 5f)
+            {
+                cAnim.Animate("RopeUp");
+            }
+            else if (rigid.velocity.y < -5f)
+            {
+                cAnim.Animate("RopeDown");
+            }
+            else if (cAnim.CompareAnimation("RopeUp") || cAnim.CompareAnimation("RopeDown"))
+            {
+                cAnim.Pause();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение на выступе
+    /// </summary>
+    public override void LedgeMove(float _time)
+    {
+        if (_time <= 0f)
+        {
+            if (cAnim != null)
+            {
+                if (rigid.velocity.x > 5f)
+                {
+                    cAnim.Animate("EdgeMoveRight");
+                }
+                else if (rigid.velocity.x <-5f)
+                {
+                    cAnim.Animate("EdgeMoveLeft");
+                }
+                else
+                {
+                    cAnim.Animate("Edge");
+                }
+            }
+        }
+        else
+        {
+            if (cAnim != null)
+            {
+                cAnim.Animate("EdgeUp");
             }
         }
     }

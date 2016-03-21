@@ -92,9 +92,5 @@ public class ChestActions : InterObjActions, ILeverActivated
     {
         chestContent = _chestClass;
     }
-
-    public override void SetInteractor(InterObjController _interactor)
-    {
-        interactor = _interactor;
-    }
+    
 }

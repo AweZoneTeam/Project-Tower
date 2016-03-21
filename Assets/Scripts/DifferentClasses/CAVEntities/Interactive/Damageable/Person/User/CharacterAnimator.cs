@@ -33,8 +33,9 @@ public class CharacterAnimator : InterObjAnimator
         whatIsGround = GetComponentInParent<PersonController>().whatIsGround;
     }
 
-    public virtual void FixedUpdate()
+    public override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (stats.groundness == groundnessEnum.inAir)
         {
             RaycastHit ray;

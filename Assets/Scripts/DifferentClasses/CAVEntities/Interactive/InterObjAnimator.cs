@@ -51,9 +51,14 @@ public class InterObjAnimator : MonoBehaviour
         }
     }*/
 
-    public virtual void Update()
+    public virtual void FixedUpdate()
     {
         Sinchronize();
+    }
+
+    public virtual void Update()
+    {
+     //   Sinchronize();
 
         /*
 #if UNITY_EDITOR
@@ -158,6 +163,23 @@ public class InterObjAnimator : MonoBehaviour
         Sinchronize();
     }
 
+    /// <summary>
+    /// Функция, что ставит на паузу все части
+    /// </summary>
+    public void Pause()
+    {
+        if (parts != null)
+        {
+            if (parts.Count > 0)
+            {
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    parts[i].mov.gotoAndStop(parts[i].mov.getCurrentFrameNumber()); 
+                }
+            }
+        }
+    }
+
     public bool CompareAnimation(string animName)
     {
         return string.Equals(animName, animTypes[anim.type].animations[anim.numb]);
@@ -188,15 +210,15 @@ public class InterObjAnimator : MonoBehaviour
                 for (int i = 1; i < parts.Count; i++)
                 {
                     aInfo = parts[i].interp.animTypes[anim.type].animInfo[anim.numb];
+                    parts[i].mov.gotoAndStop((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
                     if (!aInfo.stepByStep || !aInfo.stopStepByStep)
                     {
-                        parts[i].mov.gotoAndPlay((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
                         parts[i].mov.setPlaying(true);
                     }
-                    else if (aInfo.stepByStep)
+                    /*else if (aInfo.stepByStep)
                     {
                         parts[i].mov.gotoAndStop((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
-                    }
+                    }*/
                 }
             }
         }

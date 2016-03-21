@@ -79,6 +79,34 @@ public class PersonVisual : DmgObjVisual
     }
 
     /// <summary>
+    /// Анимировать передвижение по лестнице
+    /// </summary>
+    public virtual void StairMove()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать передвижение по верёвке
+    /// </summary>
+    public virtual void RopeMove()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать передвижение по выступу
+    /// </summary>
+    public virtual void LedgeMove(float _time)
+    {
+    }
+
+    /// <summary>
+    /// Анимировать движение по зарослям
+    /// </summary>
+    public virtual void ThicketMove()
+    {
+    }
+
+    /// <summary>
     /// Анимировать передвижение в воздухе
     /// </summary>
     public virtual void AirMove()

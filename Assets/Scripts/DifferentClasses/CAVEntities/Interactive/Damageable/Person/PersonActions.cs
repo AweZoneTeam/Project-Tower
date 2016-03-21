@@ -11,6 +11,9 @@ public class PersonActions : DmgObjActions
 
     protected const int maxEmployment = 10;
 
+    protected float jumpDownTime=1f;
+    protected float jumpDownOffset = 3f;
+
     #endregion //consts
 
     #region fields
@@ -18,6 +21,8 @@ public class PersonActions : DmgObjActions
     protected Rigidbody rigid;
 
     protected PersonVisual cAnim;
+
+    public Transform platformCheck;//Индикатор, использующийся для взаимодействия с платформами
 
     public HitClass hitData = null;//Какими параметрами атаки персонаж пользуется в данный момент
     protected HitController hitBox;//хитбокс оружия персонажа
@@ -32,9 +37,15 @@ public class PersonActions : DmgObjActions
     protected bool moving;
     protected bool death=false;
 
+    protected Vector2 climbingDirection = new Vector2(0f, 0f);
+
     public float maxSpeed;
     public float currentMaxSpeed;
     public float fastRunSpeed=0f;
+    public float stairSpeed = 0f;
+    public float ropeSpeed = 0f;
+    public float thicketSpeed = 0f;
+    public float ledgeSpeed = 0f;
 
     public float acceleration;
     public float jumpForce;
@@ -57,6 +68,8 @@ public class PersonActions : DmgObjActions
     public override void Initialize()
     {
         cAnim = GetComponentInChildren<PersonVisual>();
+        platformCheck = transform.FindChild("Indicators").FindChild("PlatformCheck");
+        climbingDirection = new Vector2(0f, 0f);
     }
 
     #region Interface
@@ -131,6 +144,23 @@ public class PersonActions : DmgObjActions
     }
 
     /// <summary>
+    /// Спрыгнуть с платформы
+    /// </summary>
+    public virtual void JumpDown()
+    {
+        StartCoroutine(JumpDownRoutine());
+    }
+
+    protected virtual IEnumerator JumpDownRoutine()
+    {
+        Vector3 pos = platformCheck.localPosition;
+        float y = pos.y;
+        platformCheck.localPosition = new Vector3(pos.x, pos.y - jumpDownOffset, pos.z);
+        yield return new WaitForSeconds(jumpDownTime);
+        platformCheck.localPosition = pos;
+    }
+
+    /// <summary>
     /// Функция прохода через двери
     /// </summary>
     public virtual void GoThroughTheDoor(DoorClass door)
@@ -174,6 +204,29 @@ public class PersonActions : DmgObjActions
     public virtual void WallInteraction()
     {
 
+    }
+
+    /// <summary>
+    /// Зацепиться (за заросли, верёвку, уступ...) или наоборот отпустить
+    /// </summary>
+    public virtual void Hang(bool yes)
+    {
+    }
+
+    /// <summary>
+    /// Установить направление особого перемещения
+    /// </summary>
+    /// <param name="direction"></param>
+    public virtual void StartClimbing(Vector2 _climbDirection)
+    {
+        moving = true;
+    }
+
+    /// <summary>
+    /// Взобраться на платформу
+    /// </summary>
+    public virtual void ClimbOntoThePlatform()
+    {
     }
 
     /// <summary>

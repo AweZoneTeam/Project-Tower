@@ -12,10 +12,14 @@ public class KeyboardActorController : PersonController
 
     private const float doorDistance = 4.5f;
 
-    private const float obstacleRadius = 0.1f;
+    private const float obstacleRadius = 1f;
 
-    const int fastRunMaxCount = 2;
+    protected const int fastRunMaxCount = 2;
     protected const float fastRunInputTime = 0.3f;
+
+    protected float observeDistance = 1.5f;
+
+    protected const float minLedgeSpeed = -90f;
 
     #endregion //consts
 
@@ -35,8 +39,6 @@ public class KeyboardActorController : PersonController
     #endregion //parametres
 
     #region fields
-
-    public int k1;
 
     private InteractionChecker interactions;
 
@@ -92,7 +94,7 @@ public class KeyboardActorController : PersonController
             if (!death)
             {
 
-            #region UsualState
+                #region UsualState
 
                 if (stats.interaction == interactionEnum.noInter)
                 {
@@ -192,14 +194,33 @@ public class KeyboardActorController : PersonController
                             actions.Flip();
                         }
                     }
-
                     else if (Input.GetButtonDown("Jump"))
                     {
                         actions.Jump();
                     }
 
+                    if (Input.GetButtonDown("Interact"))
+                    {
+                        Interact(this);
+                    }
+
                     actions.Crouch((Input.GetButton("Crouch"))||(WallIsAbove()));
 
+                    if ((stats.groundness == groundnessEnum.inAir)&&(rigid.velocity.y<-30f)&&(rigid.velocity.y > minLedgeSpeed))
+                    {
+                        if (interactions.interactions.Count > 0)
+                        {
+                            if (interactions.interactions[0].gameObject.layer == LayerMask.NameToLayer("ledge"))
+                            {
+                                Interact(this);
+                            }
+                        }
+                    }
+
+                    if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
+                    {
+                        actions.Attack();
+                    }
                 }
 
                 #endregion //UsualState
@@ -238,6 +259,47 @@ public class KeyboardActorController : PersonController
 
                 #endregion //LowEdgeState
 
+                #region SpecialMovementState
+
+                else if (stats.interaction != interactionEnum.interactive)
+                {
+                    if (rigid.useGravity == true)
+                    {
+                        actions.Hang(true);
+                    }
+                    if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+                    {
+                        float valueX = Input.GetAxis("Horizontal");
+                        float valueY = Input.GetAxis("Vertical");
+                        Vector2 climbingDirection = new Vector2(valueX, valueY).normalized;
+                        if (Physics.OverlapSphere(interCheck.position + new Vector3(climbingDirection.x * observeDistance, climbingDirection.y * observeDistance, 0f), interRadius, whatIsInteractable).Length > 0)
+                        {
+                            actions.StartClimbing(climbingDirection);
+                        }
+                        else
+                        {
+                            actions.StopWalking();
+                        }
+                    }
+                    else
+                    {
+                        actions.StopWalking();
+                    }
+                    if (Input.GetButtonDown("Interact"))
+                    {   
+                        actions.Hang(false);
+                    }
+
+                    if (stats.interaction == interactionEnum.platform)
+                    {
+                        if ((Input.GetButton("Jump")) || (rigid.velocity.y > 5f))
+                        {
+                            actions.ClimbOntoThePlatform();
+                        }
+                    }
+                }
+
+                #endregion //SpecialMovementState
 
                 if (interactions.dropList.Count > 0)
                 {
@@ -247,15 +309,10 @@ public class KeyboardActorController : PersonController
                     }
                 }
 
-                if (Input.GetButtonDown("Interact"))
-                {
-                    Interact(this);
-                }
-
-                if (Input.GetButtonDown("Attack"))
+               /* if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
                 {
                     actions.Attack();
-                }
+                }*/
 
             }
 
@@ -364,7 +421,7 @@ public class KeyboardActorController : PersonController
     {
         base.AnalyzeSituation();
         CheckObstacles();
-
+        DefineInteractable();
     }
 
     /// <summary>
@@ -390,6 +447,33 @@ public class KeyboardActorController : PersonController
         else
         {
             stats.obstacleness = obstaclenessEnum.noObstcl;
+        }
+    }
+
+    protected override void DefineInteractable()
+    {
+        if ((stats.interaction != interactionEnum.noInter) && (stats.interaction != interactionEnum.interactive))
+        {
+            if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
+            {
+                stats.interaction = interactionEnum.thicket;
+            }
+            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("rope")).Length > 0)
+            {
+                stats.interaction = interactionEnum.rope;
+            }
+            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("stair")).Length > 0)
+            {
+                stats.interaction = interactionEnum.stair;
+            }
+            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ledge")).Length > 0)
+            {
+                stats.interaction = interactionEnum.ledge;
+            }
+            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("platform")).Length > 0)
+            {
+                stats.interaction = interactionEnum.platform;
+            }
         }
     }
 

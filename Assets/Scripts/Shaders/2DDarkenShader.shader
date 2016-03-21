@@ -8,6 +8,7 @@
 
 		SubShader
 	{
+
 		Pass
 		{
 			CGPROGRAM
@@ -36,7 +37,7 @@
 			fixed4 frag(vertOut i) : SV_Target
 			{
 				fixed4 color;
-				color = fixed4 (tex2D(_MainTex, i.uv).rgb*(1-_Darkness), tex2D(_MainTex, i.uv).a);
+				color = fixed4 (tex2D(_MainTex, i.uv).rgb, tex2D(_MainTex, i.uv).a*(1 - _Darkness));
 				return color;
 			}
 			ENDCG

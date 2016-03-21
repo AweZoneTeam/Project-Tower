@@ -34,6 +34,6 @@ public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall};
 /// <summary>
 /// Номера приоритетности у взаимодействующих с персонажем объектов. Нужно ли это, покажет время
 /// </summary>
-public enum interactionEnum {noInter, stair, rope, thicket, margin, edge, lowEdge, interactive};
+public enum interactionEnum {noInter, stair, rope, thicket, ledge, platform, edge, lowEdge, interactive};
 
 public enum doorEnum { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа

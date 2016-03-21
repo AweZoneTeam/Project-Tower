@@ -10,6 +10,7 @@ public class InterObjActions : MonoBehaviour
     #region fields
     private Prestats stats;
     private InterObjVisual anim;
+    protected InterObjController interactor;
     #endregion //fields
 
     public virtual void Awake()
@@ -46,6 +47,8 @@ public class InterObjActions : MonoBehaviour
     /// Установить, кто взаимодействуетс интерактивным объектом в данный момент
     /// </summary>
     public virtual void SetInteractor(InterObjController _interactor)
-    {}
+    {
+        interactor = _interactor;
+    }
     #endregion //Interface
 }
