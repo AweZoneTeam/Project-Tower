@@ -59,3 +59,32 @@ public class WeaponCreateWindow : EditorWindow
         Selection.activeObject = asset;
     }
 }
+
+/// <summary>
+/// Окно создания новой базы данных по одноразовому используемому предмет
+/// </summary>
+public class UseItemCreateWindow : EditorWindow
+{
+    public string itemName = "New Item";
+
+    void OnGUI()
+    {
+        itemName = EditorGUILayout.TextField(itemName);
+        if (GUILayout.Button("Create New"))
+        {
+            CreateNewItem();
+        }
+    }
+
+    //Создаём новое оружие.
+    private void CreateNewItem()
+    {
+        UsableItemClass asset = ScriptableObject.CreateInstance<UsableItemClass>();
+        asset.itemName = itemName;
+        asset.type = "usable";
+        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/UsableItems/" + itemName + ".asset");
+        AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = asset;
+    }
+}

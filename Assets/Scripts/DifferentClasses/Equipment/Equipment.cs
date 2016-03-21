@@ -29,7 +29,7 @@ public class EquipmentClass: BagClass
 {
     public int[] keys={0,0,0};// Сколько ключей каждого типа есть у персонажа?
 
-    public WeaponClass rightWeapon;
+    public WeaponClass rightWeapon, leftWeapon;
 
     public int GetKeysNumber(int index)
     {
