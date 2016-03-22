@@ -316,6 +316,27 @@ public class KeyboardActorController : PersonController
 
             }
 
+            #region CameraMovement
+
+            if (rigid.velocity.magnitude <= 5f)
+            {
+                float camValue = Input.GetAxis("CamMove");
+                if (Mathf.Abs(camValue) >= 0.5f)
+                {
+                    actions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
+                }
+                else
+                {
+                    actions.Observe(new Vector2(0f, 0f));
+                }
+            }
+            else
+            {
+                actions.Observe(new Vector2(0f, 0f));
+            }
+
+            #endregion //CameraMovement
+
             AnalyzeSituation();
         }
     }
@@ -422,6 +443,11 @@ public class KeyboardActorController : PersonController
         base.AnalyzeSituation();
         CheckObstacles();
         DefineInteractable();
+    }
+
+    protected override void DefinePrecipice()
+    {
+        actions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (stats.groundness == groundnessEnum.grounded)&&(!Input.GetButton("CamMove")));
     }
 
     /// <summary>

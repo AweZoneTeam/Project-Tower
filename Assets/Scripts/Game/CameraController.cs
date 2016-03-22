@@ -27,6 +27,7 @@ public class CameraController : MonoBehaviour
     #region parametres
     private GameObject character;//За каким персонажем камера следует
     private Rigidbody2D rigid;
+    private Vector3 offsetPosition;
     private Vector2 camSize = new Vector2 (sizeX,sizeY);//размер камеры, используемый для подсчёта нормального движения внутри комнаты
     private Transform camWindow;//Окошечко, выйдя за пределы которого персонаж двигает камеру.
     private AreaClass currentArea;
@@ -44,6 +45,7 @@ public class CameraController : MonoBehaviour
     public void Start()
     {
         //Инициализация
+        offsetPosition = new Vector3(offsetX, offsetY, offsetZ);
         camWindow = transform.FindChild("CamWindow");
         if (GameObject.FindGameObjectWithTag(Tags.player) != null)
         {
@@ -63,7 +65,7 @@ public class CameraController : MonoBehaviour
     public void FixedUpdate()
     {
         vect = cam.WorldToViewportPoint(g.transform.position);
-        Vector2 spotPosition = new Vector2(transform.position.x + offsetX, transform.position.y + offsetY);
+        Vector2 spotPosition = new Vector2(transform.position.x + offsetPosition.x, transform.position.y + offsetPosition.y);
         Vector3 newPosition;
         #region howToHorizontalMove 
         movX = (int)camMovX.stop;
@@ -139,6 +141,11 @@ public class CameraController : MonoBehaviour
             pos = background.background.transform.position;
             background.background.transform.position = new Vector3(pos.x - delX * background.prlxXScale, pos.y - delY * background.prlxYScale, pos.z);
         }
+    }
+
+    public void SetOffsetPosition(Vector2 _offset)
+    {
+        offsetPosition = Vector3.Lerp(offsetPosition,new Vector3(offsetX - _offset.x, offsetY - _offset.y, offsetZ),Time.deltaTime);
     }
 }
 

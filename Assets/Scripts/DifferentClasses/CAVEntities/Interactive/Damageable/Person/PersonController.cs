@@ -193,6 +193,7 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     protected virtual void DefinePrecipice()
     {
+        actions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (stats.groundness == groundnessEnum.grounded));
     }
 
     /// <summary>
@@ -215,6 +216,7 @@ public class PersonController : DmgObjController, IPersonWatching
             cols[i].center = new Vector3(center.x, center.y, z);
         }
         groundCheck.position = new Vector3(groundCheck.position.x, groundCheck.position.y, z);
+        precipiceCheck.position = new Vector3(precipiceCheck.position.x, precipiceCheck.position.y, z);
     }
 
 

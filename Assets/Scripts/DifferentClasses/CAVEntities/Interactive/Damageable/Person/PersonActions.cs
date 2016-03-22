@@ -75,6 +75,13 @@ public class PersonActions : DmgObjActions
     #region Interface
 
     /// <summary>
+    /// Посмотреть в указанном направлении
+    /// </summary>
+    public virtual void Observe(Vector2 sightDirection)
+    {
+    }
+
+    /// <summary>
     /// Повернуть персонажа 
     /// </summary>
     /// <param name="direction"></param>

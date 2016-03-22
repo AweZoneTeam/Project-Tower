@@ -12,6 +12,7 @@ public class CharacterVisual : PersonVisual
     private const float crouchTime = 0.5f;//Сколько времени длится анимация "присесть"?
     private const float flipTime = 0.8f;//Сколько времени персонаж кувыркается?
     private const float hangTime = 0.4f;//Сколько времени длится анимация "Захватиться за уступ?"
+    private const float precipiceTime = 0.4f;//Сколько времен длится анимация "Впереди обрыв"?
 
     private const float dragSpeed = 5f;//до какой скорости считается, что персонаж ещё тормозится (когда его скорость уменьшается)?
     private const float crouchSpeed = 5f;
@@ -26,12 +27,6 @@ public class CharacterVisual : PersonVisual
 
     #endregion //enums
 
-    #region timers
-
-    public float beginRunTimer, stopDragTimer, crouchTimer;
-
-    #endregion //timers
-
     #region parametres
 
     private bool attack=false;
@@ -44,9 +39,6 @@ public class CharacterVisual : PersonVisual
     private Rigidbody rigid;
 
     public int k1 = 0;
-
-    private Dictionary<string,Timer> timers = new Dictionary<string, Timer>();
-    private List<string> timerNames = new List<string>();
 
     #endregion //fields
 
@@ -72,28 +64,13 @@ public class CharacterVisual : PersonVisual
         timerNames.Add("stopDragTimer");
         timerNames.Add("crouchTimer");
         timerNames.Add("hangTimer");
+        timerNames.Add("precipiceTimer");
 
         timers.Add("beginRunTimer",new Timer(beginRunTime));
         timers.Add("stopDragTimer", new Timer(stopDragTime));
         timers.Add("crouchTimer", new Timer(crouchTime));
         timers.Add("hangTimer", new Timer(hangTime));
-    }
-
-    /// <summary>
-    /// Сбросить все таймеры, кроме обозначенного
-    /// </summary>
-    public virtual void ResetAllTimersExcept(string _name)
-    {
-        for (int i = 0; i < timerNames.Count; i++)
-        {
-            if (!string.Equals(timerNames[i], _name))
-            {
-                if (timers.ContainsKey(timerNames[i]))
-                {
-                    timers[timerNames[i]].TimeReset();
-                }
-            }
-        }
+        timers.Add("precipiceTimer", new Timer(precipiceTime));
     }
 
     #region AnimatedActions
@@ -102,39 +79,42 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public override void GroundStand()
     {
-        if ((cAnim != null)&&(!attack)&&!(employment<=4))
+        if ((cAnim != null)&&(!attack)&&!(employment<=8))
         {
-            Timer timer = timers["stopDragTimer"];
-            ResetAllTimersExcept("stopDragTimer");
             if (Mathf.Abs(rigid.velocity.x) > dragSpeed)
             {
                 cAnim.Animate("DragBegin");
             }
             else
             {
-                if ((cAnim.CompareAnimation("DragBegin")) || (cAnim.CompareAnimation("DragStop")))
-                {
-                    if (timer == -1f)
-                    {
-                        timer.TimeStart();
-                    }
-                    if (stopDragTimer > 0f)
-                    {
-                        cAnim.Animate("DragStop");
-                        timer.value -= Time.deltaTime;
-                        stopDragTimer = timer.value;
-                    }
-                    else
-                    {
-                        cAnim.Animate("Idle");
-                        timer.TimeReset();
-                    }
-                }
-                else
-                {
-                    cAnim.Animate("Idle");
-                    timer.TimeReset();
-                }
+                AnimationTransition(stopDragTime, "DragStop", "Idle", "DragBegin","CrouchContinue","Crouch");
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Посмотреть в указанном направлении
+    /// </summary>
+    public override void Look(Vector2 direction)
+    {
+        if ((cAnim != null) && (!attack)&&(stats.interaction==interactionEnum.noInter))
+        {
+            if (employment <8)
+            {
+                return;
+            }
+            if (direction.y == 1f)
+            {
+                cAnim.Animate("LookUp");
+            }
+            else if (direction.y == -1f)
+            {
+                cAnim.Animate("LookDown");
+            }
+            else if (direction.x == 1f)
+            {
+                AnimationTransition(precipiceTime, "PrecipiceIsForward", "PrecipiceIsForwardContinue");
             }
         }
     }
@@ -158,26 +138,7 @@ public class CharacterVisual : PersonVisual
     {
         if ((cAnim != null)&&(!attack)&&!(employment<=4))
         {
-            Timer timer = timers["beginRunTimer"];
-            ResetAllTimersExcept("beginRunTimer");
-            if (!cAnim.CompareAnimation("Run")&& !cAnim.CompareAnimation("FastRun"))
-            {
-                if (timer == -1f)
-                {
-                    timer.TimeStart();
-                }
-                if (timer > 0f)
-                {
-                    beginRunTimer = timer.value;
-                    cAnim.Animate("RunBegin");
-                    timer.value-= Time.deltaTime;
-                }
-                else
-                {
-                    cAnim.Animate("Run");
-                    timer.TimeReset();
-                }
-            }
+            AnimationTransition(beginRunTime, "RunBegin", "Run", "FastRun");
         }
     }
 
@@ -188,25 +149,7 @@ public class CharacterVisual : PersonVisual
     {
         if ((cAnim != null) && (!attack) && !(employment <= 4))
         {
-            Timer timer = timers["beginRunTimer"];
-            ResetAllTimersExcept("beginRunTimer");
-            if (!cAnim.CompareAnimation("Run") && !cAnim.CompareAnimation("FastRun"))
-            {
-                if (timer == -1f)
-                {
-                    timer.TimeStart();
-                }
-                if (timer > 0f)
-                {
-                    cAnim.Animate("FastRunBegin");
-                    timer.value -= Time.deltaTime;
-                }
-                else
-                {
-                    cAnim.Animate("FastRun");
-                    timer.TimeReset();
-                }
-            }
+            AnimationTransition(beginRunTime, "FastRunBegin", "FastRun", "Run");
         }
     }
 
@@ -226,31 +169,10 @@ public class CharacterVisual : PersonVisual
                     timer.TimeReset();
                     cAnim.Animate("CrouchMove");
                 }
-                else if (!cAnim.CompareAnimation("CrouchMove") && !cAnim.CompareAnimation("CrouchContinue") && !cAnim.CompareAnimation("FlipForward"))
+                else if (employment>9)
                 {
-                    k1++;
-                    crouchTimer = timer.maxValue;
-                    if (timer == -1f)
-                    {
-                        timer.TimeStart();
-                    }
-                    if (crouchTimer > 0f)
-                    {
-                        cAnim.Animate("Crouch");
-                        timer.value -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        cAnim.Animate("CrouchContinue");
-                        timer.TimeReset();
-                    }
+                    AnimationTransition(crouchTime, "Crouch", "CrouchContinue", "CrouchMove");
                 }
-                else
-                {
-                    cAnim.Animate("CrouchContinue");
-
-                }
-                
             }
         }
     }
@@ -319,25 +241,7 @@ public class CharacterVisual : PersonVisual
             }
             else
             {
-                Timer timer = timers["hangTimer"];
-                ResetAllTimersExcept("hangTimer");
-                if (!cAnim.CompareAnimation("Hanging"))
-                {
-                    if (timer == -1f)
-                    {
-                        timer.TimeStart();
-                    }
-                    if (timer > 0f)
-                    {
-                        cAnim.Animate("HangUp");
-                        timer.value -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        cAnim.Animate("Hanging");
-                        timer.TimeReset();
-                    }
-                }
+                AnimationTransition(hangTime, "HangUp", "Hanging");
             }
         }
     }
@@ -469,7 +373,7 @@ public class CharacterVisual : PersonVisual
         yield return new WaitForSeconds(time);
         attack = false; 
     }
-
+    
     #endregion //AnimatedActions
 
     public void SetStats(Stats _stats)

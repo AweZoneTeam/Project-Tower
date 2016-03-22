@@ -24,6 +24,8 @@ public class HumanoidActorActions : PersonActions
     const float platformClimbTime = 0.85f;
     const float platformClimbSpeed = 18f;
 
+    protected const float camMaxDistance = 20f;
+
     #endregion //consts
 
     #region parametres
@@ -45,6 +47,8 @@ public class HumanoidActorActions : PersonActions
     protected Transform aboveWallCheck, lowWallCheck, frontWallCheck, highWallCheck;
 
     private WeaponClass mainWeapon;//Какое оружие персонаж носит в правой руке
+
+    protected CameraController cam = null;
 
     public int k1=0;
 
@@ -114,7 +118,14 @@ public class HumanoidActorActions : PersonActions
                     }
                     if ((stats.groundness == groundnessEnum.grounded) && (cAnim != null))
                     {
-                        cAnim.GroundStand();
+                        if (precipiceIsForward)
+                        {
+                            cAnim.Look(new Vector2(1f, 0f));
+                        }
+                        else
+                        {
+                            cAnim.GroundStand();
+                        }
                     }
                 }
                 if (cAnim != null)
@@ -207,6 +218,7 @@ public class HumanoidActorActions : PersonActions
     public override void Initialize()
     {
         base.Initialize();
+        cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>();
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
         hitData = null;
@@ -217,6 +229,22 @@ public class HumanoidActorActions : PersonActions
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck");
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck");
         employment = maxEmployment;
+    }
+
+    /// <summary>
+    /// Разглядеть
+    /// </summary>
+    public override void Observe(Vector2 sightDirection)
+    {
+        if (sightDirection.y > 0f)
+        {
+            cAnim.Look(new Vector2(0f, 1f));
+        }
+        else if (sightDirection.y < 0f)
+        {
+            cAnim.Look(new Vector2(0f, -1f));
+        }
+        cam.SetOffsetPosition(camMaxDistance * sightDirection);
     }
 
     /// <summary>

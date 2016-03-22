@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Скрипт, отвечающий за визуальную часть сложных персонажей
@@ -23,6 +24,9 @@ public class PersonVisual : DmgObjVisual
 
     protected CharacterAnimator cAnim;//Объекты, которых можно с полной уверенностью назвать персонажами, обзавелись более сложной версией аниматора
 
+    protected Dictionary<string, Timer> timers = new Dictionary<string, Timer>();
+    protected List<string> timerNames = new List<string>();
+
     #endregion //fields
 
     public override void Awake()
@@ -33,6 +37,23 @@ public class PersonVisual : DmgObjVisual
     public override void Initialize()
     {
         employment = maxEmployment;
+    }
+
+    /// <summary>
+    /// Сбросить все таймеры, кроме обозначенного
+    /// </summary>
+    public virtual void ResetAllTimersExcept(string _name)
+    {
+        for (int i = 0; i < timerNames.Count; i++)
+        {
+            if (!string.Equals(timerNames[i], _name))
+            {
+                if (timers.ContainsKey(timerNames[i]))
+                {
+                    timers[timerNames[i]].TimeReset();
+                }
+            }
+        }
     }
 
     #region AnimatedActionsInterface
@@ -55,6 +76,13 @@ public class PersonVisual : DmgObjVisual
     /// Анимировать быстрое передвижение по земле
     /// </summary>
     public virtual void FastGroundMove()
+    {
+    }
+
+    /// <summary>
+    /// Анимировать взгляд в заданную сторону
+    /// </summary>
+    public virtual void Look(Vector2 direction)
     {
     }
 
@@ -156,6 +184,58 @@ public class PersonVisual : DmgObjVisual
         yield return new WaitForSeconds(_time);
         employment += _employment;
     }
+
+    /// <summary>
+    /// Функция, которая используется для 2-x стадийных анимаций, первая стадия которых есть переход между анимациями
+    /// </summary>
+    protected virtual void AnimationTransition(float _time, string firstAnim, string secondAnim, params string[] abandonedAnims)
+    {
+        string timerName = firstAnim + "Timer";
+        if (!timers.ContainsKey(timerName))
+        {
+            timerNames.Add(timerName);
+            timers.Add(timerName, new Timer(_time));
+        }
+        ResetAllTimersExcept(timerName);
+        Timer timer = timers[timerName];
+        if (NotAbandonedAnim(abandonedAnims) && NotAbandonedAnim(secondAnim))
+        {
+            if (timer == -1f)
+            {
+                timer.TimeStart();
+            }
+            if (timer > 0f)
+            {
+                cAnim.Animate(firstAnim);
+                timer.value -= Time.deltaTime;
+            }
+            else
+            {
+                cAnim.Animate(secondAnim);
+                timer.TimeReset();
+            }
+        }
+        else
+        {
+            cAnim.Animate(secondAnim);
+            timer.TimeReset();
+        }
+    }
+
+    protected bool NotAbandonedAnim(params string[] abandonedAnims)
+    {
+        bool k = true;
+        foreach (string anim in abandonedAnims)
+        {
+            if (cAnim.CompareAnimation(anim))
+            {
+                k = false;
+                break;
+            }
+        }
+        return k;
+    }
+
 
     #endregion //AnimatedActionsInterface
 
