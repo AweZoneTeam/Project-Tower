@@ -12,9 +12,9 @@ using System;
 public class AIActionData
 {
     public string actionName;//Название действия
-    public List<AIConditionSign> whyToDo=new List<AIConditionSign>();//Условия совершения действия
+    public List<ConditionSign> whyToDo=new List<ConditionSign>();//Условия совершения действия
     public int posibility;// Вероятность, что действие будет совершено - это обычное число, что используется для определения, какое именно действие из возможных будет совершено
-    public List<AIActionSign> whatToDo = new List<AIActionSign>();//Какие элементарные функции вызываются.
+    public List<ActionSign> whatToDo = new List<ActionSign>();//Какие элементарные функции вызываются.
     public bool unavailable=false;//Если действие уже активированно или на нём висит кулдаун, то его нельзя активировать. Для этого нужна эта переменная
     public float actionTime;//Сколько времени длится действие
     public float cooldown;//Сколько времени длится кулдаун 
@@ -25,7 +25,7 @@ public class AIActionData
     /// </summary>
     public bool CheckCondition()
     {
-        AIConditionSign condSign;
+        ConditionSign condSign;
         bool k = true;
         for (int i = 0; i < whyToDo.Count; i++)
         {
@@ -47,7 +47,7 @@ public class AIActionData
     /// </summary>
     public void DoAction()
     {
-        AIActionSign actSign;
+        ActionSign actSign;
         bool k = true;
         for (int i = 0; i < whatToDo.Count; i++)
         {
@@ -76,7 +76,7 @@ public class AIActionData
 /// Класс, что представляет собой ссылку на вызываемую функцию и аргументы этой функции 
 /// </summary>
 [System.Serializable]
-public class AIActionSign
+public class ActionSign
 {
     public string actionName;//Имя вызываемой функции
     public delegate void AIAction(string id, int argument);
@@ -89,7 +89,7 @@ public class AIActionSign
 /// Класс, что представляет собой все данные, необходимые для вызова функции условия 
 /// </summary>
 [System.Serializable]
-public class AIConditionSign
+public class ConditionSign
 {
     public string conditionString;
     public delegate bool AICondition(string id, int argument);

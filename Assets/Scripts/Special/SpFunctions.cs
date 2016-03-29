@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 
 //В этот скрипт я заносил все специальные функции, которые могут использоваться каким угодно скриптом. 
 //Есть идея, сделать из этих функций отдельную библиотеку
@@ -187,8 +189,36 @@ public static class SpFunctions {
     /// </summary>
     public static void ChangeRoomData(AreaClass room)
     {
-        GameStatisics gameStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>();
-        gameStats.currentArea = room;
+        GameStatistics.currentArea = room;
+    }
+
+    /// <summary>
+    /// Поставить игру на паузу
+    /// </summary>
+    public static void Pause(string windowName)
+    {
+        InterfaceController interControl = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<InterfaceController>();
+        if (GameStatistics.paused)
+        {
+            Time.timeScale = 1f;
+            GameStatistics.paused = false;
+            interControl.CloseActiveWindow();
+        }
+        else
+        {
+            Time.timeScale = 0f;
+            GameStatistics.paused = true;
+            interControl.ChangeWindow(windowName);
+        }
+    }
+    
+    /// <summary>
+    /// Сделать игровое сообщение
+    /// </summary>
+    public static void SendMessage(MessageSentEventArgs e)
+    {
+        GameStatistics gameStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatistics>();
+        gameStats.OnMessageSent(e);
     }
 
     public static int RealSign(float x)
@@ -234,6 +264,7 @@ public static class SpFunctions {
 
     public static AreaClass GetCurrentArea()
     {
-        return GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>().currentArea;
+        return GameStatistics.currentArea;
     }
+
 }

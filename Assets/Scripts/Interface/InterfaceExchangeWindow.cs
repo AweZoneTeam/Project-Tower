@@ -12,7 +12,7 @@ public class InterfaceExchangeWindow : InterfaceWindow
     public List<GameObject> leftBagObj, rightBagObj;
 
 
-    public void Initialize()
+    public override void Initialize()
     {
         leftBag = new BagClass();
         rightBag = new BagClass();

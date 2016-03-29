@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 //Статы - это параметры персонажа, или то, как персонаж себя чувствует)
 
@@ -21,7 +22,7 @@ public class Prestats
 /// Второй по сложности тип статов, который есть у тех игровых объектов, которым можно нанести урон
 /// </summary>
 [System.Serializable]
-public class Organism: Prestats 
+public class OrganismStats: Prestats 
 {
 
     #region timers
@@ -37,7 +38,10 @@ public class Organism: Prestats
                       //0-атака не сбила его либо её вообще не было, 1-атака привела его в микростан, 2-атака сильно сбила его
     public float microStun, macroStun;//Как долго персонаж бездействует при hitted=1 и hitted>1 соотвественно
 
-    public Organism()
+
+    public event EventHandler<OrganismEventArgs> HealthChangedEvent;
+
+    public OrganismStats()
     {
         maxHealth = 100f;
         health = 100f;
@@ -56,13 +60,23 @@ public class Organism: Prestats
         hitted = hittedEnum.noHit;
     }
 
+    public virtual void OnHealthChanged(OrganismEventArgs e)
+    {
+        EventHandler<OrganismEventArgs> handler = HealthChangedEvent;
+        if (handler != null)
+        {
+            e.HP = health;
+            handler(this, e);
+        }
+    }
+
 }
 
 /// <summary>
 /// А это такой тип статов, который может, как мне кажется, охарактеризовать любое состояние "соображающего" персонажа
 /// </summary>
 [System.Serializable]
-public class Stats : Organism
+public class Stats : OrganismStats
 {
     public Vector2 currentSpeed;//Какова текущая скорость 
     public Vector2 targetSpeed;//Какую скорость персонаж стремится достичь

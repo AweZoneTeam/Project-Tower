@@ -11,7 +11,7 @@ public class PartController : MonoBehaviour
 {
 	
 	
-	public int numb, type, frame, addictiveFrame;
+	public int numb, type, frame=0, prevFrame, addictiveFrame;
 	public GAF.Core.GAFMovieClip mov;//Созданный при помощи технологии GAF клип, которым мы и управляем
     public string path;//Путь, в котором находится анимационная база данных для данной части.
     public AnimationInterpretator interp;//База данных об анимациях: когда, как и что проигрывать 
@@ -50,6 +50,7 @@ public class PartController : MonoBehaviour
 	public void Work()
 	{
 		orientation = Mathf.Sign(transform.lossyScale.x);
+        prevFrame = frame;
         frame = (int)mov.getCurrentFrameNumber();
         animationInfo animInfo=interp.animTypes [type].animInfo[numb];
         //Анимации могут зависеть от ориентации персонажа
@@ -104,13 +105,13 @@ public class PartController : MonoBehaviour
         {
             for (int i = 0; i < soundData.Count; i++)
             {
-                if ((soundData[i].time <= frame) && (soundData[i].played))
+                if ((soundData[i].time <= frame) && (!soundData[i].played))
                 {
                     sManager.RandomizeSfx(efxSource, soundData[i].audios);
                     soundData[i].played = true;
                 }
-                else if ((soundData[i].time > frame) &&
-                    (soundData[i].played))
+                else if (((soundData[i].time > frame) &&
+                    (soundData[i].played))||(frame<prevFrame))
                 {
                     soundData[i].played = false;
                 }

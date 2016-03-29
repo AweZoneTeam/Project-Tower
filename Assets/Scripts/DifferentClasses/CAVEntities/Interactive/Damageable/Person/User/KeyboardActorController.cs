@@ -76,268 +76,291 @@ public class KeyboardActorController : PersonController
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck").gameObject.GetComponent<GroundChecker>();
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
         interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<InteractionChecker>();
+        buffList.OrgStats = stats;
     }
 
     public override void Update()
     {
-        if ((stats.hitted > 0f) && (stats.health > 0f))
+        if (!GameStatistics.paused)
         {
-            Hitted();
-        }
-
-        if (stats.health <= 0f)
-        {
-            Death();
-        }
-        if (actions != null)
-        {
-            if (!death)
+            if ((stats.hitted > 0f) && (stats.health > 0f))
             {
-
-                #region UsualState
-
-                if (stats.interaction == interactionEnum.noInter)
-                {
-                    #region FastRunInput
-
-                    if (Input.GetButtonDown("Horizontal"))
-                    {
-                        if (Mathf.Abs(fastRunInputCount) < fastRunMaxCount)
-                        {
-                            float value = Input.GetAxis("Horizontal");
-                            if (fastRunInputCount * value < 0)
-                            {
-                                fastRunInputCount = 0;
-                            }
-                            fastRunInputCount += SpFunctions.RealSign(value);
-                            fastRunInputTimer = fastRunInputTime;
-                        }
-                    }
-
-                    if (fastRunInputTimer > 0)
-                    {
-                        fastRunInputTimer -= Time.deltaTime;
-                    }
-
-                    #endregion //FastRunInput
-
-                    if (Input.GetButton("Horizontal"))
-                    {
-                        if (Mathf.Abs(fastRunInputCount) == fastRunMaxCount)
-                        {
-
-                            actions.SetMaxSpeed(actions.fastRunSpeed);
-                        }
-                        else
-                        {
-                            if ((actions.currentMaxSpeed != actions.fastRunSpeed) && (stats.groundness == groundnessEnum.grounded))
-                            {
-                                actions.SetMaxSpeed(actions.maxSpeed);
-                            }
-                            if (fastRunInputTimer <= 0f)
-                            {
-                                fastRunInputCount = 0;
-                            }
-                        }
-                        orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
-                        actions.Turn(orientation);
-                        actions.StartWalking(orientation);
-
-                        #region ObstacleInteraction
-
-                        if (stats.obstacleness != obstaclenessEnum.noObstcl)
-                        {
-                            actions.SetMaxSpeed(actions.maxSpeed);
-                            fastRunInputCount = 0;
-                            actions.StopWalking();
-                            actions.WallInteraction();
-                            if (stats.obstacleness == obstaclenessEnum.lowObstcl)
-                            {
-                                if (lowWallCheck.collisions.Count > 0)
-                                {
-                                    actions.AvoidLowObstacle(CheckHeight());
-                                    stats.interaction = interactionEnum.lowEdge;
-                                }
-                            }
-                            if (stats.obstacleness == obstaclenessEnum.highObstcl)
-                            {
-                                if (Input.GetButtonDown("Jump"))
-                                {
-                                    actions.AvoidHighObstacle(CheckHeight());
-                                    stats.interaction = interactionEnum.edge;
-                                }
-                                if (highWallCheck.collisions.Count>0)
-                                {
-                                    actions.HangHighObstacle();
-                                    stats.interaction = interactionEnum.edge;
-                                }
-                            }
-                        }
-
-                        #endregion //ObstacleInteraction
-
-                    }
-                    else
-                    {
-                        if (fastRunInputTimer <= 0)
-                        {
-                            fastRunInputCount = 0;
-                            actions.SetMaxSpeed(actions.maxSpeed);
-                        }
-                        actions.StopWalking();
-                    }
-
-                    if (Input.GetButtonDown("Crouch") && Input.GetButtonDown("Jump"))
-                    {
-                        if (stats.groundness == groundnessEnum.grounded)
-                        {
-                            actions.Flip();
-                        }
-                    }
-                    else if (Input.GetButtonDown("Jump"))
-                    {
-                        actions.Jump();
-                    }
-
-                    if (Input.GetButtonDown("Interact"))
-                    {
-                        Interact(this);
-                    }
-
-                    actions.Crouch((Input.GetButton("Crouch"))||(WallIsAbove()));
-
-                    if ((stats.groundness == groundnessEnum.inAir)&&(rigid.velocity.y<-30f)&&(rigid.velocity.y > minLedgeSpeed))
-                    {
-                        if (interactions.interactions.Count > 0)
-                        {
-                            if (interactions.interactions[0].gameObject.layer == LayerMask.NameToLayer("ledge"))
-                            {
-                                Interact(this);
-                            }
-                        }
-                    }
-
-                    if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
-                    {
-                        actions.Attack();
-                    }
-                }
-
-                #endregion //UsualState
-
-                #region EdgeState
-
-                else if (stats.interaction == interactionEnum.edge)
-                {
-                    if (Input.GetButtonDown("Jump") || (rigid.velocity.y > 5f))
-                    {
-                        actions.AvoidHighObstacle(CheckHeight());
-                    }
-                    if (stats.obstacleness == obstaclenessEnum.noObstcl)
-                    {
-                        actions.AvoidHighObstacle(0f);
-                        stats.interaction = interactionEnum.noInter;
-                    }
-                }
-
-                #endregion //EdgeState
-
-                #region LowEdgeState
-
-                else if (stats.interaction == interactionEnum.lowEdge)
-                {
-                    if (rigid.velocity.y > 5f)
-                    {
-                        actions.AvoidLowObstacle(CheckHeight());
-                    }
-                    if (stats.obstacleness == obstaclenessEnum.noObstcl)
-                    {
-                        actions.AvoidLowObstacle(0f);
-                        stats.interaction = interactionEnum.noInter;
-                    }
-                }
-
-                #endregion //LowEdgeState
-
-                #region SpecialMovementState
-
-                else if (stats.interaction != interactionEnum.interactive)
-                {
-                    if (rigid.useGravity == true)
-                    {
-                        actions.Hang(true);
-                    }
-                    if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
-                    {
-                        float valueX = Input.GetAxis("Horizontal");
-                        float valueY = Input.GetAxis("Vertical");
-                        Vector2 climbingDirection = new Vector2(valueX, valueY).normalized;
-                        if (Physics.OverlapSphere(interCheck.position + new Vector3(climbingDirection.x * observeDistance, climbingDirection.y * observeDistance, 0f), interRadius, whatIsInteractable).Length > 0)
-                        {
-                            actions.StartClimbing(climbingDirection);
-                        }
-                        else
-                        {
-                            actions.StopWalking();
-                        }
-                    }
-                    else
-                    {
-                        actions.StopWalking();
-                    }
-                    if (Input.GetButtonDown("Interact"))
-                    {   
-                        actions.Hang(false);
-                    }
-
-                    if (stats.interaction == interactionEnum.platform)
-                    {
-                        if ((Input.GetButton("Jump")) || (rigid.velocity.y > 5f))
-                        {
-                            actions.ClimbOntoThePlatform();
-                        }
-                    }
-                }
-
-                #endregion //SpecialMovementState
-
-                if (interactions.dropList.Count > 0)
-                {
-                    if (interactions.dropList[0].autoPick)
-                    {
-                        TakeDrop();
-                    }
-                }
-
-               /* if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
-                {
-                    actions.Attack();
-                }*/
-
+                Hitted();
             }
 
-            #region CameraMovement
-
-            if (rigid.velocity.magnitude <= 5f)
+            if (stats.health <= 0f)
             {
-                float camValue = Input.GetAxis("CamMove");
-                if (Mathf.Abs(camValue) >= 0.5f)
+                Death();
+            }
+            if (actions != null)
+            {
+                if (!death)
                 {
-                    actions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
+
+                    #region UsualState
+
+                    if (stats.interaction == interactionEnum.noInter)
+                    {
+                        #region FastRunInput
+
+                        if (Input.GetButtonDown("Horizontal"))
+                        {
+                            if (Mathf.Abs(fastRunInputCount) < fastRunMaxCount)
+                            {
+                                float value = Input.GetAxis("Horizontal");
+                                if (fastRunInputCount * value < 0)
+                                {
+                                    fastRunInputCount = 0;
+                                }
+                                fastRunInputCount += SpFunctions.RealSign(value);
+                                fastRunInputTimer = fastRunInputTime;
+                            }
+                        }
+
+                        if (fastRunInputTimer > 0)
+                        {
+                            fastRunInputTimer -= Time.deltaTime;
+                        }
+
+                        #endregion //FastRunInput
+
+                        if (Input.GetButton("Horizontal"))
+                        {
+                            if (Mathf.Abs(fastRunInputCount) == fastRunMaxCount)
+                            {
+
+                                actions.SetMaxSpeed(actions.fastRunSpeed);
+                            }
+                            else
+                            {
+                                if ((actions.currentMaxSpeed != actions.fastRunSpeed) && (stats.groundness == groundnessEnum.grounded))
+                                {
+                                    actions.SetMaxSpeed(actions.maxSpeed);
+                                }
+                                if (fastRunInputTimer <= 0f)
+                                {
+                                    fastRunInputCount = 0;
+                                }
+                            }
+                            orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
+                            actions.Turn(orientation);
+                            actions.StartWalking(orientation);
+
+                            #region ObstacleInteraction
+
+                            if (stats.obstacleness != obstaclenessEnum.noObstcl)
+                            {
+                                actions.SetMaxSpeed(actions.maxSpeed);
+                                fastRunInputCount = 0;
+                                actions.StopWalking();
+                                actions.WallInteraction();
+                                if (stats.obstacleness == obstaclenessEnum.lowObstcl)
+                                {
+                                    if (lowWallCheck.collisions.Count > 0)
+                                    {
+                                        actions.AvoidLowObstacle(CheckHeight());
+                                        stats.interaction = interactionEnum.lowEdge;
+                                    }
+                                }
+                                if (stats.obstacleness == obstaclenessEnum.highObstcl)
+                                {
+                                    if (Input.GetButtonDown("Jump"))
+                                    {
+                                        actions.AvoidHighObstacle(CheckHeight());
+                                        stats.interaction = interactionEnum.edge;
+                                    }
+                                    if (highWallCheck.collisions.Count > 0)
+                                    {
+                                        actions.HangHighObstacle();
+                                        stats.interaction = interactionEnum.edge;
+                                    }
+                                }
+                            }
+
+                            #endregion //ObstacleInteraction
+
+                        }
+                        else
+                        {
+                            if (fastRunInputTimer <= 0)
+                            {
+                                fastRunInputCount = 0;
+                                actions.SetMaxSpeed(actions.maxSpeed);
+                            }
+                            actions.StopWalking();
+                        }
+
+                        if (Input.GetButtonDown("Crouch") && Input.GetButtonDown("Jump"))
+                        {
+                            if (stats.groundness == groundnessEnum.grounded)
+                            {
+                                actions.Flip();
+                            }
+                        }
+                        else if (Input.GetButtonDown("Jump"))
+                        {
+                            actions.Jump();
+                        }
+
+                        if (Input.GetButtonDown("Interact"))
+                        {
+                            Interact(this);
+                        }
+
+                        actions.Crouch((Input.GetButton("Crouch")) || (WallIsAbove()));
+
+                        if ((stats.groundness == groundnessEnum.inAir) && (rigid.velocity.y < -30f) && (rigid.velocity.y > minLedgeSpeed))
+                        {
+                            if (interactions.interactions.Count > 0)
+                            {
+                                if (interactions.interactions[0].gameObject.layer == LayerMask.NameToLayer("ledge"))
+                                {
+                                    Interact(this);
+                                }
+                            }
+                        }
+
+                        if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
+                        {
+                            actions.Attack();
+                        }
+                    }
+
+                    #endregion //UsualState
+
+                    #region EdgeState
+
+                    else if (stats.interaction == interactionEnum.edge)
+                    {
+                        if (Input.GetButtonDown("Jump") || (rigid.velocity.y > 5f))
+                        {
+                            actions.AvoidHighObstacle(CheckHeight());
+                        }
+                        if (stats.obstacleness == obstaclenessEnum.noObstcl)
+                        {
+                            actions.AvoidHighObstacle(0f);
+                            stats.interaction = interactionEnum.noInter;
+                        }
+                    }
+
+                    #endregion //EdgeState
+
+                    #region LowEdgeState
+
+                    else if (stats.interaction == interactionEnum.lowEdge)
+                    {
+                        if (rigid.velocity.y > 5f)
+                        {
+                            actions.AvoidLowObstacle(CheckHeight());
+                        }
+                        if (stats.obstacleness == obstaclenessEnum.noObstcl)
+                        {
+                            actions.AvoidLowObstacle(0f);
+                            stats.interaction = interactionEnum.noInter;
+                        }
+                    }
+
+                    #endregion //LowEdgeState
+
+                    #region SpecialMovementState
+
+                    else if (stats.interaction != interactionEnum.interactive)
+                    {
+                        if (rigid.useGravity == true)
+                        {
+                            actions.Hang(true);
+                        }
+                        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+                        {
+                            float valueX = Input.GetAxis("Horizontal");
+                            float valueY = Input.GetAxis("Vertical");
+                            Vector2 climbingDirection = new Vector2(valueX, valueY).normalized;
+                            if (Physics.OverlapSphere(interCheck.position + new Vector3(climbingDirection.x * observeDistance, climbingDirection.y * observeDistance, 0f), interRadius, whatIsInteractable).Length > 0)
+                            {
+                                actions.StartClimbing(climbingDirection);
+                            }
+                            else
+                            {
+                                actions.StopWalking();
+                            }
+                        }
+                        else
+                        {
+                            actions.StopWalking();
+                        }
+                        if (Input.GetButtonDown("Interact"))
+                        {
+                            actions.Hang(false);
+                        }
+
+                        if (stats.interaction == interactionEnum.platform)
+                        {
+                            if ((Input.GetButton("Jump")) || (rigid.velocity.y > 5f))
+                            {
+                                actions.ClimbOntoThePlatform();
+                            }
+                        }
+                    }
+
+                    #endregion //SpecialMovementState
+
+                    if (interactions.dropList.Count > 0)
+                    {
+                        if (interactions.dropList[0].autoPick)
+                        {
+                            TakeDrop();
+                        }
+                    }
+
+                    /* if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
+                     {
+                         actions.Attack();
+                     }*/
+
+                }
+
+                #region CameraMovement
+
+                if (rigid.velocity.magnitude <= 5f)
+                {
+                    float camValue = Input.GetAxis("CamMove");
+                    if (Mathf.Abs(camValue) >= 0.5f)
+                    {
+                        actions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
+                    }
+                    else
+                    {
+                        actions.Observe(new Vector2(0f, 0f));
+                    }
                 }
                 else
                 {
                     actions.Observe(new Vector2(0f, 0f));
                 }
-            }
-            else
-            {
-                actions.Observe(new Vector2(0f, 0f));
-            }
 
-            #endregion //CameraMovement
+                #endregion //CameraMovement
 
-            AnalyzeSituation();
+                #region ChangeItems
+
+                if (Input.GetButtonDown("ChangeRWeapon"))
+                {
+                    equip.ChangeRightWeapon();
+                }
+
+                if (Input.GetButtonDown("ChangeLWeapon"))
+                {
+                    equip.ChangeLeftWeapon();
+                }
+
+                if (Input.GetButtonDown("ChangeItem"))
+                {
+                    equip.ChangeItem();
+                }
+
+                #endregion //ChangeItems
+
+                AnalyzeSituation();
+            }
         }
     }
 

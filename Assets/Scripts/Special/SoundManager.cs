@@ -8,8 +8,37 @@ using System.Collections.Generic;
 public class SoundManager :  MonoBehaviour 
 {
 	public AudioSource musicSource;//Интересующий нас источник звука
-	public float lowPitchRange=.95f;
+    private float musVolume = 1f, fxVolume = 1f;
+    public float MusicVolume {set { musVolume = value; if (musicSource != null){ musicSource.volume = musVolume; } } }
+    public float EffectsVolume { set { fxVolume = value; } }
+
+    public float lowPitchRange=.95f;
 	public float highPitchRange=1.05f;
+
+    public void Awake()
+    {
+        Initialize();
+    }
+
+    public void Update()
+    {
+    }
+
+    public void Initialize()
+    {
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            musVolume = PlayerPrefs.GetFloat("MusicVolume");
+            if (musicSource!=null)
+            {
+                musicSource.volume = musVolume;
+            }
+        }
+        if (PlayerPrefs.HasKey("EffectsVolume"))
+        {
+            fxVolume = PlayerPrefs.GetFloat("EffectsVolume");
+        }
+    }
 
 	/// <summary>
 	/// Проиграть данный клип в данном источнике
@@ -29,6 +58,8 @@ public class SoundManager :  MonoBehaviour
 		float randomPitch = Random.Range (lowPitchRange, highPitchRange);
 		efxSource.pitch = randomPitch;
 		efxSource.clip = clips [randomIndex];
+        efxSource.volume = fxVolume;
 		efxSource.Play ();
 	}
+
 }

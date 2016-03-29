@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class HitClass
@@ -12,4 +13,5 @@ public class HitClass
     public Vector3 hitPosition;
     public Vector3 hitSize;
     public float hitTime, beginTime, endTime;//Сколько времени длится сама атака, когда начинает наноситься удар и когда он заканчивается наноситься.
+    public List<BuffClass> effects;//Как ещё подействует атака на цель (какие бафф и дебаффы навесятся при ударе?)
 }

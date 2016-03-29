@@ -7,7 +7,7 @@ using System.Collections;
 public class DmgBoxActions : DmgObjActions
 {
     #region fields
-    private Organism stats;
+    private OrganismStats stats;
     private DmgBoxVisual cAnim;
     #endregion //fields
 
@@ -38,7 +38,7 @@ public class DmgBoxActions : DmgObjActions
         cAnim.Death();
     }
 
-    public override void SetStats(Organism _stats)
+    public override void SetStats(OrganismStats _stats)
     {
         stats = _stats;
     }

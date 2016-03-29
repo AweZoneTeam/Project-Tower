@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
@@ -13,6 +14,7 @@ public class PersonController : DmgObjController, IPersonWatching
 {
 
     #region consts
+
     protected const float groundRadius = 0.2f;
     protected const float preGroundRadius = 0.7f;
 
@@ -24,7 +26,14 @@ public class PersonController : DmgObjController, IPersonWatching
     protected const int maxEmployment = 10;
 
     protected const float precipiceRadius = 0.2f;
+
     #endregion //consts
+
+    #region eventHandlers
+
+    public event EventHandler<RoomChangedEventArgs> RoomChangedEvent;
+      
+    #endregion //eventHandlers
 
     #region indicators
 
@@ -34,15 +43,20 @@ public class PersonController : DmgObjController, IPersonWatching
     protected Transform sight;//Откуда персонаж смотрит
 
     #endregion //indicators
-
+    
     #region fields
     /*private*/
     protected Stats stats;
+    protected BuffsList bList;//Список баффов, навешанных на персонажа.
+    public BuffsList buffList
+    {
+        get { return bList; }
+        set { bList = value; }
+    }
+
     protected Rigidbody rigid;
     [SerializeField]protected EquipmentClass equip;//Экипировка персонажа
     protected PersonActions actions;
-
-    protected List<PersonController> whoWatchesMe=new List<PersonController>();
    
     #endregion //fields
 
@@ -68,6 +82,8 @@ public class PersonController : DmgObjController, IPersonWatching
         interCheck = transform.FindChild("Indicators").FindChild("InterCheck");
         precipiceCheck = transform.FindChild("Indicators").FindChild("PrecipiceCheck");
         sight= transform.FindChild("Indicators").FindChild("Sight");
+        bList = new BuffsList(this);
+        bList.OrgStats = stats;
     }
 
     public virtual AreaClass GetRoomPosition()
@@ -96,13 +112,11 @@ public class PersonController : DmgObjController, IPersonWatching
 
     /// <summary>
     /// Функция, что реализует тот факт, что какой-то персонаж стал наблюдать за действиями данного
+    /// Организуется подписка на заданные события
     /// </summary>
     public virtual void WatchYou(PersonController person)
     {
-        if (!whoWatchesMe.Contains(person))
-        {
-            whoWatchesMe.Add(person);
-        }
+        person.RoomChangedEvent += TargetChangeRoom;
     }
 
     /// <summary>
@@ -110,10 +124,7 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     public virtual void StopWatchingYou(PersonController person)
     {
-        if (whoWatchesMe.Contains(person))
-        {
-            whoWatchesMe.Remove(person);
-        }
+        person.RoomChangedEvent -= TargetChangeRoom;
     }
 
     /// <summary>
@@ -121,10 +132,7 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     protected virtual void DoorInteraction()
     {
-        for (int i = 0; i < whoWatchesMe.Count; i++)
-        {
-            ExecuteEvents.Execute<IPersonWatching>(whoWatchesMe[i].gameObject, null, (x, y) => x.TargetMakeAnAction("DoorInteraction"));
-        }
+        OnRoomChanged(new RoomChangedEventArgs(currentRoom));
     }
     
     /// <summary>
@@ -133,6 +141,13 @@ public class PersonController : DmgObjController, IPersonWatching
     public virtual void TargetMakeAnAction(string actionName)
     {
 
+    }
+
+    /// <summary>
+    /// Что произойдёт, если цель уйдёт в другую комнату
+    /// </summary>
+    protected virtual void TargetChangeRoom(object sender, RoomChangedEventArgs e)
+    {
     }
 
     //Функция, что анализирует обстановку, окружающую персонажа
@@ -183,6 +198,7 @@ public class PersonController : DmgObjController, IPersonWatching
             if ((fallDamage > 0f) && ((int)stats.groundness < 4))
             {
                 stats.health -= fallDamage;
+                stats.OnHealthChanged(new OrganismEventArgs(0f));
                 fallDamage = 0f;
             }
         }
@@ -219,8 +235,22 @@ public class PersonController : DmgObjController, IPersonWatching
         precipiceCheck.position = new Vector3(precipiceCheck.position.x, precipiceCheck.position.y, z);
     }
 
-
     #endregion //Interface
+
+    #region events
+
+    public virtual void OnRoomChanged(RoomChangedEventArgs e)
+    {
+        EventHandler<RoomChangedEventArgs> handler = RoomChangedEvent;
+        if (handler != null)
+        {
+            e.Room = currentRoom;
+            handler(this, e);
+        }
+    }
+
+    #endregion //events
+
 }
 
 #if UNITY_EDITOR

@@ -12,7 +12,7 @@ public class PersonActions : DmgObjActions
     protected const int maxEmployment = 10;
 
     protected float jumpDownTime=1f;
-    protected float jumpDownOffset = 3f;
+    protected float jumpDownOffset = 4f;
 
     #endregion //consts
 

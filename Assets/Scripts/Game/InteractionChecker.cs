@@ -9,7 +9,7 @@ public class InteractionChecker : MonoBehaviour {
 
     #region consts
 
-    protected const float platformOffsetY =0.5f;
+    protected const float platformOffsetY =4f;
 
     #endregion //consts
 
@@ -37,7 +37,7 @@ public class InteractionChecker : MonoBehaviour {
     {
         if (platforms.Count>0)
         {
-            if ((platformCheck.position.y >= platforms[0].transform.position.y+platformOffsetY) && (zCoordinate != platforms[0].zCoordinate))
+            if ((platformCheck.position.y >= platforms[0].transform.position.y+platformOffsetY/4) && (zCoordinate != platforms[0].zCoordinate))
             {
                 zCoordinate = platforms[0].zCoordinate;
                 person.ChangeColliderZCordinate(zCoordinate + zCoordinateOffset);

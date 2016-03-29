@@ -11,12 +11,10 @@ public class EnterIdentifier : MonoBehaviour
     public List<EnterClass> enters;
 
     private CameraController cam;
-    private GameStatisics gStats;
 
     public void Awake()
     {
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>();
-        gStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatisics>();
     }
 
 
@@ -37,7 +35,7 @@ public class EnterIdentifier : MonoBehaviour
             if (k)
             {
                 enters.Add(enter);
-                if (gStats.currentArea != enter.nextRoom)
+                if (GameStatistics.currentArea != enter.nextRoom)
                 {
                     ChangeRoom(enter.nextRoom);
                 }
@@ -64,7 +62,7 @@ public class EnterIdentifier : MonoBehaviour
                 enters.Remove(enter);
                 if (enters.Count > 0)
                 {
-                    if (gStats.currentArea == enter.nextRoom)
+                    if (GameStatistics.currentArea == enter.nextRoom)
                     {
                         ChangeRoom(enter.nextRoom);
                     }

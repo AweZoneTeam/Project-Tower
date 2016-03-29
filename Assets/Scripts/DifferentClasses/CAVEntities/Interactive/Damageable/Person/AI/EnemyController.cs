@@ -100,6 +100,7 @@ public class EnemyController : PersonController, IPersonWatching
         actionBase.Add("pursue", Pursue);
         actionBase.Add("stay", Stay);
         actionBase.Add("attack", Attack);
+        actionBase.Add("say", SaySomething);
         actionBase.Add("test", TestFunction);
 
         BehaviourClass _behaviour;
@@ -112,7 +113,6 @@ public class EnemyController : PersonController, IPersonWatching
                 _behaviour = AssetDatabase.LoadAssetAtPath(behaviourPath + behaviours[i].path + ".asset", typeof(BehaviourClass)) as BehaviourClass;
 #endif
             }
-            behaviours[i].behaviour = _behaviour;
             behaviours[i].behaviour = new BehaviourClass(_behaviour);
         }
 
@@ -171,6 +171,24 @@ public class EnemyController : PersonController, IPersonWatching
         }
         GetComponentInChildren<CharacterAnimator>().SetStats(stats);
         employment = maxEmployment;
+        buffList.OrgStats = stats;
+    }
+
+    /// <summary>
+    /// Функция, что реализует тот факт, что какой-то персонаж стал наблюдать за действиями данного
+    /// Организуется подписка на заданные события
+    /// </summary>
+    public override void WatchYou(PersonController person)
+    {
+        person.RoomChangedEvent += TargetChangeRoom;
+    }
+
+    /// <summary>
+    /// Функция, что реализует тот факт, что какой-то персонаж перестал наблюдать за действиями данного
+    /// </summary>
+    public override void StopWatchingYou(PersonController person)
+    {
+        person.RoomChangedEvent -= TargetChangeRoom;
     }
 
     /// <summary>
@@ -188,6 +206,16 @@ public class EnemyController : PersonController, IPersonWatching
                 waypoints.Add(new TargetWithCondition(currentRoom.GetDoor(person.GetRoomPosition()), "door"));
             }
         }
+    }
+
+    /// <summary>
+    /// Что произойдёт, если цель уйдёт в другую комнату
+    /// </summary>
+    protected override void TargetChangeRoom(object sender, RoomChangedEventArgs e)
+    {
+        currentTarget = null;
+        ChangeBehaviour("Search", 0);
+        waypoints.Add(new TargetWithCondition(currentRoom.GetDoor(e.Room), "door"));
     }
 
     /// <summary>
@@ -323,11 +351,11 @@ public class EnemyController : PersonController, IPersonWatching
             {
                 if (string.Equals(id, "yes"))
                 {
-                    person.WatchYou(this);
+                    WatchYou(person);
                 }
                 else if (string.Equals(id, "no"))
                 {
-                    person.StopWatchingYou(this);
+                    StopWatchingYou(person);
                 } 
             }
         }
@@ -392,6 +420,14 @@ public class EnemyController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Сказать что-то для того, чтобы все услышали.
+    /// </summary>
+    public virtual void SaySomething(string id, int argument)
+    {
+        SpFunctions.SendMessage(new MessageSentEventArgs(id, argument, id.Length * 0.04f));   
+    }
+
+    /// <summary>
     /// Функция для детектирования срабатывания тех или иных моделей поведения
     /// </summary>
     public virtual void TestFunction(string id, int argument)
@@ -428,10 +464,10 @@ public class EnemyController : PersonController, IPersonWatching
         if (!death)
         {
             death = true;
+            WatchTheTarget("no", 0);
             actions.Death();
         }
     }
-
 
     #endregion //interface
 

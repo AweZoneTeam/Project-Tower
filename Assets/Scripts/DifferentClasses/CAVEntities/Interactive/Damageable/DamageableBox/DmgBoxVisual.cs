@@ -13,7 +13,7 @@ public class DmgBoxVisual : DmgObjVisual
     #endregion //consts
 
     #region fields
-    private Organism stats;
+    private OrganismStats stats;
     #endregion //fields
 
     public override void Awake()
@@ -61,7 +61,7 @@ public class DmgBoxVisual : DmgObjVisual
 
     #endregion //AnimatedActions
 
-    public override void SetStats(Organism _stats)
+    public override void SetStats(OrganismStats _stats)
     {
         stats = _stats;
     }

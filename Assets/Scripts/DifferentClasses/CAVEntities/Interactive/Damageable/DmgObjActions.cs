@@ -17,7 +17,7 @@ public class DmgObjActions : InterObjActions
 
     #region fields
 
-    private Organism stats;
+    private OrganismStats stats;
     private DmgObjVisual visual;
 
     #endregion //fields
@@ -73,7 +73,7 @@ public class DmgObjActions : InterObjActions
     }
     #endregion //interface
 
-    public virtual void SetStats(Organism _stats)
+    public virtual void SetStats(OrganismStats _stats)
     {
         stats = _stats;
     }

@@ -21,7 +21,7 @@ public class DmgObjController : InterObjController
     #region fields
     private DmgObjActions actions;
     private DmgObjVisual anim;
-    private Organism stats=new Organism();
+    private OrganismStats stats=new OrganismStats();
     public List<GameObject> dropList=new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
     public bool death=false;//умер ли персонаж
     #endregion //fields
@@ -85,7 +85,7 @@ public class DmgObjController : InterObjController
     {
         if (stats == null)
         {
-            stats = new Organism();
+            stats = new OrganismStats();
         }
         return stats;
     }
@@ -98,12 +98,12 @@ public class DmgObjController : InterObjController
 [CustomEditor(typeof(DmgObjController))]
 public class DmgObjEditor : InterObjEditor
 {
-    private Organism stats;
+    private OrganismStats stats;
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         DmgObjController obj = (DmgObjController)target;
-        stats = (Organism)obj.GetStats();
+        stats = (OrganismStats)obj.GetStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
         EditorGUILayout.IntField("direction", (int)stats.direction);

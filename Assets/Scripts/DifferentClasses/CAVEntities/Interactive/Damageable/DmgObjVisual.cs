@@ -52,7 +52,7 @@ public class DmgObjVisual : InterObjVisual
 
     #endregion //AnimatedActionsInterface
 
-    public virtual void SetStats(Organism _stats)
+    public virtual void SetStats(OrganismStats _stats)
     {
         
     }

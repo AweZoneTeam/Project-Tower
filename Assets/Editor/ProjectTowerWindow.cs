@@ -46,19 +46,31 @@ class ProjectTowerWindow : Editor
     [MenuItem("Project Tower/Item Creator/Create Item")]
     public static void CreateItem()
     {
-        ItemCreateWindow itemWindow = (ItemCreateWindow)EditorWindow.GetWindow(typeof(ItemCreateWindow));
+        EditorWindow.GetWindow(typeof(ItemCreateWindow));
     }
 
     [MenuItem("Project Tower/Item Creator/Create Weapon")]
     public static void CreateWeapon()
     {
-        WeaponCreateWindow weaponWindow = (WeaponCreateWindow)EditorWindow.GetWindow(typeof(WeaponCreateWindow));
+       EditorWindow.GetWindow(typeof(WeaponCreateWindow));
+    }
+
+    [MenuItem("Project Tower/Item Creator/Create Usable Item")]
+    public static void CreateUsableItem()
+    {
+        EditorWindow.GetWindow(typeof(UseItemCreateWindow));
+    }
+
+    [MenuItem("Project Tower/Buff Creator")]
+    public static void CreateBuff()
+    {
+        EditorWindow.GetWindow(typeof(BuffCreateWindow));
     }
 
     [MenuItem("Project Tower/AI/Create Behaviour")]
     public static void CreateBehaviour()
     {
-        BehaviourCreateWindow behaviourWindow = (BehaviourCreateWindow)EditorWindow.GetWindow(typeof(BehaviourCreateWindow));
+        EditorWindow.GetWindow(typeof(BehaviourCreateWindow));
     }
 
     void OnGUI()
