@@ -67,6 +67,24 @@ class ProjectTowerWindow : Editor
         EditorWindow.GetWindow(typeof(BuffCreateWindow));
     }
 
+    [MenuItem("Project Tower/Journal/ Create Journal Data")]
+    public static void CreateJData()
+    {
+        EditorWindow.GetWindow(typeof(JournalDataCreatorWindow));
+    }
+
+    [MenuItem("Project Tower/Journal/ Create Quest")]
+    public static void CreateQuest()
+    {
+        EditorWindow.GetWindow(typeof(QuestCreatorWindow));
+    }
+
+    [MenuItem("Project Tower/Journal/ Create Journal Script")]
+    public static void CreateJournalScript()
+    {
+        EditorWindow.GetWindow(typeof(JournalScriptCreatorWindow));
+    }
+
     [MenuItem("Project Tower/AI/Create Behaviour")]
     public static void CreateBehaviour()
     {

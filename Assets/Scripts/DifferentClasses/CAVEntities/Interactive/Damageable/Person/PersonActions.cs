@@ -173,6 +173,7 @@ public class PersonActions : DmgObjActions
     public virtual void GoThroughTheDoor(DoorClass door)
     {
         transform.position = door.nextPosition;
+        door.OnDoorOpen(new JournalEventArgs());
     }
 
     /// <summary>

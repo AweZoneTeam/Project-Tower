@@ -25,6 +25,8 @@ public class GameStatistics : MonoBehaviour
 
     public EventHandler<MessageSentEventArgs> MessageSentEvent;
 
+    public EventHandler<JournalEventArgs> GameStatsJournalEvent;
+
     #endregion //eventHandlers
 
     #region parametres
@@ -39,6 +41,7 @@ public class GameStatistics : MonoBehaviour
     public void Start()
     {
         Initialize();
+        OnGameBegin(new JournalEventArgs());
     }
 
     public void Update()
@@ -47,6 +50,10 @@ public class GameStatistics : MonoBehaviour
         if (Input.GetButtonDown("Cancel"))
         {
             SpFunctions.Pause("menu");
+        }
+        if (Input.GetButtonDown("Journal"))
+        {
+            SpFunctions.ChangeWindow("journal");
         }
     }
 
@@ -77,6 +84,19 @@ public class GameStatistics : MonoBehaviour
     public void OnMessageSent(MessageSentEventArgs e)
     {
         EventHandler<MessageSentEventArgs> handler = MessageSentEvent;
+
+        if (handler != null)
+        {
+            handler(this, e);
+        }
+    }
+
+    /// <summary>
+    /// Событие о том, что игра началась
+    /// </summary>
+    public void OnGameBegin(JournalEventArgs e)
+    {
+        EventHandler<JournalEventArgs> handler = GameStatsJournalEvent;
 
         if (handler != null)
         {

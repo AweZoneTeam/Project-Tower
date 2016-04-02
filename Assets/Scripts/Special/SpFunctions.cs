@@ -204,14 +204,28 @@ public static class SpFunctions {
             GameStatistics.paused = false;
             interControl.CloseActiveWindow();
         }
-        else
+        else 
         {
             Time.timeScale = 0f;
             GameStatistics.paused = true;
             interControl.ChangeWindow(windowName);
         }
     }
-    
+
+    /// <summary>
+    /// Поставить игру на паузу
+    /// </summary>
+    public static void ChangeWindow(string windowName)
+    {
+        InterfaceController interControl = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<InterfaceController>();
+        interControl.ChangeWindow(windowName);
+        if (!GameStatistics.paused)
+        {
+            Time.timeScale = 0f;
+            GameStatistics.paused = true;
+        }
+    }
+
     /// <summary>
     /// Сделать игровое сообщение
     /// </summary>
@@ -251,10 +265,23 @@ public static class SpFunctions {
 		          obj.GetComponent<Renderer>());
 	}
 
-	/// <summary>
-	/// Является ли округленное число чётным?
-	/// </summary>
-	public static bool IsItEven(float x)
+    /// <summary>
+    /// Добавить новые данные в журнал
+    /// </summary>
+    public static void SendNewJournalData(JournalRefreshEventArgs e)
+    {
+        GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameHistory>().journalEvents.OnNewJournalData(e);
+    }
+
+    public static void QuestComplete(JournalRefreshEventArgs e)
+    {
+        GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameHistory>().journalEvents.OnQuestCompleted(e);
+    }
+
+    /// <summary>
+    /// Является ли округленное число чётным?
+    /// </summary>
+    public static bool IsItEven(float x)
 	{
 		if (Div (x,1)-2*Div (x,2)>0)
 			return false;

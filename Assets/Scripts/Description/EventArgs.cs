@@ -121,3 +121,31 @@ public class BuffsChangedEventArgs : EventArgs
     }
     
 }
+
+/// <summary>
+/// Событийные данные, используемые для осуществления журнальных событий
+/// </summary>
+public class JournalEventArgs : EventArgs
+{
+    public JournalEventArgs()
+    {
+    }
+}
+
+/// <summary>
+/// Событийные данные об обновлении журнала
+/// </summary>
+public class JournalRefreshEventArgs : EventArgs
+{
+    public JournalRefreshEventArgs(JournalData _jData)
+    {
+        jData = _jData;
+    }
+    private JournalData jData;
+
+    public JournalData JData
+    {
+        get { return jData; }
+        set { jData = value; }
+    }
+}

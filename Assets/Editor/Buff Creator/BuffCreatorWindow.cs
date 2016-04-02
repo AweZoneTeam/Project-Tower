@@ -18,7 +18,7 @@ public class BuffCreateWindow : EditorWindow
         }
     }
 
-    //Создаём новый предмет.
+    //Создаём новый бафф.
     private void CreateNewBuff()
     {
         BuffClass asset = ScriptableObject.CreateInstance<BuffClass>();

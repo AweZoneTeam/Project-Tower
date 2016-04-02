@@ -15,16 +15,13 @@ public class InterfaceController : MonoBehaviour
     public InterfaceExchangeWindow exchWindow;//Окно обмена предметами
 
     private Canvas activeWindow;
+    private Canvas auxActiveWindow;
 
     private MenuWindow menu;
     private Settings settings;
+    public JournalWindow journal;
     private GameObject allWindows;
     private GameObject cam;
-
-    public void FixedUpdate()
-    {
-        //allWindows.transform.position = cam.transform.position + new Vector3(xOffset, yOffset, zOffset);
-    }
 
     public void Start()
     {
@@ -34,6 +31,7 @@ public class InterfaceController : MonoBehaviour
     public void Initialize()
     {
         activeWindow = null;
+        auxActiveWindow = null;
         cam = GameObject.FindGameObjectWithTag(Tags.cam);
         allWindows = GameObject.FindGameObjectWithTag(Tags.interfaceWindows);
         if (allWindows.GetComponentInChildren<InterfaceExchangeWindow>() != null)
@@ -48,6 +46,10 @@ public class InterfaceController : MonoBehaviour
         if (allWindows.GetComponentInChildren<Settings>() != null)
         {
             settings = allWindows.GetComponentInChildren<Settings>();
+        }
+        if (allWindows.GetComponentInChildren<JournalWindow>() != null)
+        {
+            journal = allWindows.GetComponentInChildren<JournalWindow>();
         }
         exchWindow.gameObject.GetComponent<Canvas>().enabled=false;
     }
@@ -69,6 +71,10 @@ public class InterfaceController : MonoBehaviour
         {
             activeWindow.enabled = false;
         }
+        if (auxActiveWindow != null)
+        {
+            auxActiveWindow.enabled = false;
+        }
     }
 
     /// <summary>
@@ -80,6 +86,10 @@ public class InterfaceController : MonoBehaviour
         {
             activeWindow.enabled = false;
         }
+        if (auxActiveWindow != null)
+        {
+            auxActiveWindow.enabled = false;
+        }
         if (string.Equals("menu", windowName))
         {
             activeWindow = menu.GetComponent<Canvas>();
@@ -88,7 +98,42 @@ public class InterfaceController : MonoBehaviour
         {
             activeWindow = settings.GetComponent<Canvas>();
         }
+        else if (string.Equals("journal", windowName))
+        {
+            activeWindow = journal.GetComponent<Canvas>();
+        }
         activeWindow.enabled = true;
+    }
+
+    /// <summary>
+    /// Функция, что по строке открывает нужное вспомогательное окно
+    /// </summary>
+    public void ChangeAuxWindow(string windowName)
+    {
+        if (auxActiveWindow != null)
+        {
+            auxActiveWindow.enabled = false;
+        }
+        if (string.Equals(windowName, "Quests"))
+        {
+            auxActiveWindow = transform.FindChild("Interface").FindChild("Quests").GetComponent<Canvas>();
+            journal.ChangeWindow("Quests");
+        }
+        else if (string.Equals(windowName, "Characters"))
+        {
+            auxActiveWindow = transform.FindChild("Interface").FindChild("Characters").GetComponent<Canvas>();
+            journal.ChangeWindow("Characters");
+        }
+        else if (string.Equals(windowName, "Beasts"))
+        {
+            auxActiveWindow = transform.FindChild("Interface").FindChild("Beasts").GetComponent<Canvas>();
+            journal.ChangeWindow("Beasts");
+        }
+        else if (string.Equals(windowName, "Locations"))
+        {
+            auxActiveWindow = transform.FindChild("Interface").FindChild("Locations").GetComponent<Canvas>();
+            journal.ChangeWindow("Locations");
+        }
     }
 
 }

@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+
 /// <summary>
 /// Шаблонный контроллер, который я создаю для того, чтобы определит, как вообще искусственный интеллект будет работать
 /// Он может осуществлять некоторую деятельность в спокойствии, следовать за своей целью и атаковать её
@@ -24,6 +26,12 @@ public class EnemyController : PersonController, IPersonWatching
     public delegate bool AICondition(string id, int argument);
 
     #endregion //delegates
+
+    #region eventHandlers
+
+    public EventHandler<JournalEventArgs> EnemyDieJournalEvent;
+
+    #endregion //eventHandlers
 
     #region fields
     public int k1 = 0;
@@ -246,7 +254,7 @@ public class EnemyController : PersonController, IPersonWatching
             else
             {
                 int j = 0;
-                int r = Random.Range(1, posibilitySum);
+                int r = UnityEngine.Random.Range(1, posibilitySum);
                 while (r > canIEmployIt[j].posibility)
                 {
                     j++;
@@ -466,6 +474,7 @@ public class EnemyController : PersonController, IPersonWatching
             death = true;
             WatchTheTarget("no", 0);
             actions.Death();
+            OnEnemyDie(new JournalEventArgs());
         }
     }
 
@@ -662,6 +671,20 @@ public class EnemyController : PersonController, IPersonWatching
     }
 
     #endregion //getters
+
+    #region events
+
+    public void OnEnemyDie(JournalEventArgs e)
+    {
+        EventHandler<JournalEventArgs> handler = EnemyDieJournalEvent;
+        if (handler != null)
+        {
+            handler(this, e);
+        }
+    }
+
+    #endregion //events
+
 }
 
 #if UNITY_EDITOR
