@@ -540,9 +540,9 @@ public class HumanoidActorActions : PersonActions
 
     public override void GoThroughTheDoor(DoorClass door)
     {
-        base.GoThroughTheDoor(door);
         SpFunctions.ChangeRoomData(door.roomPath);
         GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
+        base.GoThroughTheDoor(door);
     }
 
     public override void Death()

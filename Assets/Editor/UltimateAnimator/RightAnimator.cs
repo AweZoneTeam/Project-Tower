@@ -111,7 +111,7 @@ public class RightAnimator : EditorWindow
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Stencil");
+                    EditorGUILayout.TextField("Stencil");
                     stencilIndex = EditorGUILayout.Popup(stencilIndex, stencils.ToArray());
                     chosenStencil = stencils[stencilIndex];
                 }

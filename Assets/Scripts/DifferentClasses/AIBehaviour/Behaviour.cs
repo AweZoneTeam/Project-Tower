@@ -62,9 +62,17 @@ public class AIActionData
     public AIActionData(AIActionData original)
     {
         actionName=original.actionName;
-        whyToDo = original.whyToDo;
+        whyToDo = new List<ConditionSign>();
+        for (int i = 0; i < original.whyToDo.Count; i++)
+        {
+            whyToDo.Add(new ConditionSign(original.whyToDo[i]));
+        }
         posibility=original.posibility;
-        whatToDo = original.whatToDo;
+        whatToDo = new List<ActionSign>();
+        for (int i = 0; i < original.whatToDo.Count; i++)
+        {
+            whatToDo.Add(new ActionSign(original.whatToDo[i]));
+        }
         unavailable = false;
         actionTime=original.actionTime;
         cooldown=original.cooldown; 
@@ -83,6 +91,14 @@ public class ActionSign
     public AIAction aiAction;//ссылка на функцию
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
+
+    public ActionSign(ActionSign original)
+    {
+        actionName = original.actionName;
+        aiAction = null;
+        id = original.id;
+        argument = original.argument;
+    }
 }
 
 /// <summary>
@@ -96,6 +112,15 @@ public class ConditionSign
     public AICondition aiCondition;//Ссылка на функцию
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
+
+    public ConditionSign(ConditionSign original)
+    {
+        conditionString = original.conditionString;
+        aiCondition = null;
+        id = original.id;
+        argument = original.argument;
+    }
+
 }
 
 /// <summary>

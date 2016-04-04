@@ -9,8 +9,9 @@ using UnityEditor;
 //Части - это основы управления любой анимации в Project Tower. 
 public class PartController : MonoBehaviour 
 {
-	
-	
+
+    public string partType;//Тип части. 
+
 	public int numb, type, frame=0, prevFrame, addictiveFrame;
 	public GAF.Core.GAFMovieClip mov;//Созданный при помощи технологии GAF клип, которым мы и управляем
     public string path;//Путь, в котором находится анимационная база данных для данной части.

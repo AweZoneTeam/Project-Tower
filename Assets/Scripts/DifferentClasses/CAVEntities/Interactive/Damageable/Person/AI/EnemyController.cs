@@ -114,6 +114,7 @@ public class EnemyController : PersonController, IPersonWatching
         BehaviourClass _behaviour;
         for (int i=0;i<behaviours.Count;i++)
         {
+            behaviours[i].behaviour = new BehaviourClass(behaviours[i].behaviour);
             _behaviour = behaviours[i].behaviour;
             if (_behaviour == null)
             {
@@ -121,7 +122,6 @@ public class EnemyController : PersonController, IPersonWatching
                 _behaviour = AssetDatabase.LoadAssetAtPath(behaviourPath + behaviours[i].path + ".asset", typeof(BehaviourClass)) as BehaviourClass;
 #endif
             }
-            behaviours[i].behaviour = new BehaviourClass(_behaviour);
         }
 
         string s;

@@ -15,10 +15,11 @@ public class AddPartWindow : EditorWindow
 	public LeftAnimator leftAnim;
 	public GameObject character;
 	public Object movPart;//GAF анимация, которая поставиться в поле mov экземпляра класса PartController
-    public int currentIndex=0;//Вспомогательное число
+    public int currentIndex=0, stencilPartIndex = 0;//Вспомогательные числа
     public bool setDepended = false;//Ставить ли создаваемую часть в зависимость от уже существующей части?
 
 	public string partName;//Имя части
+    private string partType;//Тип части
 	public string partPath;//Путь, в который добавится сама часть тела и её интерпретатор анимаций
 
     private int pathIndex;
@@ -38,6 +39,7 @@ public class AddPartWindow : EditorWindow
         string s;
 		character = leftAnim.character;
 		partName = EditorGUILayout.TextField (partName);
+        partType = EditorGUILayout.TextField(partType);
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUILayout.LabelField("partPath");
@@ -70,14 +72,15 @@ public class AddPartWindow : EditorWindow
 		}
         EditorGUILayout.BeginHorizontal();
         {
-            if (GUILayout.Button("Add Created Part"))
-            {
-                AddPart();
-            }
-            EditorGUILayout.LabelField("Use Part as a Stencil");
+            stencilPartIndex = EditorGUILayout.Popup(stencilPartIndex, partNames.ToArray());
+            EditorGUILayout.LabelField("Use This Part as a Stencil");
             usePartAsStencil = EditorGUILayout.Toggle(usePartAsStencil);
         }
         EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("Add Created Part"))
+        {
+            AddPart();
+        }
         if (setDepended)
         {
             if (GUILayout.Button("Correct Depended Part"))
@@ -95,8 +98,8 @@ public class AddPartWindow : EditorWindow
 		GameObject partMov;
 		partMov = Instantiate ((GameObject)movPart) as GameObject;
 		partMov.transform.localScale *= animScale;
-
-		partMov.transform.position = new Vector3(character.transform.position.x+xOffset,
+        partMov.transform.localScale =new Vector3(partMov.transform.localScale.x, partMov.transform.localScale.y,0f);
+        partMov.transform.position = new Vector3(character.transform.position.x+xOffset,
 												 character.transform.position.y+yOffset,
 												 character.transform.position.z);
 		GameObject part = new GameObject(partName);
@@ -113,14 +116,15 @@ public class AddPartWindow : EditorWindow
 		asset.animTypes = new List<animationInfoType> ();
 		AssetDatabase.CreateAsset (asset, partPath + partName + ".asset");
 		PartController cPart = part.AddComponent<PartController> ();
+        cPart.partType = partType;
 		cPart.interp=new AnimationInterpretator(asset.partPath);
 		cPart.mov = partMov.GetComponent<GAF.Core.GAFMovieClip> ();
         cPart.interp = new AnimationInterpretator(asset);
         cPart.path = partPath + partName + ".asset";
         InterObjAnimator cAnim = character.GetComponent<InterObjAnimator> ();
-        if (cAnim.parts.Count > 0)
+        if ((character.GetComponent<InterObjAnimator>().parts.Count > 0)&& (usePartAsStencil))
         {
-            cPart.interp.setInterp(cAnim.parts[0].interp);
+            cPart.interp.setInterp(cAnim.parts[stencilPartIndex].interp);   
         }
         else
         {
@@ -160,9 +164,9 @@ public class AddPartWindow : EditorWindow
         cPart.path = partPath + partName + ".asset";
         if (character.GetComponent<InterObjAnimator> ().parts.Count > 0)
         {
-            if (!usePartAsStencil)
+            if (usePartAsStencil)
             {
-                cPart.interp.setInterp(cAnim.parts[0].interp);
+                cPart.interp.setInterp(cAnim.parts[stencilPartIndex].interp);
             }   
 		}
         GameObject asset1 = part;
@@ -174,7 +178,7 @@ public class AddPartWindow : EditorWindow
         }
 	}
 
-    /// <summary>
+    /// <summary
     ///Функция, добавляющая новую часть, а также связывает её с родительской частью. 
     /// </summary>
     /// <param name="часть-родитель"></param>
@@ -206,7 +210,15 @@ public class AddPartWindow : EditorWindow
         cAnim.parts.Add(part.GetComponent<PartController>());
         if (cAnim.parts.Count > 0)
         {
-            AnimationInterpretator interp0 = cAnim.parts[0].interp;
+            AnimationInterpretator interp0;
+            if (usePartAsStencil)
+            {
+                interp0 = cAnim.parts[stencilPartIndex].interp;
+            }
+            else
+            {
+                interp0 = cAnim.parts[0].interp;
+            }
             AnimationInterpretator interp1 = cPart.interp;
             int rOrder = 0, lOrder = 0;
             if (interp1.animTypes.Count > 0)
