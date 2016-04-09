@@ -12,12 +12,6 @@ public class ChestActions : InterObjActions, ILeverActivated
     private ChestVisual anim;
 
     private BagClass chestContent;
-    private InterObjController interactor;
-
-    public override void Awake()
-    {
-        base.Awake();
-    }
 
     public override void Initialize()
     {
@@ -70,7 +64,7 @@ public class ChestActions : InterObjActions, ILeverActivated
             if (interactor is PersonController)
             {
                 PersonController keyControl = (PersonController)interactor;
-                equip = keyControl.GetEquipment();
+                equip = (EquipmentClass)keyControl.GetEquipment();
                 if (chestLock is SpecialLockScript)
                 {
                     SpecialLockScript sChestLock = (SpecialLockScript)chestLock;

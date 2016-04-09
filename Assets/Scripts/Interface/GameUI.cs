@@ -64,7 +64,7 @@ public class GameUI : InterfaceWindow
 
         #region hpData
 
-        playerStats = (OrganismStats)player.GetStats();
+        playerStats = player.GetOrgStats();
         maxHealth = playerStats.maxHealth;
         playerStats.HealthChangedEvent += HandleHealthChangedEvent;
         healthText = transform.Find("HealthText").GetComponent<Text>();
@@ -90,7 +90,7 @@ public class GameUI : InterfaceWindow
         rightWeaponImage = itemsPanel.FindChild("RightWeaponPanel").FindChild("RightWeaponImage").GetComponent<Image>();
         leftWeaponImage = itemsPanel.FindChild("LeftWeaponPanel").FindChild("LeftWeaponImage").GetComponent<Image>();
         itemImage = itemsPanel.FindChild("ItemPanel").FindChild("ItemImage").GetComponent<Image>();
-        EquipmentClass equip = player.GetEquipment();
+        EquipmentClass equip = (EquipmentClass)player.GetEquipment();
         if (equip.rightWeapon != null)
         {
             rightWeaponImage.sprite = equip.rightWeapon.image;
@@ -106,7 +106,7 @@ public class GameUI : InterfaceWindow
             itemImage.sprite = equip.useItem.image;
             itemImage.color = new Color(1f, 1f, 1f, 1f);
         }
-        equip.ItemChangedEvent += HandleItemChangedEvent;
+        equip.ActiveItemChangedEvent += HandleItemChangedEvent;
 
         #endregion //itemsPanel
 

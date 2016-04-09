@@ -14,11 +14,6 @@ public class LeverActions : InterObjActions
 
     private LeverVisual anim;
 
-    public override void Awake()
-    {
-        base.Awake();
-    }
-
     public virtual void Start()
     {
         if (anim != null)

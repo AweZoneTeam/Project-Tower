@@ -63,11 +63,12 @@ public class HitController : MonoBehaviour
 
     void Hit(DmgObjController dmg)
     {
-        OrganismStats target = (OrganismStats)dmg.GetStats();
+        OrganismStats target = dmg.GetOrgStats();
+        DefenceClass defence = CalculateDefence(target.defence+target.addDefence);
         GameObject obj = dmg.gameObject;
         if (target != null)
         {
-            if (target.stability <= hitData.attack - 2)
+            if (defence.stability <= hitData.attack - 2)
             {
                 target.hitted = (hittedEnum)(1 + hitData.direction);
                 if (target.stunTimer <= 0f)
@@ -93,7 +94,7 @@ public class HitController : MonoBehaviour
                     rigid.AddForce(new Vector3(0f, -2000f, 0f));
                 }
             }
-            else if ((target.stability <= hitData.attack) && ((int)target.hitted < 1))
+            else if ((defence.stability <= hitData.attack) && ((int)target.hitted < 1))
             {
                 target.stunTimer = target.microStun;
                 StartCoroutine(target.Stunned(target.microStun));
@@ -103,15 +104,17 @@ public class HitController : MonoBehaviour
             {
                 target.hitted = 0;
             }
-            if (SpFunctions.RealSign(gameObject.transform.lossyScale.x * obj.transform.lossyScale.x) > 0f)
+            bool crit= (Random.Range(0, 100) > target.critResistance);
+            if ((SpFunctions.RealSign(gameObject.transform.lossyScale.x * obj.transform.lossyScale.x) > 0f)||(crit))
             {
-                target.health -= (hitData.pDamage * (100 - target.pDefence) / 100 + hitData.fDamage * (100 - target.fDefence) / 100 +
-                                 hitData.aDamage * (100 - target.aDefence) / 100 + hitData.dDamage * (100 - target.dDefence) / 100) * hitData.backStabKoof;
+                target.health -= (hitData.pDamage * (100 - defence.pDefence) / 100 + hitData.fDamage * (100 - defence.fDefence) / 100 +
+                                  hitData.aDamage * (100 - defence.aDefence) / 100 + hitData.dDamage * (100 - defence.dDefence) / 100) * hitData.backStabKoof;
+                
             }
             else
             {
-                target.health -= hitData.pDamage * (100 - target.pDefence) / 100 + hitData.fDamage * (100 - target.fDefence) / 100 +
-                                 hitData.aDamage * (100 - target.aDefence) / 100 + hitData.dDamage * (100 - target.dDefence) / 100;
+                target.health -= hitData.pDamage * (100 - defence.pDefence) / 100 + hitData.fDamage * (100 - defence.fDefence) / 100 +
+                                 hitData.aDamage * (100 - defence.aDefence) / 100 + hitData.dDamage * (100 - defence.dDefence) / 100;
             }
             if (dmg is PersonController)
             {
@@ -124,6 +127,16 @@ public class HitController : MonoBehaviour
             }
             target.OnHealthChanged(new OrganismEventArgs(0f));
         }
+    }
+
+    DefenceClass CalculateDefence(DefenceClass _defence)
+    {
+        DefenceClass newDefence=new DefenceClass(Mathf.RoundToInt(Mathf.Clamp(_defence.pDefence,0f,100f)),
+                                                 Mathf.RoundToInt(Mathf.Clamp(_defence.fDefence, 0f, 100f)),
+                                                 Mathf.RoundToInt(Mathf.Clamp(_defence.aDefence, 0f, 100f)),
+                                                 _defence.dDefence,
+                                                 _defence.stability);
+        return newDefence;
     }
 
 }

@@ -8,7 +8,7 @@ using System.Collections;
 public class AnimConditionClass
 {	
 	public AnimClass anim;
-	public Stats stats;
+	public EnvironmentStats stats;
 	public int direction;
 	public float speedX;
 	public float nSpeedX;

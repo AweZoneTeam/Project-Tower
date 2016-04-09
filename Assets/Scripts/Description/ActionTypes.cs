@@ -12,7 +12,7 @@ public static class ActionTypes
 	/// <summary>
 	/// Достичь заданной скорости (здесь скорость - двумерный вектор), используя ускорение
 	/// </summary>
-	public static void AchieveSpeed (Rigidbody2D rigid, Stats stats, Vector2 targetSpeed, int acceleration)
+	public static void AchieveSpeed (Rigidbody2D rigid, EnvironmentStats stats, Vector2 targetSpeed, int acceleration)
 	{
 		//rigid.gravityScale = 1f;
 		if (Mathf.Abs(rigid.velocity.sqrMagnitude-targetSpeed.sqrMagnitude)>0.25f) 
@@ -49,7 +49,7 @@ public static class ActionTypes
 	/// <summary>
 	/// Функция, обеспечивающая передвижение по таким поверхностям, как заросли, верёвка лестница и тп.)
 	/// </summary>
-	public static void Climb(Rigidbody2D rigid, Stats stats, InfoGetClass inf, Vector2 speed)
+	public static void Climb(Rigidbody2D rigid, EnvironmentStats stats, InfoGetClass inf, Vector2 speed)
 	{
 		rigid.gravityScale = 0f;
 		if (InfoGetTypes.Raycaster(inf,speed))
@@ -57,39 +57,6 @@ public static class ActionTypes
 		else
 			rigid.velocity=new Vector2(0f,0f);
         stats.targetSpeed=speed;
-	}
-
-	//тип 1 номер 7
-	/// <summary>
-	/// Функция, обеспечивающая попадание на верёвку, лестницу.
-	/// (Можно находится неподалёку от верёвки, нажать Е и сразу же оказаться на верёвке)
-	/// </summary>
-	public static void MoveToClimb(Rigidbody2D rigid, Stats stats, InfoGetClass inf)
-	{
-		RaycastHit2D hit;
-		rigid.velocity = new Vector2 (0f, 0f);
-		rigid.gravityScale = 0;
-		int koof2;
-		if (rigid.velocity.y>=0) 
-			koof2=1;
-		else
-			koof2=-1;
-		hit=Physics2D.Raycast (inf.indicator.transform.position,
-		                       new Vector2(inf.infoVectors [0].x*SpFunctions.RealSign((int)stats.direction),
-		            					   inf.infoVectors [0].y*koof2).normalized,
-		                       inf.floatParametres [0],
-		                       inf.whatToCheck);
-		float koof = -1*SpFunctions.RealSign (hit.normal.x);
-		if (hit) 
-		{
-				rigid.velocity=new Vector2(0f,0f);
-				float length = hit.distance;
-				Vector2 vect = inf.infoVectors[0].normalized;
-				vect = new Vector2 (vect.x *koof* length, vect.y *koof2* length); 
-				rigid.gameObject.transform.position = new Vector3 (rigid.gameObject.transform.position.x + vect.x,
-		                                                		   rigid.gameObject.transform.position.y + vect.y,
-		                                                		   rigid.gameObject.transform.position.z);
-		}
 	}
 	
 

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class EnemyActions : PersonActions
 {
+
     #region epsilons
     const float velEps = 1f;
     #endregion //epsilons
@@ -14,16 +15,10 @@ public class EnemyActions : PersonActions
     #endregion //parametres
 
     #region fields
-    private Stats stats;
 
     public WeaponClass weapon;//Это поле соддержит данные по атакам персонажа
 
     #endregion //fields
-
-    public override void Awake()
-    {
-        base.Awake();
-    }
 
     public void Update()
     {
@@ -31,11 +26,11 @@ public class EnemyActions : PersonActions
         {
             if (cAnim != null)
             {
-                if (stats.groundness == groundnessEnum.inAir)
+                if (envStats.groundness == groundnessEnum.inAir)
                 {
                     cAnim.AirMove();
                 }
-                else if (stats.groundness == groundnessEnum.grounded)
+                else if (envStats.groundness == groundnessEnum.grounded)
                 {
                     if (moving)
                     {
@@ -87,7 +82,7 @@ public class EnemyActions : PersonActions
         {
             if (jumpIsPossible)
             {
-                if ((stats.groundness == groundnessEnum.grounded) && (!jumped))
+                if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
                 {
                     Jump();
                 }
@@ -102,18 +97,18 @@ public class EnemyActions : PersonActions
     /// <summary>
     /// Идти в указанном направлении
     /// </summary>
-    public override void StartWalking(orientationEnum direction)
+    public override void StartWalking(orientationEnum _direction)
     {
-        base.StartWalking(direction);
-        stats.direction = direction;
+        base.StartWalking(_direction);
+        direction.dir = _direction;
         Vector3 targetVelocity=new Vector3(0f,0f,0f);
-        if (direction == orientationEnum.left)
+        if (_direction == orientationEnum.left)
         {
-            targetVelocity = new Vector3(-maxSpeed, rigid.velocity.y, rigid.velocity.z);
+            targetVelocity = new Vector3(-RunSpeed, rigid.velocity.y, rigid.velocity.z);
         }
-        else if(direction == orientationEnum.right)
+        else if(_direction == orientationEnum.right)
         {
-            targetVelocity = new Vector3(maxSpeed, rigid.velocity.y, rigid.velocity.z);
+            targetVelocity = new Vector3(RunSpeed, rigid.velocity.y, rigid.velocity.z);
         }
         if (Vector3.Distance(rigid.velocity, targetVelocity) < velEps)
         {
@@ -199,9 +194,9 @@ public class EnemyActions : PersonActions
     /// <summary>
     /// Задать поле статов
     /// </summary>
-    public override void SetStats(Stats _stats)
+    public override void SetStats(EnvironmentStats _stats)
     {
-        stats = _stats;
+        envStats = _stats;
     }
 
 }

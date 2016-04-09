@@ -12,44 +12,69 @@ public class DmgObjController : InterObjController
 {
 
     #region consts
+
     const float dropX1 = -500f;
     const float dropX2 = 500f;
     const float dropY1 = 100f;
     const float dropY2 = 1000f;
+
     #endregion //consts
 
     #region fields
-    private DmgObjActions actions;
-    private DmgObjVisual anim;
-    private OrganismStats stats=new OrganismStats();
+
+    protected DmgObjActions dmgActions;
+    protected DmgObjVisual dmgAnim;
+    protected OrganismStats orgStats=new OrganismStats();
     public List<GameObject> dropList=new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
     public bool death=false;//умер ли персонаж
+
     #endregion //fields
 
     public override void Initialize()
     {
-        actions = GetComponent<DmgObjActions>();
-        if (actions != null)
+        if (direction == null)
         {
-            actions.SetStats(stats);
+            direction = new Direction();
         }
-        anim = GetComponentInChildren<DmgObjVisual>();
-        if (anim != null)
+        if (orgStats == null)
         {
-            anim.SetStats(stats);
+            orgStats = new OrganismStats();
         }
+        dmgActions = GetComponent<DmgObjActions>();
+        if (dmgActions != null)
+        {
+            SetAction();
+        }
+        dmgAnim = GetComponentInChildren<DmgObjVisual>();
+        if (dmgAnim != null)
+        {
+            SetVisual();
+        }
+    }
+
+    protected override void SetAction()
+    {
+        dmgActions.Initialize();
+        dmgActions.SetDirection(direction);
+        dmgActions.SetOrgStats(orgStats);
+    }
+
+    protected virtual void SetVisual()
+    {
+        dmgAnim.SetDirection(direction);
+        dmgAnim.SetOrgStats(orgStats);
     }
 
     #region interface
 
     public virtual void Update()
     {
-        if ((stats.hitted>0f)&&(stats.health >0f))
+        if ((orgStats.hitted>0f)&&(orgStats.health >0f))
         {
             Hitted();
         }
 
-        if (stats.health <= 0f)
+        if (orgStats.health <= 0f)
         {
             Death();
         }
@@ -60,7 +85,7 @@ public class DmgObjController : InterObjController
     /// </summary>
     public virtual void Hitted()
     {
-        actions.Hitted();
+        dmgActions.Hitted();
     }
 
     /// <summary>
@@ -71,7 +96,7 @@ public class DmgObjController : InterObjController
         if (!death)
         {
             death = true;
-            actions.Death();
+            dmgActions.Death();
         }
     }
 
@@ -79,15 +104,16 @@ public class DmgObjController : InterObjController
     {
         base.Interact(interactor);
     }
+
     #endregion //interface
 
-    public override Prestats GetStats()
+    public OrganismStats GetOrgStats()
     {
-        if (stats == null)
+        if (orgStats == null)
         {
-            stats = new OrganismStats();
+            orgStats = new OrganismStats();
         }
-        return stats;
+        return orgStats;
     }
 }
 
@@ -98,26 +124,30 @@ public class DmgObjController : InterObjController
 [CustomEditor(typeof(DmgObjController))]
 public class DmgObjEditor : InterObjEditor
 {
-    private OrganismStats stats;
+
+    private Direction direction;
+    private OrganismStats orgStats;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         DmgObjController obj = (DmgObjController)target;
-        stats = (OrganismStats)obj.GetStats();
+        direction = obj.GetDirection();
+        orgStats = obj.GetOrgStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", (int)stats.direction);
-        stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
-        stats.health=EditorGUILayout.FloatField("Health", stats.health);
-        stats.stability = EditorGUILayout.IntField("Stability", stats.stability);
+        EditorGUILayout.EnumMaskField("direction", direction.dir);
+        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        orgStats.health=EditorGUILayout.FloatField("Health", orgStats.health);
+        orgStats.defence.stability = EditorGUILayout.IntField("Stability", orgStats.defence.stability);
         EditorGUILayout.Space();
-        EditorGUILayout.IntField("Hitted", (int)stats.hitted);
-        stats.microStun = EditorGUILayout.FloatField("MicroStun", stats.microStun);
-        stats.macroStun = EditorGUILayout.FloatField("MacroStun", stats.macroStun);
-        stats.pDefence = EditorGUILayout.IntField("Physic Defence", stats.pDefence);
-        stats.fDefence = EditorGUILayout.IntField("Fire Defence", stats.fDefence);
-        stats.aDefence = EditorGUILayout.IntField("Poison Defence", stats.aDefence);
-        stats.dDefence = EditorGUILayout.IntField("Dark Defence", stats.dDefence);
+        EditorGUILayout.IntField("Hitted", (int)orgStats.hitted);
+        orgStats.microStun = EditorGUILayout.FloatField("MicroStun", orgStats.microStun);
+        orgStats.macroStun = EditorGUILayout.FloatField("MacroStun", orgStats.macroStun);
+        orgStats.defence.pDefence = EditorGUILayout.IntField("Physic Defence", orgStats.defence.pDefence);
+        orgStats.defence.fDefence = EditorGUILayout.IntField("Fire Defence", orgStats.defence.fDefence);
+        orgStats.defence.aDefence = EditorGUILayout.IntField("Poison Defence", orgStats.defence.aDefence);
+        orgStats.defence.dDefence = EditorGUILayout.IntField("Dark Defence", orgStats.defence.dDefence);
     }
 }
 #endif

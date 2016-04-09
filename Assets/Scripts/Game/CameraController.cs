@@ -25,6 +25,7 @@ public class CameraController : MonoBehaviour
     #endregion //enums
 
     #region parametres
+
     private GameObject character;//За каким персонажем камера следует
     private Rigidbody2D rigid;
     private Vector3 offsetPosition;

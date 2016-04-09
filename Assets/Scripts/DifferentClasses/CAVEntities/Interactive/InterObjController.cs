@@ -10,9 +10,9 @@ using UnityEditor;
 public class InterObjController : MonoBehaviour
 {
     #region fields
-    private Prestats stats;
-    private InterObjActions actions;
-
+    protected Direction direction;
+    protected InterObjActions intActions;
+   
     //protected InterObjVisual anim;
     #endregion //fields
 
@@ -21,20 +21,24 @@ public class InterObjController : MonoBehaviour
         Initialize();
     }
 
-    public void What()
-    {
-        stats = new Stats();
-    }
-
     public virtual void Initialize()
     {
-        actions = GetComponent<InterObjActions>();
-        if (actions != null)
+        if (direction == null)
         {
-            actions = GetComponent<InterObjActions>();
-            actions.SetStats(stats);
+            direction = new Direction();
+        }
+        intActions = GetComponent<InterObjActions>();
+        if (intActions != null)
+        {
+            SetAction();
         }
         //anim = transform.GetComponentInChildren < InterObjVisual>();
+    }
+
+    protected virtual void SetAction()
+    {
+        intActions.Initialize();
+        intActions.SetDirection(direction);
     }
 
     /// <summary>
@@ -42,20 +46,20 @@ public class InterObjController : MonoBehaviour
     /// </summary>
     public virtual void Interact(InterObjController interactor)
     {
-        if (actions != null)
+        if (intActions != null)
         {
-            actions.SetInteractor(interactor);
-            actions.Interact();
+            intActions.SetInteractor(interactor);
+            intActions.Interact();
         }
     }
 
-    public virtual Prestats GetStats()
+    public Direction GetDirection()
     {
-        if (stats == null)
+        if (direction == null)
         {
-            stats = new Prestats();
+            direction = new Direction();
         }
-        return stats;
+        return direction;
     }
 
 }
@@ -67,15 +71,15 @@ public class InterObjController : MonoBehaviour
 [CustomEditor(typeof(InterObjController))]
 public class InterObjEditor : Editor
 {
-    private Prestats stats;
+    private Direction direction;
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         InterObjController obj = (InterObjController)target;
-        stats = obj.GetStats();
+        direction = obj.GetDirection();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", (int)stats.direction);
+        EditorGUILayout.EnumMaskField("direction", direction.dir);
     }
 }
 #endif

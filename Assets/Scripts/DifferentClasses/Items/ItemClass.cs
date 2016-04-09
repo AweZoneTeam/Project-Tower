@@ -11,6 +11,16 @@ public class ItemClass: ScriptableObject
 	public string itemName;
     public string type;
     public Sprite image;//Иконка предмета  
+    [TextArea(3,10)]
+    public string description;
+    [TextArea(3, 10)]
+    public string parametres;
+    public int maxCount;//Сколько максимум предметов этого типа может находится в одном экземпляре класса itemBunch
+
+
+
+    public List<ItemVisual> itemVisuals = new List<ItemVisual>();//части тела, которые добавляются персонажу при использовании предмета.
+
 }
 
 /// <summary>
@@ -21,4 +31,27 @@ public class ItemBunch
 {
     public ItemClass item;
     public int quantity;
+
+    public ItemBunch(ItemClass _item)
+    {
+        item = _item;
+        quantity = 1;
+    }
+
+}
+
+/// <summary>
+/// Специальный класс, нужный для смены предметов
+/// </summary>
+[System.Serializable]
+public class ItemVisual
+{
+    public GameObject part;
+    public Vector3 pos;
+
+    public ItemVisual(Vector3 _pos)
+    {
+        part = null;
+        pos = _pos;
+    }
 }

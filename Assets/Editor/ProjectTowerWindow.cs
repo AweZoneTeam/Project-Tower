@@ -61,6 +61,12 @@ class ProjectTowerWindow : Editor
         EditorWindow.GetWindow(typeof(UseItemCreateWindow));
     }
 
+    [MenuItem("Project Tower/Item Creator/Create Armor")]
+    public static void CreateArmor()
+    {
+        EditorWindow.GetWindow(typeof(ArmorCreateWindow));
+    }
+
     [MenuItem("Project Tower/Buff Creator")]
     public static void CreateBuff()
     {

@@ -16,7 +16,7 @@ public class CharacterAnimator : InterObjAnimator
     private LayerMask whatIsGround;//На какие поверхности отбрасывается тень
 
     public bool play = false, stop = true;//два весёлых була, обеспечивающие проигрывание анимации непосредственно в самом редакторе.
-    private Stats stats;//Параметры персонажа
+    private EnvironmentStats stats;//Параметры персонажа
 
     #endregion //fields
 
@@ -73,7 +73,7 @@ public class CharacterAnimator : InterObjAnimator
     /// Задать поле статов
     /// </summary>
     /// <param name="задаваемые параметры"></param>
-    public void SetStats(Stats _stats)
+    public void SetStats(EnvironmentStats _stats)
     {
         stats = _stats;
     }
@@ -84,7 +84,7 @@ public class CharacterAnimator : InterObjAnimator
 /// Класс, необходимый для создания нужного нам отображения полей аниматора персонажа
 /// </summary>
 [CustomEditor(typeof(CharacterAnimator))]
-public class CharacterAnimatorEditor : BaseAnimatorEditor
+public class CharacterAnimatorEditor : Editor
 {
     public override void OnInspectorGUI()
     {

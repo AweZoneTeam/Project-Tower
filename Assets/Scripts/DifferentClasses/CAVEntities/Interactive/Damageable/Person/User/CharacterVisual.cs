@@ -35,10 +35,7 @@ public class CharacterVisual : PersonVisual
 
     #region fields
 
-    private Stats stats;
     private Rigidbody rigid;
-
-    public int k1 = 0;
 
     #endregion //fields
 
@@ -98,7 +95,7 @@ public class CharacterVisual : PersonVisual
     /// </summary>
     public override void Look(Vector2 direction)
     {
-        if ((cAnim != null) && (!attack)&&(stats.interaction==interactionEnum.noInter))
+        if ((cAnim != null) && (!attack)&&(envStats.interaction==interactionEnum.noInter))
         {
             if (employment <8)
             {
@@ -184,7 +181,7 @@ public class CharacterVisual : PersonVisual
     {
         if ((cAnim != null)&&(!attack)&&(employment>4))
         {
-            if (stats.groundness == groundnessEnum.preGround) { cAnim.Animate("Fallen"); }
+            if (envStats.groundness == groundnessEnum.preGround) { cAnim.Animate("Fallen"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.fastDown) { cAnim.Animate("FallEnd"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.medDown) { cAnim.Animate("FallContinue"); }
             else if (rigid.velocity.y <= 1f * (int)speedY.slowDown) { cAnim.Animate("FallBegin"); }
@@ -210,11 +207,11 @@ public class CharacterVisual : PersonVisual
             }
             else
             {
-                if (stats.groundness == groundnessEnum.grounded)
+                if (envStats.groundness == groundnessEnum.grounded)
                 {
                     cAnim.Animate("WallInFront");
                 }
-                else if (stats.groundness == groundnessEnum.crouch)
+                else if (envStats.groundness == groundnessEnum.crouch)
                 {
                     cAnim.Animate("CrouchWall");
                 }
@@ -376,9 +373,9 @@ public class CharacterVisual : PersonVisual
     
     #endregion //AnimatedActions
 
-    public void SetStats(Stats _stats)
+    public void SetStats(EnvironmentStats _stats)
     {
-        stats = _stats;
+        envStats = _stats;
     }
 }
 

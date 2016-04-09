@@ -34,6 +34,7 @@ public class EnemyController : PersonController, IPersonWatching
     #endregion //eventHandlers
 
     #region fields
+
     public int k1 = 0;
     private TargetWithCondition mainTarget;//Объект, что является истинной целью ИИ. Выполнение действия с данной целью является корнем поведения ИИ
     private List<TargetWithCondition> waypoints=new List<TargetWithCondition>();//Очередь из последовательности объектов, что являются точками интереса ИИ. ИИ последовательно выполняет действия с этими объектами.
@@ -44,12 +45,12 @@ public class EnemyController : PersonController, IPersonWatching
 
     //public behaviourEnum behaviour;//Какую модель поведения применяет ИИ в данный момент (Calm,Agressive) 
 
-    private EnemyVisual anim;
     public string behaviourPath;//Путь, в котором находятся модели поведения данного персонажа
     public List<SBehaviourClass> behaviours = new List<SBehaviourClass>();//Какие модели поведения используются ИИ
     public BehaviourClass currentBehaviour;
     protected Dictionary<string, AICondition> conditionBase = new Dictionary<string, AICondition>();//База данных, которая по строке возвращает функцию проверки условия, что прописана в контроллере
     protected Dictionary<string,AIAction> actionBase = new Dictionary<string, AIAction>();//База данных, которая по строке возвращает элементарную функцию действия
+
     #endregion //fields
 
     #region parametres
@@ -66,12 +67,12 @@ public class EnemyController : PersonController, IPersonWatching
 
     public void FixedUpdate()
     {
-        if ((stats.hitted > 0f) && (stats.health > 0f))
+        if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
         {
             Hitted();
         }
 
-        if (stats.health <= 0f)
+        if (orgStats.health <= 0f)
         {
             Death();
         }
@@ -153,33 +154,21 @@ public class EnemyController : PersonController, IPersonWatching
     public override void Initialize()
     {
         base.Initialize();
+        if (pActions != null)
+        {
+            pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
+        }
         sight = transform.FindChild("Indicators").FindChild("Sight");
         FormBehaviourList();
         if (behaviours.Count > 0)
         {
             currentBehaviour = behaviours[0].behaviour;
         }
-        if (stats == null)
-        {
-            stats = new Stats();
-        }
-        rigid = GetComponent<Rigidbody>();
         currentTarget = null;
         mainTarget = null;
         waypoints = new List<TargetWithCondition>();
-        actions = GetComponent<EnemyActions>();
-        if (actions != null)
-        {
-            actions.SetStats(stats);
-        }
-        anim = GetComponentInChildren<EnemyVisual>();
-        if (anim != null)
-        {
-            anim.SetStats(stats);
-        }
-        GetComponentInChildren<CharacterAnimator>().SetStats(stats);
+        GetComponentInChildren<CharacterAnimator>().SetStats(envStats);
         employment = maxEmployment;
-        buffList.OrgStats = stats;
     }
 
     /// <summary>
@@ -320,7 +309,7 @@ public class EnemyController : PersonController, IPersonWatching
             }
             if (currentTarget != null)
             {
-                actions.target = currentTarget.target.transform;
+                pActions.target = currentTarget.target.transform;
             }
         }
     }
@@ -331,7 +320,7 @@ public class EnemyController : PersonController, IPersonWatching
     public virtual void Perception(string id, int argument)
     {
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(new Ray(sight.position, (int)stats.direction * sight.right), out hit, sightRadius,whatToSight))
+        if (Physics.Raycast(new Ray(sight.position, (int)direction.dir * sight.right), out hit, sightRadius,whatToSight))
         {
             for (int i = 0; i < enemies.Count; i++)
             {
@@ -339,7 +328,7 @@ public class EnemyController : PersonController, IPersonWatching
                 {
                     currentTarget = new TargetWithCondition(hit.collider.gameObject,"enemy");
                     mainTarget = currentTarget;
-                    actions.target = currentTarget.target.transform;
+                    pActions.target = currentTarget.target.transform;
                     break;
                 }
             }           
@@ -375,8 +364,8 @@ public class EnemyController : PersonController, IPersonWatching
     public virtual void Attack (string id, int argument)
     {
         k1++;
-        actions.SetHitData(id);
-        actions.Attack();
+        pActions.SetHitData(id);
+        pActions.Attack();
     }
     
     /// <summary>
@@ -386,9 +375,9 @@ public class EnemyController : PersonController, IPersonWatching
     {
         if (currentTarget!=null)
         {
-            if (actions != null)
+            if (pActions != null)
             {
-                actions.Pursue();
+                pActions.Pursue();
             }
         }
     }
@@ -398,9 +387,9 @@ public class EnemyController : PersonController, IPersonWatching
     /// </summary>
     public virtual void Stay(string id, int argument)
     {
-        if (actions != null)
+        if (pActions != null)
         {
-            actions.StopWalking();
+            pActions.StopWalking();
         }
     }
 
@@ -416,7 +405,7 @@ public class EnemyController : PersonController, IPersonWatching
             if (door.locker.opened)
             {
                 currentRoom = door.roomPath;
-                actions.GoThroughTheDoor(door);
+                pActions.GoThroughTheDoor(door);
             }
         }
         if (waypoints.Contains(currentTarget))
@@ -461,7 +450,7 @@ public class EnemyController : PersonController, IPersonWatching
     /// </summary>
     public override void Hitted()
     {
-        actions.Hitted();
+        pActions.Hitted();
     }
 
     /// <summary>
@@ -473,14 +462,14 @@ public class EnemyController : PersonController, IPersonWatching
         {
             death = true;
             WatchTheTarget("no", 0);
-            actions.Death();
+            pActions.Death();
             OnEnemyDie(new JournalEventArgs());
         }
     }
 
     #endregion //interface
 
-    #region condition
+    #region conditions
 
     /// <summary>
     /// Проверка на наличие у данного персонажа активной цели
@@ -552,7 +541,7 @@ public class EnemyController : PersonController, IPersonWatching
         if (currentTarget != null)
         {
             RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(new Ray(sight.position, (int)stats.direction * sight.right), out hit, sightRadius))
+            if (Physics.Raycast(new Ray(sight.position, (int)direction.dir * sight.right), out hit, sightRadius))
             {
                 if (hit.transform.gameObject==currentTarget.target)
                 {
@@ -613,9 +602,9 @@ public class EnemyController : PersonController, IPersonWatching
     /// </summary>
     protected override void DefinePrecipice()
     {
-        if (actions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (stats.groundness == groundnessEnum.grounded)))
+        if (pActions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (envStats.groundness == groundnessEnum.grounded)))
         {
-            actions.JumpIsPossible = DefineJumpPosibility(actions.maxSpeed * 1f, actions.jumpForce * 1f, stats.health);
+            pActions.JumpIsPossible = DefineJumpPosibility(pActions.RunSpeed * 1f, pActions.jumpForce * 1f, orgStats.health);
         }
     }
 
@@ -626,13 +615,14 @@ public class EnemyController : PersonController, IPersonWatching
     protected virtual bool DefineJumpPosibility(float v0x, float v0y, float hp)
     {
         Vector3 precPos = precipiceCheck.position;
+        int dir = (int)direction.dir;
         float hpCost = 0f;
         float delX = 1f;
-        float x = precPos.x+(int)stats.direction*delX;
-        float x1 = precPos.x + (int)stats.direction * delX;
+        float x = precPos.x+dir*delX;
+        float x1 = precPos.x + dir * delX;
         float vy = v0y;
         float y = 0f;
-        Vector2 extremum = new Vector2(precPos.x + (int)stats.direction * v0x * v0y / g, precPos.y + v0y * v0y / g);
+        Vector2 extremum = new Vector2(precPos.x + dir * v0x * v0y / g, precPos.y + v0y * v0y / g);
         while (hpCost < hp)
         {
             y = -1 * g / v0x / v0x * (x - extremum.x)* (x - extremum.x) + extremum.y;
@@ -644,10 +634,10 @@ public class EnemyController : PersonController, IPersonWatching
                     return true;
                 }
             }
-            x += (int)stats.direction * delX;
+            x += dir * delX;
             if (!(Physics.OverlapSphere(new Vector3(x1, y + height, precPos.z), precipiceRadius, whatIsGround).Length > 0))
             {
-                x1 += (int)stats.direction * delX;
+                x1 += dir * delX;
             }
             if (vy < -1f * minDmgFallSpeed)
             {
@@ -694,18 +684,24 @@ public class EnemyController : PersonController, IPersonWatching
 [CustomEditor(typeof(EnemyController))]
 public class EnemyEditor : Editor
 {
-    private Stats stats;
+    private Direction direction;
+    private OrganismStats orgStats;
+    private EnvironmentStats envStats;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         EnemyController obj = (EnemyController)target;
         EditorGUILayout.ObjectField(obj.GetTarget(), typeof(GameObject), true);
-        stats = (Stats)obj.GetStats();
+        direction = obj.GetDirection();
+        orgStats = obj.GetOrgStats();
+        envStats = obj.GetEnvStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", (int)stats.direction);
-        stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
-        EditorGUILayout.FloatField("Health", stats.health);
+        EditorGUILayout.EnumMaskField("direction", direction.dir);
+        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
+        EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

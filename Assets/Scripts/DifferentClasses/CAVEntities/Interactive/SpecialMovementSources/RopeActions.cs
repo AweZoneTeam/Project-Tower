@@ -27,12 +27,12 @@ public class RopeActions : InterObjActions
             if (interCheck != null)
             {
                 trans.localScale = new Vector3((trans.localScale.x < 0f ? -1 : 1) * trans.localScale.x, trans.localScale.y, trans.localScale.z);
-                interactor.GetStats().direction = orientationEnum.right;
+                interactor.GetDirection().dir = orientationEnum.right;
                 trans.position = new Vector3(transform.position.x - (interCheck.transform.position.x - pos.x)+offsetX, pos.y, pos.z);
                 if (interactor is PersonController)
                 {
                     PersonController person = (PersonController)interactor;
-                    Stats _stats = (Stats)person.GetStats();
+                    EnvironmentStats _stats = person.GetEnvStats();
                     _stats.interaction = interactionEnum.rope;
                 }
             }

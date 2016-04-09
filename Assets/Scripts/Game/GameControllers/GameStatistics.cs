@@ -55,6 +55,10 @@ public class GameStatistics : MonoBehaviour
         {
             SpFunctions.ChangeWindow("journal");
         }
+        else if (Input.GetButtonDown("Equipment"))
+        {
+            SpFunctions.ChangeWindow("equipment");
+        }
     }
 
     void Initialize()

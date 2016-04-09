@@ -11,13 +11,44 @@ public class OrganismEventArgs : EventArgs
     {
         hp = _hp;
     }
+
+    public OrganismEventArgs(float _maxHP, float _hp, DefenceClass _defence, float _velocity)
+    {
+        maxHP = _maxHP;
+        hp = _hp;
+        defence = _defence;
+        velocity = _velocity;
+    }
+
+    private float maxHP;
     private float hp;
+    private DefenceClass defence;
+    private float velocity;
 
     public float HP
     {
         get { return hp; }
         set { hp = value; }
     }
+
+    public float MAXHP
+    {
+        get { return maxHP; }
+        set { maxHP = value; }
+    }
+
+    public DefenceClass DEFENCE
+    {
+        get { return defence; }
+        set { defence = value; }
+    }
+
+    public float VELOCITY
+    {
+        get { return velocity; }
+        set { velocity = value; }
+    }
+
 }
 
 /// <summary>
@@ -63,6 +94,51 @@ public class ItemChangedEventArgs : EventArgs
     {
         get { return itemType; }
         set { itemType = value; }
+    }
+
+}
+
+/// <summary>
+/// Событийные данные о изменении числа ресурсов
+/// </summary>
+public class ResourceChangedEventArgs: EventArgs
+{
+    public ResourceChangedEventArgs(int _ironKey, int _silverKey, int _goldKey, int _gold)
+    {
+        ironKey = _ironKey;
+        silverKey = _silverKey;
+        goldKey = _goldKey;
+        gold = _gold;
+    }
+
+    public ResourceChangedEventArgs()
+    {
+    }
+
+    private int ironKey, silverKey, goldKey, gold;
+
+    public int IronKey
+    {
+        get { return ironKey; }
+        set { ironKey = value; }
+    }
+
+    public int SilverKey
+    {
+        get { return silverKey; }
+        set { silverKey = value; }
+    }
+
+    public int GoldKey
+    {
+        get { return goldKey; }
+        set { goldKey = value; }
+    }
+
+    public int Gold
+    {
+        get { return gold; }
+        set { gold = value; }
     }
 
 }

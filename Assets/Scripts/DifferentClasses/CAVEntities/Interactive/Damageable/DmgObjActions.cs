@@ -17,21 +17,21 @@ public class DmgObjActions : InterObjActions
 
     #region fields
 
-    private OrganismStats stats;
-    private DmgObjVisual visual;
+    protected OrganismStats orgStats;
+    protected DmgObjVisual dmgAnim;
 
     #endregion //fields
 
     public List<GameObject> dropList = new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
 
-    public override void Awake()
-    {
-        base.Awake();
-    }
-
     public override void Initialize()
     {
-        visual = GetComponentInChildren<DmgObjVisual>();
+        dmgAnim = GetComponentInChildren<DmgObjVisual>();
+    }
+
+    public void SetOrgStats(OrganismStats _orgStats)
+    {
+        orgStats = _orgStats;
     }
 
     #region interface
@@ -73,8 +73,4 @@ public class DmgObjActions : InterObjActions
     }
     #endregion //interface
 
-    public virtual void SetStats(OrganismStats _stats)
-    {
-        stats = _stats;
-    }
 }

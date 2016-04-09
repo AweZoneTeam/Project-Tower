@@ -7,7 +7,7 @@ using System;
 /// Класс, представляющий собой бафф, который навешивается на персонажа и творит с ним всё, что угодно
 /// </summary>
 [System.Serializable]
-public class BuffClass: ScriptableObject
+public class BuffClass : ScriptableObject
 {
 
     #region delegates
@@ -24,12 +24,12 @@ public class BuffClass: ScriptableObject
 
     #region fields
 
-    public List<ActionSign> actionList;
+    public List<ReactionSign> actionList = new List<ReactionSign>();
 
     public string buffName;
     public Sprite buffImage;
     public float buffTime = 0f;//Сколько времени длится бафф. Если 0, то сколько угодно.
-    
+
     public BuffTypeEnum buffType;
 
     private BuffsList buffList;//Ссылка на список бафов, в который данный бафф находится
@@ -60,10 +60,23 @@ public class BuffClass: ScriptableObject
     void Initialize()
     {
         Dictionary<string, BuffAction> actionBase = new Dictionary<string, BuffAction>();
+        Dictionary<string, BuffAction> contrActionBase = new Dictionary<string, BuffAction>();
 
+        actionBase.Add("addStats",AddStats);
         actionBase.Add("poison", Poison);
 
-        foreach (ActionSign aSign in actionList)
+        contrActionBase.Add("addStats", RemoveStats);
+
+        foreach (ReactionSign aSign in actionList)
+        {
+            if (contrActionBase.ContainsKey(aSign.actionName))
+            {
+                string s = aSign.actionName;
+                aSign.reAction = contrActionBase[s].Invoke;
+            }
+        }
+
+        foreach (ReactionSign aSign in actionList)
         {
             if (actionBase.ContainsKey(aSign.actionName))
             {
@@ -83,12 +96,15 @@ public class BuffClass: ScriptableObject
 
     IEnumerator BuffProcess()
     {
-        foreach (ActionSign act in actionList)
+        foreach (ReactionSign act in actionList)
         {
-            act.aiAction(act.id, act.argument); 
+            act.aiAction(act.id, act.argument);
         }
         yield return new WaitForSeconds(buffTime);
-        buffList.RemoveBuff(this);
+        if (buffTime != 0)
+        {
+            buffList.RemoveBuff(this);
+        }
     }
 
     /// <summary>
@@ -96,10 +112,78 @@ public class BuffClass: ScriptableObject
     /// </summary>
     public virtual void Deactivate()
     {
+        foreach (ReactionSign act in actionList)
+        {
+            act.reAction(act.id, act.argument);
+        }
     }
 
     #region interface
 
+    /// <summary>
+    /// Увеличить статы персонажу
+    /// </summary>
+    public void AddStats(string id, int argument)
+    {
+        OrganismStats orgStats = buffList.OrgStats;
+        if (string.Equals(id, "physicDefence"))
+        {
+            orgStats.defence.pDefence += argument;
+        }
+        else if (string.Equals(id, "fireDefence"))
+        {
+            orgStats.defence.fDefence += argument;
+        }
+        else if (string.Equals(id, "acidDefence"))
+        {
+            orgStats.defence.aDefence += argument;
+        }
+        else if (string.Equals(id, "darknessDefence"))
+        {
+            orgStats.defence.dDefence += argument;
+        }
+        else if (string.Equals(id, "stability"))
+        {
+            orgStats.defence.stability += argument;
+        }
+        else if (string.Equals(id, "velocity"))
+        {
+            orgStats.velocity += argument/10f;
+        }
+
+    }
+    /// <summary>
+    /// Уменьшить статы персонажу
+    /// </summary>
+    public void RemoveStats(string id, int argument)
+    {
+        OrganismStats orgStats = buffList.OrgStats;
+        if (string.Equals(id, "physicDefence"))
+        {
+            orgStats.defence.pDefence -= argument;
+        }
+        else if (string.Equals(id, "fireDefence"))
+        {
+            orgStats.defence.fDefence -= argument;
+        }
+        else if (string.Equals(id, "acidDefence"))
+        {
+            orgStats.defence.aDefence -= argument;
+        }
+        else if (string.Equals(id, "darknessDefence"))
+        {
+            orgStats.defence.dDefence -= argument;
+        }
+        else if (string.Equals(id, "stability"))
+        {
+            orgStats.defence.stability -= argument;
+        }
+        else if (string.Equals(id, "velocity"))
+        {
+            orgStats.velocity -= argument / 10f;
+        }
+
+    }
     /// <summary>
     /// Отравить
     /// </summary>
@@ -114,7 +198,7 @@ public class BuffClass: ScriptableObject
     /// </summary>
     IEnumerator PoisonProcess(float dmg, BuffClass _buff, BuffsList _buffList)
     {
-        OrganismStats stats = _buffList.OrgStats;   
+        OrganismStats orgStats = _buffList.OrgStats;   
         for (float i = 0f; i < buffTime; i += 1f)
         {
             if (this == null)
@@ -126,8 +210,8 @@ public class BuffClass: ScriptableObject
                 break;
             }
             yield return new WaitForSeconds(1f);
-            stats.health -= (100 - stats.aDefence) / 100f * dmg;
-            stats.OnHealthChanged(new OrganismEventArgs(0f));
+            orgStats.health -= (100 - orgStats.defence.aDefence) / 100f * dmg;
+            orgStats.OnHealthChanged(new OrganismEventArgs(0f));
         }
     }
 

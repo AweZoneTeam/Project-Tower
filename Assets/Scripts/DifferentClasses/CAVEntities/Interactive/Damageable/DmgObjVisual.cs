@@ -11,6 +11,9 @@ public class DmgObjVisual : InterObjVisual
     #endregion //timers
 
     #region fields
+
+    protected OrganismStats orgStats;
+
     #endregion //fields
 
     #region parametres
@@ -30,6 +33,14 @@ public class DmgObjVisual : InterObjVisual
     }
 
     #region AnimatedActionsInterface
+
+    /// <summary>
+    /// Вызвать процесс получения урона
+    /// </summary>
+    public virtual void Injured()
+    {
+
+    }
 
     /// <summary>
     /// Вызвать процесс разрушения
@@ -52,8 +63,8 @@ public class DmgObjVisual : InterObjVisual
 
     #endregion //AnimatedActionsInterface
 
-    public virtual void SetStats(OrganismStats _stats)
+    public void SetOrgStats(OrganismStats _orgStats)
     {
-        
+        orgStats = _orgStats;    
     }
 }

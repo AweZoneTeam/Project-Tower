@@ -21,7 +21,7 @@ public class SkeletonVisual : EnemyVisual
     #endregion //parametres
 
     #region fields
-    private Stats stats;
+    private EnvironmentStats stats;
     //private Rigidbody rigid;
     #endregion //fields
 

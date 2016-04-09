@@ -27,6 +27,8 @@ public class PersonVisual : DmgObjVisual
     protected Dictionary<string, Timer> timers = new Dictionary<string, Timer>();
     protected List<string> timerNames = new List<string>();
 
+    protected EnvironmentStats envStats;
+
     #endregion //fields
 
     public override void Awake()
@@ -37,6 +39,11 @@ public class PersonVisual : DmgObjVisual
     public override void Initialize()
     {
         employment = maxEmployment;
+    }
+
+    public void SetEnvStats(EnvironmentStats _envStats)
+    {
+        envStats = _envStats;
     }
 
     /// <summary>
@@ -222,6 +229,9 @@ public class PersonVisual : DmgObjVisual
         }
     }
 
+    /// <summary>
+    /// Проверка, не является ли запрашиваемая анимация запрещённой
+    /// </summary>
     protected bool NotAbandonedAnim(params string[] abandonedAnims)
     {
         bool k = true;

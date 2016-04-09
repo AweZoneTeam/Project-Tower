@@ -117,6 +117,7 @@ public class AddPartWindow : EditorWindow
 		AssetDatabase.CreateAsset (asset, partPath + partName + ".asset");
 		PartController cPart = part.AddComponent<PartController> ();
         cPart.partType = partType;
+        cPart.childParts = new List<PartController>();
 		cPart.interp=new AnimationInterpretator(asset.partPath);
 		cPart.mov = partMov.GetComponent<GAF.Core.GAFMovieClip> ();
         cPart.interp = new AnimationInterpretator(asset);

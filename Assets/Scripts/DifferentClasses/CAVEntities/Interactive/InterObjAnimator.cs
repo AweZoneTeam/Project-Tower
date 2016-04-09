@@ -25,7 +25,7 @@ public class InterObjAnimator : MonoBehaviour
                                                                       //Нужен для удобного написания скриптов.
     //public bool play = false, stop = true;//два весёлых була, обеспечивающие проигрывание анимации непосредственно в самом редакторе.
 
-    private Prestats prestats;//Параметры персонажа
+    private Direction direction;//Параметры персонажа
 
     #endregion //fields
 
@@ -228,9 +228,9 @@ public class InterObjAnimator : MonoBehaviour
     /// Задать поле статов
     /// </summary>
     /// <param name="задаваемые параметры"></param>
-    public void SetStats(Prestats _stats)
+    public void SetStats(Direction _direction)
     {
-        prestats = _stats;
+        direction = _direction;
     }
 
 }

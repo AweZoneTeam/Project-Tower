@@ -5,7 +5,7 @@ public class InterObjVisual : MonoBehaviour
 {
 
     #region fields
-    private Prestats stats;
+    protected Direction direction;
     protected InterObjAnimator iAnim;//Все простые объекты имеют простейшую версию аниматора
     #endregion fields
 
@@ -19,8 +19,8 @@ public class InterObjVisual : MonoBehaviour
         Initialize();
     }
 
-    public virtual void SetStats(Prestats _stats)
+    public virtual void SetDirection(Direction _direction)
     {
-        stats = _stats; 
+        direction = _direction; 
     }
 }

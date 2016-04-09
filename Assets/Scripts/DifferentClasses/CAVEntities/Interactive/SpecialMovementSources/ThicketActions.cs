@@ -36,11 +36,11 @@ public class ThicketActions : InterObjActions
                 if (Physics.OverlapSphere(interCheck.position, radius, LayerMask.GetMask("thicket")).Length > 0)
                 {
                     trans.localScale = new Vector3((trans.localScale.x < 0f ? -1 : 1) * trans.localScale.x, trans.localScale.y, trans.localScale.z);
-                    interactor.GetStats().direction = orientationEnum.right;
+                    interactor.GetDirection().dir = orientationEnum.right;
                     if (interactor is PersonController)
                     {
                         PersonController person = (PersonController)interactor;
-                        Stats _stats = (Stats)person.GetStats();
+                        EnvironmentStats _stats = person.GetEnvStats();
                         _stats.interaction = interactionEnum.thicket;
                     }
                 }

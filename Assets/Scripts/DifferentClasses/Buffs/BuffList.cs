@@ -79,13 +79,16 @@ public class BuffsList : List<BuffClass>
     /// </summary>
     public void RemoveBuff(BuffClass _buff)
     {
-        if (this.Contains(_buff))
+        foreach (BuffClass buff in this)
         {
-            this.Remove(_buff);
+            if (string.Equals(buff.buffName, _buff.buffName))
+            {
+                this.Remove(buff);
+                buff.Deactivate();
+                OnBuffsChanged(new BuffsChangedEventArgs(buff));
+                break;
+            }
         }
-        _buff.Deactivate();
-
-        OnBuffsChanged(new BuffsChangedEventArgs(_buff));
     }
 
     #region events

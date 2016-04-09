@@ -18,13 +18,13 @@ public class LedgeActions : InterObjActions
                 Vector3 pos = trans.position;
                 if (pos.y < transform.position.y)
                 {
-                    interactor.GetStats().direction = orientationEnum.right;
+                    interactor.GetDirection().dir = orientationEnum.right;
                     trans.localScale = new Vector3((trans.localScale.x < 0f ? -1 : 1) * trans.localScale.x, trans.localScale.y, trans.localScale.z);
                     trans.position = new Vector3(pos.x, transform.position.y - (interCheck.transform.position.y - pos.y), pos.z);
                     if (interactor is PersonController)
                     {
                         PersonController person = (PersonController)interactor;
-                        Stats _stats = (Stats)person.GetStats();
+                        EnvironmentStats _stats = person.GetEnvStats();
                         _stats.interaction = interactionEnum.ledge;
                     }
                 }

@@ -124,6 +124,29 @@ public class ConditionSign
 }
 
 /// <summary>
+/// Класс, что представляет собой ссылку на вызываемую функцию и аргументы этой функции 
+/// </summary>
+[System.Serializable]
+public class ReactionSign
+{
+    public string actionName;//Имя вызываемой функции
+    public delegate void AIAction(string id, int argument);
+    public AIAction aiAction;//ссылка на функцию
+    public AIAction reAction;//Ссылка на контрфункцию
+    public string id;//Строковый аргумент
+    public int argument;//Численный аргумент
+
+    public ReactionSign(ActionSign original)
+    {
+        actionName = original.actionName;
+        aiAction = null;
+        reAction = null;
+        id = original.id;
+        argument = original.argument;
+    }
+}
+
+/// <summary>
 /// Класс, что используется при загрузке моделей поведения в персонажа с ИИ
 /// </summary>
 [System.Serializable]

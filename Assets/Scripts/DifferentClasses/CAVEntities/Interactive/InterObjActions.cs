@@ -8,15 +8,10 @@ public class InterObjActions : MonoBehaviour
 {
 
     #region fields
-    private Prestats stats;
+    protected Direction direction;
     private InterObjVisual anim;
     protected InterObjController interactor;
     #endregion //fields
-
-    public virtual void Awake()
-    {
-        Initialize();
-    }
 
     public virtual void Initialize()
     {
@@ -24,9 +19,13 @@ public class InterObjActions : MonoBehaviour
     }
 
 
-    public virtual void SetStats(Prestats _stats)
+    /// <summary>
+    /// Установить ориентацию
+    /// </summary>
+    /// <param name="_direction"></param>
+    public void SetDirection(Direction _direction)
     {
-        stats = _stats;
+        direction = _direction;
     }
 
     #region Interface

@@ -30,8 +30,6 @@ public class HumanoidActorActions : PersonActions
 
     #region parametres
 
-    public float crouchingSpeed = 25f;
-
     public float flipForce = 2000f;
 
 	public bool touchingGround;
@@ -40,17 +38,14 @@ public class HumanoidActorActions : PersonActions
     #endregion //parametres
 
     #region fields
-    private Stats stats;//Параметры персонажа
 
     public BoxCollider upperBody, lowerBody;//2 коллайдера, отвечающих за 2 половины тела персонажа
 
     protected Transform aboveWallCheck, lowWallCheck, frontWallCheck, highWallCheck;
 
-    private WeaponClass mainWeapon;//Какое оружие персонаж носит в правой руке
+    private WeaponClass mainWeapon, secondaryWeapon;//Какое оружие персонаж носит в правой руке
 
     protected CameraController cam = null;
-
-    public int k1=0;
 
     #endregion //fields
 
@@ -62,23 +57,15 @@ public class HumanoidActorActions : PersonActions
 		touchingGround = false;
 	}
 
-    /// <summary>
-    /// Инициализация полей и переменных
-    /// </summary>
-    public override void Awake ()
-    {
-        base.Awake();
-	}
-
     public void Update() {
 
         if (!death)
         {
             #region UsualActions
 
-            if (stats.interaction == interactionEnum.noInter)
+            if (envStats.interaction == interactionEnum.noInter)
             {
-                if (stats.groundness == groundnessEnum.crouch)
+                if (envStats.groundness == groundnessEnum.crouch)
                 {
                     upperBody.isTrigger = true;
                 }
@@ -91,14 +78,14 @@ public class HumanoidActorActions : PersonActions
                     if (movingDirection == orientationEnum.left)
                     {
                         rigid.velocity = new Vector3(-currentMaxSpeed, rigid.velocity.y, rigid.velocity.z);
-                        stats.direction = orientationEnum.left;
+                        direction.dir = orientationEnum.left;
                     }
                     else
                     {
                         rigid.velocity = new Vector3(currentMaxSpeed, rigid.velocity.y, rigid.velocity.z);
-                        stats.direction = orientationEnum.right;
+                        direction.dir = orientationEnum.right;
                     }
-                    if ((stats.groundness == groundnessEnum.grounded) && (cAnim != null))
+                    if ((envStats.groundness == groundnessEnum.grounded) && (cAnim != null))
                     {
                         if (currentMaxSpeed == fastRunSpeed)
                         {
@@ -112,11 +99,11 @@ public class HumanoidActorActions : PersonActions
                 }
                 else
                 {
-                    if ((stats.groundness == groundnessEnum.grounded) && (rigid.velocity.x != 0))
+                    if ((envStats.groundness == groundnessEnum.grounded) && (rigid.velocity.x != 0))
                     {
                         rigid.drag = 0.1f;
                     }
-                    if ((stats.groundness == groundnessEnum.grounded) && (cAnim != null))
+                    if ((envStats.groundness == groundnessEnum.grounded) && (cAnim != null))
                     {
                         if (precipiceIsForward)
                         {
@@ -130,11 +117,11 @@ public class HumanoidActorActions : PersonActions
                 }
                 if (cAnim != null)
                 {
-                    if (stats.groundness == groundnessEnum.inAir)
+                    if (envStats.groundness == groundnessEnum.inAir)
                     {
                         cAnim.AirMove();
                     }
-                    if (stats.groundness == groundnessEnum.crouch)
+                    if (envStats.groundness == groundnessEnum.crouch)
                     {
                         cAnim.CrouchMove();
                     }
@@ -144,7 +131,7 @@ public class HumanoidActorActions : PersonActions
 
             #region EdgeActions
 
-            else if (stats.interaction == interactionEnum.edge)
+            else if (envStats.interaction == interactionEnum.edge)
             {
                 cAnim.Hanging(0f);
             }
@@ -152,7 +139,7 @@ public class HumanoidActorActions : PersonActions
             #endregion //EdgeActions
 
             #region SpecialMovement
-            else if (stats.interaction != interactionEnum.interactive)
+            else if (envStats.interaction != interactionEnum.interactive)
             {
 
                 #region DefineMovement
@@ -161,7 +148,7 @@ public class HumanoidActorActions : PersonActions
                 {
                     return;
                 }
-                if (stats.interaction == interactionEnum.thicket)
+                if (envStats.interaction == interactionEnum.thicket)
                 {
                     SetMaxSpeed(thicketSpeed);
                     if (cAnim != null)
@@ -169,7 +156,7 @@ public class HumanoidActorActions : PersonActions
                         cAnim.ThicketMove();
                     }
                 }
-                else if (stats.interaction == interactionEnum.stair)
+                else if (envStats.interaction == interactionEnum.stair)
                 {
                     SetMaxSpeed(stairSpeed);
                     if (cAnim != null)
@@ -177,7 +164,7 @@ public class HumanoidActorActions : PersonActions
                         cAnim.StairMove();
                     }
                 }
-                else if (stats.interaction == interactionEnum.rope)
+                else if (envStats.interaction == interactionEnum.rope)
                 {
                     SetMaxSpeed(ropeSpeed);
                     if (cAnim != null)
@@ -222,7 +209,7 @@ public class HumanoidActorActions : PersonActions
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
         hitData = null;
-        currentMaxSpeed = maxSpeed;
+        currentMaxSpeed = runSpeed;
         BoxCollider[] cols = gameObject.GetComponents<BoxCollider>();
         lowerBody = cols[0];
         upperBody = cols[1];
@@ -279,11 +266,11 @@ public class HumanoidActorActions : PersonActions
         {
             return;
         }
-        if (stats.groundness == groundnessEnum.grounded)
+        if (envStats.groundness == groundnessEnum.grounded)
         {
             rigid.velocity = new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y + jumpForce, Mathf.NegativeInfinity, jumpForce), rigid.velocity.z);
         }
-        else if (stats.groundness == groundnessEnum.crouch)
+        else if (envStats.groundness == groundnessEnum.crouch)
         {
             JumpDown();
         }
@@ -308,18 +295,18 @@ public class HumanoidActorActions : PersonActions
         }
         if (yes)
         {
-            stats.groundness = groundnessEnum.crouch;
-            SetMaxSpeed(crouchingSpeed);
+            envStats.groundness = groundnessEnum.crouch;
+            SetMaxSpeed(crouchSpeed);
             highWallCheck.localPosition = new Vector3(highWallCheck.localPosition.x, highWallPosition2, highWallCheck.localPosition.z);
             frontWallCheck.localPosition = new Vector3(frontWallCheck.localPosition.x, frontWallPosition2, frontWallCheck.localPosition.z);
         }
         else
         {
-            if (stats.groundness == groundnessEnum.crouch)
+            if (envStats.groundness == groundnessEnum.crouch)
             {
                 highWallCheck.localPosition = new Vector3(highWallCheck.localPosition.x, highWallPosition1, highWallCheck.localPosition.z);
                 frontWallCheck.localPosition = new Vector3(frontWallCheck.localPosition.x, frontWallPosition1, frontWallCheck.localPosition.z);
-                stats.groundness = groundnessEnum.grounded;
+                envStats.groundness = groundnessEnum.grounded;
             }
         }
     }
@@ -334,7 +321,7 @@ public class HumanoidActorActions : PersonActions
             return;
         }
         moving = false;
-        stats.groundness = groundnessEnum.crouch;
+        envStats.groundness = groundnessEnum.crouch;
         rigid.velocity = new Vector3(flipForce * (int)movingDirection, rigid.velocity.y, rigid.velocity.z);
         if (cAnim != null)
         {
@@ -393,7 +380,7 @@ public class HumanoidActorActions : PersonActions
         if (height == 0f)
         {
             rigid.useGravity = true;
-            rigid.velocity = new Vector3((int)stats.direction * lowObstacleSpeed / 2, 5f, rigid.velocity.z);
+            rigid.velocity = new Vector3((int)direction.dir * lowObstacleSpeed / 2, 5f, rigid.velocity.z);
         }
     }
 
@@ -417,7 +404,7 @@ public class HumanoidActorActions : PersonActions
         }
         if (height==0f)
         {
-            rigid.velocity= new Vector3((int)stats.direction*highObstacleSpeed/2, 5f, rigid.velocity.z);
+            rigid.velocity= new Vector3((int)direction.dir * highObstacleSpeed/2, 5f, rigid.velocity.z);
             rigid.useGravity = true;
         }
     }
@@ -435,8 +422,8 @@ public class HumanoidActorActions : PersonActions
         else
         {
             rigid.useGravity = true;
-            stats.interaction = interactionEnum.noInter;
-            SetMaxSpeed(maxSpeed);
+            envStats.interaction = interactionEnum.noInter;
+            SetMaxSpeed(runSpeed);
             moving = false;
         }
     }
@@ -501,7 +488,7 @@ public class HumanoidActorActions : PersonActions
         } 
         if ((hitData == null)&&(mainWeapon!=null))
         {
-            if (stats.groundness == groundnessEnum.grounded)
+            if (envStats.groundness == groundnessEnum.grounded)
             {
                 hitData = mainWeapon.GetHit("groundHit");
                 if ((cAnim != null)&&(hitData!=null))
@@ -510,7 +497,7 @@ public class HumanoidActorActions : PersonActions
                 }
                 StartCoroutine(AttackProcess(6)); 
             }
-            else if (stats.groundness == groundnessEnum.inAir)
+            else if (envStats.groundness == groundnessEnum.inAir)
             {
                 hitData = mainWeapon.GetHit("airHit");
                 if ((cAnim != null)&&(hitData!=null))
@@ -558,17 +545,29 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Задать поле статов
     /// </summary>
-    public override void SetStats(Stats _stats)
+    public override void SetStats(EnvironmentStats _stats)
     {
-        stats = _stats;
+        envStats = _stats;
     }
 
     /// <summary>
-    /// Установить в правой руке нужное оружие
+    /// Установить нужное оружие
     /// </summary>
-    public override void SetWeapon(WeaponClass _weapon)
+    public override void SetWeapon(WeaponClass _weapon, string weaponType)
     {
-        mainWeapon = _weapon;
+        if (string.Equals("Main", weaponType))
+        {
+            mainWeapon = _weapon;
+        }
+        else if (string.Equals("Secondary", weaponType))
+        {
+            secondaryWeapon = _weapon;
+        }
+        else if (string.Equals("TwoHanded", weaponType))
+        {
+            mainWeapon = _weapon;
+            secondaryWeapon = _weapon;
+        }
     }
 }
 

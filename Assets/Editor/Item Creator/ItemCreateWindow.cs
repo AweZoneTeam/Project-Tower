@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 
 /// <summary>
@@ -7,11 +8,26 @@ using UnityEditor;
 /// </summary>
 public class ItemCreateWindow : EditorWindow
 {
-    public string itemName = "New Item";
+    protected string itemName = "New Item";
+    protected int partsNumb = 0;
+    protected float x = 0f, y = 0f, z = 0f;
 
-    void OnGUI()
+    protected virtual void OnGUI()
     {
         itemName = EditorGUILayout.TextField(itemName);
+        EditorGUILayout.BeginHorizontal();
+        {
+            EditorGUILayout.TextField("Parts Number");
+            partsNumb = EditorGUILayout.IntField(partsNumb);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        {
+            x = EditorGUILayout.FloatField(x);
+            y = EditorGUILayout.FloatField(y);
+            z = EditorGUILayout.FloatField(z);
+        }
+        EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Create New"))
         {
             CreateNewItem();
@@ -19,14 +35,24 @@ public class ItemCreateWindow : EditorWindow
     }
 
     //Создаём новый предмет.
-    private void CreateNewItem()
+    protected virtual void CreateNewItem()
+    {
+        Initialize();
+        AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+    }
+
+    protected virtual void Initialize()
     {
         ItemClass asset = ScriptableObject.CreateInstance<ItemClass>();
         asset.itemName = itemName;
         asset.type = "item";
-        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/" + itemName  + ".asset");
-        AssetDatabase.SaveAssets();
-        EditorUtility.FocusProjectWindow();
+        asset.itemVisuals = new List<ItemVisual>();
+        for (int i = 0; i < partsNumb; i++)
+        {
+            asset.itemVisuals.Add(new ItemVisual(new Vector3(x, y, z)));
+        }
+        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/" + itemName + ".asset");
         Selection.activeObject = asset;
     }
 }
@@ -34,57 +60,91 @@ public class ItemCreateWindow : EditorWindow
 /// <summary>
 /// Окно создания новой базы данных по оружию
 /// </summary>
-public class WeaponCreateWindow : EditorWindow
+public class WeaponCreateWindow : ItemCreateWindow
 {
-    public string weaponName = "New Weapon";
+    protected string weaponType = "sword";
 
-    void OnGUI()
+    protected override void OnGUI()
     {
-        weaponName = EditorGUILayout.TextField(weaponName);
-        if (GUILayout.Button("Create New"))
-        {
-            CreateNewWeapon();
-        }
+        base.OnGUI();
+        weaponType = EditorGUILayout.TextField(weaponType);
     }
 
-    //Создаём новое оружие.
-    private void CreateNewWeapon()
+    protected override void Initialize()
     {
         WeaponClass asset = ScriptableObject.CreateInstance<WeaponClass>();
-        asset.itemName = weaponName;
+        asset.itemName = itemName;
         asset.type = "weapon";
-        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/Weapons/" + weaponName + ".asset");
-        AssetDatabase.SaveAssets();
-        EditorUtility.FocusProjectWindow();
+        asset.itemVisuals = new List<ItemVisual>();
+        for (int i = 0; i < partsNumb; i++)
+        {
+            asset.itemVisuals.Add(new ItemVisual(new Vector3(x, y, z)));
+        }
+        WeaponClass weapon = (WeaponClass)asset;
+        weapon.weaponType = weaponType;
+        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/Weapons/" + itemName + ".asset");
         Selection.activeObject = asset;
+    }
+}
+
+/// <summary>
+/// Окно создания новой базы данных по доспехам
+/// </summary>
+public class ArmorCreateWindow : ItemCreateWindow
+{
+    public string armorType = "helmet";
+
+
+    protected override void OnGUI()
+    {
+        base.OnGUI();
+        armorType = EditorGUILayout.TextField(armorType);
+    }
+
+    protected override void Initialize()
+    {
+        ArmorClass asset = ScriptableObject.CreateInstance<ArmorClass>();
+        asset.itemName = itemName;
+        asset.type = "armor";
+        ArmorClass armor = (ArmorClass)asset;
+        armor.armorType = armorType;
+        armor.itemVisuals = new List<ItemVisual>();
+        for (int i = 0; i < partsNumb; i++)
+        {
+            armor.itemVisuals.Add(new ItemVisual(new Vector3(x, y, z)));
+        }
+        AssetDatabase.CreateAsset(asset, "Assets/Database/Items/Armor/" + itemName + ".asset");
+        AssetDatabase.SaveAssets();
     }
 }
 
 /// <summary>
 /// Окно создания новой базы данных по одноразовому используемому предмет
 /// </summary>
-public class UseItemCreateWindow : EditorWindow
+public class UseItemCreateWindow : ItemCreateWindow
 {
-    public string itemName = "New Item";
+    public string useItemType = "potion";
 
-    void OnGUI()
+    protected override void OnGUI()
     {
-        itemName = EditorGUILayout.TextField(itemName);
-        if (GUILayout.Button("Create New"))
-        {
-            CreateNewItem();
-        }
+        base.OnGUI();
+        useItemType = EditorGUILayout.TextField(useItemType);
     }
 
-    //Создаём новое оружие.
-    private void CreateNewItem()
+    //Создаём новый юзабельный предмет.
+    protected override void CreateNewItem()
     {
         UsableItemClass asset = ScriptableObject.CreateInstance<UsableItemClass>();
         asset.itemName = itemName;
+        asset.itemVisuals = new List<ItemVisual>();
+        for (int i = 0; i < partsNumb; i++)
+        {
+            asset.itemVisuals.Add(new ItemVisual(new Vector3(x, y, z)));
+        }
         asset.type = "usable";
+        UsableItemClass useItem = (UsableItemClass)asset;
+        useItem.useItemType = useItemType;
         AssetDatabase.CreateAsset(asset, "Assets/Database/Items/UsableItems/" + itemName + ".asset");
-        AssetDatabase.SaveAssets();
-        EditorUtility.FocusProjectWindow();
         Selection.activeObject = asset;
     }
 }

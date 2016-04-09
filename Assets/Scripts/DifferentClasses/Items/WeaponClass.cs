@@ -8,6 +8,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class WeaponClass : ItemClass
 {
+
+    public string weaponType;
+
     public List<HitClass> hitData = new List<HitClass>();
 
     public HitClass GetHit(string hitName)

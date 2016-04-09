@@ -46,8 +46,11 @@ public class PersonController : DmgObjController, IPersonWatching
     
     #region fields
     /*private*/
-    protected Stats stats;
+    protected EnvironmentStats envStats;
+    [SerializeField]
+    protected BagClass bag;
     protected BuffsList bList;//Список баффов, навешанных на персонажа.
+
     public BuffsList buffList
     {
         get { return bList; }
@@ -55,8 +58,9 @@ public class PersonController : DmgObjController, IPersonWatching
     }
 
     protected Rigidbody rigid;
-    [SerializeField]protected EquipmentClass equip;//Экипировка персонажа
-    protected PersonActions actions;
+
+    protected PersonActions pActions;
+    protected PersonVisual cAnim;
    
     #endregion //fields
 
@@ -83,7 +87,45 @@ public class PersonController : DmgObjController, IPersonWatching
         precipiceCheck = transform.FindChild("Indicators").FindChild("PrecipiceCheck");
         sight= transform.FindChild("Indicators").FindChild("Sight");
         bList = new BuffsList(this);
-        bList.OrgStats = stats;
+        rigid = GetComponent<Rigidbody>();
+        if (direction == null)
+        {
+            direction = new Direction();
+        }
+        if (orgStats == null)
+        {
+            orgStats = new OrganismStats();
+        }
+        if (envStats == null)
+        {
+            envStats = new EnvironmentStats();
+        }
+        bList.OrgStats = orgStats;
+        pActions = GetComponent<PersonActions>();
+        if (pActions != null)
+        {
+            SetAction();
+        }
+        cAnim = GetComponentInChildren<PersonVisual>();
+        if (cAnim != null)
+        {
+            SetVisual();
+        }
+    }
+
+    protected override void SetAction()
+    {
+        pActions.Initialize();
+        pActions.SetDirection(direction);
+        pActions.SetOrgStats(orgStats);
+        pActions.SetEnvStats(envStats);
+    }
+
+    protected override void SetVisual()
+    {
+        cAnim.SetDirection(direction);
+        cAnim.SetOrgStats(orgStats);
+        cAnim.SetEnvStats(envStats);
     }
 
     public virtual AreaClass GetRoomPosition()
@@ -96,18 +138,18 @@ public class PersonController : DmgObjController, IPersonWatching
         currentRoom = _room;
     }
 
-    public virtual EquipmentClass GetEquipment()
+    public virtual BagClass GetEquipment()
     {
-        return equip;
+        return bag;
     }
 
-    public override Prestats GetStats()
+    public EnvironmentStats GetEnvStats()
     {
-        if (stats == null)
+        if (envStats == null)
         {
-            stats = new Stats();
+            envStats = new EnvironmentStats();
         }
-        return stats;
+        return envStats;
     }
 
     /// <summary>
@@ -165,18 +207,18 @@ public class PersonController : DmgObjController, IPersonWatching
     {
         if (Physics.OverlapSphere(groundCheck.position,groundRadius,whatIsGround).Length>0)
         {
-            if (stats.groundness!=groundnessEnum.crouch)
+            if (envStats.groundness!=groundnessEnum.crouch)
             {
-                stats.groundness = groundnessEnum.grounded;
+                envStats.groundness = groundnessEnum.grounded;
             }
         }
         else if (Physics.OverlapSphere(groundCheck.position, groundRadius, whatIsGround).Length > 0)
         {
-            stats.groundness = groundnessEnum.preGround;
+            envStats.groundness = groundnessEnum.preGround;
         }
         else
         {
-            stats.groundness = groundnessEnum.inAir;
+            envStats.groundness = groundnessEnum.inAir;
         }
     }
 
@@ -187,18 +229,18 @@ public class PersonController : DmgObjController, IPersonWatching
     {
         if (rigid != null)
         {
-            if ((rigid.velocity.y < -1f * minDmgFallSpeed)&&(stats.groundness==groundnessEnum.inAir))
+            if ((rigid.velocity.y < -1f * minDmgFallSpeed)&&(envStats.groundness==groundnessEnum.inAir))
             {
                 fallDamage = dmgPerSpeed * Mathf.Abs(rigid.velocity.y + minDmgFallSpeed);
             }
-            else if (stats.groundness==groundnessEnum.inAir)
+            else if (envStats.groundness==groundnessEnum.inAir)
             {
                 fallDamage = 0f;
             }
-            if ((fallDamage > 0f) && ((int)stats.groundness < 4))
+            if ((fallDamage > 0f) && ((int)envStats.groundness < 4))
             {
-                stats.health -= fallDamage;
-                stats.OnHealthChanged(new OrganismEventArgs(0f));
+                orgStats.health -= fallDamage;
+                orgStats.OnHealthChanged(new OrganismEventArgs(0f));
                 fallDamage = 0f;
             }
         }
@@ -209,7 +251,7 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     protected virtual void DefinePrecipice()
     {
-        actions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (stats.groundness == groundnessEnum.grounded));
+        pActions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (envStats.groundness == groundnessEnum.grounded));
     }
 
     /// <summary>
@@ -260,17 +302,22 @@ public class PersonController : DmgObjController, IPersonWatching
 [CustomEditor(typeof(PersonController))]
 public class PersonEditor : DmgObjEditor
 {
-    private Stats stats;
+    private Direction direction;
+    private OrganismStats orgStats;
+    private EnvironmentStats envStats;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         PersonController obj = (PersonController)target;
-        stats = (Stats)obj.GetStats();
+        direction = obj.GetDirection();
+        orgStats = obj.GetOrgStats();
+        envStats = obj.GetEnvStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", (int)stats.direction);
-        stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
-        EditorGUILayout.FloatField("Health", stats.health);
+        EditorGUILayout.EnumMaskField("direction", direction.dir);
+        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

@@ -20,6 +20,7 @@ public class InterfaceController : MonoBehaviour
     private MenuWindow menu;
     private Settings settings;
     public JournalWindow journal;
+    private EquipmentWindow equipment;
     private GameObject allWindows;
     private GameObject cam;
 
@@ -50,6 +51,10 @@ public class InterfaceController : MonoBehaviour
         if (allWindows.GetComponentInChildren<JournalWindow>() != null)
         {
             journal = allWindows.GetComponentInChildren<JournalWindow>();
+        }
+        if (allWindows.GetComponentInChildren<EquipmentWindow>() != null)
+        {
+            equipment = allWindows.GetComponentInChildren<EquipmentWindow>();
         }
         exchWindow.gameObject.GetComponent<Canvas>().enabled=false;
     }
@@ -101,6 +106,10 @@ public class InterfaceController : MonoBehaviour
         else if (string.Equals("journal", windowName))
         {
             activeWindow = journal.GetComponent<Canvas>();
+        }
+        else if (string.Equals("equipment", windowName))
+        {
+            activeWindow = equipment.GetComponent<Canvas>();
         }
         activeWindow.enabled = true;
     }

@@ -36,11 +36,17 @@ public class KeyboardActorController : PersonController
     public int fastRunInputCount = 0;
     protected float fastRunInputTimer = 0f;
 
+    protected List<string> dependedPartTypes = new List<string> { "Sword", "Shield"};
+    protected Dictionary<string, string> partDependencies = new Dictionary<string, string> { { "Sword", "RightHand" }, { "Shield", "LeftHand" } };
+
     #endregion //parametres
 
     #region fields
 
     private InteractionChecker interactions;
+
+    [SerializeField]
+    protected EquipmentClass equip;//Экипировка персонажа
 
     protected Transform aboveWallCheck;
     protected GroundChecker lowWallCheck, frontWallCheck, highWallCheck;
@@ -51,55 +57,36 @@ public class KeyboardActorController : PersonController
     public override void Awake()
     {
         base.Awake();
-        stats.maxHealth = 100f;
-        stats.health = 100f;
+        orgStats.maxHealth = 100f;
+        orgStats.health = 100f;
     }
 
-    public override void Initialize()
+    public virtual void Start()
     {
-        base.Initialize();
-        actions = GetComponent<HumanoidActorActions>();
-        if (stats == null)
-        {
-            stats = new Stats();
-        }
-        if (actions != null)
-        {
-            actions.SetStats(stats);
-            actions.SetWeapon(equip.rightWeapon);
-        }
-        rigid = GetComponent<Rigidbody>();
-        transform.GetComponentInChildren<CharacterVisual>().SetStats(stats);
-        transform.GetComponentInChildren<CharacterAnimator>().SetStats(stats);
-        aboveWallCheck = transform.FindChild("Indicators").FindChild("AboveWallCheck");
-        lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
-        frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck").gameObject.GetComponent<GroundChecker>();
-        highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
-        interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<InteractionChecker>();
-        buffList.OrgStats = stats;
+        InitializeEquipment();
     }
 
     public override void Update()
     {
         if (!GameStatistics.paused)
         {
-            if ((stats.hitted > 0f) && (stats.health > 0f))
+            if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
             {
                 Hitted();
             }
 
-            if (stats.health <= 0f)
+            if (orgStats.health <= 0f)
             {
                 Death();
             }
-            if (actions != null)
+            if (pActions != null)
             {
                 if (!death)
                 {
 
                     #region UsualState
 
-                    if (stats.interaction == interactionEnum.noInter)
+                    if (envStats.interaction == interactionEnum.noInter)
                     {
                         #region FastRunInput
 
@@ -129,13 +116,13 @@ public class KeyboardActorController : PersonController
                             if (Mathf.Abs(fastRunInputCount) == fastRunMaxCount)
                             {
 
-                                actions.SetMaxSpeed(actions.fastRunSpeed);
+                                pActions.SetMaxSpeed(pActions.FastRunSpeed);
                             }
                             else
                             {
-                                if ((actions.currentMaxSpeed != actions.fastRunSpeed) && (stats.groundness == groundnessEnum.grounded))
+                                if ((pActions.CurrentSpeed != pActions.FastRunSpeed) && (envStats.groundness == groundnessEnum.grounded))
                                 {
-                                    actions.SetMaxSpeed(actions.maxSpeed);
+                                    pActions.SetMaxSpeed(pActions.RunSpeed);
                                 }
                                 if (fastRunInputTimer <= 0f)
                                 {
@@ -143,36 +130,36 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                             orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
-                            actions.Turn(orientation);
-                            actions.StartWalking(orientation);
+                            pActions.Turn(orientation);
+                            pActions.StartWalking(orientation);
 
                             #region ObstacleInteraction
 
-                            if (stats.obstacleness != obstaclenessEnum.noObstcl)
+                            if (envStats.obstacleness != obstaclenessEnum.noObstcl)
                             {
-                                actions.SetMaxSpeed(actions.maxSpeed);
+                                pActions.SetMaxSpeed(pActions.RunSpeed);
                                 fastRunInputCount = 0;
-                                actions.StopWalking();
-                                actions.WallInteraction();
-                                if (stats.obstacleness == obstaclenessEnum.lowObstcl)
+                                pActions.StopWalking();
+                                pActions.WallInteraction();
+                                if (envStats.obstacleness == obstaclenessEnum.lowObstcl)
                                 {
                                     if (lowWallCheck.collisions.Count > 0)
                                     {
-                                        actions.AvoidLowObstacle(CheckHeight());
-                                        stats.interaction = interactionEnum.lowEdge;
+                                        pActions.AvoidLowObstacle(CheckHeight());
+                                        envStats.interaction = interactionEnum.lowEdge;
                                     }
                                 }
-                                if (stats.obstacleness == obstaclenessEnum.highObstcl)
+                                if (envStats.obstacleness == obstaclenessEnum.highObstcl)
                                 {
                                     if (Input.GetButtonDown("Jump"))
                                     {
-                                        actions.AvoidHighObstacle(CheckHeight());
-                                        stats.interaction = interactionEnum.edge;
+                                        pActions.AvoidHighObstacle(CheckHeight());
+                                        envStats.interaction = interactionEnum.edge;
                                     }
                                     if (highWallCheck.collisions.Count > 0)
                                     {
-                                        actions.HangHighObstacle();
-                                        stats.interaction = interactionEnum.edge;
+                                        pActions.HangHighObstacle();
+                                        envStats.interaction = interactionEnum.edge;
                                     }
                                 }
                             }
@@ -185,21 +172,21 @@ public class KeyboardActorController : PersonController
                             if (fastRunInputTimer <= 0)
                             {
                                 fastRunInputCount = 0;
-                                actions.SetMaxSpeed(actions.maxSpeed);
+                                pActions.SetMaxSpeed(pActions.RunSpeed);
                             }
-                            actions.StopWalking();
+                            pActions.StopWalking();
                         }
 
                         if (Input.GetButtonDown("Crouch") && Input.GetButtonDown("Jump"))
                         {
-                            if (stats.groundness == groundnessEnum.grounded)
+                            if (envStats.groundness == groundnessEnum.grounded)
                             {
-                                actions.Flip();
+                                pActions.Flip();
                             }
                         }
                         else if (Input.GetButtonDown("Jump"))
                         {
-                            actions.Jump();
+                            pActions.Jump();
                         }
 
                         if (Input.GetButtonDown("Interact"))
@@ -207,9 +194,9 @@ public class KeyboardActorController : PersonController
                             Interact(this);
                         }
 
-                        actions.Crouch((Input.GetButton("Crouch")) || (WallIsAbove()));
+                        pActions.Crouch((Input.GetButton("Crouch")) || (WallIsAbove()));
 
-                        if ((stats.groundness == groundnessEnum.inAir) && (rigid.velocity.y < -30f) && (rigid.velocity.y > minLedgeSpeed))
+                        if ((envStats.groundness == groundnessEnum.inAir) && (rigid.velocity.y < -30f) && (rigid.velocity.y > minLedgeSpeed))
                         {
                             if (interactions.interactions.Count > 0)
                             {
@@ -222,7 +209,7 @@ public class KeyboardActorController : PersonController
 
                         if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
                         {
-                            actions.Attack();
+                            pActions.Attack();
                         }
                     }
 
@@ -230,16 +217,16 @@ public class KeyboardActorController : PersonController
 
                     #region EdgeState
 
-                    else if (stats.interaction == interactionEnum.edge)
+                    else if (envStats.interaction == interactionEnum.edge)
                     {
                         if (Input.GetButtonDown("Jump") || (rigid.velocity.y > 5f))
                         {
-                            actions.AvoidHighObstacle(CheckHeight());
+                            pActions.AvoidHighObstacle(CheckHeight());
                         }
-                        if (stats.obstacleness == obstaclenessEnum.noObstcl)
+                        if (envStats.obstacleness == obstaclenessEnum.noObstcl)
                         {
-                            actions.AvoidHighObstacle(0f);
-                            stats.interaction = interactionEnum.noInter;
+                            pActions.AvoidHighObstacle(0f);
+                            envStats.interaction = interactionEnum.noInter;
                         }
                     }
 
@@ -247,16 +234,16 @@ public class KeyboardActorController : PersonController
 
                     #region LowEdgeState
 
-                    else if (stats.interaction == interactionEnum.lowEdge)
+                    else if (envStats.interaction == interactionEnum.lowEdge)
                     {
                         if (rigid.velocity.y > 5f)
                         {
-                            actions.AvoidLowObstacle(CheckHeight());
+                            pActions.AvoidLowObstacle(CheckHeight());
                         }
-                        if (stats.obstacleness == obstaclenessEnum.noObstcl)
+                        if (envStats.obstacleness == obstaclenessEnum.noObstcl)
                         {
-                            actions.AvoidLowObstacle(0f);
-                            stats.interaction = interactionEnum.noInter;
+                            pActions.AvoidLowObstacle(0f);
+                            envStats.interaction = interactionEnum.noInter;
                         }
                     }
 
@@ -264,11 +251,11 @@ public class KeyboardActorController : PersonController
 
                     #region SpecialMovementState
 
-                    else if (stats.interaction != interactionEnum.interactive)
+                    else if (envStats.interaction != interactionEnum.interactive)
                     {
                         if (rigid.useGravity == true)
                         {
-                            actions.Hang(true);
+                            pActions.Hang(true);
                         }
                         if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
                         {
@@ -277,27 +264,27 @@ public class KeyboardActorController : PersonController
                             Vector2 climbingDirection = new Vector2(valueX, valueY).normalized;
                             if (Physics.OverlapSphere(interCheck.position + new Vector3(climbingDirection.x * observeDistance, climbingDirection.y * observeDistance, 0f), interRadius, whatIsInteractable).Length > 0)
                             {
-                                actions.StartClimbing(climbingDirection);
+                                pActions.StartClimbing(climbingDirection);
                             }
                             else
                             {
-                                actions.StopWalking();
+                                pActions.StopWalking();
                             }
                         }
                         else
                         {
-                            actions.StopWalking();
+                            pActions.StopWalking();
                         }
                         if (Input.GetButtonDown("Interact"))
                         {
-                            actions.Hang(false);
+                            pActions.Hang(false);
                         }
 
-                        if (stats.interaction == interactionEnum.platform)
+                        if (envStats.interaction == interactionEnum.platform)
                         {
                             if ((Input.GetButton("Jump")) || (rigid.velocity.y > 5f))
                             {
-                                actions.ClimbOntoThePlatform();
+                                pActions.ClimbOntoThePlatform();
                             }
                         }
                     }
@@ -326,16 +313,16 @@ public class KeyboardActorController : PersonController
                     float camValue = Input.GetAxis("CamMove");
                     if (Mathf.Abs(camValue) >= 0.5f)
                     {
-                        actions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
+                        pActions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
                     }
                     else
                     {
-                        actions.Observe(new Vector2(0f, 0f));
+                        pActions.Observe(new Vector2(0f, 0f));
                     }
                 }
                 else
                 {
-                    actions.Observe(new Vector2(0f, 0f));
+                    pActions.Observe(new Vector2(0f, 0f));
                 }
 
                 #endregion //CameraMovement
@@ -344,12 +331,30 @@ public class KeyboardActorController : PersonController
 
                 if (Input.GetButtonDown("ChangeRWeapon"))
                 {
+                    List<PartController> children = new List<PartController> ();
+                    CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
+                    DeletePart(equip.rightWeapon,children,anim);
+                    if ((equip.altRightWeapon != null) && (equip.leftWeapon == equip.rightWeapon))
+                    {
+                        DeletePart(equip.leftWeapon, children, anim);
+                    }    
                     equip.ChangeRightWeapon();
+                    AddPart(equip.rightWeapon, children, anim);
+                    SetChildren(anim.parts, children);
                 }
 
                 if (Input.GetButtonDown("ChangeLWeapon"))
                 {
+                    List<PartController> children = new List<PartController>();
+                    CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
+                    DeletePart(equip.leftWeapon, children, anim);
+                    if ((equip.altLeftWeapon != null) && (equip.leftWeapon == equip.rightWeapon))
+                    {
+                        DeletePart(equip.rightWeapon, children, anim);
+                    }
                     equip.ChangeLeftWeapon();
+                    AddPart(equip.leftWeapon, children, anim);
+                    SetChildren(anim.parts, children);
                 }
 
                 if (Input.GetButtonDown("ChangeItem"))
@@ -364,6 +369,30 @@ public class KeyboardActorController : PersonController
         }
     }
 
+    public override void Initialize()
+    {
+        base.Initialize();
+        if (pActions != null)
+        {
+            pActions.SetWeapon(equip.rightWeapon, "Main");
+            pActions.SetWeapon(equip.leftWeapon, "Secondary");
+        }
+        transform.GetComponentInChildren<CharacterAnimator>().SetStats(envStats);
+        aboveWallCheck = transform.FindChild("Indicators").FindChild("AboveWallCheck");
+        lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
+        frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck").gameObject.GetComponent<GroundChecker>();
+        highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
+        interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<InteractionChecker>();
+    }
+
+    /// <summary>
+    /// Возвращает инвентарь персонажа
+    /// </summary>
+    public override BagClass GetEquipment()
+    {
+        return equip;
+    }
+
     #region Interact
 
     /// <summary>
@@ -371,7 +400,7 @@ public class KeyboardActorController : PersonController
     /// </summary>
     public override void Interact(InterObjController interactor)
     {
-        if (actions != null)
+        if (pActions != null)
         {
             if (interactions.interactions.Count > 0)
             {
@@ -394,7 +423,7 @@ public class KeyboardActorController : PersonController
         float zDistance = Mathf.Abs(currentRoom.position.z + currentRoom.size.z / 2 - trans.position.z) - 0.5f;
         RaycastHit hit = new RaycastHit();
         DoorClass door;
-        if (Physics.Raycast(new Ray(trans.position, (int)stats.direction * trans.right), out hit, doorDistance))
+        if (Physics.Raycast(new Ray(trans.position, (int)direction.dir * trans.right), out hit, doorDistance))
         {
             door = hit.collider.gameObject.GetComponent<DoorClass>();
             if (door != null)
@@ -402,7 +431,7 @@ public class KeyboardActorController : PersonController
                 if (door.locker.opened)
                 {
                     currentRoom = door.roomPath;
-                    actions.GoThroughTheDoor(door);
+                    pActions.GoThroughTheDoor(door);
                 }
             }
         }
@@ -415,7 +444,7 @@ public class KeyboardActorController : PersonController
                 if (door.locker.opened)
                 {
                     currentRoom = door.roomPath;
-                    actions.GoThroughTheDoor(door);
+                    pActions.GoThroughTheDoor(door);
                 }
             }
         }
@@ -428,7 +457,7 @@ public class KeyboardActorController : PersonController
         List<ItemBunch> items = drop.drop;
         for (int i = 0; i < items.Count; i++)
         {
-            equip.bag.Add(items[i]);
+            equip.TakeItem(items[i]);
         }
         interactions.dropList.RemoveAt(0);
         Destroy(drop.gameObject);
@@ -439,7 +468,7 @@ public class KeyboardActorController : PersonController
     /// </summary>
     public override void Hitted()
     {
-        actions.Hitted();
+        pActions.Hitted();
     }
 
     /// <summary>
@@ -450,7 +479,7 @@ public class KeyboardActorController : PersonController
         if (!death)
         {
             death = true;
-            actions.Death();
+            pActions.Death();
         }
     }
 
@@ -470,7 +499,7 @@ public class KeyboardActorController : PersonController
 
     protected override void DefinePrecipice()
     {
-        actions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (stats.groundness == groundnessEnum.grounded)&&(!Input.GetButton("CamMove")));
+        pActions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (envStats.groundness == groundnessEnum.grounded)&&(!Input.GetButton("CamMove")));
     }
 
     /// <summary>
@@ -481,47 +510,47 @@ public class KeyboardActorController : PersonController
         if ((lowWallCheck.collisions.Count> 0) &&
             (frontWallCheck.collisions.Count == 0))
         {
-            stats.obstacleness = obstaclenessEnum.lowObstcl;
+            envStats.obstacleness = obstaclenessEnum.lowObstcl;
         }
         else if ((frontWallCheck.collisions.Count> 0) &&
                 (highWallCheck.collisions.Count== 0))
         {
-            stats.obstacleness = obstaclenessEnum.highObstcl;
+            envStats.obstacleness = obstaclenessEnum.highObstcl;
         }
         else if ((frontWallCheck.collisions.Count > 0) &&
             (highWallCheck.collisions.Count > 0))
         {
-            stats.obstacleness = obstaclenessEnum.wall;
+            envStats.obstacleness = obstaclenessEnum.wall;
         }
         else
         {
-            stats.obstacleness = obstaclenessEnum.noObstcl;
+            envStats.obstacleness = obstaclenessEnum.noObstcl;
         }
     }
 
     protected override void DefineInteractable()
     {
-        if ((stats.interaction != interactionEnum.noInter) && (stats.interaction != interactionEnum.interactive))
+        if ((envStats.interaction != interactionEnum.noInter) && (envStats.interaction != interactionEnum.interactive))
         {
             if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
             {
-                stats.interaction = interactionEnum.thicket;
+                envStats.interaction = interactionEnum.thicket;
             }
             else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("rope")).Length > 0)
             {
-                stats.interaction = interactionEnum.rope;
+                envStats.interaction = interactionEnum.rope;
             }
             else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("stair")).Length > 0)
             {
-                stats.interaction = interactionEnum.stair;
+                envStats.interaction = interactionEnum.stair;
             }
             else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ledge")).Length > 0)
             {
-                stats.interaction = interactionEnum.ledge;
+                envStats.interaction = interactionEnum.ledge;
             }
             else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("platform")).Length > 0)
             {
-                stats.interaction = interactionEnum.platform;
+                envStats.interaction = interactionEnum.platform;
             }
         }
     }
@@ -544,6 +573,276 @@ public class KeyboardActorController : PersonController
 
     #endregion //Analyze
 
+    #region equipment
+
+    /// <summary>
+    /// Инициализировать инвентарь 
+    /// </summary>
+    protected void InitializeEquipment()
+    {
+        List<PartController> parts = new List<PartController>();
+        CharacterAnimator cAnim=GetComponentInChildren<CharacterAnimator>();
+        ArmorSet armorSet = equip.armor;
+        ConsiderArmor(armorSet.helmet, true);
+        ConsiderArmor(armorSet.cuirass, true);
+        ConsiderArmor(armorSet.pants, true);
+        ConsiderArmor(armorSet.gloves, true);
+        ConsiderArmor(armorSet.boots, true);
+        if (equip.rightWeapon != null)
+        {
+            AddPart(equip.rightWeapon,parts, cAnim);
+        }
+        if (equip.leftWeapon != null)
+        {
+            AddPart(equip.leftWeapon,parts, cAnim);
+        }
+        SetChildren(cAnim.parts, parts);
+        if (pActions != null)
+        {
+            pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
+        }
+    }
+
+    /// <summary>
+    /// Функция учёта эффектов, происходящих при надевании того или иного элемента доспехов
+    /// </summary>
+    protected void ConsiderArmor(ArmorClass armor, bool consider)
+    {
+        if (armor != null)
+        {
+            if (consider)
+            {
+                orgStats.defence += armor.defence;
+                orgStats.velocity += armor.velocity;
+                foreach (BuffClass buff in armor.buffs)
+                {
+                    buffList.AddBuff(buff);
+                }
+                ConsiderSetBuff(armor);
+            }
+            else
+            {
+                orgStats.defence -= armor.defence;
+                orgStats.velocity -= armor.velocity;
+                foreach (BuffClass buff in armor.buffs)
+                {
+                    buffList.RemoveBuff(buff);
+                }
+                buffList.RemoveBuff(armor.setBuff);
+            }
+            orgStats.OnParametersChanged(new OrganismEventArgs(100f));
+        }
+    }
+
+    /// <summary>
+    /// Учесть, что добавив новый элемент доспеха, персонаж мог приобрести бонус сета
+    /// </summary>
+    protected void ConsiderSetBuff(ArmorClass armor)
+    {
+        ArmorSet armorSet = equip.armor;
+        int count = 0;
+        count += CompareSets(armor, armorSet.helmet);
+        count += CompareSets(armor, armorSet.cuirass);
+        count += CompareSets(armor, armorSet.pants);
+        count += CompareSets(armor, armorSet.gloves);
+        count += CompareSets(armor, armorSet.boots);
+        if (count >= armor.setNumber)
+        {
+            buffList.AddBuff(armor.setBuff);
+        }
+    }
+
+    /// <summary>
+    /// Проверка на то, составляют ли 2 элемента доспеха один и тот же сет
+    /// </summary>
+    /// <returns>1- если составляют, 0 - если из разных сетов</returns>
+    protected int CompareSets(ArmorClass armor1, ArmorClass armor2)
+    {
+        if (armor1 == null)
+        {
+            return 0;
+        }
+        if (armor2 == null)
+        {
+            return 0;
+        }
+        if (armor1.setBuff == armor2.setBuff)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// Сменить доспех, оружие, кольцо или используемый предмет
+    /// </summary>
+    public void ChangeItem(ItemClass item, string itemType)
+    {
+        #region init
+
+        CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
+        List<PartController> childParts = new List<PartController>();
+
+        List<ItemClass> removeItems = equip.ChangeEquipmentElement(item, itemType);
+
+        #endregion //init
+        
+        if (!string.Equals(itemType,"rightWeapon2")&&!string.Equals(itemType, "leftWeapon2"))
+        {
+            #region visualize
+
+            AddPart(item, childParts, anim);
+            
+            #endregion //visualize
+
+            #region changeEquipment
+
+            ArmorClass armor;
+
+            for (int i = 0; i < removeItems.Count; i++)
+            {
+                if (removeItems[i] != null)
+                {
+                    if (removeItems[i] is ArmorClass)
+                    {
+                        armor = (ArmorClass)removeItems[i];
+                        ConsiderArmor(armor, false);
+                    }
+                }
+            }
+
+            if (item != null)
+            {
+                if (string.Equals(item.type, "armor"))
+                {
+                    armor = (ArmorClass)item;
+                    ConsiderArmor(armor, true);
+                    if (pActions != null)
+                    {
+                        pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
+                    }
+                }
+
+                if (string.Equals(item.type, "weapon"))
+                {
+                    if (pActions != null)
+                    {
+                        pActions.SetWeapon(equip.rightWeapon, "Main");
+                        pActions.SetWeapon(equip.leftWeapon, "Secondary");
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < removeItems.Count; i++)
+            {
+                DeletePart(removeItems[i], childParts, anim);
+            }
+
+            #endregion //changeEquipment
+
+            #region setChildren
+
+            SetChildren(anim.parts, childParts);
+        }
+        #endregion //setChildren
+
+    }
+
+    /// <summary>
+    /// Функция, вызываемая при добавлении новой части
+    /// </summary>
+    protected void AddPart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
+    {
+        if (item != null)
+        {
+            List<PartController> parts = anim.parts;
+            PartController part = null;
+            foreach (ItemVisual itemVis in item.itemVisuals)
+            {
+                GameObject obj = Instantiate(itemVis.part) as GameObject;
+                obj.transform.parent = anim.transform;
+                obj.transform.localPosition = itemVis.pos;
+                obj.transform.localScale = new Vector3(1f, 1f, 1f);
+                part = obj.GetComponent<PartController>();
+                if (part != null)
+                {
+                    parts.Add(part);
+                    if (dependedPartTypes.Contains(part.partType))
+                    {
+                        childParts.Add(part);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Функция, вызываемая для удаления не использующихся частей
+    /// </summary>
+    protected void DeletePart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
+    {
+        if (item != null)
+        {
+            List<PartController> parts = anim.parts;
+            PartController part = null;
+            foreach (ItemVisual itemVis in item.itemVisuals)
+            {
+                part = null;
+                foreach (PartController _part in parts)
+                {
+                    if (_part.gameObject.name.Contains(itemVis.part.name))
+                    {
+                        part = _part;
+                        break;
+                    }
+                }
+                if (part!=null)
+                {
+                    parts.Remove(part);
+                    if (part.childParts != null)
+                    {
+                        foreach (PartController _part in part.childParts)
+                        {
+                            if (!childParts.Contains(_part))
+                            {
+                                childParts.Add(_part);
+                            }
+                        }
+                    }
+                    DestroyImmediate(part.gameObject);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Функция, используемая для установления зависимостей между частями
+    /// </summary>
+    protected void SetChildren(List<PartController> parts,List<PartController> childParts)
+    {
+        foreach (PartController child in childParts)
+        {
+            if (!partDependencies.ContainsKey(child.partType))
+            {
+                break;
+            }
+            foreach (PartController _part in parts)
+            {
+                if (string.Equals(partDependencies[child.partType], _part.partType))
+                {
+                    _part.childParts.Add(child);
+                    break;
+                }
+            }
+        }
+    }
+
+    #endregion //equipment
+
 }
 
 #if UNITY_EDITOR
@@ -553,20 +852,27 @@ public class KeyboardActorController : PersonController
 [CustomEditor(typeof(KeyboardActorController))]
 public class KeyboardActorEditor : Editor
 {
-    private Stats stats;
+
+    private Direction direction;
+    private OrganismStats orgStats;
+    private EnvironmentStats envStats;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         KeyboardActorController obj = (KeyboardActorController)target;
-        stats = (Stats)obj.GetStats();
+        direction = obj.GetDirection();
+        orgStats = obj.GetOrgStats();
+        envStats = obj.GetEnvStats();
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
-        EditorGUILayout.IntField("direction", (int)stats.direction);
-        EditorGUILayout.EnumPopup(stats.groundness);
-        EditorGUILayout.EnumPopup(stats.obstacleness);
-        EditorGUILayout.EnumPopup(stats.interaction);
-        stats.maxHealth = EditorGUILayout.FloatField("Max Health", stats.maxHealth);
-        EditorGUILayout.FloatField("Health", stats.health);
+        EditorGUILayout.IntField("direction", (int)direction.dir);
+        EditorGUILayout.EnumPopup(envStats.groundness);
+        EditorGUILayout.EnumPopup(envStats.obstacleness);
+        EditorGUILayout.EnumPopup(envStats.interaction);
+        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
+        EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

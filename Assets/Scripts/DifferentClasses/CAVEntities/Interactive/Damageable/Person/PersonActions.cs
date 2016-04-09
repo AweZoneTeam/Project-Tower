@@ -29,6 +29,8 @@ public class PersonActions : DmgObjActions
 
     public Transform target;
 
+    protected EnvironmentStats envStats;
+
     #endregion //fields
 
     #region parametres
@@ -39,13 +41,31 @@ public class PersonActions : DmgObjActions
 
     protected Vector2 climbingDirection = new Vector2(0f, 0f);
 
-    public float maxSpeed;
-    public float currentMaxSpeed;
-    public float fastRunSpeed=0f;
-    public float stairSpeed = 0f;
-    public float ropeSpeed = 0f;
-    public float thicketSpeed = 0f;
-    public float ledgeSpeed = 0f;
+    #region speeds
+
+    protected float currentMaxSpeed;
+
+    public float defRunSpeed=0f;
+    public float defFastRunSpeed = 0f;
+    public float defCrouchSpeed = 0f;
+    public float defStairSpeed = 0f;
+    public float defRopeSpeed = 0f;
+    public float defThicketSpeed = 0f;
+    public float defLedgeSpeed = 0f;
+
+    protected float runSpeed=0f;
+    protected float fastRunSpeed=0f;
+    protected float crouchSpeed = 25f;
+    protected float stairSpeed = 0f;
+    protected float ropeSpeed = 0f;
+    protected float thicketSpeed = 0f;
+    protected float ledgeSpeed = 0f;
+    
+    public float CurrentSpeed { get { return currentMaxSpeed; } set { } }
+    public float RunSpeed { get { return runSpeed;} set { } }
+    public float FastRunSpeed { get { return fastRunSpeed; } set { } }
+
+    #endregion //speeds
 
     public float acceleration;
     public float jumpForce;
@@ -60,16 +80,16 @@ public class PersonActions : DmgObjActions
 
     #endregion //parametres
 
-    public override void Awake()
-    {
-        base.Awake();
-    }
-
     public override void Initialize()
     {
         cAnim = GetComponentInChildren<PersonVisual>();
         platformCheck = transform.FindChild("Indicators").FindChild("PlatformCheck");
         climbingDirection = new Vector2(0f, 0f);
+    }
+
+    public void SetEnvStats(EnvironmentStats _envStats)
+    {
+        envStats = _envStats;
     }
 
     #region Interface
@@ -98,13 +118,13 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Начать передвижение
     /// </summary>
-    public virtual void StartWalking(orientationEnum direction)
+    public virtual void StartWalking(orientationEnum _direction)
     {
         if (!moving)
         {
             moving = true;
         }
-        movingDirection = direction;
+        movingDirection = _direction;
     }
 
     /// <summary>
@@ -179,7 +199,7 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Установить в правой руке нужное оружие
     /// </summary>
-    public virtual void SetWeapon(WeaponClass _weapon)
+    public virtual void SetWeapon(WeaponClass _weapon, string weaponType)
     {
    
     }
@@ -275,8 +295,23 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Задать поле статов
     /// </summary>
-    public virtual void SetStats(Stats _stats)
+    public virtual void SetStats(EnvironmentStats _stats)
     {
+    }
+
+    /// <summary>
+    /// Ф-ция, устанавливающая скорости передвижения персонажа
+    /// </summary>
+    public virtual void SetSpeeds(float speed, float defSpeed)
+    {
+        float koof = speed / defSpeed;
+        runSpeed = defRunSpeed *koof;
+        fastRunSpeed = defFastRunSpeed*koof;
+        crouchSpeed = defCrouchSpeed* koof;
+        stairSpeed = defStairSpeed * koof;
+        ropeSpeed = defRopeSpeed * koof;
+        thicketSpeed = defThicketSpeed * koof;
+        ledgeSpeed = defLedgeSpeed * koof;
     }
 
 }

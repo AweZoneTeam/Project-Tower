@@ -7,5 +7,5 @@ using System.Collections;
 [System.Serializable]
 public class UsableItemClass : ItemClass
 {
-
+    public string useItemType;
 }

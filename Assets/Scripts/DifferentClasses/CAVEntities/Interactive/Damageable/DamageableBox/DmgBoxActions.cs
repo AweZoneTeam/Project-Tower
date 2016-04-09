@@ -7,18 +7,12 @@ using System.Collections;
 public class DmgBoxActions : DmgObjActions
 {
     #region fields
-    private OrganismStats stats;
-    private DmgBoxVisual cAnim;
-    #endregion //fields
 
-    public override void Awake()
-    {
-        base.Awake();
-    }
+    #endregion //fields
 
     public override void Initialize()
     {
-        cAnim = GetComponentInChildren<DmgBoxVisual>();
+        dmgAnim = GetComponentInChildren<DmgBoxVisual>();
     }
 
     /// <summary>
@@ -26,7 +20,7 @@ public class DmgBoxActions : DmgObjActions
     /// </summary>
     public override void Hitted()
     {
-        cAnim.Injured();
+        dmgAnim.Injured();
     }
 
     /// <summary>
@@ -35,12 +29,7 @@ public class DmgBoxActions : DmgObjActions
     public override void Death()
     {
         base.Death();
-        cAnim.Death();
-    }
-
-    public override void SetStats(OrganismStats _stats)
-    {
-        stats = _stats;
+        dmgAnim.Death();
     }
 
 }
