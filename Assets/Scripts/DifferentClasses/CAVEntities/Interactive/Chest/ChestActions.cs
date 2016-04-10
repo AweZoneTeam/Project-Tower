@@ -50,12 +50,12 @@ public class ChestActions : InterObjActions, ILeverActivated
         if (chestLock.opened)
         {
             GameObject controller = GameObject.FindGameObjectWithTag(Tags.gameController);
-            BagClass rightBag = chestContent;
+            BagClass bag = chestContent;
             if (interactor is PersonController)
             {
                 PersonController bInteractor = (PersonController)interactor;
-                BagClass leftBag = bInteractor.GetEquipment();
-                controller.GetComponent<InterfaceController>().OpenExchangeWindow(leftBag,rightBag);
+                EquipmentClass equip = (EquipmentClass)bInteractor.GetEquipment();
+                controller.GetComponent<InterfaceController>().OpenExchangeWindow(bag,equip,bInteractor.transform, transform);
             }
         }
         else

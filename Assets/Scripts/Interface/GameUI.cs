@@ -103,8 +103,11 @@ public class GameUI : InterfaceWindow
         }
         if (equip.useItem != null)
         {
-            itemImage.sprite = equip.useItem.image;
-            itemImage.color = new Color(1f, 1f, 1f, 1f);
+            if (equip.useItem.item != null)
+            {
+                itemImage.sprite = equip.useItem.item.image;
+                itemImage.color = new Color(1f, 1f, 1f, 1f);
+            }
         }
         equip.ActiveItemChangedEvent += HandleItemChangedEvent;
 

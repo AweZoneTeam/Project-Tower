@@ -140,10 +140,10 @@ public class EquipmentWindow : InterfaceWindow
         InitializeSlot(characterDollPanel, "GlovesSlot", equip.armor.gloves);
         InitializeSlot(characterDollPanel, "LeftRingSlot", equip.armor.leftRing);
         InitializeSlot(characterDollPanel, "RightRingSlot", equip.armor.rightRing);
-        InitializeSlot(characterDollPanel, "UsableItemSlot1", equip.useItems[0]);
-        InitializeSlot(characterDollPanel, "UsableItemSlot2", equip.useItems[1]);
-        InitializeSlot(characterDollPanel, "UsableItemSlot3", equip.useItems[2]);
-        InitializeSlot(characterDollPanel, "UsableItemSlot4", equip.useItems[3]);
+        InitializeSlot(characterDollPanel, "UsableItemSlot1", equip.useItems[0].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot2", equip.useItems[1].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot3", equip.useItems[2].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot4", equip.useItems[3].item);
         rightWeaponSlot1.Initialize(this,new ItemBunch(equip.rightWeapon));
         rightWeaponSlot2.Initialize(this,new ItemBunch(equip.altRightWeapon));
         leftWeaponSlot1.Initialize(this,new ItemBunch(equip.leftWeapon));
@@ -220,9 +220,9 @@ public class EquipmentWindow : InterfaceWindow
         slot.Initialize(this, new ItemBunch(item));
     }
 
-    public void ChangeCharacterEquipment(ItemClass item, string changeType)
+    public void ChangeCharacterEquipment(ItemBunch itemBunch, string changeType)
     {
-        player.ChangeItem(item, changeType);
+        player.ChangeItem(itemBunch, changeType);
     }
 
     public void ChangeDescription(bool _visualizeDescription)

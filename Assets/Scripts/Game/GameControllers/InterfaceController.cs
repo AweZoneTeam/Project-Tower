@@ -59,12 +59,10 @@ public class InterfaceController : MonoBehaviour
         exchWindow.gameObject.GetComponent<Canvas>().enabled=false;
     }
 
-    public void OpenExchangeWindow(BagClass leftBag, BagClass rightBag)
+    public void OpenExchangeWindow(BagClass bag, EquipmentClass _equip, Transform _exchanger1, Transform _exchanger2)
     {
-        exchWindow.gameObject.GetComponent<Canvas>().enabled=true;
-        exchWindow.leftBag = leftBag;
-        exchWindow.rightBag = rightBag;
-        exchWindow.SetImages();
+        exchWindow.SetBag(bag, _equip,_exchanger1,_exchanger2);
+        exchWindow.GetComponent<Canvas>().enabled = true;
     }
 
     /// <summary>

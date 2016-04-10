@@ -95,12 +95,12 @@ public class ItemSlot : EquipmentSlot
                         {
                             pair.itemBunch = _itemBunch;
                         }
-                        equip.ChangeCharacterEquipment(itemBunch.item, slotType.Contains("1") ? "twoHandedWeapon1" : "twoHandedWeapon2");
+                        equip.ChangeCharacterEquipment(itemBunch, slotType.Contains("1") ? "twoHandedWeapon1" : "twoHandedWeapon2");
                         return;
                     }
                 }
             }
-            equip.ChangeCharacterEquipment(itemBunch.item, slotType);
+            equip.ChangeCharacterEquipment(itemBunch, slotType);
         }
         else
         {

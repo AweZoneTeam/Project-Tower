@@ -46,8 +46,8 @@ public class EquipmentClass: BagClass
 
     public ArmorSet armor;
 
-    public UsableItemClass useItem;
-    public List<UsableItemClass> useItems = new List<UsableItemClass>();
+    public ItemBunch useItem;
+    public List<ItemBunch> useItems = new List<ItemBunch>();
 
     #endregion //fields
 
@@ -105,25 +105,34 @@ public class EquipmentClass: BagClass
     /// </summary>
     public void ChangeItem()
     {
-        if (useItems.Count > 0)
+        List<ItemBunch> availableItems = new List<ItemBunch>();
+        for (int i = 0; i < useItems.Count; i++)
         {
-            if (useItems.IndexOf(useItem) + 1 == useItems.Count)
+            if (useItems[i].item != null)
+            {
+                availableItems.Add(useItems[i]);
+            }
+        }
+        if (availableItems.Count >0)
+        {
+            if (availableItems.IndexOf(useItem) + 1 == availableItems.Count)
             {
                 useItem = useItems[0];
             }
             else
             {
-                useItem = useItems[useItems.IndexOf(useItem) + 1];
+                useItem = availableItems[availableItems.IndexOf(useItem) + 1];
             }
-            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "usable"));
+            OnActiveItemChanged(new ItemChangedEventArgs(useItem.item, "usable"));
         }
     }
 
     /// <summary>
     /// Сменить предмет в инвентаре
     /// </summary>
-    public List<ItemClass> ChangeEquipmentElement(ItemClass item, string itemType)
+    public List<ItemClass> ChangeEquipmentElement(ItemBunch itemBunch, string itemType)
     {
+        ItemClass item = itemBunch.item;
         List<ItemClass> removeItems=new List<ItemClass>();
 
         #region weapons
@@ -246,12 +255,12 @@ public class EquipmentClass: BagClass
             {
                 if (useItems.IndexOf(useItem) == index)
                 {
-                    useItem = (UsableItemClass)item;
+                    useItem = itemBunch;
                 }
             }
-            removeItems.Add(useItems[index]);
-            useItems.Insert(index, (UsableItemClass)item);
-            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "usable"));
+            removeItems.Add(useItems[index].item);
+            useItems.Insert(index, itemBunch);
+            OnActiveItemChanged(new ItemChangedEventArgs(item, "usable"));
         }
 
         #endregion //usableItems
@@ -287,37 +296,44 @@ public class EquipmentClass: BagClass
     /// </summary>
     public void TakeItem(ItemBunch itemBunch)
     {
-        ItemBunch _itemBunch;
         if (string.Equals(itemBunch.item.type, "money"))
         {
-            gold += itemBunch.item.maxCount;
+            gold += itemBunch.quantity;
             OnResourceChanged(new ResourceChangedEventArgs());
         }
         else if (string.Equals(itemBunch.item.itemName, "Железный ключ"))
         {
-            keys[0] += itemBunch.item.maxCount;
+            keys[0] += itemBunch.quantity;
             OnResourceChanged(new ResourceChangedEventArgs());
         }
         else if (string.Equals(itemBunch.item.itemName, "Серебряный ключ"))
         {
-            keys[1] += itemBunch.item.maxCount;
+            keys[1] += itemBunch.quantity;
             OnResourceChanged(new ResourceChangedEventArgs());
         }
         else if (string.Equals(itemBunch.item.itemName, "Золотой ключ"))
         {
-            keys[2] += itemBunch.item.maxCount;
+            keys[2] += itemBunch.quantity;
             OnResourceChanged(new ResourceChangedEventArgs());
         }
         else
         {
+            for (int i=0;i<useItems.Count;i++)
+            {
+                if (useItems[i].item == itemBunch.item)
+                {
+                    useItems[i] = StuckItems(itemBunch, useItems[i]);
+                }
+                if (itemBunch.quantity == 0)
+                {
+                    return;
+                }
+            }
             for (int i = 0; i < bag.Count; i++)
             {
                 if (bag[i].item == itemBunch.item)
                 {
-                    _itemBunch = bag[i];
-                    int reserve = _itemBunch.item.maxCount - _itemBunch.quantity - itemBunch.quantity;
-                    itemBunch.quantity = (reserve >= 0 ? 0 : -reserve);
-                    _itemBunch.quantity = (reserve >= 0 ? _itemBunch.quantity + itemBunch.quantity : _itemBunch.item.maxCount);
+                    bag[i] = StuckItems(itemBunch, bag[i]);
                 }
                 if (itemBunch.quantity == 0)
                 {
@@ -326,6 +342,17 @@ public class EquipmentClass: BagClass
             }
             bag.Add(itemBunch);
         }
+    }
+
+    public ItemBunch StuckItems(ItemBunch newItem, ItemBunch stock)
+    {
+        if (stock.item == newItem.item)
+        {
+            int reserve = stock.item.maxCount - stock.quantity - newItem.quantity;
+            stock.quantity = (reserve >= 0 ? stock.quantity + newItem.quantity : stock.item.maxCount);
+            newItem.quantity = (reserve >= 0 ? 0 : -reserve);
+        }
+        return stock;
     }
 
     #region events

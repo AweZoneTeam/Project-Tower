@@ -679,14 +679,15 @@ public class KeyboardActorController : PersonController
     /// <summary>
     /// Сменить доспех, оружие, кольцо или используемый предмет
     /// </summary>
-    public void ChangeItem(ItemClass item, string itemType)
+    public void ChangeItem(ItemBunch itemBunch, string itemType)
     {
         #region init
+        ItemClass item = itemBunch.item;
 
         CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
         List<PartController> childParts = new List<PartController>();
 
-        List<ItemClass> removeItems = equip.ChangeEquipmentElement(item, itemType);
+        List<ItemClass> removeItems = equip.ChangeEquipmentElement(itemBunch, itemType);
 
         #endregion //init
         
