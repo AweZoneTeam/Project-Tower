@@ -12,8 +12,8 @@ public class EquipmentWindow : InterfaceWindow
 
     #region consts
 
-    private const float width=500f;
-    private const float height = 500f;
+    private const float mouseAreaWidth=900f;
+    private const float mouseAreaHeight = 500f;
 
     #endregion //consts
 
@@ -52,8 +52,6 @@ public class EquipmentWindow : InterfaceWindow
         get { return mouseImage; }
         set { mouseImage = value; }
     }
-
-    public Sprite defaultCursor;
 
     #region itemDescription
 
@@ -95,10 +93,6 @@ public class EquipmentWindow : InterfaceWindow
 
     public override void Initialize()
     {
-        if (defaultCursor != null)
-        {
-            Cursor.SetCursor(defaultCursor.texture, Vector2.zero, CursorMode.Auto);
-        }
 
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<Camera>();
 
@@ -202,6 +196,9 @@ public class EquipmentWindow : InterfaceWindow
 
     }
 
+    /// <summary>
+    /// Функция добавления нового предмета в рюкзак
+    /// </summary>
     void AddItemInBag(ItemBunch itemBunch)
     {
         for (int i = 0; i < bagSlots.Count; i++)
@@ -214,17 +211,26 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
+    /// <summary>
+    /// Инициализировать слот
+    /// </summary>
     public void InitializeSlot(Transform trans, string childName, ItemClass item)
     {
         ItemSlot slot = trans.FindChild(childName).GetComponent<ItemSlot>();
         slot.Initialize(this, new ItemBunch(item));
     }
 
+    /// <summary>
+    /// Сменить какой-то предмет в экипировке персонажа
+    /// </summary>
     public void ChangeCharacterEquipment(ItemBunch itemBunch, string changeType)
     {
         player.ChangeItem(itemBunch, changeType);
     }
 
+    /// <summary>
+    /// В окне описания предмета задать описание интересующего предмета
+    /// </summary>
     public void ChangeDescription(bool _visualizeDescription)
     {
         if (_visualizeDescription)
@@ -239,13 +245,32 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
+    /// <summary>
+    /// Сменить положение изображения перетаскиваемого предмета
+    /// </summary>
+    public void ChangeMouseImagePosition()
+    {
+        Vector3 pos = Input.mousePosition;
+        pos.x -= cam.pixelWidth/2;
+        pos.x = pos.x / cam.pixelWidth * mouseAreaWidth;
+        pos.y -= cam.pixelHeight/2;
+        pos.y = pos.y / cam.pixelHeight*mouseAreaHeight;
+        mouseImage.transform.localPosition = pos;
+    }
+
     #region eventHandlers
 
+    /// <summary>
+    /// Обработчик события "Изменение ХП"
+    /// </summary>
     void HealthChangedEventHandler(object sender, OrganismEventArgs e)
     {
         healthText.text = "Здоровье " + e.HP.ToString() + "/" + e.MAXHP.ToString();
     }
 
+    /// <summary>
+    /// Обработчик события "Изменение параметров"
+    /// </summary>
     void ParametersChangedEventHandler(object sender, OrganismEventArgs e)
     {
         healthText.text = "Здоровье " + e.HP.ToString() + "/" + e.MAXHP.ToString();
@@ -254,6 +279,9 @@ public class EquipmentWindow : InterfaceWindow
                             "\n\n Устойчивость "+ e.DEFENCE.stability + "\n\n Скорость "+e.VELOCITY.ToString();
     }
 
+    /// <summary>
+    /// Обработчик события "Смена экипировки"
+    /// </summary>
     void ActiveItemChangedEventHandler(object sender, ItemChangedEventArgs e)
     {
         if (string.Equals(e.ItemType, "rightWeapon"))
@@ -270,6 +298,9 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
+    /// <summary>
+    /// Обработчик события "изменение числа ресурсов"
+    /// </summary>
     void ResourceChangedEventHandler(object sender, ResourceChangedEventArgs e)
     {
         goldText.text = e.Gold.ToString();

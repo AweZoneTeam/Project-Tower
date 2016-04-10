@@ -49,6 +49,9 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
+    /// <summary>
+    /// Проверить, подходит ли данный предмет этому слоту
+    /// </summary>
     public virtual bool IsItemProper(ItemBunch _itemBunch)
     {
         return true;
@@ -105,7 +108,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public virtual void OnDrag(PointerEventData eventData)
     {
-        Cursor.SetCursor(equip.MouseImage.sprite.texture,Vector2.zero,CursorMode.Auto);
+        equip.ChangeMouseImagePosition();
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
@@ -113,7 +116,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         equip.CurrentSlot = null;
-        Cursor.SetCursor(equip.defaultCursor.texture, Vector2.zero, CursorMode.Auto);
+        equip.MouseImage.transform.localPosition = new Vector3(500f, 500f, 0f);
     }
 
     public virtual void OnDrop(PointerEventData eventData)

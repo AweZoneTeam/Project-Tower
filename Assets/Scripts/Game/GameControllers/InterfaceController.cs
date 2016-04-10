@@ -13,6 +13,7 @@ public class InterfaceController : MonoBehaviour
     #endregion //consts
 
     public InterfaceExchangeWindow exchWindow;//Окно обмена предметами
+    public Texture2D cursorSprite;
 
     private Canvas activeWindow;
     private Canvas auxActiveWindow;
@@ -23,6 +24,11 @@ public class InterfaceController : MonoBehaviour
     private EquipmentWindow equipment;
     private GameObject allWindows;
     private GameObject cam;
+
+    public void Awake()
+    {
+        Cursor.SetCursor(cursorSprite, Vector2.zero, CursorMode.Auto);
+    }
 
     public void Start()
     {
