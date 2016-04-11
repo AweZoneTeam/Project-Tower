@@ -31,10 +31,11 @@ namespace GAF.Objects
 
 		public GAFMaskObjectImpl(
 			  GameObject _ThisObject
-			, GAFObjectData _Data
+            , List<GAFPivot> _pivots
+            , GAFObjectData _Data
 			, Renderer _Renderer
 			, MeshFilter _Filter)
-			: base(_ThisObject, _Data, _Renderer, _Filter)
+			: base(_ThisObject, _pivots, _Data, _Renderer, _Filter)
 		{
 		}
 
