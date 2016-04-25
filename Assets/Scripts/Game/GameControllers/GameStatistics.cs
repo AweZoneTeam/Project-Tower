@@ -78,6 +78,7 @@ public class GameStatistics : MonoBehaviour
         paused = true;
         SpFunctions.Pause("menu");
         deathNumber = 0;
+        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().Initialize();
     }
 
     #region events

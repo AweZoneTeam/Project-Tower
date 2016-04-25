@@ -36,14 +36,12 @@ public class KeyboardActorController : PersonController
     public int fastRunInputCount = 0;
     protected float fastRunInputTimer = 0f;
 
-    protected List<string> dependedPartTypes = new List<string> { "Sword", "Shield"};
+    protected List<string> dependedPartTypes = new List<string> { "Sword", "Shield" };
     protected Dictionary<string, string> partDependencies = new Dictionary<string, string> { { "Sword", "RightHand" }, { "Shield", "LeftHand" } };
 
     #endregion //parametres
 
     #region fields
-
-    private InteractionChecker interactions;
 
     [SerializeField]
     protected EquipmentClass equip;//Экипировка персонажа
@@ -143,7 +141,7 @@ public class KeyboardActorController : PersonController
                                 pActions.WallInteraction();
                                 if (envStats.obstacleness == obstaclenessEnum.lowObstcl)
                                 {
-                                    if (lowWallCheck.collisions.Count > 0)
+                                    if (lowWallCheck.GetCount() > 0)
                                     {
                                         pActions.AvoidLowObstacle(CheckHeight());
                                         envStats.interaction = interactionEnum.lowEdge;
@@ -156,7 +154,7 @@ public class KeyboardActorController : PersonController
                                         pActions.AvoidHighObstacle(CheckHeight());
                                         envStats.interaction = interactionEnum.edge;
                                     }
-                                    if (highWallCheck.collisions.Count > 0)
+                                    if (highWallCheck.GetCount() > 0)
                                     {
                                         pActions.HangHighObstacle();
                                         envStats.interaction = interactionEnum.edge;
@@ -198,9 +196,9 @@ public class KeyboardActorController : PersonController
 
                         if ((envStats.groundness == groundnessEnum.inAir) && (rigid.velocity.y < -30f) && (rigid.velocity.y > minLedgeSpeed))
                         {
-                            if (interactions.interactions.Count > 0)
+                            if (interactions.GetInteractionList() != null ? interactions.GetInteractionList().Count > 0 : false)
                             {
-                                if (interactions.interactions[0].gameObject.layer == LayerMask.NameToLayer("ledge"))
+                                if (interactions.GetInteractionList()[0].gameObject.layer == LayerMask.NameToLayer("ledge"))
                                 {
                                     Interact(this);
                                 }
@@ -210,6 +208,11 @@ public class KeyboardActorController : PersonController
                         if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
                         {
                             pActions.Attack();
+                        }
+
+                        if (Input.GetButtonDown("UseItem"))
+                        {
+                            UseItem();
                         }
                     }
 
@@ -291,14 +294,37 @@ public class KeyboardActorController : PersonController
 
                     #endregion //SpecialMovementState
 
-                    if (interactions.dropList.Count > 0)
+                    #region interactiveObjects
+
+                    else
                     {
-                        if (interactions.dropList[0].autoPick)
+                        if (interactionObject is MoveableBoxActions)
+                        {
+                            orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
+                            if (Input.GetButton("Horizontal"))
+                            {
+                                pActions.StartWalking(orientation);
+                            }
+                            else
+                            {
+                                pActions.StopWalking();
+                            }
+                            if (Input.GetButtonDown("Interact"))
+                            {
+                                interactionObject.Interact();
+                            }
+                        }
+                    }
+
+                    #endregion //interactiveObjects
+
+                    if (interactions.GetDropList() != null ? interactions.GetDropList().Count > 0 : false)
+                    {
+                        if (interactions.GetDropList()[0].autoPick)
                         {
                             TakeDrop();
                         }
                     }
-
                     /* if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
                      {
                          actions.Attack();
@@ -331,13 +357,13 @@ public class KeyboardActorController : PersonController
 
                 if (Input.GetButtonDown("ChangeRWeapon"))
                 {
-                    List<PartController> children = new List<PartController> ();
+                    List<PartController> children = new List<PartController>();
                     CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
-                    DeletePart(equip.rightWeapon,children,anim);
+                    DeletePart(equip.rightWeapon, children, anim);
                     if ((equip.altRightWeapon != null) && (equip.leftWeapon == equip.rightWeapon))
                     {
                         DeletePart(equip.leftWeapon, children, anim);
-                    }    
+                    }
                     equip.ChangeRightWeapon();
                     AddPart(equip.rightWeapon, children, anim);
                     SetChildren(anim.parts, children);
@@ -382,7 +408,6 @@ public class KeyboardActorController : PersonController
         lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck").gameObject.GetComponent<GroundChecker>();
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
-        interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<InteractionChecker>();
     }
 
     /// <summary>
@@ -393,6 +418,28 @@ public class KeyboardActorController : PersonController
         return equip;
     }
 
+    /// <summary>
+    /// Испольщрваит активный предмет инвентаря
+    /// </summary>
+    protected override void UseItem()
+    {
+        ItemBunch useItem = equip.useItem;
+        if (useItem != null)
+        {
+            if (pActions != null)
+            {
+                pActions.UseItem(useItem);
+                useItem.quantity--;
+                if (useItem.quantity == 0)
+                {
+                    equip.useItem = null;
+                    equip.useItems[equip.useItems.IndexOf(useItem)] = null;
+                    equip.ChangeItem();
+                }
+            }
+        }
+    }
+
     #region Interact
 
     /// <summary>
@@ -400,15 +447,21 @@ public class KeyboardActorController : PersonController
     /// </summary>
     public override void Interact(InterObjController interactor)
     {
-        if (pActions != null)
+        if ((pActions != null) && (interactions!=null))
         {
-            if (interactions.interactions.Count > 0)
+            pActions.StopWalking();
+            List<InterObjController> interactionList = interactions.GetInteractionList();
+            List<DropClass> dropList = interactions.GetDropList();
+            if (interactionList != null? interactionList.Count>0:false)
             {
-                interactions.interactions[0].Interact(this);
+                interactionList[0].Interact(this);
             }
-            else if (interactions.dropList.Count > 0)
+            else if (dropList!= null? dropList.Count>0:false)
             {
-                TakeDrop();
+                if (dropList.Count > 0)
+                {
+                    TakeDrop();
+                }
             }
             else
             {
@@ -433,6 +486,14 @@ public class KeyboardActorController : PersonController
                     currentRoom = door.roomPath;
                     pActions.GoThroughTheDoor(door);
                 }
+                else
+                {
+                    door.locker.TryToOpen(equip);
+                    if (door.locker.opened)
+                    {
+                        door.pairDoor.locker.opened = true;
+                    }
+                }
             }
         }
 
@@ -453,13 +514,14 @@ public class KeyboardActorController : PersonController
 
     void TakeDrop()
     {
-        DropClass drop = interactions.dropList[0];
+        List<DropClass> dropList = interactions.GetDropList();
+        DropClass drop = dropList[0];
         List<ItemBunch> items = drop.drop;
         for (int i = 0; i < items.Count; i++)
         {
             equip.TakeItem(items[i]);
         }
-        interactions.dropList.RemoveAt(0);
+        dropList.RemoveAt(0);
         Destroy(drop.gameObject);
     }
 
@@ -507,18 +569,18 @@ public class KeyboardActorController : PersonController
     /// </summary>
     protected void CheckObstacles()
     {
-        if ((lowWallCheck.collisions.Count> 0) &&
-            (frontWallCheck.collisions.Count == 0))
+        if ((lowWallCheck.GetCount()> 0) &&
+            (frontWallCheck.GetCount() == 0))
         {
             envStats.obstacleness = obstaclenessEnum.lowObstcl;
         }
-        else if ((frontWallCheck.collisions.Count> 0) &&
-                (highWallCheck.collisions.Count== 0))
+        else if ((frontWallCheck.GetCount()> 0) &&
+                 (highWallCheck.GetCount()== 0))
         {
             envStats.obstacleness = obstaclenessEnum.highObstcl;
         }
-        else if ((frontWallCheck.collisions.Count > 0) &&
-            (highWallCheck.collisions.Count > 0))
+        else if ((frontWallCheck.GetCount() > 0) &&
+                 (highWallCheck.GetCount() > 0))
         {
             envStats.obstacleness = obstaclenessEnum.wall;
         }
@@ -540,9 +602,9 @@ public class KeyboardActorController : PersonController
             {
                 envStats.interaction = interactionEnum.rope;
             }
-            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("stair")).Length > 0)
+            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ladder")).Length > 0)
             {
-                envStats.interaction = interactionEnum.stair;
+                envStats.interaction = interactionEnum.ladder;
             }
             else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ledge")).Length > 0)
             {
@@ -682,6 +744,7 @@ public class KeyboardActorController : PersonController
     public void ChangeItem(ItemBunch itemBunch, string itemType)
     {
         #region init
+
         ItemClass item = itemBunch.item;
 
         CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();

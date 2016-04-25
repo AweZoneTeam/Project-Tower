@@ -147,22 +147,47 @@ public class GameUI : InterfaceWindow
     /// </summary>
     void HandleItemChangedEvent(object sender, ItemChangedEventArgs e)
     {
-        if (e.Item != null)
+        ItemClass item = e.Item;
+        string itemType = e.ItemType;
+        if (string.Equals(itemType, "rightWeapon"))
         {
-            ItemClass item = e.Item;
-            string itemType = e.ItemType;
-            if (string.Equals(itemType, "rightWeapon"))
-            {
-                rightWeaponImage.sprite = item.image;
-            }
-            else if (string.Equals(itemType, "leftWeapon"))
-            {
-                leftWeaponImage.sprite = item.image;
-            }
-            else if (string.Equals(itemType, "usable"))
-            {
-                itemImage.sprite = item.image;
-            }
+            SetImage( ref rightWeaponImage, e.Item);
+        }
+        else if (string.Equals(itemType, "leftWeapon"))
+        {
+            SetImage(ref leftWeaponImage, e.Item);
+        }
+        else if (string.Equals(itemType, "usable"))
+        {
+            SetImage(ref itemImage, e.ItemBunch);
+        }
+    }
+
+    void SetImage(ref Image _image, ItemBunch _itemBunch)
+    {
+        if (_itemBunch == null ? true : _itemBunch.quantity <= 0)
+        {
+            _image.sprite = null;
+            _image.color = new Color(1f, 1f, 1f, 0f);
+        }
+        else
+        {
+            _image.sprite = _itemBunch.item.image;
+            _image.color = new Color(1f, 1f, 1f, 1f);
+        }
+    }
+
+    void SetImage(ref Image _image, ItemClass _item)
+    {
+        if (_item == null )
+        {
+            _image.sprite = null;
+            _image.color = new Color(1f, 1f, 1f, 0f);
+        }
+        else
+        {
+            _image.sprite = _item.image;
+            _image.color = new Color(1f, 1f, 1f, 1f);
         }
     }
 

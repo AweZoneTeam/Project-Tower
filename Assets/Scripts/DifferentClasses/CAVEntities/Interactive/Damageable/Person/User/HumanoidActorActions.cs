@@ -12,7 +12,7 @@ public class HumanoidActorActions : PersonActions
     const float maxLowObstacleHeight = 8f;
     const float lowObstacleSpeed = 30f;
 
-    const float highObstacleTime = 0.8f;
+    const float highObstacleTime = 1f;
     const float highObstacleSpeed = 30f;
     const float maxHighObstacleHeight = 17f;
 
@@ -39,7 +39,7 @@ public class HumanoidActorActions : PersonActions
 
     #region fields
 
-    public BoxCollider upperBody, lowerBody;//2 коллайдера, отвечающих за 2 половины тела персонажа
+    public Collider upperBody, lowerBody;//2 коллайдера, отвечающих за 2 половины тела персонажа
 
     protected Transform aboveWallCheck, lowWallCheck, frontWallCheck, highWallCheck;
 
@@ -57,10 +57,12 @@ public class HumanoidActorActions : PersonActions
 		touchingGround = false;
 	}
 
-    public void Update() {
+    public void Update()
+    {
 
         if (!death)
         {
+
             #region UsualActions
 
             if (envStats.interaction == interactionEnum.noInter)
@@ -75,16 +77,7 @@ public class HumanoidActorActions : PersonActions
                 }
                 if (moving)
                 {
-                    if (movingDirection == orientationEnum.left)
-                    {
-                        rigid.velocity = new Vector3(-currentMaxSpeed, rigid.velocity.y, rigid.velocity.z);
-                        direction.dir = orientationEnum.left;
-                    }
-                    else
-                    {
-                        rigid.velocity = new Vector3(currentMaxSpeed, rigid.velocity.y, rigid.velocity.z);
-                        direction.dir = orientationEnum.right;
-                    }
+                    Move(movingDirection, currentMaxSpeed);
                     if ((envStats.groundness == groundnessEnum.grounded) && (cAnim != null))
                     {
                         if (currentMaxSpeed == fastRunSpeed)
@@ -144,7 +137,7 @@ public class HumanoidActorActions : PersonActions
 
                 #region DefineMovement
 
-                if (employment<4)
+                if (employment < 4)
                 {
                     return;
                 }
@@ -156,12 +149,12 @@ public class HumanoidActorActions : PersonActions
                         cAnim.ThicketMove();
                     }
                 }
-                else if (envStats.interaction == interactionEnum.stair)
+                else if (envStats.interaction == interactionEnum.ladder)
                 {
-                    SetMaxSpeed(stairSpeed);
+                    SetMaxSpeed(ladderSpeed);
                     if (cAnim != null)
                     {
-                        cAnim.StairMove();
+                        cAnim.LadderMove();
                     }
                 }
                 else if (envStats.interaction == interactionEnum.rope)
@@ -199,6 +192,26 @@ public class HumanoidActorActions : PersonActions
             }
             #endregion //SpecialMovement
 
+            #region actionWithInteractiveObject
+
+            else if (envStats.interaction==interactionEnum.interactive)
+            {
+                if (interactionObject is MoveableBoxActions)
+                {
+                    SetMaxSpeed(boxSpeed);
+                    if (moving)
+                    {
+                        Move(movingDirection, boxSpeed);
+                        if (cAnim != null)
+                        {
+                            cAnim.BoxMove();
+                        }
+                    }
+                }
+            }
+
+            #endregion //actionWithInteractiveObject
+
         }
     }
 
@@ -211,8 +224,8 @@ public class HumanoidActorActions : PersonActions
         hitData = null;
         currentMaxSpeed = runSpeed;
         BoxCollider[] cols = gameObject.GetComponents<BoxCollider>();
-        lowerBody = cols[0];
-        upperBody = cols[1];
+        lowerBody = GetComponent<SphereCollider>();
+        upperBody = GetComponent<BoxCollider>();
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck");
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck");
         employment = maxEmployment;
@@ -514,7 +527,6 @@ public class HumanoidActorActions : PersonActions
         if (hitBox != null)
         {
             GameObject hBox = hitBox.gameObject;
-            hBox.transform.localPosition = hitData.hitPosition;
             hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             employment -= _employment;
             yield return new WaitForSeconds(hitData.hitTime-hitData.beginTime);
@@ -525,10 +537,34 @@ public class HumanoidActorActions : PersonActions
         }
     }
 
+    public override void UseItem(ItemBunch itemBunch)
+    {
+        UsableItemClass item = (UsableItemClass)itemBunch.item;
+        if (employment <= 4)
+        {
+            return;
+        }
+        if (item!=null? (item.grounded ? envStats.groundness == groundnessEnum.grounded : (envStats.groundness != groundnessEnum.crouch)):false)
+        {
+            if (itemActionList.ContainsKey(item.itemAction.actionName))
+            {
+                StartCoroutine(ItemProcess(item));
+            }
+        }
+    }
+
+    protected override IEnumerator ItemProcess(UsableItemClass item)
+    {
+        employment -= item.employment;
+        itemActionList[item.itemAction.actionName](this, item, item.itemAction.id, item.itemAction.argument);
+        yield return new WaitForSeconds(item.itemTime);
+        employment += item.employment;
+    }
+
     public override void GoThroughTheDoor(DoorClass door)
     {
+        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom(GameStatistics.currentArea, door.roomPath);
         SpFunctions.ChangeRoomData(door.roomPath);
-        GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>().ChangeRoom();
         base.GoThroughTheDoor(door);
     }
 

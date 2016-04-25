@@ -15,8 +15,8 @@ public class PersonController : DmgObjController, IPersonWatching
 
     #region consts
 
-    protected const float groundRadius = 0.2f;
-    protected const float preGroundRadius = 0.7f;
+    protected const float groundRadius = 1f;
+    protected const float preGroundRadius = 2f;
 
     protected const float interRadius = 1f;
 
@@ -45,6 +45,7 @@ public class PersonController : DmgObjController, IPersonWatching
     #endregion //indicators
     
     #region fields
+
     /*private*/
     protected EnvironmentStats envStats;
     [SerializeField]
@@ -61,7 +62,10 @@ public class PersonController : DmgObjController, IPersonWatching
 
     protected PersonActions pActions;
     protected PersonVisual cAnim;
-   
+    protected PreInteractionChecker interactions;
+
+    protected InterObjActions interactionObject;//Объект, с которым взаимодействует персонаж. Это поле используется в особых случаях.
+
     #endregion //fields
 
     #region parametres
@@ -74,6 +78,7 @@ public class PersonController : DmgObjController, IPersonWatching
     protected int employment;
 
     public LayerMask whatIsGround;
+    protected LayerMask whatIsWall=LayerMask.GetMask("door", "ground");
     public LayerMask whatIsInteractable;
 
     #endregion //parametres
@@ -111,7 +116,14 @@ public class PersonController : DmgObjController, IPersonWatching
         {
             SetVisual();
         }
+        interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<PreInteractionChecker>();
+        if (interactions != null)
+        {
+            SetInteractions();
+        }
     }
+    
+
 
     protected override void SetAction()
     {
@@ -126,6 +138,13 @@ public class PersonController : DmgObjController, IPersonWatching
         cAnim.SetDirection(direction);
         cAnim.SetOrgStats(orgStats);
         cAnim.SetEnvStats(envStats);
+    }
+
+    protected virtual void SetInteractions()
+    {
+        interactions.Person = this;
+        interactions.Rigid = rigid;
+        interactions.Initialize();
     }
 
     public virtual AreaClass GetRoomPosition()
@@ -152,6 +171,34 @@ public class PersonController : DmgObjController, IPersonWatching
         return envStats;
     }
 
+    public void SetInteractionObject(InterObjActions _interactionObject)
+    {
+        interactionObject = _interactionObject;
+        if (pActions != null)
+        {
+            pActions.InteractionObject = _interactionObject;
+        }
+    }
+
+    /// <summary>
+    /// Если к такому объекту подойдёт персонаж и будет взаимодействовать, то контроллер предпримет нужные действия
+    /// </summary>
+    public override void Interact(InterObjController interactor)
+    {
+        if (pActions != null)
+        {
+            pActions.SetInteractor(interactor);
+            pActions.Interact();
+        }
+    }
+
+    /// <summary>
+    /// Использовать активный предмет инвентаря
+    /// </summary>
+    protected virtual void UseItem()
+    {
+    }
+
     /// <summary>
     /// Функция, что реализует тот факт, что какой-то персонаж стал наблюдать за действиями данного
     /// Организуется подписка на заданные события
@@ -175,6 +222,10 @@ public class PersonController : DmgObjController, IPersonWatching
     protected virtual void DoorInteraction()
     {
         OnRoomChanged(new RoomChangedEventArgs(currentRoom));
+        if (interactions != null)
+        {
+            interactions.SetZCoordinate();
+        }
     }
     
     /// <summary>

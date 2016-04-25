@@ -212,7 +212,7 @@ public class JournalScriptStock
     /// </summary>
     void EnemyDeathInit(JournalEventScript _script, GameObject obj)
     {
-        obj.GetComponent<EnemyController>().EnemyDieJournalEvent += _script.HandleJournalEvent;
+        obj.GetComponent<AIController>().EnemyDieJournalEvent += _script.HandleJournalEvent;
     }
 
     #endregion //initFunctions
@@ -240,7 +240,7 @@ public class JournalScriptStock
     /// </summary>
     void EnemyDeathDeInit(JournalEventScript _script, GameObject obj)
     {
-        obj.GetComponent<EnemyController>().EnemyDieJournalEvent -= _script.HandleJournalEvent;
+        obj.GetComponent<AIController>().EnemyDieJournalEvent -= _script.HandleJournalEvent;
     }
 
     #endregion //deInitFunctions

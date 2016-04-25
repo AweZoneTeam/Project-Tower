@@ -17,5 +17,6 @@ public static class Tags {
     public const string interactive = "Interactive";
     public const string drop = "Dropable";
     public const string platform = "Platform";
+    public const string stairPlatform = "stairPlatform";
 
 }

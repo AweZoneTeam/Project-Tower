@@ -67,6 +67,7 @@ public class EquipmentWindow : InterfaceWindow
     #region characterDoll
 
     private ItemSlot rightWeaponSlot1, rightWeaponSlot2, leftWeaponSlot1, leftWeaponSlot2;
+    private List<ItemSlot> usableItemSlots=new List<ItemSlot>();
 
     #endregion //characterDoll
 
@@ -126,6 +127,14 @@ public class EquipmentWindow : InterfaceWindow
         leftWeaponSlot1.Initialize(this);
         leftWeaponSlot2 = characterDollPanel.FindChild("LeftWeaponSlot2").GetComponent<ItemSlot>();
         leftWeaponSlot2.Initialize(this);
+        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot1").GetComponent<ItemSlot>());
+        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot2").GetComponent<ItemSlot>());
+        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot3").GetComponent<ItemSlot>());
+        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot4").GetComponent<ItemSlot>());
+        foreach (ItemSlot slot in usableItemSlots)
+        {
+            slot.Initialize(this);
+        }
 
         InitializeSlot(characterDollPanel, "HelmetSlot", equip.armor.helmet);
         InitializeSlot(characterDollPanel, "CuirassSlot", equip.armor.cuirass);
@@ -134,14 +143,14 @@ public class EquipmentWindow : InterfaceWindow
         InitializeSlot(characterDollPanel, "GlovesSlot", equip.armor.gloves);
         InitializeSlot(characterDollPanel, "LeftRingSlot", equip.armor.leftRing);
         InitializeSlot(characterDollPanel, "RightRingSlot", equip.armor.rightRing);
-        InitializeSlot(characterDollPanel, "UsableItemSlot1", equip.useItems[0].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot2", equip.useItems[1].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot3", equip.useItems[2].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot4", equip.useItems[3].item);
         rightWeaponSlot1.Initialize(this,new ItemBunch(equip.rightWeapon));
         rightWeaponSlot2.Initialize(this,new ItemBunch(equip.altRightWeapon));
         leftWeaponSlot1.Initialize(this,new ItemBunch(equip.leftWeapon));
         leftWeaponSlot2.Initialize(this,new ItemBunch(equip.altLeftWeapon));
+        for (int i=0; i<usableItemSlots.Count;i++)
+        {
+            usableItemSlots[i].Initialize(this, equip.useItems[i]);
+        }
 
 
         #endregion //characterDoll
@@ -220,6 +229,11 @@ public class EquipmentWindow : InterfaceWindow
         slot.Initialize(this, new ItemBunch(item));
     }
 
+    private EquipmentSlot GetSlot(Transform trans, string childName)
+    {
+        return trans.FindChild(childName).GetComponent<EquipmentSlot>();
+    }
+
     /// <summary>
     /// Сменить какой-то предмет в экипировке персонажа
     /// </summary>
@@ -287,14 +301,24 @@ public class EquipmentWindow : InterfaceWindow
         if (string.Equals(e.ItemType, "rightWeapon"))
         {
             ItemBunch _itemBunch = rightWeaponSlot1.itemBunch;
-            rightWeaponSlot1.Initialize(this,rightWeaponSlot2.itemBunch);
-            rightWeaponSlot2.Initialize(this,_itemBunch);
+            rightWeaponSlot1.Initialize(this, rightWeaponSlot2.itemBunch);
+            rightWeaponSlot2.Initialize(this, _itemBunch);
         }
         else if (string.Equals(e.ItemType, "leftWeapon"))
         {
             ItemBunch _itemBunch = leftWeaponSlot1.itemBunch;
-            leftWeaponSlot1.Initialize(this,leftWeaponSlot2.itemBunch);
-            leftWeaponSlot2.Initialize(this,_itemBunch);
+            leftWeaponSlot1.Initialize(this, leftWeaponSlot2.itemBunch);
+            leftWeaponSlot2.Initialize(this, _itemBunch);
+        }
+        else if (string.Equals(e.ItemType, "usable"))
+        {
+            foreach (ItemSlot slot in usableItemSlots)
+            {
+                if (slot.itemBunch != null? slot.itemBunch.quantity <= 0: true)
+                {
+                    slot.Remove();
+                }
+            }
         }
     }
 

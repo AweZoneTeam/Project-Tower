@@ -189,7 +189,23 @@ public static class SpFunctions {
     /// </summary>
     public static void ChangeRoomData(AreaClass room)
     {
+        foreach (GameObject obj in GameStatistics.currentArea.hideForeground)
+        {
+            obj.SetActive(true);
+        }
+        foreach (GameObject obj in GameStatistics.currentArea.lightSources)
+        {
+            obj.SetActive(false);
+        }
         GameStatistics.currentArea = room;
+        foreach (GameObject obj in GameStatistics.currentArea.hideForeground)
+        {
+            obj.SetActive(false);
+        }
+        foreach (GameObject obj in GameStatistics.currentArea.lightSources)
+        {
+            obj.SetActive(true);
+        }
     }
 
     /// <summary>

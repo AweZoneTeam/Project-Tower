@@ -27,6 +27,7 @@ public class CameraController : MonoBehaviour
     #region parametres
 
     private GameObject character;//За каким персонажем камера следует
+    private GameObject ambLight;
     private Rigidbody2D rigid;
     private Vector3 offsetPosition;
     private Vector2 camSize = new Vector2 (sizeX,sizeY);//размер камеры, используемый для подсчёта нормального движения внутри комнаты
@@ -36,36 +37,15 @@ public class CameraController : MonoBehaviour
     public Rect roomCoords;
     public int movX = 0, movY=0;//Есть ли у камеры ограничения на передвижение вдоль направление движущегося персонажа
     private float deltaX, deltaY;
-    public GameObject g;
     public Vector3 vect;
 
     public List<BackgroundClass> backgroundList=new List<BackgroundClass>();
 
     #endregion //parametres
 
-    public void Start()
-    {
-        //Инициализация
-        offsetPosition = new Vector3(offsetX, offsetY, offsetZ);
-        camWindow = transform.FindChild("CamWindow");
-        if (GameObject.FindGameObjectWithTag(Tags.player) != null)
-        {
-            character = GameObject.FindGameObjectWithTag(Tags.player);
-            rigid = character.GetComponent<Rigidbody2D>();
-        }
-        currentArea = SpFunctions.GetCurrentArea();
-        roomCoords = new Rect(currentArea.position.x - currentArea.size.x / 2+sizeX/2,
-                    currentArea.position.y - currentArea.size.y / 2+sizeY/2,
-                    currentArea.size.x-sizeX,
-                    currentArea.size.y-sizeY);
-
-        cam = GetComponent<Camera>();
-        transform.position = new Vector3(transform.position.x, character.transform.position.y+offsetY, character.transform.position.z + offsetZ);
-    }
-
     public void FixedUpdate()
     {
-        vect = cam.WorldToViewportPoint(g.transform.position);
+        vect = cam.WorldToViewportPoint(character.transform.position);
         Vector2 spotPosition = new Vector2(transform.position.x + offsetPosition.x, transform.position.y + offsetPosition.y);
         Vector3 newPosition;
         #region howToHorizontalMove 
@@ -121,15 +101,60 @@ public class CameraController : MonoBehaviour
         #endregion //Move
     }
 
-    public void ChangeRoom()
+    public void Initialize()
     {
-        Transform trans = character.transform;
+        //Инициализация
+        offsetPosition = new Vector3(offsetX, offsetY, offsetZ);
+        camWindow = transform.FindChild("CamWindow");
+        if (GameObject.FindGameObjectWithTag(Tags.player) != null)
+        {
+            character = GameObject.FindGameObjectWithTag(Tags.player);
+            rigid = character.GetComponent<Rigidbody2D>();
+        }
+        if (transform.FindChild("AmbientLight")!= null)
+        {
+            ambLight = transform.FindChild("AmbientLight").gameObject;
+        }
         currentArea = SpFunctions.GetCurrentArea();
-        transform.position = new Vector3(currentArea.position.x,currentArea.position.y,trans.position.z+offsetZ);
-        roomCoords = new Rect(currentArea.position.x - currentArea.size.x / 2+sizeX/2,
-                            currentArea.position.y - currentArea.size.y / 2+sizeY/2,
-                            currentArea.size.x-sizeX,
-                            currentArea.size.y-sizeY);
+        roomCoords = new Rect(currentArea.position.x - currentArea.size.x / 2 + sizeX / 2,
+                    currentArea.position.y - currentArea.size.y / 2 + sizeY / 2,
+                    currentArea.size.x - sizeX,
+                    currentArea.size.y - sizeY);
+
+        cam = GetComponent<Camera>();
+        transform.position = new Vector3(transform.position.x, character.transform.position.y + offsetY, character.transform.position.z + offsetZ);
+    }
+
+    public void ChangeRoom(AreaClass prevArea, AreaClass nextArea)
+    {
+        if (nextArea.size.x == 0)
+        {
+            if (ambLight != null)
+            {
+                ambLight.SetActive(false);
+            }
+        }
+        else
+        {
+            if (ambLight != null)
+            {
+                ambLight.SetActive(true);
+            }
+            Transform trans = character.transform;
+            if (currentArea != nextArea)
+            {
+                currentArea = nextArea;
+                Vector3 newPosition = new Vector3(currentArea.position.x, currentArea.position.y, nextArea.position.z+offsetZ);
+                deltaX = newPosition.x - transform.position.x;
+                deltaY = newPosition.y - transform.position.y;
+                //Parallax(deltaX, deltaY);
+                //transform.position = newPosition;
+                roomCoords = new Rect(currentArea.position.x - currentArea.size.x / 2 + sizeX / 2,
+                                    currentArea.position.y - currentArea.size.y / 2 + sizeY / 2,
+                                    currentArea.size.x - sizeX,
+                                    currentArea.size.y - sizeY);
+            }
+        }
     }
 
     void Parallax(float delX, float delY)

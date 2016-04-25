@@ -269,7 +269,7 @@ public class CharacterVisual : PersonVisual
     /// <summary>
     /// Анимировать движение на лестнице
     /// </summary>
-    public override void StairMove()
+    public override void LadderMove()
     {
         if (cAnim != null)
         {
@@ -348,6 +348,24 @@ public class CharacterVisual : PersonVisual
             if (cAnim != null)
             {
                 cAnim.Animate("EdgeUp");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Анимировать движение с коробкой
+    /// </summary>
+    public override void BoxMove()
+    {
+        if (cAnim != null)
+        {
+            if (Mathf.Abs(rigid.velocity.x) > 5f)
+            {
+                cAnim.Animate("WallMoving");
+            }
+            else
+            {
+                cAnim.Animate("WalInFront");
             }
         }
     }

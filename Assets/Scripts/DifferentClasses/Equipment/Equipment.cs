@@ -113,7 +113,7 @@ public class EquipmentClass: BagClass
                 availableItems.Add(useItems[i]);
             }
         }
-        if (availableItems.Count >0)
+        if (availableItems.Count > 0)
         {
             if (availableItems.IndexOf(useItem) + 1 == availableItems.Count)
             {
@@ -123,7 +123,12 @@ public class EquipmentClass: BagClass
             {
                 useItem = availableItems[availableItems.IndexOf(useItem) + 1];
             }
-            OnActiveItemChanged(new ItemChangedEventArgs(useItem.item, "usable"));
+            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "usable"));
+        }
+        else
+        {
+            useItem = null;
+            OnActiveItemChanged(new ItemChangedEventArgs((ItemBunch)null, "usable"));
         }
     }
 
@@ -256,11 +261,11 @@ public class EquipmentClass: BagClass
                 if (useItems.IndexOf(useItem) == index)
                 {
                     useItem = itemBunch;
+                    OnActiveItemChanged(new ItemChangedEventArgs(itemBunch, "usable"));
                 }
             }
             removeItems.Add(useItems[index].item);
-            useItems.Insert(index, itemBunch);
-            OnActiveItemChanged(new ItemChangedEventArgs(item, "usable"));
+            useItems[index]= itemBunch;
         }
 
         #endregion //usableItems

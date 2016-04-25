@@ -130,4 +130,9 @@ public class ItemSlot : EquipmentSlot
         base.AddItem(_itemBunch);       
     }
 
+    public void Remove()
+    {
+        DeleteItem();
+    }
+
 }
