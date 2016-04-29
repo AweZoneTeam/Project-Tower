@@ -699,9 +699,9 @@ public class EnemyEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
         EditorGUILayout.EnumMaskField("direction", direction.dir);
-        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
-        orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
-        EditorGUILayout.FloatField("Health", orgStats.health);
+        //orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        //orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
+        //EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

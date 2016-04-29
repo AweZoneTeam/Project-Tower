@@ -540,7 +540,7 @@ public class HumanoidActorActions : PersonActions
     public override void UseItem(ItemBunch itemBunch)
     {
         UsableItemClass item = (UsableItemClass)itemBunch.item;
-        if (employment <= 4)
+        if ((employment <= 4))
         {
             return;
         }
@@ -548,17 +548,99 @@ public class HumanoidActorActions : PersonActions
         {
             if (itemActionList.ContainsKey(item.itemAction.actionName))
             {
-                StartCoroutine(ItemProcess(item));
+                StartCoroutine(ItemProcess(item.itemAction, 0f));
+            }
+            if (item.itemAction.consumed)
+            {
+                itemBunch.quantity--;
             }
         }
     }
 
-    protected override IEnumerator ItemProcess(UsableItemClass item)
+    /// <summary>
+    /// Задержать действие, совершаемое при использовании предмета
+    /// </summary>
+    public override void ChargeItem(ItemBunch itemBunch)
     {
-        employment -= item.employment;
-        itemActionList[item.itemAction.actionName](this, item, item.itemAction.id, item.itemAction.argument);
-        yield return new WaitForSeconds(item.itemTime);
-        employment += item.employment;
+        UsableItemClass item = (UsableItemClass)itemBunch.item;
+        if (item.charge ? ((employment < 5) && (chargeValue == 0)) : true)
+        {
+            return;
+        }
+        if (item.grounded ? envStats.groundness == groundnessEnum.grounded : (envStats.groundness != groundnessEnum.crouch))
+        {
+            ChargeData chargeData = item.chargeData;
+            if (chargeValue == 0)
+            {
+                employment -= chargeData.employment;
+            }
+            if (chargeValue < chargeData.maxValue)
+            {
+                chargeValue += Time.deltaTime;
+            }
+            else if (chargeValue > chargeData.maxValue)
+            {
+                chargeValue = chargeData.maxValue;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Совершить действие, происходящее при прекращении зарядки
+    /// </summary>
+    public override void ReleaseItem(ItemBunch itemBunch)
+    {
+        UsableItemClass item = (UsableItemClass)itemBunch.item;
+        if (!item.charge)
+        {
+            return;
+        }
+        ItemChargeData chargeAction = item.chargeData;
+        employment += chargeAction.employment;
+        if (chargeValue < chargeAction.deadZone)
+        {
+            if (itemActionList.ContainsKey(item.itemAction.actionName))
+            {
+                StartCoroutine(ItemProcess(item.itemAction, 0f));
+            }
+            if (item.itemAction.consumed)
+            {
+                itemBunch.quantity--;
+            }
+        }
+        else if (chargeValue < chargeAction.maxValue)
+        {
+            if (itemActionList.ContainsKey(chargeAction.unchargedAction.actionName))
+            {
+                StartCoroutine(ItemProcess((ItemActionData)chargeAction.unchargedAction, chargeValue));
+            }
+            ItemActionData itemData = (ItemActionData)chargeAction.unchargedAction;
+            if (itemData.consumed)
+            {
+                itemBunch.quantity--;
+            }
+        }
+        else
+        {
+            if (itemActionList.ContainsKey(chargeAction.chargedAction.actionName))
+            {
+                StartCoroutine(ItemProcess((ItemActionData)chargeAction.chargedAction, chargeValue));
+            }
+            ItemActionData itemData = (ItemActionData)chargeAction.chargedAction;
+            if (itemData.consumed)
+            {
+                itemBunch.quantity--;
+            }
+        }
+        chargeValue = -1f;
+    }
+
+    protected override IEnumerator ItemProcess(ItemActionData itemData, float _chargeValue)
+    {
+        employment -= itemData.employment;
+        itemActionList[itemData.actionName](this, itemData, chargeValue);
+        yield return new WaitForSeconds(itemData.actionTime);
+        employment += itemData.employment;
     }
 
     public override void GoThroughTheDoor(DoorClass door)

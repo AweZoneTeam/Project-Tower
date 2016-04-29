@@ -210,10 +210,8 @@ public class KeyboardActorController : PersonController
                             pActions.Attack();
                         }
 
-                        if (Input.GetButtonDown("UseItem"))
-                        {
-                            UseItem();
-                        }
+                        UseItem();
+
                     }
 
                     #endregion //UsualState
@@ -424,12 +422,41 @@ public class KeyboardActorController : PersonController
     protected override void UseItem()
     {
         ItemBunch useItem = equip.useItem;
-        if (useItem != null)
-        {
+        UsableItemClass item=null;
+        if (useItem != null? ((item = (UsableItemClass)useItem.item)!=null):false)
+        {   
             if (pActions != null)
             {
-                pActions.UseItem(useItem);
-                useItem.quantity--;
+                if ((item.charge&&(pActions.ChargeValue>=0f)))
+                {
+                    if (Input.GetButton("UseItem"))
+                    {
+                        ItemChargeData chargeData = item.chargeData;
+                        if (chargeData.autoInteruption ? (pActions.ChargeValue >= chargeData.maxValue) : false)
+                        {
+                            pActions.ReleaseItem(useItem);
+                        }
+                        else
+                        {
+                            pActions.ChargeItem(useItem);
+                        }
+                    }
+                    else if (Input.GetButtonUp("UseItem"))
+                    {
+                        pActions.ReleaseItem(useItem);
+                    }
+                }
+                else if (Input.GetButtonDown("UseItem"))
+                {
+                    if (!item.charge)
+                    {
+                        pActions.UseItem(useItem);
+                    }
+                    else
+                    {
+                        pActions.ChargeValue = 0f;
+                    }
+                }
                 if (useItem.quantity == 0)
                 {
                     equip.useItem = null;
@@ -934,9 +961,9 @@ public class KeyboardActorEditor : Editor
         EditorGUILayout.EnumPopup(envStats.groundness);
         EditorGUILayout.EnumPopup(envStats.obstacleness);
         EditorGUILayout.EnumPopup(envStats.interaction);
-        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
-        orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
-        EditorGUILayout.FloatField("Health", orgStats.health);
+        //orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        //orgStats.velocity = EditorGUILayout.FloatField("Velocity", orgStats.velocity);
+        //EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

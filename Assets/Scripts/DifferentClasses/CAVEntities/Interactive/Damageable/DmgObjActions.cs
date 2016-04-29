@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Набор простейших действи, которые может совершать объект, имеющий здоровье
+/// Набор простейших действий, которые может совершать объект, имеющий здоровье
 /// </summary>
 public class DmgObjActions : InterObjActions
 {
@@ -20,9 +20,9 @@ public class DmgObjActions : InterObjActions
     protected OrganismStats orgStats;
     protected DmgObjVisual dmgAnim;
 
-    #endregion //fields
-
     public List<GameObject> dropList = new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
+
+    #endregion //fields
 
     public override void Initialize()
     {

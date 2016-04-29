@@ -367,8 +367,8 @@ public class PersonEditor : DmgObjEditor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
         EditorGUILayout.EnumMaskField("direction", direction.dir);
-        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
-        EditorGUILayout.FloatField("Health", orgStats.health);
+        //orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        //EditorGUILayout.FloatField("Health", orgStats.health);
     }
 }
 #endif

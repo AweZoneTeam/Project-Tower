@@ -33,6 +33,10 @@ public class PersonActions : DmgObjActions
 
     public Transform platformCheck;//Индикатор, использующийся для взаимодействия с платформами
 
+    protected Transform sight;//Индикатор, использующийся для зрения персонажа.
+    public Transform Sight
+    { get { return sight; } }
+
     public HitClass hitData = null;//Какими параметрами атаки персонаж пользуется в данный момент
     protected HitController hitBox;//хитбокс оружия персонажа
 
@@ -43,8 +47,12 @@ public class PersonActions : DmgObjActions
     protected InterObjActions interactionObject;
     public InterObjActions InteractionObject {set { interactionObject = value;}}
 
-    protected delegate void itemAction(PersonActions person, UsableItemClass item, string id, int argument);
-    protected static Dictionary<string, itemAction> itemActionList = new Dictionary<string, itemAction> { { "setUp", SetUpItem } };
+    protected float chargeValue = 0f;//Переменная, отвечающая за "заряжающиеся" действия
+    public float ChargeValue
+    { get { return chargeValue; } set { chargeValue = 0; } }
+
+    protected delegate void itemAction(PersonActions person, ActionData aData, float _chargeValue);
+    protected static Dictionary<string, itemAction> itemActionList = new Dictionary<string, itemAction> { { "setUp", SetUpItem }, { "throw", ThrowItem} };
 
     #endregion //fields
 
@@ -101,6 +109,7 @@ public class PersonActions : DmgObjActions
     {
         cAnim = GetComponentInChildren<PersonVisual>();
         platformCheck = transform.FindChild("Indicators").FindChild("PlatformCheck");
+        sight = transform.FindChild("Indicators").FindChild("Sight");
         climbingDirection = new Vector2(0f, 0f);
     }
 
@@ -317,6 +326,11 @@ public class PersonActions : DmgObjActions
         yield return new WaitForSeconds(0f);
     }
 
+    /// <summary>
+    /// Использовать предмет.
+    /// </summary>
+    /// <param name="Какие предметы используются"></param>
+    /// <param name="Если true, то действие предмета произойдёт в начале использования. Иначе - в конце"></param>
     public virtual void UseItem(ItemBunch itemBunch)
     {
         UsableItemClass item = (UsableItemClass)itemBunch.item;
@@ -324,23 +338,48 @@ public class PersonActions : DmgObjActions
         {
             if (itemActionList.ContainsKey(item.itemAction.actionName))
             {
-                StartCoroutine(ItemProcess(item));
+                StartCoroutine(ItemProcess(item.itemAction,0f));
             }
         }
     }
 
-    protected virtual IEnumerator ItemProcess(UsableItemClass item)
+    /// <summary>
+    /// Задержать действие, совершаемое при использовании предмета
+    /// </summary>
+    public virtual void ChargeItem(ItemBunch itemBunch)
     {
-        itemActionList[item.itemAction.actionName](this, item, item.itemAction.id, item.itemAction.argument);
-        yield return new WaitForSeconds(item.itemTime);
+    }
+
+    /// <summary>
+    /// Совершить действие, происходящее при прекращении зарядки
+    /// </summary>
+    public virtual void ReleaseItem(ItemBunch itemBunch)
+    {
+    }
+
+    protected virtual IEnumerator ItemProcess(ItemActionData itemData, float _chargeValue)
+    {
+        itemActionList[itemData.actionName](this, itemData, _chargeValue);
+        yield return new WaitForSeconds(itemData.actionTime);
     }
 
     #region itemActions
 
-    protected static void SetUpItem(PersonActions person, UsableItemClass item, string id, int argument)
+    protected static void SetUpItem(PersonActions person, ActionData aData, float _chargeValue)
     {
-        GameObject drop = Instantiate(item.itemObject);
-        drop.transform.position = new Vector3(person.transform.position.x, person.transform.position.y, person.transform.position.z + argument);
+        ItemActionData iData = (ItemActionData)aData;
+        GameObject drop = Instantiate(iData.itemObject);
+        drop.transform.position = new Vector3(person.transform.position.x, person.transform.position.y, person.transform.position.z + iData.argument);
+    }
+
+    protected static void ThrowItem(PersonActions person, ActionData aData, float _chargeValue)
+    {
+        ItemActionData iData = (ItemActionData)aData;
+        GameObject item = Instantiate(iData.itemObject, person.Sight.position, person.Sight.rotation) as GameObject;
+        Vector3 scale = item.transform.localScale;
+        item.transform.localScale = new Vector3(scale.x * Mathf.Sign(person.transform.localScale.x), scale.y, scale.z);
+        Rigidbody rigid = item.GetComponentInChildren<Rigidbody>();
+        rigid.AddForce(new Vector3(Mathf.Sign(person.transform.localScale.x) * iData.argument * _chargeValue, iData.argument * _chargeValue/2, 0f));
     }
 
     #endregion //itemActions

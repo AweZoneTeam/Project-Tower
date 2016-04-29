@@ -24,7 +24,8 @@ public class DmgObjController : InterObjController
 
     protected DmgObjActions dmgActions;
     protected DmgObjVisual dmgAnim;
-    protected OrganismStats orgStats=new OrganismStats();
+    [SerializeField]
+    protected OrganismStats orgStats;
     public List<GameObject> dropList=new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
     public bool death=false;//умер ли персонаж
 
@@ -137,17 +138,17 @@ public class DmgObjEditor : InterObjEditor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Parametres");
         EditorGUILayout.EnumMaskField("direction", direction.dir);
-        orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
-        orgStats.health=EditorGUILayout.FloatField("Health", orgStats.health);
-        orgStats.defence.stability = EditorGUILayout.IntField("Stability", orgStats.defence.stability);
+        //orgStats.maxHealth = EditorGUILayout.FloatField("Max Health", orgStats.maxHealth);
+        //orgStats.health=EditorGUILayout.FloatField("Health", orgStats.health);
+        //orgStats.defence.stability = EditorGUILayout.IntField("Stability", orgStats.defence.stability);
         EditorGUILayout.Space();
-        EditorGUILayout.IntField("Hitted", (int)orgStats.hitted);
-        orgStats.microStun = EditorGUILayout.FloatField("MicroStun", orgStats.microStun);
-        orgStats.macroStun = EditorGUILayout.FloatField("MacroStun", orgStats.macroStun);
-        orgStats.defence.pDefence = EditorGUILayout.IntField("Physic Defence", orgStats.defence.pDefence);
-        orgStats.defence.fDefence = EditorGUILayout.IntField("Fire Defence", orgStats.defence.fDefence);
-        orgStats.defence.aDefence = EditorGUILayout.IntField("Poison Defence", orgStats.defence.aDefence);
-        orgStats.defence.dDefence = EditorGUILayout.IntField("Dark Defence", orgStats.defence.dDefence);
+        //EditorGUILayout.IntField("Hitted", (int)orgStats.hitted);
+        //orgStats.microStun = EditorGUILayout.FloatField("MicroStun", orgStats.microStun);
+        //orgStats.macroStun = EditorGUILayout.FloatField("MacroStun", orgStats.macroStun);
+        //orgStats.defence.pDefence = EditorGUILayout.IntField("Physic Defence", orgStats.defence.pDefence);
+        //orgStats.defence.fDefence = EditorGUILayout.IntField("Fire Defence", orgStats.defence.fDefence);
+        //orgStats.defence.aDefence = EditorGUILayout.IntField("Poison Defence", orgStats.defence.aDefence);
+        //orgStats.defence.dDefence = EditorGUILayout.IntField("Dark Defence", orgStats.defence.dDefence);
     }
 }
 #endif

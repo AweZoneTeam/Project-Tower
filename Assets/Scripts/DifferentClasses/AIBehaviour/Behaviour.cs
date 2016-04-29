@@ -147,6 +147,63 @@ public class ReactionSign
 }
 
 /// <summary>
+/// Класс, что представяет собой данные, используемые при вызове функций, при которых происходит некоторое активное действие персонажа
+/// </summary>
+[System.Serializable]
+public class ActionData
+{
+    public string actionName;//Имя вызываемой функции
+    public string id;//Строковый аргумент
+    public int argument;//Числовой аргумент
+    public float actionTime = 1f;//Как долго совершается действие
+    public int employment;//Насколько занятым станет персонаж при совершении этого действия?
+
+}
+
+/// <summary>
+/// Класс, представляющий собой данные для вызова чарджевых действий
+/// </summary>
+[System.Serializable]
+public class ChargeData : ActionData
+{
+    public float deadZone = 1f;//значение, при котором считается, что чардж ещё не начался
+    public float maxValue = 2f;//Максимальное значение которого можно достичь при накапливании.
+    public bool autoInteruption;//Если true, то автоматически прервётся чардж при достижении максимального значения.
+
+    public ChargeData()
+    {
+        deadZone = 1f;
+        maxValue = 2f;
+        autoInteruption = false;
+    }
+}
+
+/// <summary>
+/// Класс, представляющий собой данные для вызовачарджевых действий предметов
+/// </summary>
+[System.Serializable]
+public class ItemChargeData : ChargeData
+{
+    public ItemActionData chargedAction, unchargedAction;//Действия, что вызывается при завершённой и незавершённой заряддках предета соответственно
+}
+
+/// <summary>
+/// Класс, что представляет собой аргументы функций, вызываемых при использовании предметов
+/// </summary>
+[System.Serializable]
+public class ItemActionData: ActionData
+{
+    public GameObject itemObject;//Игровой объект, что ассоциируется с этим действием (бомба, что бросится при "Броске бомбы")
+    public bool consumed=true;//Если true, то при использовании предмета, он будет расходоваться
+
+    public ItemActionData()
+    {
+    }
+
+
+}
+
+/// <summary>
 /// Класс, что используется при загрузке моделей поведения в персонажа с ИИ
 /// </summary>
 [System.Serializable]

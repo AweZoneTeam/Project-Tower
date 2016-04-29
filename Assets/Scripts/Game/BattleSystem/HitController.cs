@@ -47,7 +47,7 @@ public class HitController : MonoBehaviour
     //Cмотрим, попал ли хитбокс по врагу, и, если попал, то идёт расчёт урона
     void OnTriggerEnter(Collider other)
     {
-        if (enemies.Contains(other.gameObject.tag))
+        if (enemies != null ? (enemies.Count == 0? false : enemies.Contains(other.gameObject.tag)):true)
         {
             DmgObjController target = other.gameObject.GetComponent<DmgObjController>();
             if (target != null)
@@ -127,6 +127,14 @@ public class HitController : MonoBehaviour
             }
             target.OnHealthChanged(new OrganismEventArgs(0f));
         }
+    }
+
+    /// <summary>
+    /// Установить, по каким целям будет попадать хитбокс
+    /// </summary>
+    public void SetEnemies(List<string> _enemies)
+    {
+        enemies = _enemies;
     }
 
     DefenceClass CalculateDefence(DefenceClass _defence)
