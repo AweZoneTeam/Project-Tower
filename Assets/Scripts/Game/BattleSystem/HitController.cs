@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class HitController : MonoBehaviour
 {
     public BoxCollider col;//Область удара
-    public List<string> enemies;//По каким тегам искать врагов?
+    private List<string> enemies;//По каким тегам искать врагов?
     public float actTime;// Время активности хитбокса (как долго ещё хитбокс атакует?)
     public OrganismStats target;//Кого атаковать?
 
@@ -126,6 +126,11 @@ public class HitController : MonoBehaviour
                 }
             }
             target.OnHealthChanged(new OrganismEventArgs(0f));
+            if (dmg is AIController)
+            {
+                AIController ai = (AIController)dmg;
+                ai.WhoAttacksMe = new TargetWithCondition(transform.parent.gameObject, "enemy");
+            }
         }
     }
 

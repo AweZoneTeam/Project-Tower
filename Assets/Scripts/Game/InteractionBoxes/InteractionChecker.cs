@@ -55,11 +55,8 @@ public class InteractionChecker : PreInteractionChecker {
         }
 
         #endregion //DropInteractions
-
-        else
-        {
-            base.OnTriggerEnter(other);
-        }
+        
+        base.OnTriggerEnter(other);
 
     }
 
@@ -92,10 +89,7 @@ public class InteractionChecker : PreInteractionChecker {
 
         #endregion //DropInteractions
 
-        else
-        {
-            base.OnTriggerExit(other);
-        }
+        base.OnTriggerExit(other);
 
     }
 

@@ -98,6 +98,9 @@ public class PersonActions : DmgObjActions
     protected bool precipiceIsForward = false;
     public bool PrecipiceIsForward { set { precipiceIsForward = value; } }
 
+    protected bool obstacleIsForward = false;
+    public bool ObstacleIsForward {set { obstacleIsForward = value; } }
+
     protected bool jumpIsPossible = true;
     public bool JumpIsPossible { set { jumpIsPossible = value; } }
 
@@ -109,7 +112,7 @@ public class PersonActions : DmgObjActions
     {
         cAnim = GetComponentInChildren<PersonVisual>();
         platformCheck = transform.FindChild("Indicators").FindChild("PlatformCheck");
-        sight = transform.FindChild("Indicators").FindChild("Sight");
+        sight = transform.FindChild("Sight");
         climbingDirection = new Vector2(0f, 0f);
     }
 
@@ -215,6 +218,13 @@ public class PersonActions : DmgObjActions
     }
 
     /// <summary>
+    /// Функция избегания цели
+    /// </summary>
+    public virtual void Escape()
+    {
+    }
+
+    /// <summary>
     /// Совершить прыжок
     /// </summary>
     public virtual void Jump()
@@ -243,8 +253,8 @@ public class PersonActions : DmgObjActions
     /// </summary>
     public virtual void GoThroughTheDoor(DoorClass door)
     {
-        transform.position = new Vector3 (door.pairDoor.transform.position.x+SpFunctions.RealSign(door.pairDoor.transform.position.x - door.transform.position.x) *DoorClass.changeRoomOffset,
-                                          door.pairDoor.transform.position.y,
+        transform.position = new Vector3 (door.pairDoor.transform.position.x+SpFunctions.RealSign(door.pairDoor.transform.position.x - door.transform.position.x) *DoorClass.changeRoomOffsetX,
+                                          door.pairDoor.transform.position.y+DoorClass.changeRoomOffsetY,
                                           door.roomPath.id.coordZ);
         door.OnDoorOpen(new JournalEventArgs());
     }
@@ -276,7 +286,8 @@ public class PersonActions : DmgObjActions
     /// </summary>
     public virtual void AvoidLowObstacle(float height)
     {
-
+        envStats.obstacleness = obstaclenessEnum.noObstcl;
+        envStats.interaction = interactionEnum.noInter;
     }
 
     /// <summary>

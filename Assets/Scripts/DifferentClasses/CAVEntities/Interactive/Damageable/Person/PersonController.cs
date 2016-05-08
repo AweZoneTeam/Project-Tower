@@ -41,15 +41,15 @@ public class PersonController : DmgObjController, IPersonWatching
     protected Transform precipiceCheck;//Индикатор, проверяющий, находится ли впереди пропасть
     protected Transform interCheck;//Индикатор, определяющий, где находятся средства особого перемещения (заросли, верёвки...)
     protected Transform sight;//Откуда персонаж смотрит
+    protected GroundChecker frontWallCheck;//Индикатор, которым персонаж определяет непроходимое препятствие
 
     #endregion //indicators
     
     #region fields
 
     /*private*/
-    protected EnvironmentStats envStats;
-    [SerializeField]
-    protected BagClass bag;
+    [SerializeField]protected EnvironmentStats envStats;
+    [SerializeField]protected BagClass bag;
     protected BuffsList bList;//Список баффов, навешанных на персонажа.
 
     public BuffsList buffList
@@ -63,6 +63,7 @@ public class PersonController : DmgObjController, IPersonWatching
     protected PersonActions pActions;
     protected PersonVisual cAnim;
     protected PreInteractionChecker interactions;
+    protected HitController hitBox;//То, чем персонаж атакует
 
     protected InterObjActions interactionObject;//Объект, с которым взаимодействует персонаж. Это поле используется в особых случаях.
 
@@ -75,7 +76,7 @@ public class PersonController : DmgObjController, IPersonWatching
     protected bool fallDamaged = false;
     protected float fallDamage = 0f;
 
-    protected int employment;
+    [SerializeField]protected int employment;
 
     public LayerMask whatIsGround;
     protected LayerMask whatIsWall=LayerMask.GetMask("door", "ground");
@@ -87,10 +88,15 @@ public class PersonController : DmgObjController, IPersonWatching
 
     public override void Initialize()
     {
-        groundCheck = transform.FindChild("Indicators").FindChild("GroundCheck");
-        interCheck = transform.FindChild("Indicators").FindChild("InterCheck");
-        precipiceCheck = transform.FindChild("Indicators").FindChild("PrecipiceCheck");
-        sight= transform.FindChild("Indicators").FindChild("Sight");
+        Transform indicators = transform.FindChild("Indicators");
+        if (indicators != null)
+        {
+            groundCheck = indicators.FindChild("GroundCheck");
+            interCheck = indicators.FindChild("InterCheck");
+            precipiceCheck = indicators.FindChild("PrecipiceCheck");
+            sight = transform.FindChild("Sight");
+            frontWallCheck = indicators.FindChild("FrontWallCheck")!=null? indicators.FindChild("FrontWallCheck").GetComponent<GroundChecker>():null;
+        }
         bList = new BuffsList(this);
         rigid = GetComponent<Rigidbody>();
         if (direction == null)
@@ -121,6 +127,11 @@ public class PersonController : DmgObjController, IPersonWatching
         {
             SetInteractions();
         }
+        if (currentRoom != null)
+        {
+            currentRoom.container.Add(this);
+        }
+        hitBox = GetComponentInChildren<HitController>();
     }
     
 
@@ -224,7 +235,20 @@ public class PersonController : DmgObjController, IPersonWatching
         OnRoomChanged(new RoomChangedEventArgs(currentRoom));
         if (interactions != null)
         {
-            interactions.SetZCoordinate();
+            interactions.ZCoordinate=0;
+        }
+    }
+
+    /// <summary>
+    /// Сменить комнату
+    /// </summary>
+    protected virtual void ChangeRoom(AreaClass nextRoom)
+    {
+        if (currentRoom != null)
+        {
+            currentRoom.container.Remove(this);
+            currentRoom = nextRoom;
+            currentRoom.container.Add(this);
         }
     }
     
@@ -249,6 +273,7 @@ public class PersonController : DmgObjController, IPersonWatching
         DefineGroundness();
         DefineFallDamage();
         DefinePrecipice();
+        CheckObstacles();
     }
 
     /// <summary>
@@ -313,19 +338,39 @@ public class PersonController : DmgObjController, IPersonWatching
     }
 
     /// <summary>
+    /// Учесть препятствия, ставшие на пути персонажа
+    /// </summary>
+    protected virtual void CheckObstacles()
+    {
+        if (frontWallCheck!= null? frontWallCheck.GetCount() > 0:false)
+        {
+            envStats.obstacleness = obstaclenessEnum.wall;
+        }
+        else
+        {
+            envStats.obstacleness = obstaclenessEnum.noObstcl;
+        }
+    }
+
+    /// <summary>
     /// Поменять коллайдеру z-координатам.
     /// </summary>
-    public virtual void ChangeColliderZCordinate(float z)
+    public virtual void ChangeColliderZCoordinate(float z)
     {
         BoxCollider[] cols = GetComponents<BoxCollider>();
+        List<Transform> wallChecks = new List<Transform>();
         Vector3 center;
+        
         for (int i = 0; i < cols.Length; i++)
         {
             center = cols[i].center;
             cols[i].center = new Vector3(center.x, center.y, z);
         }
-        groundCheck.position = new Vector3(groundCheck.position.x, groundCheck.position.y, z);
-        precipiceCheck.position = new Vector3(precipiceCheck.position.x, precipiceCheck.position.y, z);
+        Transform indicators;
+        if ((indicators=transform.FindChild("Indicators"))!= null)
+        {
+            indicators.localPosition = new Vector3(indicators.localPosition.x, indicators.localPosition.y, z);
+        }
     }
 
     #endregion //Interface

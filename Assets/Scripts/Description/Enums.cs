@@ -11,6 +11,17 @@ public enum orientationEnum
     max=10
 }
 
+public enum traceEnum
+{
+    backward=-1,
+    forward=1
+}
+
+/// <summary>
+/// Енам, содержащий основные 6 направлений
+/// </summary>
+public enum directionEnum {left, right, down, up, back, forward, anywhere}
+
 /// <summary>
 /// Положение относительно земли
 /// </summary>
@@ -36,4 +47,12 @@ public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall};
 /// </summary>
 public enum interactionEnum {noInter, ladder, rope, thicket, ledge, platform, edge, lowEdge, interactive};
 
-public enum doorEnum { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа
+/// <summary>
+/// За какой тип двери отвечает каждый номер типа
+/// </summary>
+public enum doorEnum { left, right, back, forward, down, up, everywhere };
+
+/// <summary>
+/// Ориентация поверхности, на которой стоит персонаж
+/// </summary>
+public enum groundOrientationEnum {down, right, up, left};

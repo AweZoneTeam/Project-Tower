@@ -224,8 +224,8 @@ public class HumanoidActorActions : PersonActions
         hitData = null;
         currentMaxSpeed = runSpeed;
         BoxCollider[] cols = gameObject.GetComponents<BoxCollider>();
-        lowerBody = GetComponent<SphereCollider>();
-        upperBody = GetComponent<BoxCollider>();
+        lowerBody = cols[0];
+        upperBody = cols[1];
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck");
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck");
         employment = maxEmployment;

@@ -70,7 +70,90 @@ public static class SpFunctions {
 	{
 		return new Vector2 (vect.x, vect.y);
 	}
-		
+
+    /// <summary>
+    /// Вспомогательная функция, возвращающая вектор направления движения для существ, которые могут передвигаться на разных поверхностях, когда они повёрнуты вправо
+    /// </summary>
+    public static Vector3 GetSurfaceRightDirection(groundOrientationEnum grEnum)
+    {
+        switch (grEnum)
+        {
+            case groundOrientationEnum.down:
+                {
+                    return new Vector3(1f, 0f,0f);
+                    break;
+                }
+            case groundOrientationEnum.right:
+                {
+                    return new Vector3(0f, 1f,0f);
+                    break;
+                }
+            case groundOrientationEnum.up:
+                {
+                    return new Vector3(-1f, 0f,0f);
+                    break;
+                }
+            case groundOrientationEnum.left:
+                {
+                    return new Vector3(0f, -1f,0f);
+                    break;
+                }
+            default:
+                {
+                    return Vector3.zero;
+                    break;
+                }
+        }
+    }
+
+    /// <summary>
+    /// На какой поверхности окажется персонаж при повороте
+    /// </summary>
+    /// <param name="изначальная ориентация"></param>
+    /// <param name="поворот будет произведён по часовой стрелке на 90 градусов"></param>
+    public static groundOrientationEnum GetNextSurfaceOrientation(groundOrientationEnum _grOrientation, bool sunwise)
+    {
+        int enumValue = (int)_grOrientation;
+        enumValue = enumValue + (sunwise ? -1 : 1);
+        enumValue = enumValue < 0 ? 3 : (enumValue > 3 ? 0 : enumValue);
+        return (groundOrientationEnum)enumValue;
+    }
+
+    /// <summary>
+    /// На какой угол надо повернуться, чтобы оказаться на заданной поверхности
+    /// </summary>
+    public static float GetAngleOfSurfaceOrientation(groundOrientationEnum grEnum)
+    {
+        switch (grEnum)
+        {
+            case groundOrientationEnum.down:
+                {
+                    return 0f;
+                    break;
+                }
+            case groundOrientationEnum.right:
+                {
+                    return 90f;
+                    break;
+                }
+            case groundOrientationEnum.up:
+                {
+                    return 180f;
+                    break;
+                }
+            case groundOrientationEnum.left:
+                {
+                    return 270f;
+                    break;
+                }
+            default:
+                {
+                    return 0f;
+                    break;
+                }
+        }
+    }
+    	
 	/// <summary>
 	/// Узнаёт проекцию vect1 по vect2 и отнимает её от vect1.
 	/// </summary>

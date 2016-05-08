@@ -46,7 +46,7 @@ public class CharacterAnimator : InterObjAnimator
                     shadow.SetY(ray.point.y);
                 }
             }
-        }    
+        }   
     }
 
 	public override void Update()

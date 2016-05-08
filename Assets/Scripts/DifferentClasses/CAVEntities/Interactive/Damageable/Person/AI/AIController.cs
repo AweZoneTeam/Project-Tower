@@ -13,17 +13,30 @@ using UnityEditor;
 public class AIController : PersonController, IPersonWatching
 {
     #region consts
+
     protected const float sightRadius = 60f;
-    protected const float hearingRadius = 10f;
+    protected const float hearingRadius = 20f;
 
     protected const float g = 100f;
-    
+
     #endregion //consts
+
+    #region dictionaries
+
+    protected Dictionary<string, jDataActionDelegate> jActionBase = new Dictionary<string, jDataActionDelegate> ();
+
+    public virtual Dictionary<string, jDataActionDelegate> GetJActionBase()
+    {
+        return jActionBase;
+    }
+
+    #endregion //dictionaries
 
     #region delegates
 
     public delegate void AIAction(string id, int argument);
     public delegate bool AICondition(string id, int argument);
+    public delegate void jDataActionDelegate(JournalEventAction _action);//Делегат функции, что вызываются скриптовыми событиями
 
     #endregion //delegates
 
@@ -36,16 +49,22 @@ public class AIController : PersonController, IPersonWatching
     #region fields
 
     public int k1 = 0;
-    private TargetWithCondition mainTarget;//Объект, что является истинной целью ИИ. Выполнение действия с данной целью является корнем поведения ИИ
-    private List<TargetWithCondition> waypoints=new List<TargetWithCondition>();//Очередь из последовательности объектов, что являются точками интереса ИИ. ИИ последовательно выполняет действия с этими объектами.
-                                                                              //Таким образом я хочу сделать что-то вроде памяти ИИ. Ну и ещё это часть вспомогательного механизма, двигающего ИИ
-    private TargetWithCondition currentTarget;//Чем интересуется ИИ в данный момент
-    private float targetDistance;//Расстояние до текущей цели
+
+    protected HearingScript hearing;//Слух персонажа
+
+    protected Vector3 startPosition;//Начальная позиция персонажа
+    protected AreaClass startRoom;//Начальная комната пероснажа
+    protected TargetWithCondition mainTarget;//Объект, что является истинной целью ИИ. Выполнение действия с данной целью является корнем поведения ИИ
+    protected List<TargetWithCondition> waypoints=new List<TargetWithCondition>();//Очередь из последовательности объектов, что являются точками интереса ИИ. ИИ последовательно выполняет действия с этими объектами.                      
+                                                                                 //Таким образом я хочу сделать что-то вроде памяти ИИ. Ну и ещё это часть вспомогательного механизма, двигающего ИИ
+    protected TargetWithCondition currentTarget;//Чем интересуется ИИ в данный момент
+    protected TargetWithCondition whoAttacksMe;//Кто атаковал персонажа
+    public TargetWithCondition WhoAttacksMe {set { whoAttacksMe = value; } }
+    protected float targetDistance;//Расстояние до текущей цели
     public List<string> enemies;//Какие типы игровых объектов этот ИИ считает за врагов (пока что я отслеживаю враг ли это по тегу.)
 
     //public behaviourEnum behaviour;//Какую модель поведения применяет ИИ в данный момент (Calm,Agressive) 
 
-    public string behaviourPath;//Путь, в котором находятся модели поведения данного персонажа
     public List<SBehaviourClass> behaviours = new List<SBehaviourClass>();//Какие модели поведения используются ИИ
     public BehaviourClass currentBehaviour;
     protected Dictionary<string, AICondition> conditionBase = new Dictionary<string, AICondition>();//База данных, которая по строке возвращает функцию проверки условия, что прописана в контроллере
@@ -56,7 +75,7 @@ public class AIController : PersonController, IPersonWatching
     #region parametres
 
     protected float height = 15f;
-    public LayerMask whatToSight;
+    [SerializeField]protected LayerMask whatToSight;
 
     #endregion //parametres
 
@@ -65,7 +84,7 @@ public class AIController : PersonController, IPersonWatching
         base.Awake();
     }
 
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
         {
@@ -88,41 +107,67 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
-    /// Сформировать список моделей поведения
+    /// Сформировать словари действий и проверок
     /// </summary>
-    public virtual void FormBehaviourList()
+    protected virtual void FormActionDictionaries()
     {
         conditionBase = new Dictionary<string, AICondition>();
         conditionBase.Add("distance to target", CheckTargetDistance);
+        conditionBase.Add("distance x to target", CheckTargetX);
+        conditionBase.Add("distance y to target", CheckTargetY);
+        conditionBase.Add("distance abs x to target", CheckTargetAbsX);
+        conditionBase.Add("distance abs y to target", CheckTargetAbsY);
+        conditionBase.Add("target room",CheckTargetRoomPosition);
         conditionBase.Add("target exists?", CheckTarget);
         conditionBase.Add("main target exists?", CheckMainTarget);
         conditionBase.Add("waypoints exist?", CheckWaypoints);
+        conditionBase.Add("attacker exists?", CheckAttacker);
+        conditionBase.Add("main target is current", MainTargetIsCurrent);
         conditionBase.Add("target on sight?", CheckTargetIsOnSight);
         conditionBase.Add("target type", CheckTargetType);
+        conditionBase.Add("main target type", CheckMainTargetType);
+        conditionBase.Add("health", CheckHeatlh);
 
         actionBase = new Dictionary<string, AIAction>();
         actionBase.Add("change behaviour", ChangeBehaviour);
         actionBase.Add("watch the target", WatchTheTarget);
         actionBase.Add("choose waypoint", ConcentrateOnWaypoint);
+        actionBase.Add("clear waypoints", ClearWaypoints);
+        actionBase.Add("choose attacker", ConcentrateOnAttacker);
+        actionBase.Add("choose main target", ConcentrateOnMainTarget);
         actionBase.Add("use door", DoorInteraction);
+        actionBase.Add("use enter", EnterInteraction);
+        actionBase.Add("use waypoint", WaypointInteraction);
+        actionBase.Add("use target", UnknownWaypointInteraction);
+        actionBase.Add("lose target", LoseTarget);
         actionBase.Add("perception", Perception);
         actionBase.Add("pursue", Pursue);
+        actionBase.Add("escape", Escape);
         actionBase.Add("stay", Stay);
         actionBase.Add("attack", Attack);
         actionBase.Add("say", SaySomething);
+        actionBase.Add("tell about target", SayEveryOneAboutTarget);
         actionBase.Add("test", TestFunction);
+        actionBase.Add("turn", Turn);
+        actionBase.Add("turnMove", TurnMoveDirection);
+        actionBase.Add("jump", Jump);
+        actionBase.Add("go home", GoHome);
+
+        jActionBase.Add("makeAnEnemy", MakeAnEnemy);
+    }
+
+    /// <summary>
+    /// Сформировать список моделей поведения
+    /// </summary>
+    protected virtual void FormBehaviourList()
+    {
+        FormActionDictionaries();
 
         BehaviourClass _behaviour;
         for (int i=0;i<behaviours.Count;i++)
         {
             behaviours[i].behaviour = new BehaviourClass(behaviours[i].behaviour);
             _behaviour = behaviours[i].behaviour;
-            if (_behaviour == null)
-            {
-#if UNITY_EDITOR
-                _behaviour = AssetDatabase.LoadAssetAtPath(behaviourPath + behaviours[i].path + ".asset", typeof(BehaviourClass)) as BehaviourClass;
-#endif
-            }
         }
 
         string s;
@@ -154,11 +199,16 @@ public class AIController : PersonController, IPersonWatching
     public override void Initialize()
     {
         base.Initialize();
+        hearing = GetComponentInChildren<HearingScript>();
+        if (hearing!=null)
+        {
+            hearing.HearingRadius = hearingRadius;
+            hearing.Initialize();
+        }
         if (pActions != null)
         {
             pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
         }
-        sight = transform.FindChild("Indicators").FindChild("Sight");
         FormBehaviourList();
         if (behaviours.Count > 0)
         {
@@ -169,6 +219,12 @@ public class AIController : PersonController, IPersonWatching
         waypoints = new List<TargetWithCondition>();
         GetComponentInChildren<CharacterAnimator>().SetStats(envStats);
         employment = maxEmployment;
+        startPosition = transform.position;
+        startRoom = currentRoom;
+        if (hitBox != null)
+        {
+            hitBox.SetEnemies(enemies);
+        }
     }
 
     /// <summary>
@@ -212,13 +268,14 @@ public class AIController : PersonController, IPersonWatching
     {
         currentTarget = null;
         ChangeBehaviour("Search", 0);
+        waypoints = new List<TargetWithCondition>();
         waypoints.Add(new TargetWithCondition(currentRoom.GetDoor(e.Room), "door"));
     }
 
     /// <summary>
     /// Реализовать данную модель поведения
     /// </summary>
-    public virtual void ImplementBehaviour(BehaviourClass _behaviour)
+    protected virtual void ImplementBehaviour(BehaviourClass _behaviour)
     {
         List<AIActionData> canIEmployIt = new List<AIActionData>();
         List<AIActionData> whatToEmploy = new List<AIActionData>();
@@ -262,6 +319,8 @@ public class AIController : PersonController, IPersonWatching
 
     #region interface
 
+    #region actions
+
     /// <summary>
     /// Сменить модель поведения
     /// </summary>
@@ -277,19 +336,23 @@ public class AIController : PersonController, IPersonWatching
                 break;
             }
         }
+        //Переосмотреть цели
+        whoAttacksMe = null;
+        currentTarget = null;
+        waypoints = null;
     }
 
     /// <summary>
     /// Сделать активной целью один из вэйпоинтов
     /// </summary>
-    public virtual void ConcentrateOnWaypoint(string id, int argument)
+    protected virtual void ConcentrateOnWaypoint(string id, int argument)
     {
-        if (waypoints.Count>0)
+        if (waypoints!=null?waypoints.Count>0:false)
         {
             if (string.Equals(id, "next"))
             {
                 int index = 0;
-                if (currentTarget!=null)
+                if (currentTarget != null)
                 {
                     if (waypoints.Contains(currentTarget))
                     {
@@ -301,11 +364,24 @@ public class AIController : PersonController, IPersonWatching
                         index = 0;
                     }
                 }
+                TargetWithCondition prevWaypoint = currentTarget;
                 currentTarget = waypoints[index];
+                if (currentTarget == prevWaypoint)
+                {
+                    currentTarget = null;
+                }
+                if (waypoints.Contains(prevWaypoint))
+                {
+                    waypoints.Remove(prevWaypoint);
+                }
             }
             else if (waypoints.Count > argument)
             {
                 currentTarget = waypoints[argument];
+            }
+            else
+            {
+                currentTarget = null;
             }
             if (currentTarget != null)
             {
@@ -315,33 +391,106 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Сконцентрироваться на атакующем
+    /// </summary>
+    protected virtual void ConcentrateOnAttacker(string id, int argument)
+    {
+        if (whoAttacksMe != null?(whoAttacksMe.target!=null):false)
+        {
+            currentTarget = whoAttacksMe;
+            mainTarget = whoAttacksMe;
+            if (pActions != null)
+            {
+                pActions.target = currentTarget.target.transform;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Сконцентрироваться на главной цели
+    /// </summary>
+    protected virtual void ConcentrateOnMainTarget(string id, int argument)
+    {
+        if (mainTarget != null ? (mainTarget.target != null) : false)
+        {
+            currentTarget = mainTarget;
+            if (pActions!=null)
+            {
+                pActions.target = currentTarget.target.transform;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Сбросить список вэйпоинтов
+    /// </summary>
+    protected virtual void ClearWaypoints(string id, int argument)
+    {
+        waypoints.Clear();
+    }
+
+    /// <summary>
+    /// Игнорировать текущую цель
+    /// </summary>
+    protected virtual void LoseTarget(string id, int argument)
+    {
+        currentTarget = null;
+    }
+
+    /// <summary>
+    /// Возвращение в начальную позицию
+    /// </summary>
+    protected virtual void GoHome(string id, int argument)
+    {
+        GameObject startPoint = new GameObject("StartPoint");
+        startPoint.transform.position = startPosition;
+        mainTarget = new TargetWithCondition(startPoint, "waypoint");
+        waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(transform.position,currentRoom,mainTarget,startRoom);
+    }
+
+    /// <summary>
     /// Функция, что отвечает за нахождение цели
     /// </summary> 
-    public virtual void Perception(string id, int argument)
+    protected virtual void Perception(string id, int argument)
     {
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(new Ray(sight.position, (int)direction.dir * sight.right), out hit, sightRadius,whatToSight))
+        if (sight != null)
         {
-            for (int i = 0; i < enemies.Count; i++)
+            if (Physics.Raycast(new Ray(sight.position, (int)direction.dir * sight.right), out hit, sightRadius, whatToSight))
             {
-                if (string.Equals(hit.collider.gameObject.tag, enemies[i]))
+                if (enemies.Contains(hit.collider.gameObject.tag))
                 {
-                    currentTarget = new TargetWithCondition(hit.collider.gameObject,"enemy");
+                    currentTarget = new TargetWithCondition(hit.collider.gameObject, "enemy");
                     mainTarget = currentTarget;
                     pActions.target = currentTarget.target.transform;
-                    break;
                 }
-            }           
+            }
+        }
+        if (hearing != null)
+        {
+            if (hearing.WhoIHear.Count > 0)
+            {
+                foreach(PersonController person in hearing.WhoIHear)
+                {
+                    if (enemies.Contains(person.gameObject.tag))
+                    {
+                        currentTarget = new TargetWithCondition(person.gameObject, "enemy");
+                        mainTarget = currentTarget;
+                        pActions.target = currentTarget.target.transform;
+                        break;
+                    }
+                }
+            }
         }
     }
 
     /// <summary>
     /// Начать пристально наблюдать за противником
     /// </summary>
-    public virtual void WatchTheTarget(string id, int argument)
+    protected virtual void WatchTheTarget(string id, int argument)
     {
         PersonController person=null;
-        if (currentTarget != null)
+        if (currentTarget != null? (currentTarget.target!=null):false)
         {
             person = currentTarget.target.GetComponent<PersonController>();
             if (person != null)
@@ -361,7 +510,7 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Функция совершения любого вида атаки
     /// </summary>
-    public virtual void Attack (string id, int argument)
+    protected virtual void Attack (string id, int argument)
     {
         k1++;
         pActions.SetHitData(id);
@@ -371,9 +520,9 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Функция пресследования цели
     /// </summary>
-    public virtual void Pursue(string id, int argument)
+    protected virtual void Pursue(string id, int argument)
     {
-        if (currentTarget!=null)
+        if (currentTarget!=null?(currentTarget.target!=null):false)
         {
             if (pActions != null)
             {
@@ -383,9 +532,23 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Функция избегания цели
+    /// </summary>
+    protected virtual void Escape(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            if (pActions != null)
+            {
+                pActions.Escape();
+            }
+        }
+    }
+
+    /// <summary>
     /// Функция стояния на месте
     /// </summary>
-    public virtual void Stay(string id, int argument)
+    protected virtual void Stay(string id, int argument)
     {
         if (pActions != null)
         {
@@ -394,9 +557,53 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Повернуться на противоположную сторону
+    /// </summary>
+    protected virtual void Turn(string id, int argument)
+    {
+        if (pActions!=null)
+        {
+            if (argument == 1)
+            {
+                pActions.Turn((orientationEnum)1);
+            }
+            else if (argument == -1)
+            {
+                pActions.Turn((orientationEnum)(-1));
+            }
+            else
+            {
+                pActions.Turn((orientationEnum)(-1 * (int)direction.dir));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Поменять направление движения на противоположное
+    /// </summary>
+    protected virtual void TurnMoveDirection(string id, int argument)
+    {
+        if (pActions != null)
+        {
+            pActions.movingDirection = (orientationEnum)(-1 * (int)pActions.movingDirection);
+        }
+    }
+
+    /// <summary>
+    /// Совершить прыжок
+    /// </summary>
+    protected virtual void Jump(string id, int argument)
+    {
+        if (pActions!=null)
+        {
+            pActions.Jump();
+        }
+    }
+
+    /// <summary>
     /// Функция открывания двери
     /// </summary>
-    public virtual void DoorInteraction(string id, int argument)
+    protected virtual void DoorInteraction(string id, int argument)
     {
         Transform trans = gameObject.transform;
         DoorClass door=currentTarget.target.GetComponent<DoorClass>();
@@ -404,22 +611,71 @@ public class AIController : PersonController, IPersonWatching
         {
             if (door.locker.opened)
             {
-                currentRoom = door.roomPath;
+                ChangeRoom(door.roomPath);
                 pActions.GoThroughTheDoor(door);
             }
         }
-        if (waypoints.Contains(currentTarget))
+        if (waypoints!=null?waypoints.Contains(currentTarget):false)
         {
-            waypoints.Remove(currentTarget);
+            ConcentrateOnWaypoint("next", 0);
         }
-        currentTarget = null;
         base.DoorInteraction();
+    }
+
+    /// <summary>
+    /// Как персонаж ведёт себя с вэйпоинтом обыкновенным
+    /// </summary>
+    protected virtual void WaypointInteraction(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            Destroy(currentTarget.target);
+            ConcentrateOnWaypoint("next", 0);
+        }
+    }
+
+    /// <summary>
+    /// Общая функция, объединяющая в себе все типы взаимодействий с вэйпоинтами
+    /// </summary>
+    protected virtual void UnknownWaypointInteraction(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            if (string.Equals(currentTarget.targetType, "door"))
+            {
+                DoorInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "enter"))
+            {
+                EnterInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "waypoint"))
+            {
+                WaypointInteraction("", 0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Как персонаж ведёт себя с объектами класса EnterClass
+    /// </summary>
+    protected virtual void EnterInteraction(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            EnterClass enter;
+            if ((enter = currentTarget.target.GetComponent<EnterClass>()) != null)
+            {
+                ChangeRoom(enter.nextRoom);
+                ConcentrateOnWaypoint("next", 0);
+            }
+        }
     }
 
     /// <summary>
     /// Сказать что-то для того, чтобы все услышали.
     /// </summary>
-    public virtual void SaySomething(string id, int argument)
+    protected virtual void SaySomething(string id, int argument)
     {
         SpFunctions.SendMessage(new MessageSentEventArgs(id, argument, id.Length * 0.04f));   
     }
@@ -427,10 +683,12 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Функция для детектирования срабатывания тех или иных моделей поведения
     /// </summary>
-    public virtual void TestFunction(string id, int argument)
+    protected virtual void TestFunction(string id, int argument)
     {
         k1++;
     }
+
+    #endregion //actions
 
     /// <summary>
     /// Реализовать данную деятельность
@@ -474,15 +732,15 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Проверка на наличие у данного персонажа активной цели
     /// </summary>
-    public virtual bool CheckTarget(string id, int argument)
+    protected virtual bool CheckTarget(string id, int argument)
     {
         if (string.Equals(id, "no"))
         {
-            return (currentTarget == null);
+            return (currentTarget == null? true: (currentTarget.target == null));
         }
         else if (string.Equals(id, "yes"))
         {
-            return (currentTarget != null);
+            return (currentTarget != null ? (currentTarget.target != null) : false);
         }
         else return false;
     }
@@ -490,15 +748,15 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Проверка на наличие у данного персонажа каких-либо вэйпоинтов
     /// </summary>
-    public virtual bool CheckWaypoints(string id, int argument)
+    protected virtual bool CheckWaypoints(string id, int argument)
     {
         if (string.Equals(id, "no"))
         {
-            return (waypoints.Count == 0);
+            return (waypoints==null?true: (waypoints.Count == 0));
         }
         else if (string.Equals(id, "yes"))
         {
-            return (waypoints.Count>0);
+            return (waypoints!=null?(waypoints.Count>0):false);
         }
         else return false;
     }
@@ -506,15 +764,66 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Проверка на наличие у данного персонажа главной цели
     /// </summary>
-    public virtual bool CheckMainTarget(string id, int argument)
+    protected virtual bool CheckMainTarget(string id, int argument)
     {
         if (string.Equals(id, "no"))
         {
-            return (mainTarget == null);
+            return (mainTarget == null?true: (mainTarget.target == null));
         }
         else if (string.Equals(id, "yes"))
         {
-            return (mainTarget != null);
+            return (mainTarget != null?(mainTarget.target!=null):false);
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Проверка на наличие того, кто атаковал персонажа в последний момент
+    /// </summary>
+    protected virtual bool CheckAttacker(string id, int argument)
+    {
+        if (string.Equals(id, "no"))
+        {
+            return (whoAttacksMe == null?true: (whoAttacksMe.target == null));
+        }
+        else if (string.Equals(id, "yes"))
+        {
+            return (whoAttacksMe != null?(whoAttacksMe.target!=null):false);
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Все незанятые персонажи одного типа в той же комнате узнают о новой цели
+    /// </summary>
+    protected virtual void SayEveryOneAboutTarget(string id, int argument)
+    {
+        foreach (PersonController person in currentRoom.container)
+        {
+            if (string.Equals(person.tag, gameObject.tag))
+            {
+                AIController ai = (AIController)person;
+                if (ai.currentTarget == null? true: (currentTarget.target == null))
+                {
+                    ai.mainTarget=mainTarget;
+                    ai.currentTarget = mainTarget;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Проверить, действительно ли главная цель персонажа является главной
+    /// </summary
+    protected virtual bool MainTargetIsCurrent(string id, int argument)
+    {
+        if (string.Equals(id, "no"))
+        {
+            return (mainTarget != currentTarget);
+        }
+        else if (string.Equals(id, "yes"))
+        {
+            return (mainTarget == currentTarget);
         }
         else return false;
     }
@@ -522,10 +831,10 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Оценка расстояния до активной цели
     /// </summary>
-    public virtual bool CheckTargetDistance(string id, int argument)
+    protected virtual bool CheckTargetDistance(string id, int argument)
     {
         float targetDistance;
-        if (currentTarget != null)
+        if (currentTarget != null ? (currentTarget.target != null) : false)
         {
             targetDistance = Vector3.Distance(transform.position, currentTarget.target.transform.position);
             return SpFunctions.ComprFunctionality(targetDistance, id,argument * 1f);
@@ -534,11 +843,59 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Оценить относительную x-координату цели
+    /// </summary>
+    protected virtual bool CheckTargetX(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            return SpFunctions.ComprFunctionality((currentTarget.target.transform.position - transform.position).x, id, argument);
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Оценить расстояние по оси x до цели
+    /// </summary>
+    protected virtual bool CheckTargetAbsX(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            return SpFunctions.ComprFunctionality(Mathf.Abs((currentTarget.target.transform.position - transform.position).x), id, argument);
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Оценить относительную y-координату цели
+    /// </summary>
+    protected virtual bool CheckTargetY(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            return SpFunctions.ComprFunctionality((currentTarget.target.transform.position - transform.position).y, id, argument);
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Оценить расстояние по оси y до цели
+    /// </summary>
+    protected virtual bool CheckTargetAbsY(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            return SpFunctions.ComprFunctionality(Mathf.Abs((currentTarget.target.transform.position - transform.position).y), id, argument);
+        }
+        else return false;
+    }
+
+    /// <summary>
     /// Проверка на нахождение текущей цели в поле зрения
     /// </summary>
-    public virtual bool CheckTargetIsOnSight (string id, int argument)
+    protected virtual bool CheckTargetIsOnSight (string id, int argument)
     {
-        if (currentTarget != null)
+        if (currentTarget != null ? (currentTarget.target != null) : false)
         {
             RaycastHit hit = new RaycastHit();
             if (Physics.Raycast(new Ray(sight.position, (int)direction.dir * sight.right), out hit, sightRadius))
@@ -551,7 +908,7 @@ public class AIController : PersonController, IPersonWatching
                     }
                     else return false;
                 }
-                if (string.Equals(id, "no"))
+                else if (string.Equals(id, "no"))
                 {
                     return true;
                 }
@@ -568,9 +925,9 @@ public class AIController : PersonController, IPersonWatching
     /// <summary>
     /// Проверка на соответствие типа текущей цели заданному
     /// </summary>
-    public virtual bool CheckTargetType(string id, int argument)
+    protected virtual bool CheckTargetType(string id, int argument)
     {
-        if (currentTarget != null)
+        if (currentTarget != null ? (currentTarget.target != null) : false)
         {
             if (argument == -1)
             {
@@ -588,7 +945,81 @@ public class AIController : PersonController, IPersonWatching
         return false;
     }
 
+    /// <summary>
+    /// Проверить тип главной цели персонажа
+    /// </summary>
+    protected virtual bool CheckMainTargetType(string id, int argument)
+    {
+        if (mainTarget != null?(mainTarget.target!=null):false)
+        {
+            if (argument == -1)
+            {
+                return (!string.Equals(id, mainTarget.targetType));
+            }
+            else
+            {
+                return (string.Equals(id, mainTarget.targetType));
+            }
+        }
+        if (argument == -1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Проверить, сколько здововья осталось у персонажа
+    /// </summary>
+    protected virtual bool CheckHeatlh(string id, int argument)
+    {
+        return SpFunctions.ComprFunctionality(orgStats.health, id, argument * 1f);
+    }
+
+    /// <summary>
+    /// Узнать, находится ли нынешняя цель в той же комнате, что и персонаж
+    /// </summary>
+    protected virtual bool CheckTargetRoomPosition(string id, int argument)
+    {
+        PersonController person;
+        if ((person = currentTarget.target.GetComponent<PersonController>()) != null)
+        {
+            if (string.Equals(id, "same"))
+            {
+                return (currentRoom == person.currentRoom);
+            }
+            else if (string.Equals(id, "other"))
+            {
+                return (currentRoom != person.currentRoom);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     #endregion //condition
+
+    #region scriptActions
+
+    /// <summary>
+    /// Добавить в свой список врагов нового
+    /// </summary>
+    protected virtual void MakeAnEnemy(JournalEventAction _action)
+    {
+        string newEnemy = _action.id;
+        if (!enemies.Contains(newEnemy))
+        {
+            enemies.Add(newEnemy);
+        }
+    }
+
+    #endregion //scriptActions
 
     #region Analyze
 

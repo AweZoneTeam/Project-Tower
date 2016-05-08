@@ -11,7 +11,8 @@ public class DoorClass: MonoBehaviour
 
     #region consts
 
-    public const float changeRoomOffset = 5f;//Добавка к изменению расстояния при переходе через дверь.
+    public const float changeRoomOffsetX = 5f;//Добавка к изменению расстояния при переходе через дверь.
+    public const float changeRoomOffsetY = -6f;
 
     #endregion //consts
 

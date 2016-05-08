@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 /// <summary>
@@ -6,6 +7,34 @@ using System.Collections;
 //о/ </summary>
 public class EnterClass : MonoBehaviour
 {
+
+    #region eventHandlers
+
+    public EventHandler<JournalEventArgs> EnterUseJournalEvent;
+
+    #endregion //eventHandlers
+
+    #region fields
+
     public doorEnum enterType;//Тип прохода
     public AreaClass nextRoom;// Комната, в которую ведёт проход
+
+    #endregion //fields
+
+    #region events
+
+    /// <summary>
+    /// Событие, что вызывается при использовании прохода
+    /// </summary>
+    public void OnEnterUse(JournalEventArgs e)
+    {
+        EventHandler<JournalEventArgs> handler = EnterUseJournalEvent;
+        if (handler != null)
+        {
+            handler(this, e);
+        }
+    }
+
+    #endregion //events
 }
+

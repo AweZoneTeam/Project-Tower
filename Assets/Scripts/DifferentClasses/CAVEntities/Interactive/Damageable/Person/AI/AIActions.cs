@@ -63,13 +63,53 @@ public class AIActions : PersonActions
         {
             Turn(orientationEnum.right);
         }
-        if (!precipiceIsForward)
+        if ((!precipiceIsForward)&&(envStats.obstacleness!=obstaclenessEnum.wall))
         {
             if (target.position.x < transform.position.x)
             {
                 StartWalking(orientationEnum.left);
             }
             else if (target.position.x > transform.position.x)
+            {
+                StartWalking(orientationEnum.right);
+            }
+        }
+        if (precipiceIsForward)
+        {
+            if (jumpIsPossible)
+            {
+                if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
+                {
+                    Jump();
+                }
+            }
+            else
+            {
+                StopWalking();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Функция избегания цели
+    /// </summary>
+    public override void Escape()
+    {
+        if (target.position.x > transform.position.x)
+        {
+            Turn(orientationEnum.left);
+        }
+        else if (target.position.x < transform.position.x)
+        {
+            Turn(orientationEnum.right);
+        }
+        if ((!precipiceIsForward) && (envStats.obstacleness != obstaclenessEnum.wall))
+        {
+            if (target.position.x > transform.position.x)
+            {
+                StartWalking(orientationEnum.left);
+            }
+            else if (target.position.x < transform.position.x)
             {
                 StartWalking(orientationEnum.right);
             }

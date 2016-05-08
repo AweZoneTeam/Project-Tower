@@ -13,7 +13,7 @@ public class GameHistory : MonoBehaviour
 
     public JournalScriptStock journalEvents = new JournalScriptStock();
 
-    public void Awake()
+    public void Start()
     {
         journalEvents.Initialize();
     }
@@ -45,8 +45,8 @@ public class JournalScriptStock
     public delegate void jDataActionDelegate(JournalEventAction _action);
     public delegate void jDataConditionDelegate(JournalEventScript _script, GameObject obj);
 
-    private Dictionary<string, jDataActionDelegate> jActionBase=new Dictionary<string, jDataActionDelegate>();//действие
-    private Dictionary<string, jDataConditionDelegate> jConditionBase=new Dictionary<string, jDataConditionDelegate>();//подписка
+    private Dictionary<string, jDataActionDelegate> jActionBase = new Dictionary<string, jDataActionDelegate>();//действие
+    private Dictionary<string, jDataConditionDelegate> jConditionBase = new Dictionary<string, jDataConditionDelegate>();//подписка
     private Dictionary<string, jDataConditionDelegate> jDeInitBase = new Dictionary<string, jDataConditionDelegate>();//отписка
 
     #endregion fields
@@ -79,10 +79,12 @@ public class JournalScriptStock
         jConditionBase.Add("startGame", GameBeginInit);
         jConditionBase.Add("doorOpened", DoorOpenInit);
         jConditionBase.Add("enemyIsDead", EnemyDeathInit);
+        jConditionBase.Add("enterUsed", EnterUseInit);
 
         jDeInitBase.Add("startGame", GameBeginDeInit);
         jDeInitBase.Add("doorOpened", DoorOpenDeInit);
         jDeInitBase.Add("enemyIsDead", EnemyDeathDeInit);
+        jDeInitBase.Add("enterUsed", EnterUseDeInit);
 
     }
 
@@ -91,16 +93,24 @@ public class JournalScriptStock
     /// </summary>
     public void InitializeScript(JournalEventScript _script)
     {
+        JournalScriptInitializer jInit = null;
         _script.jList = this;
-        GameObject jTarget=null;
+        GameObject jTarget = null;
         foreach (JournalScriptInitializer init in initList)
         {
             if (init.jScript == _script)
             {
-                jTarget = init.obj;
+                jInit = init;
                 break;
             }
         }
+
+        if (jInit == null)
+        {
+            return;
+        }
+
+        jTarget = jInit.eventReason;
 
         //В первую очередь, подпишемся на журнальные объекты
         if (jConditionBase.ContainsKey(_script.jDataConditionName))
@@ -111,10 +121,25 @@ public class JournalScriptStock
 
         foreach (JournalEventAction _action in _script.jActions)
         {
-            if (jActionBase.ContainsKey(_action.jDataActionName))
+            foreach (GameObject obj in jInit.eventObj)
             {
-                string s = _action.jDataActionName;
-                _action.jDataAction = jActionBase[s].Invoke;
+                if (obj.GetComponent<GameHistory>() != null)
+                {
+                    if (jActionBase.ContainsKey(_action.jDataActionName))
+                    {
+                        string s = _action.jDataActionName;
+                        _action.jDataAction += jActionBase[s].Invoke;
+                    }
+                }
+                else if (obj.GetComponent<AIController>() != null)
+                {
+                    AIController ai = obj.GetComponent<AIController>();
+                    if (ai.GetJActionBase().ContainsKey(_action.jDataActionName))
+                    {
+                        string s = _action.jDataActionName;
+                        _action.jDataAction += ai.GetJActionBase()[s].Invoke;
+                    }
+                }
             }
         }
     }
@@ -129,7 +154,7 @@ public class JournalScriptStock
         {
             if (init.jScript == _script)
             {
-                jTarget = init.obj;
+                jTarget = init.eventReason;
                 break;
             }
         }
@@ -215,6 +240,14 @@ public class JournalScriptStock
         obj.GetComponent<AIController>().EnemyDieJournalEvent += _script.HandleJournalEvent;
     }
 
+    /// <summary>
+    /// Вызвать событие при использовании определённого прохода
+    /// </summary>
+    void EnterUseInit(JournalEventScript _script, GameObject obj)
+    {
+        obj.GetComponent<EnterClass>().EnterUseJournalEvent += _script.HandleJournalEvent;
+    } 
+
     #endregion //initFunctions
 
     #region deInitFunctions
@@ -241,6 +274,14 @@ public class JournalScriptStock
     void EnemyDeathDeInit(JournalEventScript _script, GameObject obj)
     {
         obj.GetComponent<AIController>().EnemyDieJournalEvent -= _script.HandleJournalEvent;
+    }
+
+    /// <summary>
+    /// Отписка от события "использован проход"
+    /// </summary>
+    void EnterUseDeInit(JournalEventScript _script, GameObject obj)
+    {
+        obj.GetComponent<EnterClass>().EnterUseJournalEvent -= _script.HandleJournalEvent;
     }
 
     #endregion //deInitFunctions
@@ -283,5 +324,6 @@ public class JournalScriptStock
 public class JournalScriptInitializer
 {
     public JournalEventScript jScript;
-    public GameObject obj;
+    public GameObject eventReason;//Какой объект вызовет событие?
+    public List<GameObject> eventObj;//Какие объекты подключатся к событию?
 }

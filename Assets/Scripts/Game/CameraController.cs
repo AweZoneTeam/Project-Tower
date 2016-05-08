@@ -144,11 +144,14 @@ public class CameraController : MonoBehaviour
             if (currentArea != nextArea)
             {
                 currentArea = nextArea;
-                Vector3 newPosition = new Vector3(currentArea.position.x, currentArea.position.y, nextArea.position.z+offsetZ);
-                deltaX = newPosition.x - transform.position.x;
-                deltaY = newPosition.y - transform.position.y;
+                Vector3 newPosition = new Vector3(trans.position.x, trans.position.y, nextArea.position.z+offsetZ);
+                //deltaX = newPosition.x - transform.position.x;
+                //deltaY = newPosition.y - transform.position.y;
                 //Parallax(deltaX, deltaY);
-                //transform.position = newPosition;
+                if (nextArea.position.z != prevArea.position.z)
+                {
+                    transform.position = newPosition;
+                }
                 roomCoords = new Rect(currentArea.position.x - currentArea.size.x / 2 + sizeX / 2,
                                     currentArea.position.y - currentArea.size.y / 2 + sizeY / 2,
                                     currentArea.size.x - sizeX,

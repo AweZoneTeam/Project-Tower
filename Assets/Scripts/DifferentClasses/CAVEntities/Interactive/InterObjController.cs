@@ -26,6 +26,7 @@ public class InterObjController : MonoBehaviour
         if (direction == null)
         {
             direction = new Direction();
+            direction.dir = (orientationEnum)SpFunctions.RealSign(transform.localScale.x);
         }
         intActions = GetComponent<InterObjActions>();
         if (intActions != null)

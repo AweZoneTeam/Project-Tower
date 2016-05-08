@@ -47,7 +47,7 @@ public class KeyboardActorController : PersonController
     protected EquipmentClass equip;//Экипировка персонажа
 
     protected Transform aboveWallCheck;
-    protected GroundChecker lowWallCheck, frontWallCheck, highWallCheck;
+    protected GroundChecker lowWallCheck, highWallCheck;
 
     #endregion //fields
 
@@ -404,7 +404,6 @@ public class KeyboardActorController : PersonController
         transform.GetComponentInChildren<CharacterAnimator>().SetStats(envStats);
         aboveWallCheck = transform.FindChild("Indicators").FindChild("AboveWallCheck");
         lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
-        frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck").gameObject.GetComponent<GroundChecker>();
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
     }
 
@@ -510,7 +509,7 @@ public class KeyboardActorController : PersonController
             {
                 if (door.locker.opened)
                 {
-                    currentRoom = door.roomPath;
+                    ChangeRoom(door.roomPath);
                     pActions.GoThroughTheDoor(door);
                 }
                 else
@@ -524,14 +523,14 @@ public class KeyboardActorController : PersonController
             }
         }
 
-        if (Physics.Raycast(new Ray(trans.position, Input.GetKey(KeyCode.W) ? new Vector3(0f, 0f, -1f) : new Vector3(0f, 0f, 1f)), out hit, zDistance))
+        if (Physics.Raycast(new Ray(trans.position, Input.GetKey(KeyCode.W) ? new Vector3(0f, 0f, -1f) : new Vector3(0f, 0f, 1f)), out hit, zDistance,LayerMask.GetMask("ground")))
         {
             door = hit.collider.gameObject.GetComponent<DoorClass>();
             if (door != null)
             {
                 if (door.locker.opened)
                 {
-                    currentRoom = door.roomPath;
+                    ChangeRoom(door.roomPath);
                     pActions.GoThroughTheDoor(door);
                 }
             }
@@ -582,7 +581,6 @@ public class KeyboardActorController : PersonController
     protected override void AnalyzeSituation()
     {
         base.AnalyzeSituation();
-        CheckObstacles();
         DefineInteractable();
     }
 
@@ -594,7 +592,7 @@ public class KeyboardActorController : PersonController
     /// <summary>
     /// Функция, учитывающая, находятся ли перед персонажем какие-нибудь препятствия
     /// </summary>
-    protected void CheckObstacles()
+    protected override void CheckObstacles()
     {
         if ((lowWallCheck.GetCount()> 0) &&
             (frontWallCheck.GetCount() == 0))

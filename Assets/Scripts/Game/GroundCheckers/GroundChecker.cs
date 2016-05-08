@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// </summary>
 public class GroundChecker : MonoBehaviour
 {
-    protected List<GameObject> collisions=new List<GameObject>();
+    [SerializeField]protected List<GameObject> collisions=new List<GameObject>();
 
     private List<string> whatIsGround=new List<string> {"ground" };
     protected List<int> layers=new List<int>();

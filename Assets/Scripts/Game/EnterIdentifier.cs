@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class EnterIdentifier : MonoBehaviour
 {
 
-    public List<EnterClass> enters;
+    [SerializeField]protected List<EnterClass> enters=new List<EnterClass>();
 
     private CameraController cam;
 
@@ -28,7 +28,8 @@ public class EnterIdentifier : MonoBehaviour
                 enters.Add(enter);
                 if (GameStatistics.currentArea != enter.nextRoom)
                 {
-                    ChangeRoom(enter.nextRoom);
+                    ChangeRoom(enter);
+
                 }
             }
         }
@@ -44,20 +45,28 @@ public class EnterIdentifier : MonoBehaviour
                 enters.Remove(enter);
                 if (enters.Count > 0)
                 {
-                    ChangeRoom(enters[0].nextRoom);
+                    ChangeRoom(enters[0]);
                 }
             }
         }
     }
 
-    public void ChangeRoom(AreaClass nextRoom)
+    /// <summary>
+    /// Перейти в комнату, в которую ведёт проход 
+    /// </summary>
+    public void ChangeRoom(EnterClass _enter)
     {
         Transform parent = transform.parent.parent;
         Vector3 pos = parent.position;
-        cam.ChangeRoom(GameStatistics.currentArea,nextRoom);
-        parent.position = new Vector3(pos.x, pos.y, nextRoom.id.coordZ);
-        parent.GetComponent<KeyboardActorController>().currentRoom = nextRoom;
-        SpFunctions.ChangeRoomData(nextRoom);
+        PersonController person = parent.GetComponent<PersonController>();
+        if (person is KeyboardActorController)
+        {
+            cam.ChangeRoom(GameStatistics.currentArea, _enter.nextRoom);
+            _enter.OnEnterUse(new JournalEventArgs());
+        }
+        parent.position = new Vector3(pos.x, pos.y, _enter.nextRoom.id.coordZ);
+        person.currentRoom = _enter.nextRoom;
+        SpFunctions.ChangeRoomData(_enter.nextRoom);      
     }
 
 }

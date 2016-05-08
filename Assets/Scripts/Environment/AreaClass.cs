@@ -12,7 +12,7 @@ public class AreaClass : MonoBehaviour
     public AreaID id=new AreaID();
     public List<RoomConnection> subAreas = new List<RoomConnection>();//какие пространства являются подчинёнными
     public List<RoomConnection> neigbAreas = new List<RoomConnection>();//какие пространства соседствуют с этим
-    public List<GameObject> container=new List<GameObject>();//Что содержит в себе это пространство. Содержание подпространств не учитывается.
+    public List<InterObjController> container=new List<InterObjController>();//Что содержит в себе это пространство. Содержание подпространств не учитывается.
     public List<GameObject> lightSources = new List<GameObject>();//Источники освещения в данном пространстве
     public List<GameObject> hideForeground = new List<GameObject>();//Какие объекты исчезают из поля зрения камеры, при входе в область
     public Vector3 position;//координаты центра пространства (пространство по форме обязательно представляет собой параллелепипед)
