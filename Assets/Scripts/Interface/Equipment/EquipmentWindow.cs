@@ -22,7 +22,7 @@ public class EquipmentWindow : InterfaceWindow
     private Camera cam;
 
     private KeyboardActorController player;
-    private EquipmentClass equip;
+    public EquipmentClass equip;
     private OrganismStats orgStats;
 
     private EquipmentSlot currentSlot;
@@ -202,7 +202,7 @@ public class EquipmentWindow : InterfaceWindow
 
     }
 
-    void AddItemInBag(ItemBunch itemBunch)
+    public void AddItemInBag(ItemBunch itemBunch)
     {
         for (int i = 0; i < bagSlots.Count; i++)
         {
@@ -212,6 +212,20 @@ public class EquipmentWindow : InterfaceWindow
                 break;
             }
         }
+    }
+    
+    //проверяет есть ли нужное количество сободных слотов
+    public bool HaveEmptySlots(byte count)
+    {
+        byte _count = 0;
+        for (int i = 0; i < bagSlots.Count; i++)
+        {
+            if (bagSlots[i].itemBunch == null)
+            {
+                _count++;
+            }
+        }
+        return count<=_count;
     }
 
     public void InitializeSlot(Transform trans, string childName, ItemClass item)
@@ -268,6 +282,7 @@ public class EquipmentWindow : InterfaceWindow
             leftWeaponSlot1.Initialize(this,leftWeaponSlot2.itemBunch);
             leftWeaponSlot2.Initialize(this,_itemBunch);
         }
+
     }
 
     void ResourceChangedEventHandler(object sender, ResourceChangedEventArgs e)

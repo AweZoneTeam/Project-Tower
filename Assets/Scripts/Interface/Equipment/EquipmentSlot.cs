@@ -11,6 +11,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     protected EquipmentWindow equip;
     protected Image itemImage;
+    public ItemSlot pair; //Использовать для слотов с оружием, здесь будет ссылка на вторую руку. 
 
     protected ItemBunch bunch;
     public ItemBunch itemBunch
@@ -97,15 +98,19 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (equip.CurrentSlot == null)
         {
-            equip.CurrentSlot = this;
-            equip.MouseImage.sprite = GetComponent<Image>().sprite;
-            GetComponent<CanvasGroup>().blocksRaycasts = false;
+            if (itemBunch != null)
+            {
+                equip.CurrentSlot = this;
+                equip.MouseImage.sprite = GetComponent<Image>().sprite;
+                GetComponent<CanvasGroup>().blocksRaycasts = false;
+            }
         }
     }
 
     public virtual void OnDrag(PointerEventData eventData)
     {
-        Cursor.SetCursor(equip.MouseImage.sprite.texture,Vector2.zero,CursorMode.Auto);
+        if(equip.MouseImage.sprite!=null && equip.CurrentSlot!=null)
+            Cursor.SetCursor(equip.MouseImage.sprite.texture,Vector2.zero,CursorMode.Auto);
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
@@ -118,15 +123,59 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public virtual void OnDrop(PointerEventData eventData)
     {
-        if (equip.CurrentSlot != this)
+        bool b = true;
+        if (itemBunch != null && equip.CurrentSlot.itemBunch != null)
         {
-            if ((equip.CurrentSlot.IsItemProper(itemBunch)) &&
-            (IsItemProper(equip.CurrentSlot.itemBunch)))
+            if (itemBunch.item is WeaponClass && equip.CurrentSlot.itemBunch.item is WeaponClass)
             {
-                ItemBunch _itemBunch = itemBunch;
-                AddItem(equip.CurrentSlot.itemBunch);
-                equip.CurrentSlot.AddItem(_itemBunch);
-                equip.CurrentSlot = null;
+                b = true;
+                WeaponClass weapon = null;
+                WeaponClass weapon1 = null;
+                if (this.pair!=null)
+                {
+                    if (this.pair.itemBunch != null)
+                    {
+                        weapon = equip.CurrentSlot.itemBunch != null ? (WeaponClass)equip.CurrentSlot.itemBunch.item : null;
+                        weapon1 = itemBunch != null ? (WeaponClass)itemBunch.item : null;
+                        b = false;
+                    }
+                }
+                else if (equip.CurrentSlot.pair!=null)
+                {
+                    if (equip.CurrentSlot.pair.itemBunch != null)
+                    {
+                        weapon1 = equip.CurrentSlot.itemBunch != null ? (WeaponClass)equip.CurrentSlot.itemBunch.item : null;
+                        weapon = itemBunch != null ? (WeaponClass)itemBunch.item : null;
+                        b = false;
+                    }
+                }
+                if (weapon != null && weapon1 != null)
+                {
+                    Debug.Log(b);
+                    b = b
+                        ||
+                        (weapon.weaponType == "bow" || weapon.weaponType == "twoHandedSword") &&
+                        (weapon1.weaponType != "bow" && weapon1.weaponType != "twoHandedSword") &&
+                        equip.HaveEmptySlots(1)
+                        ||
+                        (weapon.weaponType != "bow" && weapon.weaponType != "twoHandedSword")
+                        ||
+                        weapon == null;
+                }
+            }
+        }
+        if (b)
+        {
+            if (equip.CurrentSlot != this && equip.CurrentSlot != null)
+            {
+                if ((equip.CurrentSlot.IsItemProper(itemBunch)) &&
+                (IsItemProper(equip.CurrentSlot.itemBunch)))
+                {
+                    ItemBunch _itemBunch = equip.CurrentSlot.itemBunch;
+                    equip.CurrentSlot.AddItem(itemBunch);
+                    AddItem(_itemBunch);
+                    equip.CurrentSlot = null;
+                }
             }
         }
     }

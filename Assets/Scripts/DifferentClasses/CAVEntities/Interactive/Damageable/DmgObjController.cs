@@ -27,6 +27,9 @@ public class DmgObjController : InterObjController
     protected OrganismStats orgStats=new OrganismStats();
     public List<GameObject> dropList=new List<GameObject>();//Какие предметы выпадают из персонажа после его смерти
     public bool death=false;//умер ли персонаж
+	//ДОБАВИЛ
+	public GameObject HitParticle;
+	public GameObject DefParticles;
 
     #endregion //fields
 
@@ -69,10 +72,11 @@ public class DmgObjController : InterObjController
 
     public virtual void Update()
     {
-        if ((orgStats.hitted>0f)&&(orgStats.health >0f))
+		//ДОБАВИЛ, а точнее не понял что это и зачем нужно и закоментировал
+        /*if ((orgStats.hitted>0f)&&(orgStats.health >0f))
         {
             Hitted();
-        }
+        }*/
 
         if (orgStats.health <= 0f)
         {
@@ -83,7 +87,7 @@ public class DmgObjController : InterObjController
     /// <summary>
     /// Эта функция вызывается при нанесении урона
     /// </summary>
-    public virtual void Hitted()
+	public virtual void Hitted()
     {
         dmgActions.Hitted();
     }

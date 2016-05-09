@@ -442,5 +442,6 @@ namespace GAF.Assets
 		}
 
 		#endregion // Implementation
+
 	}
 }

@@ -131,8 +131,16 @@ public class EquipmentClass: BagClass
     /// Сменить предмет в инвентаре
     /// </summary>
     public List<ItemClass> ChangeEquipmentElement(ItemBunch itemBunch, string itemType)
-    {
-        ItemClass item = itemBunch.item;
+	{
+		ItemClass item;
+		if(itemBunch == null)
+		{
+			item = null;
+		}
+		else
+		{
+        	item = itemBunch.item;
+		}
         List<ItemClass> removeItems=new List<ItemClass>();
 
         #region weapons

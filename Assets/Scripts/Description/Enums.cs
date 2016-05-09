@@ -17,6 +17,11 @@ public enum orientationEnum
 public enum groundnessEnum { grounded = 1, crouch, preGround, inAir };
 
 /// <summary>
+/// состояние из которого производится атака
+/// </summary>
+public enum attackState { stay, walk, run, crouch, up, jump, jumpDawn, NO };
+
+/// <summary>
 /// В какую модель поведения использует данный представитель искусственного интеллекта
 /// </summary>
 public enum behaviourEnum {calm, agression, search};

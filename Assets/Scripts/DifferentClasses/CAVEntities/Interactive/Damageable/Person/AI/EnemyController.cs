@@ -67,10 +67,11 @@ public class EnemyController : PersonController, IPersonWatching
 
     public void FixedUpdate()
     {
-        if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
+		//ДОБАВИЛ, а точнее не понял что это и зачем нужно и закоментировал
+        /*if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
         {
             Hitted();
-        }
+        }*/
 
         if (orgStats.health <= 0f)
         {
@@ -154,6 +155,11 @@ public class EnemyController : PersonController, IPersonWatching
     public override void Initialize()
     {
         base.Initialize();
+		GAF.Core.GAFMovieClip[] g = GetComponentsInChildren<GAF.Core.GAFMovieClip>();
+		foreach(GAF.Core.GAFMovieClip gg in g)
+		{
+		}
+
         if (pActions != null)
         {
             pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
@@ -365,7 +371,7 @@ public class EnemyController : PersonController, IPersonWatching
     {
         k1++;
         pActions.SetHitData(id);
-        pActions.Attack();
+        pActions.Attack(null);
     }
     
     /// <summary>
@@ -448,7 +454,7 @@ public class EnemyController : PersonController, IPersonWatching
     /// <summary>
     /// Эта функция вызывается при нанесении урона
     /// </summary>
-    public override void Hitted()
+	public override void Hitted()
     {
         pActions.Hitted();
     }

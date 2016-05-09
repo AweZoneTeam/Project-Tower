@@ -20,8 +20,15 @@ public class EnemyActions : PersonActions
 
     #endregion //fields
 
-    public void Update()
+	//ДОБАВИЛ
+	public override void FixedUpdate()
+	{
+		base.FixedUpdate();
+	}
+
+	public override void Update()
     {
+		base.Update();
         if (!death)
         {
             if (cAnim != null)
@@ -61,21 +68,21 @@ public class EnemyActions : PersonActions
     {
         if (target.position.x < transform.position.x)
         {
-            Turn(orientationEnum.left);
+			Turn(new ActionClass(orientationEnum.left));
         }
         else if (target.position.x > transform.position.x)
         {
-            Turn(orientationEnum.right);
+			Turn(new ActionClass(orientationEnum.right));
         }
         if (!precipiceIsForward)
         {
             if (target.position.x < transform.position.x)
             {
-                StartWalking(orientationEnum.left);
+				StartWalking(new ActionClass(orientationEnum.left));
             }
             else if (target.position.x > transform.position.x)
             {
-                StartWalking(orientationEnum.right);
+				StartWalking(new ActionClass(orientationEnum.right));
             }
         }
         if (precipiceIsForward)
@@ -84,7 +91,7 @@ public class EnemyActions : PersonActions
             {
                 if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
                 {
-                    Jump();
+					Jump(null);
                 }
             }
             else
@@ -97,16 +104,16 @@ public class EnemyActions : PersonActions
     /// <summary>
     /// Идти в указанном направлении
     /// </summary>
-    public override void StartWalking(orientationEnum _direction)
+	public override void StartWalking(ActionClass a)
     {
-        base.StartWalking(_direction);
-        direction.dir = _direction;
+        base.StartWalking(a);
+        direction.dir = a.dir;
         Vector3 targetVelocity=new Vector3(0f,0f,0f);
-        if (_direction == orientationEnum.left)
+		if (a.dir == orientationEnum.left)
         {
             targetVelocity = new Vector3(-RunSpeed, rigid.velocity.y, rigid.velocity.z);
         }
-        else if(_direction == orientationEnum.right)
+		else if(a.dir == orientationEnum.right)
         {
             targetVelocity = new Vector3(RunSpeed, rigid.velocity.y, rigid.velocity.z);
         }
@@ -140,7 +147,7 @@ public class EnemyActions : PersonActions
     /// <summary>
     /// Совершить прыжок
     /// </summary>
-    public override void Jump()
+	public override void Jump(ActionClass a)
     {
         rigid.velocity = new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y + jumpForce, Mathf.NegativeInfinity, jumpForce), rigid.velocity.z);
         StartCoroutine(JumpProcess());
@@ -154,7 +161,7 @@ public class EnemyActions : PersonActions
     }
     #endregion //interface
 
-    public override void Attack()
+	public override void Attack(ActionClass a)
     {
         if ((hitData != null) && (weapon != null))
         {
@@ -165,6 +172,11 @@ public class EnemyActions : PersonActions
             StartCoroutine(AttackProcess());
         }
     }
+
+	public override void Hitted()
+	{
+		base.Hitted();
+	}
 
     protected override IEnumerator AttackProcess()//Процесс атаки
     {
@@ -182,13 +194,18 @@ public class EnemyActions : PersonActions
 
     public override void SetHitData(string hitName)
     {
-        for (int i = 0; i < weapon.hitData.Count; i++)
-        {
-            if (string.Equals(hitName, weapon.hitData[i].hitName))
-            {
-                hitData = weapon.hitData[i];
-            }
-        }
+		//ДОБАВИЛ(ИЗМЕНИЛ)
+		if(weapon is SimpleWeapon)
+		{
+			SimpleWeapon _weapon = (SimpleWeapon)weapon;
+			for (int i = 0; i < _weapon.attackData.Count; i++)
+	        {
+				if (string.Equals(hitName, _weapon.attackData[i].attackName))
+				{
+					hitData = _weapon.attackData [i].combo.hitData [0];
+	            }
+	        }
+		}
     }
 
     /// <summary>
