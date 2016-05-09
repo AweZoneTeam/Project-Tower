@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class HumanoidActorActions : PersonActions
 {
@@ -35,6 +36,9 @@ public class HumanoidActorActions : PersonActions
 	public bool touchingGround;
 	public BoxCollider2D groundCol;
 
+    public bool canCharge;
+    public float chargeValue;
+
     #endregion //parametres
 
     #region fields
@@ -43,19 +47,125 @@ public class HumanoidActorActions : PersonActions
 
     protected Transform aboveWallCheck, lowWallCheck, frontWallCheck, highWallCheck;
 
-    private WeaponClass mainWeapon, secondaryWeapon;//Какое оружие персонаж носит в правой руке
+    public WeaponClass mainWeapon, secondaryWeapon;//Какое оружие персонаж носит в правой руке
 
     protected CameraController cam = null;
 
     #endregion //fields
 
-    public void OnCollisionEnter2D(Collision2D col) {
+    #region queue//очередь инпутов
+
+    public ActionQueue actionQueue = new ActionQueue();
+
+    void NextAction()
+    {
+        if (!canCharge && chargeValue == 0f && !Input.GetButton("Horizontal"))
+        {
+            if (actionQueue.turn != null)
+            {
+                Turn(actionQueue.turn);
+                actionQueue.turn = null;
+            }
+            if (actionQueue.startWalk != null)
+            {
+                StartWalking(actionQueue.startWalk);
+                actionQueue.startWalk = null;
+            }
+            if (actionQueue.next != null)
+            {
+                actionBase[actionQueue.next.func](actionQueue.next);
+                actionQueue.next = null;
+            }
+        }
+        actionQueue.Clear();
+    }
+
+    #endregion//queue
+
+    #region FuncDictionary
+
+    protected delegate void PAction(ActionClass a);
+    protected delegate bool PCondition(ActionClass a);
+    protected Dictionary<string, PCondition> conditionBase;
+    protected Dictionary<string, PAction> actionBase;
+    public virtual void FuncDictionry()
+    {
+        conditionBase = new Dictionary<string, PCondition>();
+
+        actionBase = new Dictionary<string, PAction>();
+        actionBase.Add("Turn", Turn);
+        actionBase.Add("Attack", Attack);
+        actionBase.Add("StartCharge", StartCharge);
+        actionBase.Add("Flip", Flip);
+        actionBase.Add("Jump", Jump);
+
+    }
+
+    #endregion//FuncDictionary
+
+    #region fightingMode
+
+    string currentCombo = "";
+    int nCombo = 0;
+    float comboTime;
+
+    bool _isFightMode;
+    public bool isFightMode
+    {
+        get { return _isFightMode; }
+        set
+        {
+            if (value)
+            {
+                _fightingModeTime = fightingModeTime;
+                if (!_isFightMode)
+                {
+                    //достать оружие
+                }
+            }
+            if (!value && _isFightMode)
+            {
+                _fightingModeTime = 0;
+                //убрать оружие
+            }
+            _isFightMode = value;
+        }
+    }
+    public float fightingModeTime;
+    float _fightingModeTime;
+
+    public override void Hitted()
+    {
+        base.Hitted();
+        isFightMode = true;
+    }
+
+    #endregion//fightingMode
+
+    public void OnCollisionEnter2D(Collision2D col)
+    {
 		touchingGround = true;
 	}
 
 	public void OnCollisionExit2D(Collision2D col) {
 		touchingGround = false;
 	}
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (_fightingModeTime > 0)
+            _fightingModeTime -= Time.deltaTime;
+        else
+            if (isFightMode) isFightMode = false;
+        if (comboTime > 0)
+            comboTime -= Time.deltaTime;
+        else
+        {
+            nCombo = 0;
+            currentCombo = "";
+        }
+    }
 
     public void Update()
     {
@@ -218,6 +328,7 @@ public class HumanoidActorActions : PersonActions
     public override void Initialize()
     {
         base.Initialize();
+        FuncDictionry();
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>();
         rigid = GetComponent<Rigidbody>();
         hitBox = GetComponentInChildren<HitController>();
@@ -250,33 +361,50 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Совершить поворот
     /// </summary>
-	public override void Turn(orientationEnum Direction) {
+	public override void Turn(ActionClass a)
+    {
         if (employment <= 4)
         {
+            if (!canCharge)
+            {
+                a.func = "Turn";
+                actionQueue.AddToQueue(a);
+            }
             return;
         }
-        base.Turn(Direction);
-	}
+        base.Turn(a);
+    }
 
     /// <summary>
     /// Начать обыкновенное перемещение
     /// </summary>
-	public override void StartWalking(orientationEnum Direction)
+	public override void StartWalking(ActionClass a)
     {
-        if (employment <= 3)
+        if (employment <= 4)
         {
+            if (!canCharge)
+            {
+                a.func = "StartWalking";
+                actionQueue.AddToQueue(a);
+            }
             return;
         }
-        base.StartWalking(Direction);
-	}
+        base.StartWalking(a);
+    }
 
     /// <summary>
     /// Совершить прыжок
     /// </summary>
-	public override void Jump()
+	public override void Jump(ActionClass a)
     {
         if (employment <= 5)
         {
+            if (!canCharge)
+            {
+                a = new ActionClass();
+                a.func = "Jump";
+                actionQueue.AddToQueue(a);
+            }
             return;
         }
         if (envStats.groundness == groundnessEnum.grounded)
@@ -292,7 +420,7 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Спрыгнуть с платформы
     /// </summary>
-    public override void JumpDown()
+    public override void JumpDown(ActionClass a)
     {
         base.JumpDown();
     }
@@ -302,12 +430,12 @@ public class HumanoidActorActions : PersonActions
     /// </summary>
     public override void Crouch(bool yes)
     {
-        if (employment <= 4)
-        {
-            return;
-        }
         if (yes)
         {
+            if (employment <= 4)
+            {
+                return;
+            }
             envStats.groundness = groundnessEnum.crouch;
             SetMaxSpeed(crouchSpeed);
             highWallCheck.localPosition = new Vector3(highWallCheck.localPosition.x, highWallPosition2, highWallCheck.localPosition.z);
@@ -327,10 +455,17 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Совершить кувырок
     /// </summary>
-    public override void Flip()
+    public override void Flip(ActionClass a)
     {
         if (employment <= 4)
         {
+            if (!canCharge)
+            {
+                if (a == null)
+                    a = new ActionClass();
+                a.func = "Flip";
+                actionQueue.AddToQueue(a);
+            }
             return;
         }
         moving = false;
@@ -491,35 +626,173 @@ public class HumanoidActorActions : PersonActions
     }
 
     /// <summary>
+	/// Оповещает о том, что можно начинать накапливать чардж атаку
+	/// </summary>
+	public void StartCharge(ActionClass action)
+    {
+        isFightMode = true;
+        if (action is AttackClass)
+        {
+            if (employment < 10)
+            {
+                return;
+            }
+            employment = 0;
+        }
+        else if (action is ShieldClass)
+        {
+            if (employment < 10)
+            {
+                return;
+            }
+            employment = 0;
+            orgStats.addDefence = ((ShieldClass)action).addDefence;
+        }
+        else if (action is BowClass)
+        {
+            if (employment < 10)
+            {
+                return;
+            }
+            employment = 0;
+            chargeValue = -100f;
+            GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = true;
+        }
+        canCharge = true;
+    }
+
+    /// <summary>
+    /// Оповещает о том, что можно высвободить силу богов
+    /// </summary>
+    public void EndCharge(ActionClass action)
+    {
+        isFightMode = true;
+        if (action is AttackClass)
+        {
+            AttackClass a = (AttackClass)action;
+            if (canCharge)
+            {
+                canCharge = false;
+                employment = 10;
+                if (chargeValue >= a.chargeAttack.finalTime)
+                {
+                    hitData = a.chargeAttack.hitData;
+                    StartCoroutine(AttackProcess(6));
+                }
+                chargeValue = 0f;
+            }
+            else
+            {
+                chargeValue = 0f;
+                actionQueue.next = null;
+                Attack(a);
+            }
+        }
+        else if (action is ShieldClass)
+        {
+            if (canCharge)
+            {
+                canCharge = false;
+                employment = 10;
+                orgStats.addDefence = null;
+            }
+        }
+        else if (action is BowClass)
+        {
+            if (canCharge)
+            {
+                GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = false;
+                GameObject arrow = Instantiate(((BowClass)action).arrow);
+                Debug.Log(transform.position + Vector3.up * 2.5f);
+                arrow.transform.position = transform.position + Vector3.up * 2.5f;
+                arrow.GetComponent<HitController>().hitData = ((BowClass)action).hitData;
+                Vector3 force = new Vector3();
+                force.x = ((BowClass)action).shotForce * Mathf.Cos((chargeValue + 100) * Mathf.PI / 180f);
+                force.y = ((BowClass)action).shotForce * Mathf.Sin((chargeValue + 100) * Mathf.PI / 180f);
+                if (movingDirection == orientationEnum.left) force.x = force.x * -1f;
+                arrow.GetComponent<Rigidbody>().AddForce(force);
+                chargeValue = 0f;
+                canCharge = false;
+                employment = 10;
+            }
+        }
+    }
+
+    /// <summary>
     /// Учёт ситуации и произведение нужной в данный момент атаки
     /// </summary>
-    public override void Attack()
+    public override void Attack(ActionClass action)
     {
         if (employment <= 4)
         {
-            return;
-        } 
-        if ((hitData == null)&&(mainWeapon!=null))
-        {
-            if (envStats.groundness == groundnessEnum.grounded)
+
+            if (!canCharge)
             {
-                hitData = mainWeapon.GetHit("groundHit");
-                if ((cAnim != null)&&(hitData!=null))
-                {
-                    cAnim.Attack("Hit", hitData.hitTime);
-                }
-                StartCoroutine(AttackProcess(6)); 
+                action.func = "Attack";
+                actionQueue.AddToQueue(action);
             }
-            else if (envStats.groundness == groundnessEnum.inAir)
+            return;
+        }
+        if (action is AttackClass)
+        {
+            if (envStats.groundness != ((AttackClass)action).groundnessState)
             {
-                hitData = mainWeapon.GetHit("airHit");
-                if ((cAnim != null)&&(hitData!=null))
+                return;
+            }
+            ComboClass combo = ((AttackClass)action).combo;
+            hitData = null;
+            if (mainWeapon != null)
+            {
+                if ((cAnim != null) && (hitData == null))
                 {
-                    cAnim.Attack("Hit", hitData.hitTime);
+                    if (combo.comboName != currentCombo)
+                    {
+                        currentCombo = combo.comboName;
+                        if (!combo.preCombo.Contains(currentCombo))
+                            nCombo = 0;
+                    }
+                    isFightMode = true;
+                    hitData = combo.hitData[nCombo];
+                    nCombo++;
+                    if (nCombo >= combo.hitData.Count)
+                    {
+                        nCombo = 0;
+                        currentCombo = "";
+                    }
+                    else
+                    {
+                        comboTime = hitData.hitTime;
+                    }
                 }
-                StartCoroutine(AttackProcess(6));
+                if (hitData != null)
+                {
+                    StartCoroutine(AttackProcess(6));
+                }
             }
         }
+        if (action is BowClass)
+        {
+            StartCoroutine(ShotProcess(6, action));
+        }
+    }
+
+    protected virtual IEnumerator ShotProcess(int _employment, ActionClass act)
+    {
+        employment -= _employment;
+        yield return new WaitForSeconds(0.3f);
+        GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = false;
+        GameObject arrow = Instantiate(((BowClass)act).arrow);
+        Debug.Log(transform.position + Vector3.up * 2.5f);
+        arrow.transform.position = transform.position + Vector3.up * 2.5f;
+        arrow.GetComponent<HitController>().hitData = ((BowClass)act).hitData;
+        Vector3 force = new Vector3();
+        force.x = ((BowClass)act).shotForce;
+        if (movingDirection == orientationEnum.left) force.x = force.x * -1f;
+        arrow.GetComponent<Rigidbody>().AddForce(force);
+        chargeValue = 0f;
+        canCharge = false;
+        employment += _employment;
+        NextAction();
     }
 
     protected virtual IEnumerator AttackProcess(int _employment)//Процесс атаки
@@ -527,13 +800,28 @@ public class HumanoidActorActions : PersonActions
         if (hitBox != null)
         {
             GameObject hBox = hitBox.gameObject;
+            hBox.transform.localPosition = hitData.hitPosition;
             hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             employment -= _employment;
-            yield return new WaitForSeconds(hitData.hitTime-hitData.beginTime);
+            StopWalking();
+            if (hitData.hitForce.magnitude > 0)
+            {
+                rigid.velocity = Vector3.zero;
+            }
+            yield return new WaitForSeconds(hitData.hitTime - hitData.beginTime);
+            if (movingDirection == orientationEnum.right)
+            {
+                rigid.AddForce(hitData.hitForce);
+            }
+            else if (movingDirection == orientationEnum.left)
+            {
+                rigid.AddForce(new Vector3(-hitData.hitForce.x, hitData.hitForce.y, hitData.hitForce.z));
+            }
             this.hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
-            yield return new WaitForSeconds(hitData.beginTime);
+            yield return new WaitForSeconds(hitData.beginTime - hitData.comboTime);
             employment += _employment;
             hitData = null;
+            NextAction();
         }
     }
 

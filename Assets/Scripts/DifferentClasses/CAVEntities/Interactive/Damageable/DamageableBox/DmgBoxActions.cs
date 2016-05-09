@@ -18,7 +18,7 @@ public class DmgBoxActions : DmgObjActions
     /// <summary>
     /// Как персонаж реагирует на удар
     /// </summary>
-    public override void Hitted()
+	public override void Hitted()
     {
         dmgAnim.Injured();
     }

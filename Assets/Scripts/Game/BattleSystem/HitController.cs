@@ -56,6 +56,7 @@ public class HitController : MonoBehaviour
                 {
                     list.Add(other.gameObject);
                     Hit(target);
+					target.Hitted();
                 }
             }
         }
@@ -68,41 +69,46 @@ public class HitController : MonoBehaviour
         GameObject obj = dmg.gameObject;
         if (target != null)
         {
-            if (defence.stability <= hitData.attack - 2)
+
+			Rigidbody rigid = obj.GetComponent<Rigidbody>();
+
+			Vector3 _dir = new Vector3(
+				SpFunctions.RealSign(gameObject.transform.lossyScale.x) * hitData.direction.x,
+				hitData.direction.y, 
+				0f);
+			if (target.addDefence.pDefence <= 0) 
+			{
+                if (dmg.HitParticle)
+				Instantiate (dmg.HitParticle, dmg.transform.position, Quaternion.Euler (new Vector3 (0f, SpFunctions.RealSign (gameObject.transform.lossyScale.x) * 90f, 0f)));
+			}
+			else 
+			{
+                if (dmg.DefParticles)
+				Instantiate (dmg.DefParticles, dmg.transform.position, Quaternion.Euler (new Vector3 (0f, SpFunctions.RealSign (gameObject.transform.lossyScale.x) * -90f, 0f)));
+			}
+			if (defence.stability <= hitData.attack - 2)
             {
-                target.hitted = (hittedEnum)(1 + hitData.direction);
-                if (target.stunTimer <= 0f)
-                {
-                    target.stunTimer = target.macroStun;
-                    StartCoroutine(target.Stunned(target.macroStun));
-                }
-                else
-                {
-                    target.stunTimer = target.macroStun;
-                }
-                Rigidbody rigid = obj.GetComponent<Rigidbody>();
-                if (hitData.direction == 1)
-                {
-                    rigid.AddForce(new Vector3(SpFunctions.RealSign(gameObject.transform.lossyScale.x) * 2000f, 0f, 0f));
-                }
-                else if (hitData.direction == 2)
-                {
-                    rigid.AddForce(new Vector3(0f, 2000f, 0f));
-                }   
-                else if (hitData.direction == 3)
-                {
-                    rigid.AddForce(new Vector3(0f, -2000f, 0f));
-                }
+				if(hitData.direction==Vector3.zero)
+				{
+					if (target.stunTimer <= 0f)
+					{
+						target.stunTimer = target.macroStun;
+						StartCoroutine(target.Stunned(target.macroStun));
+					}
+					else
+					{
+						target.stunTimer = target.macroStun;
+					}
+				}
+				else
+				{
+					rigid.AddForce(_dir);
+				}
             }
-            else if ((defence.stability <= hitData.attack) && ((int)target.hitted < 1))
+            else if (defence.stability <= hitData.attack)
             {
                 target.stunTimer = target.microStun;
                 StartCoroutine(target.Stunned(target.microStun));
-                target.hitted = (hittedEnum)1;
-            }
-            else if ((int)target.hitted < 1)
-            {
-                target.hitted = 0;
             }
             bool crit= (Random.Range(0, 100) > target.critResistance);
             if ((SpFunctions.RealSign(gameObject.transform.lossyScale.x * obj.transform.lossyScale.x) > 0f)||(crit))

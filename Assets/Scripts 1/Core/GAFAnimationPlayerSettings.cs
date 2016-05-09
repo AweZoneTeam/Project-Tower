@@ -243,6 +243,11 @@ namespace GAF.Core
 			{
 				return m_AnimationColor;
 			}
+			//ДОБАВИЛ
+			set
+			{
+				m_AnimationColor = value;
+			}
 		}
 
 		#endregion // Properties

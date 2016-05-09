@@ -11,6 +11,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     protected EquipmentWindow equip;
     protected Image itemImage;
+    public ItemSlot pair; //Использовать для слотов с оружием, здесь будет ссылка на вторую руку. 
 
     protected ItemBunch bunch;
     public ItemBunch itemBunch
@@ -18,7 +19,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         get { return bunch; }
         set { bunch = value; }
     }
-   
+
 
     public void Initialize(EquipmentWindow equipWindow)
     {
@@ -49,9 +50,6 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
-    /// <summary>
-    /// Проверить, подходит ли данный предмет этому слоту
-    /// </summary>
     public virtual bool IsItemProper(ItemBunch _itemBunch)
     {
         return true;
@@ -91,7 +89,7 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             itemImage.sprite = null;
         }
-        itemImage.color=new Vector4(1f,1f,1f,0f);
+        itemImage.color = new Vector4(1f, 1f, 1f, 0f);
     }
 
     #region events
@@ -100,15 +98,19 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (equip.CurrentSlot == null)
         {
-            equip.CurrentSlot = this;
-            equip.MouseImage.sprite = GetComponent<Image>().sprite;
-            GetComponent<CanvasGroup>().blocksRaycasts = false;
+            if (itemBunch != null)
+            {
+                equip.CurrentSlot = this;
+                equip.MouseImage.sprite = GetComponent<Image>().sprite;
+                GetComponent<CanvasGroup>().blocksRaycasts = false;
+            }
         }
     }
 
     public virtual void OnDrag(PointerEventData eventData)
     {
-        equip.ChangeMouseImagePosition();
+        if (equip.MouseImage.sprite != null && equip.CurrentSlot != null)
+            Cursor.SetCursor(equip.MouseImage.sprite.texture, Vector2.zero, CursorMode.Auto);
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
@@ -116,20 +118,64 @@ public class EquipmentSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         equip.CurrentSlot = null;
-        equip.MouseImage.transform.localPosition = new Vector3(500f, 500f, 0f);
+        Cursor.SetCursor(equip.defaultCursor, Vector2.zero, CursorMode.Auto);
     }
 
     public virtual void OnDrop(PointerEventData eventData)
     {
-        if (equip.CurrentSlot != this)
+        bool b = true;
+        if (itemBunch != null && (equip.CurrentSlot!=null? equip.CurrentSlot.itemBunch != null: false))
         {
-            if ((equip.CurrentSlot.IsItemProper(itemBunch)) &&
-            (IsItemProper(equip.CurrentSlot.itemBunch)))
+            if (itemBunch.item is WeaponClass && equip.CurrentSlot.itemBunch.item is WeaponClass)
             {
-                ItemBunch _itemBunch = itemBunch;
-                AddItem(equip.CurrentSlot.itemBunch);
-                equip.CurrentSlot.AddItem(_itemBunch);
-                equip.CurrentSlot = null;
+                b = true;
+                WeaponClass weapon = null;
+                WeaponClass weapon1 = null;
+                if (this.pair != null)
+                {
+                    if (this.pair.itemBunch != null)
+                    {
+                        weapon = equip.CurrentSlot.itemBunch != null ? (WeaponClass)equip.CurrentSlot.itemBunch.item : null;
+                        weapon1 = itemBunch != null ? (WeaponClass)itemBunch.item : null;
+                        b = false;
+                    }
+                }
+                else if (equip.CurrentSlot.pair != null)
+                {
+                    if (equip.CurrentSlot.pair.itemBunch != null)
+                    {
+                        weapon1 = equip.CurrentSlot.itemBunch != null ? (WeaponClass)equip.CurrentSlot.itemBunch.item : null;
+                        weapon = itemBunch != null ? (WeaponClass)itemBunch.item : null;
+                        b = false;
+                    }
+                }
+                if (weapon != null && weapon1 != null)
+                {
+                    Debug.Log(b);
+                    b = b
+                        ||
+                        (weapon.weaponType == "bow" || weapon.weaponType == "twoHandedSword") &&
+                        (weapon1.weaponType != "bow" && weapon1.weaponType != "twoHandedSword") &&
+                        equip.HaveEmptySlots(1)
+                        ||
+                        (weapon.weaponType != "bow" && weapon.weaponType != "twoHandedSword")
+                        ||
+                        weapon == null;
+                }
+            }
+        }
+        if (b)
+        {
+            if (equip.CurrentSlot != this && equip.CurrentSlot != null)
+            {
+                if ((equip.CurrentSlot.IsItemProper(itemBunch)) &&
+                (IsItemProper(equip.CurrentSlot.itemBunch)))
+                {
+                    ItemBunch _itemBunch = equip.CurrentSlot.itemBunch;
+                    equip.CurrentSlot.AddItem(itemBunch);
+                    AddItem(_itemBunch);
+                    equip.CurrentSlot = null;
+                }
             }
         }
     }

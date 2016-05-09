@@ -61,7 +61,6 @@ public class AIController : PersonController, IPersonWatching
     protected TargetWithCondition whoAttacksMe;//Кто атаковал персонажа
     public TargetWithCondition WhoAttacksMe {set { whoAttacksMe = value; } }
     protected float targetDistance;//Расстояние до текущей цели
-    public List<string> enemies;//Какие типы игровых объектов этот ИИ считает за врагов (пока что я отслеживаю враг ли это по тегу.)
 
     //public behaviourEnum behaviour;//Какую модель поведения применяет ИИ в данный момент (Calm,Agressive) 
 
@@ -221,10 +220,6 @@ public class AIController : PersonController, IPersonWatching
         employment = maxEmployment;
         startPosition = transform.position;
         startRoom = currentRoom;
-        if (hitBox != null)
-        {
-            hitBox.SetEnemies(enemies);
-        }
     }
 
     /// <summary>

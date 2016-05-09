@@ -33,7 +33,6 @@ public class ItemSlot : EquipmentSlot
     };
 
     public string slotType;
-    public ItemSlot pair; //Использовать для слотов с оружием, здесь будет ссылка на вторую руку. 
 
     public override void ChooseItem()
     {
@@ -60,20 +59,16 @@ public class ItemSlot : EquipmentSlot
             else if (string.Equals(_itemBunch.item.type, "weapon"))
             {
                 WeaponClass weapon = (WeaponClass)_itemBunch.item;
-                if (isSuitableItem[slotType].Contains(weapon.weaponType))
-                {
-                    return true;
-                }
-                return false;
+                return isSuitableItem[slotType].Contains(weapon.weaponType);
             }
-            else if ((string.Equals(_itemBunch.item.type, "ring"))|| (string.Equals(_itemBunch.item.type, "usable")))
+            else if ((string.Equals(_itemBunch.item.type, "ring")) || (string.Equals(_itemBunch.item.type, "usable")))
             {
                 if (isSuitableItem[slotType].Contains(_itemBunch.item.type))
                 {
                     return true;
                 }
                 return false;
-            }            
+            }
         }
         return false;
     }
@@ -81,7 +76,7 @@ public class ItemSlot : EquipmentSlot
     public override void AddItem(ItemBunch _itemBunch)
     {
         base.AddItem(_itemBunch);
-        if (_itemBunch!=null)
+        if (_itemBunch != null)
         {
             if (_itemBunch.item != null)
             {
@@ -93,10 +88,30 @@ public class ItemSlot : EquipmentSlot
                     {
                         if (pair != null)
                         {
-                            pair.itemBunch = _itemBunch;
+                            if (pair.itemBunch == null)
+                            {
+                                pair.Initialize(equip, _itemBunch);
+                            }
+                            else
+                            {
+                                equip.AddItemInBag(pair.itemBunch);
+                                pair.Initialize(equip, _itemBunch);
+                            }
                         }
                         equip.ChangeCharacterEquipment(itemBunch, slotType.Contains("1") ? "twoHandedWeapon1" : "twoHandedWeapon2");
                         return;
+                    }
+                    else
+                    {
+                        //если это одноручное оружие то надо убрать из второй руки оружие если оно двуручное
+                        if (pair.itemBunch != null)
+                        {
+                            if (pair.slotType.Contains("1") && (isSuitableTwoHandedItem["twoHandedWeapon1"].Contains(((WeaponClass)pair.itemBunch.item).weaponType)) ||
+                                pair.slotType.Contains("2") && (isSuitableTwoHandedItem["twoHandedWeapon2"].Contains(((WeaponClass)pair.itemBunch.item).weaponType)))
+                            {
+                                pair.DeleteItem();
+                            }
+                        }
                     }
                 }
             }
@@ -121,18 +136,15 @@ public class ItemSlot : EquipmentSlot
             }
             equip.ChangeCharacterEquipment(null, slotType);
         }
- 
     }
+
 
     public virtual void Initialize(EquipmentWindow equipWindow, ItemBunch _itemBunch)
     {
         base.Initialize(equipWindow);
-        base.AddItem(_itemBunch);       
+        base.AddItem(_itemBunch);
     }
 
-    public void Remove()
-    {
-        DeleteItem();
-    }
+
 
 }

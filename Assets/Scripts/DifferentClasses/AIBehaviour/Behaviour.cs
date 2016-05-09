@@ -14,7 +14,7 @@ public class AIActionData
     public string actionName;//Название действия
     public List<ConditionSign> whyToDo=new List<ConditionSign>();//Условия совершения действия
     public int posibility;// Вероятность, что действие будет совершено - это обычное число, что используется для определения, какое именно действие из возможных будет совершено
-    public List<ActionSign> whatToDo = new List<ActionSign>();//Какие элементарные функции вызываются.
+    public List<AIActionSign> whatToDo = new List<AIActionSign>();//Какие элементарные функции вызываются.
     public bool unavailable=false;//Если действие уже активированно или на нём висит кулдаун, то его нельзя активировать. Для этого нужна эта переменная
     public float actionTime;//Сколько времени длится действие
     public float cooldown;//Сколько времени длится кулдаун 
@@ -47,7 +47,7 @@ public class AIActionData
     /// </summary>
     public void DoAction()
     {
-        ActionSign actSign;
+        AIActionSign actSign;
         bool k = true;
         for (int i = 0; i < whatToDo.Count; i++)
         {
@@ -68,10 +68,10 @@ public class AIActionData
             whyToDo.Add(new ConditionSign(original.whyToDo[i]));
         }
         posibility=original.posibility;
-        whatToDo = new List<ActionSign>();
+        whatToDo = new List<AIActionSign>();
         for (int i = 0; i < original.whatToDo.Count; i++)
         {
-            whatToDo.Add(new ActionSign(original.whatToDo[i]));
+            whatToDo.Add(new AIActionSign(original.whatToDo[i]));
         }
         unavailable = false;
         actionTime=original.actionTime;
@@ -84,7 +84,7 @@ public class AIActionData
 /// Класс, что представляет собой ссылку на вызываемую функцию и аргументы этой функции 
 /// </summary>
 [System.Serializable]
-public class ActionSign
+public class AIActionSign
 {
     public string actionName;//Имя вызываемой функции
     public delegate void AIAction(string id, int argument);
@@ -92,7 +92,7 @@ public class ActionSign
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
 
-    public ActionSign(ActionSign original)
+    public AIActionSign(AIActionSign original)
     {
         actionName = original.actionName;
         aiAction = null;
@@ -136,7 +136,7 @@ public class ReactionSign
     public string id;//Строковый аргумент
     public int argument;//Численный аргумент
 
-    public ReactionSign(ActionSign original)
+    public ReactionSign(AIActionSign original)
     {
         actionName = original.actionName;
         aiAction = null;
@@ -212,3 +212,24 @@ public class SBehaviourClass
     public string path;
     public BehaviourClass behaviour;
 }
+
+
+	
+//ДОБАВИЛ---------------------------------------------------------
+/// <summary>
+/// Класс для хранения функции действия и аргумента к нему
+/// </summary>
+public class ActionSign
+{
+	public string type;
+	public delegate void act(ActionClass a);
+	public act actionFunction;
+	public ActionClass data;
+	public ActionSign(ActionClass _data, act _actionFunction, string _type)
+	{
+		type = _type;
+		actionFunction = _actionFunction;
+		data = _data;
+	}
+}
+

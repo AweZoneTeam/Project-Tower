@@ -18,7 +18,7 @@ public class AnimationEditorData : MonoBehaviour
 	{
 		animBase.allCharacters.Clear ();
 		DirectoryInfo direct = new DirectoryInfo (datapath);
-		FileInfo[] files = direct.GetFiles ();
+		FileInfo[] files = direct.GetFiles();
 		foreach (FileInfo file in files)
 		{
 			if (!file.Name.Contains ("meta")) {

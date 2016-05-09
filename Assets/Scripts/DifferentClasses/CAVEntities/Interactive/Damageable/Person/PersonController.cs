@@ -67,6 +67,8 @@ public class PersonController : DmgObjController, IPersonWatching
 
     protected InterObjActions interactionObject;//Объект, с которым взаимодействует персонаж. Это поле используется в особых случаях.
 
+    public List<string> enemies;//Какие типы игровых объектов этот ИИ считает за врагов (пока что я отслеживаю враг ли это по тегу.)
+
     #endregion //fields
 
     #region parametres
@@ -132,6 +134,10 @@ public class PersonController : DmgObjController, IPersonWatching
             currentRoom.container.Add(this);
         }
         hitBox = GetComponentInChildren<HitController>();
+        if (hitBox != null)
+        {
+            hitBox.SetEnemies(enemies);
+        }
     }
     
 

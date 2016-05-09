@@ -52,7 +52,7 @@ public static class ActionTypes
 	public static void Climb(Rigidbody2D rigid, EnvironmentStats stats, InfoGetClass inf, Vector2 speed)
 	{
 		rigid.gravityScale = 0f;
-		if (InfoGetTypes.Raycaster(inf,speed))
+		if (InfoGetTypes.Raycaster(inf, speed))
 		    rigid.velocity=speed;
 		else
 			rigid.velocity=new Vector2(0f,0f);

@@ -33,8 +33,14 @@ public class KeyboardActorController : PersonController
 
     protected directionClaveEnum dirClave = directionClaveEnum.notPressed;
 
+    //текущая выполняемая атака
+    AttackClass attack = new AttackClass();
+
     public int fastRunInputCount = 0;
     protected float fastRunInputTimer = 0f;
+
+    HumanoidActorActions HAA;
+    public WeaponClass defaultWeapon1, defaultWeapon2;
 
     protected List<string> dependedPartTypes = new List<string> { "Sword", "Shield" };
     protected Dictionary<string, string> partDependencies = new Dictionary<string, string> { { "Sword", "RightHand" }, { "Shield", "LeftHand" } };
@@ -55,6 +61,7 @@ public class KeyboardActorController : PersonController
     public override void Awake()
     {
         base.Awake();
+        HAA = (HumanoidActorActions)pActions;
         orgStats.maxHealth = 100f;
         orgStats.health = 100f;
     }
@@ -86,6 +93,197 @@ public class KeyboardActorController : PersonController
 
                     if (envStats.interaction == interactionEnum.noInter)
                     {
+
+                        #region mainWeapon
+
+                        if (Input.GetButtonUp("Attack") && Input.GetButtonDown("Attack"))
+                        {
+                            if (HAA.mainWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)
+                                {
+                                    HAA.EndCharge(attack);
+                                }
+                                else
+                                {
+                                    if (attack.chargeAttack.finalTime > 0)
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                }
+                            }
+                            if (HAA.secondaryWeapon is Bow)
+                            {
+                                if (HAA.canCharge && HAA.chargeValue < 0)
+                                {
+                                    HAA.EndCharge(((Bow)HAA.secondaryWeapon).arrowStats);
+                                }
+                                else
+                                {
+                                    HAA.Attack(((Bow)HAA.secondaryWeapon).arrowStats);
+                                }
+                            }
+                        }
+
+                        if (Input.GetButtonDown("Attack"))
+                        {
+                            if (HAA.mainWeapon is SimpleWeapon)
+                            {
+                                attackState state = GetAttackState();
+                                attack = ((SimpleWeapon)HAA.mainWeapon).GetAttack(state.ToString());
+                                if (attack != null)
+                                {
+                                    if (attack.chargeAttack.finalTime <= 0)//считать что если время накопление анаки не больше нуля то чардж атаки нет
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                    else
+                                    {
+                                        if (HAA.chargeValue >= 0)
+                                        {
+                                            HAA.chargeValue = 0f;
+                                            HAA.canCharge = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (Input.GetButton("Attack"))
+                        {
+                            if (HAA.mainWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue >= 0)
+                                {
+                                    HAA.isFightMode = true;
+                                    HAA.chargeValue += Time.deltaTime;
+                                    if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                    {
+                                        HAA.StartCharge(attack);
+                                    }
+                                    if (HAA.canCharge)
+                                    {
+                                        if (HAA.chargeValue >= attack.chargeAttack.finalTime && attack.chargeAttack.autoFinal)
+                                        {
+                                            HAA.EndCharge(attack);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                        {
+                                            HAA.chargeValue = attack.chargeAttack.deadTime;
+                                        }
+                                    }
+                                }
+                            }
+                            if (HAA.secondaryWeapon is Bow && envStats.groundness != groundnessEnum.inAir)
+                            {
+                                if (HAA.chargeValue < 0.2f)
+                                {
+                                    if (HAA.chargeValue >= 0)
+                                    {
+                                        HAA.isFightMode = true;
+                                        HAA.chargeValue += Time.deltaTime;
+                                    }
+                                    else
+                                    {
+                                        if (HAA.movingDirection == orientationEnum.left)
+                                        {
+                                            HAA.chargeValue += Input.GetAxis("Horizontal");
+                                        }
+                                        if (HAA.movingDirection == orientationEnum.right)
+                                        {
+                                            HAA.chargeValue -= Input.GetAxis("Horizontal");
+                                        }
+                                        HAA.isFightMode = true;
+                                        if (HAA.chargeValue > -10f)
+                                            HAA.chargeValue = -10f;
+                                        if (HAA.chargeValue < -190f)
+                                            HAA.chargeValue = -190f;
+                                        GameObject.Find("Aim").transform.localPosition = new Vector3
+                                            (
+                                                7 * Mathf.Cos((HAA.chargeValue + 100) * Mathf.PI / 180f),
+                                                 2.5f + 7 * Mathf.Sin((HAA.chargeValue + 100) * Mathf.PI / 180f),
+                                                 0f
+                                            );
+                                    }
+                                }
+                                else
+                                {
+                                    HAA.StartCharge(((Bow)HAA.secondaryWeapon).arrowStats);
+                                }
+                            }
+                        }
+
+                        if (Input.GetButtonUp("Attack"))
+                        {
+                            if (HAA.mainWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)
+                                {
+                                    HAA.EndCharge(attack);
+                                }
+                                else
+                                {
+                                    if (attack.chargeAttack.finalTime > 0)
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                }
+                                if (HAA.chargeValue > 0f)
+                                {
+                                    HAA.chargeValue = 0f;
+                                }
+                            }
+                            if (HAA.secondaryWeapon is Bow)
+                            {
+                                if (HAA.canCharge && HAA.chargeValue < 0)
+                                {
+                                    HAA.EndCharge(((Bow)HAA.secondaryWeapon).arrowStats);
+                                }
+                                else
+                                {
+                                    HAA.Attack(((Bow)HAA.secondaryWeapon).arrowStats);
+                                }
+                            }
+                        }
+
+                        #endregion//mainWeapon
+
+                        #region secondaryWeapon
+
+                        if (Input.GetButtonUp("SecondAttack") && Input.GetButtonDown("SecondAttack") && attack != null)
+                        {
+                            if (HAA.secondaryWeapon is Shield)
+                            {
+                                HAA.EndCharge(((Shield)HAA.secondaryWeapon).defStats);
+                            }
+                        }
+
+                        if (Input.GetButtonDown("SecondAttack"))
+                        {
+
+                        }
+
+                        if (Input.GetButton("SecondAttack") && attack != null)
+                        {
+                            if (HAA.secondaryWeapon is Shield && envStats.groundness != groundnessEnum.inAir)
+                            {
+                                HAA.StartCharge(((Shield)HAA.secondaryWeapon).defStats);
+                            }
+                        }
+
+                        if (Input.GetButtonUp("SecondAttack") && attack != null)
+                        {
+                            if (HAA.secondaryWeapon is Shield)
+                            {
+                                HAA.EndCharge(((Shield)HAA.secondaryWeapon).defStats);
+                            }
+                        }
+
+                        #endregion//secondaryWeapon
+
                         #region FastRunInput
 
                         if (Input.GetButtonDown("Horizontal"))
@@ -113,7 +311,6 @@ public class KeyboardActorController : PersonController
                         {
                             if (Mathf.Abs(fastRunInputCount) == fastRunMaxCount)
                             {
-
                                 pActions.SetMaxSpeed(pActions.FastRunSpeed);
                             }
                             else
@@ -128,8 +325,8 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                             orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
-                            pActions.Turn(orientation);
-                            pActions.StartWalking(orientation);
+                            pActions.Turn(new ActionClass(orientation));
+                            pActions.StartWalking(new ActionClass(orientation));
 
                             #region ObstacleInteraction
 
@@ -179,12 +376,12 @@ public class KeyboardActorController : PersonController
                         {
                             if (envStats.groundness == groundnessEnum.grounded)
                             {
-                                pActions.Flip();
+                                pActions.Flip(null);
                             }
                         }
                         else if (Input.GetButtonDown("Jump"))
                         {
-                            pActions.Jump();
+                            pActions.Jump(null);
                         }
 
                         if (Input.GetButtonDown("Interact"))
@@ -203,11 +400,6 @@ public class KeyboardActorController : PersonController
                                     Interact(this);
                                 }
                             }
-                        }
-
-                        if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
-                        {
-                            pActions.Attack();
                         }
 
                         UseItem();
@@ -407,6 +599,7 @@ public class KeyboardActorController : PersonController
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
     }
 
+
     /// <summary>
     /// Возвращает инвентарь персонажа
     /// </summary>
@@ -584,6 +777,9 @@ public class KeyboardActorController : PersonController
         DefineInteractable();
     }
 
+    /// <summary>
+    /// Определение типа препятствия, находящегося перед персонажем
+    /// </summary>
     protected override void DefinePrecipice()
     {
         pActions.PrecipiceIsForward = (!(Physics.OverlapSphere(precipiceCheck.position, precipiceRadius, whatIsGround).Length > 0) && (envStats.groundness == groundnessEnum.grounded)&&(!Input.GetButton("CamMove")));
@@ -615,6 +811,9 @@ public class KeyboardActorController : PersonController
         }
     }
 
+    /// <summary>
+    /// Определение типа взаимодействия
+    /// </summary>
     protected override void DefineInteractable()
     {
         if ((envStats.interaction != interactionEnum.noInter) && (envStats.interaction != interactionEnum.interactive))
@@ -656,6 +855,52 @@ public class KeyboardActorController : PersonController
             pos = new Vector3(pos.x, pos.y + delY, pos.z);
         }
         return (pos.y - lowWallCheck.transform.position.y);
+    }
+
+    /// <summary>
+    /// Определить, какую атаку можно использовать
+    /// </summary>
+    /// <returns></returns>
+    public attackState GetAttackState()
+    {
+        if (Input.GetButton("Crouch"))
+        {
+            return attackState.crouch;
+        }
+        if (envStats.groundness == groundnessEnum.grounded)
+        {
+            if (Input.GetButton("Horizontal"))
+            {
+                if (Mathf.Abs(fastRunInputCount) > 1)
+                {
+                    return attackState.run;
+                }
+                else
+                {
+                    return attackState.walk;
+                }
+            }
+            else if (Input.GetKey(KeyCode.W))
+            {
+                return attackState.up;
+            }
+            else
+            {
+                return attackState.stay;
+            }
+        }
+        else if (envStats.groundness == groundnessEnum.inAir)
+        {
+            if (Input.GetKey(KeyCode.S))
+            {
+                return attackState.jumpDawn;
+            }
+            else
+            {
+                return attackState.jump;
+            }
+        }
+        return attackState.NO;
     }
 
     #endregion //Analyze
@@ -769,8 +1014,15 @@ public class KeyboardActorController : PersonController
     public void ChangeItem(ItemBunch itemBunch, string itemType)
     {
         #region init
-
-        ItemClass item = itemBunch.item;
+        ItemClass item;
+        if (itemBunch == null)
+        {
+            item = null;
+        }
+        else
+        {
+            item = itemBunch.item;
+        }
 
         CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
         List<PartController> childParts = new List<PartController>();
@@ -778,13 +1030,13 @@ public class KeyboardActorController : PersonController
         List<ItemClass> removeItems = equip.ChangeEquipmentElement(itemBunch, itemType);
 
         #endregion //init
-        
-        if (!string.Equals(itemType,"rightWeapon2")&&!string.Equals(itemType, "leftWeapon2"))
+
+        if (!string.Equals(itemType, "rightWeapon2") && !string.Equals(itemType, "leftWeapon2"))
         {
             #region visualize
 
             AddPart(item, childParts, anim);
-            
+
             #endregion //visualize
 
             #region changeEquipment
@@ -814,16 +1066,25 @@ public class KeyboardActorController : PersonController
                         pActions.SetSpeeds(orgStats.velocity, orgStats.defVelocity);
                     }
                 }
-
-                if (string.Equals(item.type, "weapon"))
+            }
+            if (string.Equals(itemType, "rightWeapon1") || string.Equals(itemType, "leftWeapon1"))
+            {
+                if (pActions != null)
                 {
-                    if (pActions != null)
+                    pActions.SetWeapon(equip.rightWeapon, "Main");
+                    pActions.SetWeapon(equip.leftWeapon, "Secondary");
+                }
+                if (equip.rightWeapon == null)
+                {
+                    if (equip.leftWeapon == null)
                     {
-                        pActions.SetWeapon(equip.rightWeapon, "Main");
-                        pActions.SetWeapon(equip.leftWeapon, "Secondary");
+                        pActions.SetWeapon(defaultWeapon2, "Main");
+                    }
+                    else
+                    {
+                        pActions.SetWeapon(defaultWeapon1, "Main");
                     }
                 }
-
             }
 
             for (int i = 0; i < removeItems.Count; i++)
@@ -844,25 +1105,64 @@ public class KeyboardActorController : PersonController
     /// <summary>
     /// Функция, вызываемая при добавлении новой части
     /// </summary>
-    protected void AddPart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
+    public void AddPart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
     {
         if (item != null)
         {
             List<PartController> parts = anim.parts;
             PartController part = null;
-            foreach (ItemVisual itemVis in item.itemVisuals)
+            if (item.type != "weapon")
             {
-                GameObject obj = Instantiate(itemVis.part) as GameObject;
-                obj.transform.parent = anim.transform;
-                obj.transform.localPosition = itemVis.pos;
-                obj.transform.localScale = new Vector3(1f, 1f, 1f);
-                part = obj.GetComponent<PartController>();
-                if (part != null)
+                foreach (ItemVisual itemVis in item.itemVisuals)
                 {
-                    parts.Add(part);
-                    if (dependedPartTypes.Contains(part.partType))
+                    GameObject obj = Instantiate(itemVis.part) as GameObject;
+                    obj.transform.parent = anim.transform;
+                    obj.transform.localPosition = itemVis.pos;
+                    obj.transform.localScale = new Vector3(1f, 1f, 1f);
+                    part = obj.GetComponent<PartController>();
+                    if (part != null)
                     {
-                        childParts.Add(part);
+                        parts.Add(part);
+                        if (dependedPartTypes.Contains(part.partType))
+                        {
+                            childParts.Add(part);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                HumanoidActorActions haa = (HumanoidActorActions)pActions;
+                if (haa.isFightMode)
+                {
+                    GameObject obj = Instantiate(item.itemVisuals[1].part) as GameObject;
+                    obj.transform.parent = anim.transform;
+                    obj.transform.localPosition = item.itemVisuals[1].pos;
+                    obj.transform.localScale = new Vector3(1f, 1f, 1f);
+                    part = obj.GetComponent<PartController>();
+                    if (part != null)
+                    {
+                        parts.Add(part);
+                        if (dependedPartTypes.Contains(part.partType))
+                        {
+                            childParts.Add(part);
+                        }
+                    }
+                }
+                else
+                {
+                    GameObject obj = Instantiate(item.itemVisuals[0].part) as GameObject;
+                    obj.transform.parent = anim.transform;
+                    obj.transform.localPosition = item.itemVisuals[0].pos;
+                    obj.transform.localScale = new Vector3(1f, 1f, 1f);
+                    part = obj.GetComponent<PartController>();
+                    if (part != null)
+                    {
+                        parts.Add(part);
+                        if (dependedPartTypes.Contains(part.partType))
+                        {
+                            childParts.Add(part);
+                        }
                     }
                 }
             }

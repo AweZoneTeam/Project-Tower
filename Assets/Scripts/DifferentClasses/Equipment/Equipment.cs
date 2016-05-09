@@ -108,7 +108,7 @@ public class EquipmentClass: BagClass
         List<ItemBunch> availableItems = new List<ItemBunch>();
         for (int i = 0; i < useItems.Count; i++)
         {
-            if (useItems[i].item != null)
+            if (useItems!=null? useItems[i].item != null: false)
             {
                 availableItems.Add(useItems[i]);
             }
@@ -136,8 +136,16 @@ public class EquipmentClass: BagClass
     /// Сменить предмет в инвентаре
     /// </summary>
     public List<ItemClass> ChangeEquipmentElement(ItemBunch itemBunch, string itemType)
-    {
-        ItemClass item = itemBunch.item;
+	{
+		ItemClass item;
+		if(itemBunch == null)
+		{
+			item = null;
+		}
+		else
+		{
+        	item = itemBunch.item;
+		}
         List<ItemClass> removeItems=new List<ItemClass>();
 
         #region weapons

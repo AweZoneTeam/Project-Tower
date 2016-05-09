@@ -72,7 +72,19 @@ public class WeaponCreateWindow : ItemCreateWindow
 
     protected override void Initialize()
     {
-        WeaponClass asset = ScriptableObject.CreateInstance<WeaponClass>();
+		ItemClass asset;
+		if(weaponType == "bow")
+		{
+			asset = ScriptableObject.CreateInstance<Bow>();
+		}
+		else if(weaponType == "shield")
+		{
+			asset = ScriptableObject.CreateInstance<Shield>();
+		}
+		else
+		{
+			asset = ScriptableObject.CreateInstance<SimpleWeapon>();
+		}
         asset.itemName = itemName;
         asset.type = "weapon";
         asset.itemVisuals = new List<ItemVisual>();
@@ -80,8 +92,10 @@ public class WeaponCreateWindow : ItemCreateWindow
         {
             asset.itemVisuals.Add(new ItemVisual(new Vector3(x, y, z)));
         }
-        WeaponClass weapon = (WeaponClass)asset;
-        weapon.weaponType = weaponType;
+		if(asset is WeaponClass)
+		{
+			((WeaponClass)asset).weaponType = weaponType;
+		}
         AssetDatabase.CreateAsset(asset, "Assets/Database/Items/Weapons/" + itemName + ".asset");
         Selection.activeObject = asset;
     }

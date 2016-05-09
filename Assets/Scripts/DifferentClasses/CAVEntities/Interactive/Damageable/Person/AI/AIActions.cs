@@ -133,10 +133,10 @@ public class AIActions : PersonActions
     /// <summary>
     /// Идти в указанном направлении
     /// </summary>
-    public override void StartWalking(orientationEnum _direction)
+    public override void StartWalking(ActionClass a)
     {
-        base.StartWalking(_direction);
-        Move(_direction, runSpeed);
+        base.StartWalking(a);
+        Move(a.dir, runSpeed);
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ public class AIActions : PersonActions
     /// <summary>
     /// Совершить прыжок
     /// </summary>
-    public override void Jump()
+    public override void Jump(ActionClass a)
     {
         rigid.velocity = new Vector3(rigid.velocity.x, Mathf.Clamp(rigid.velocity.y + jumpForce, Mathf.NegativeInfinity, jumpForce), rigid.velocity.z);
         StartCoroutine(JumpProcess());
@@ -173,7 +173,7 @@ public class AIActions : PersonActions
     }
     #endregion //interface
 
-    public override void Attack()
+    public override void Attack(ActionClass a)
     {
         if ((hitData != null) && (weapon != null))
         {
@@ -193,7 +193,8 @@ public class AIActions : PersonActions
             hBox.transform.localPosition = hitData.hitPosition;
             hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             yield return new WaitForSeconds(hitData.hitTime - hitData.beginTime);
-            this.hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
+            Debug.Log(hitData);
+            hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
             yield return new WaitForSeconds(hitData.beginTime);
             hitData = null;
         }
@@ -201,11 +202,15 @@ public class AIActions : PersonActions
 
     public override void SetHitData(string hitName)
     {
-        for (int i = 0; i < weapon.hitData.Count; i++)
+        if (weapon is SimpleWeapon)
         {
-            if (string.Equals(hitName, weapon.hitData[i].hitName))
+            SimpleWeapon _weapon = (SimpleWeapon)weapon;
+            for (int i = 0; i < _weapon.attackData.Count; i++)
             {
-                hitData = weapon.hitData[i];
+                if (string.Equals(hitName, _weapon.attackData[i].attackName))
+                {
+                    hitData = _weapon.attackData[i].combo.hitData[0];
+                }
             }
         }
     }

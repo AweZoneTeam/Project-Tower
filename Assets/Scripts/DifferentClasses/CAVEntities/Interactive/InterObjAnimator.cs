@@ -193,7 +193,8 @@ public class InterObjAnimator : MonoBehaviour
 
     public bool CompareAnimation(string animName)
     {
-        return string.Equals(animName, animTypes[anim.type].animations[anim.numb]);
+        //return string.Equals(animName, animTypes[anim.type].animations[anim.numb]);
+        return true;
     }
 
     /// <summary>

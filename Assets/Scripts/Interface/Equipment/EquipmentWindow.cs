@@ -12,8 +12,8 @@ public class EquipmentWindow : InterfaceWindow
 
     #region consts
 
-    private const float mouseAreaWidth=900f;
-    private const float mouseAreaHeight = 500f;
+    private const float width = 500f;
+    private const float height = 500f;
 
     #endregion //consts
 
@@ -22,7 +22,7 @@ public class EquipmentWindow : InterfaceWindow
     private Camera cam;
 
     private KeyboardActorController player;
-    private EquipmentClass equip;
+    public EquipmentClass equip;
     private OrganismStats orgStats;
 
     private EquipmentSlot currentSlot;
@@ -53,6 +53,8 @@ public class EquipmentWindow : InterfaceWindow
         set { mouseImage = value; }
     }
 
+    public Texture2D defaultCursor;
+
     #region itemDescription
 
     private Text itemNameText;
@@ -67,7 +69,6 @@ public class EquipmentWindow : InterfaceWindow
     #region characterDoll
 
     private ItemSlot rightWeaponSlot1, rightWeaponSlot2, leftWeaponSlot1, leftWeaponSlot2;
-    private List<ItemSlot> usableItemSlots=new List<ItemSlot>();
 
     #endregion //characterDoll
 
@@ -94,6 +95,10 @@ public class EquipmentWindow : InterfaceWindow
 
     public override void Initialize()
     {
+        if (defaultCursor != null)
+        {
+            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        }
 
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<Camera>();
 
@@ -127,14 +132,6 @@ public class EquipmentWindow : InterfaceWindow
         leftWeaponSlot1.Initialize(this);
         leftWeaponSlot2 = characterDollPanel.FindChild("LeftWeaponSlot2").GetComponent<ItemSlot>();
         leftWeaponSlot2.Initialize(this);
-        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot1").GetComponent<ItemSlot>());
-        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot2").GetComponent<ItemSlot>());
-        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot3").GetComponent<ItemSlot>());
-        usableItemSlots.Add(characterDollPanel.FindChild("UsableItemSlot4").GetComponent<ItemSlot>());
-        foreach (ItemSlot slot in usableItemSlots)
-        {
-            slot.Initialize(this);
-        }
 
         InitializeSlot(characterDollPanel, "HelmetSlot", equip.armor.helmet);
         InitializeSlot(characterDollPanel, "CuirassSlot", equip.armor.cuirass);
@@ -143,14 +140,14 @@ public class EquipmentWindow : InterfaceWindow
         InitializeSlot(characterDollPanel, "GlovesSlot", equip.armor.gloves);
         InitializeSlot(characterDollPanel, "LeftRingSlot", equip.armor.leftRing);
         InitializeSlot(characterDollPanel, "RightRingSlot", equip.armor.rightRing);
-        rightWeaponSlot1.Initialize(this,new ItemBunch(equip.rightWeapon));
-        rightWeaponSlot2.Initialize(this,new ItemBunch(equip.altRightWeapon));
-        leftWeaponSlot1.Initialize(this,new ItemBunch(equip.leftWeapon));
-        leftWeaponSlot2.Initialize(this,new ItemBunch(equip.altLeftWeapon));
-        for (int i=0; i<usableItemSlots.Count;i++)
-        {
-            usableItemSlots[i].Initialize(this, equip.useItems[i]);
-        }
+        InitializeSlot(characterDollPanel, "UsableItemSlot1", equip.useItems[0].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot2", equip.useItems[1].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot3", equip.useItems[2].item);
+        InitializeSlot(characterDollPanel, "UsableItemSlot4", equip.useItems[3].item);
+        rightWeaponSlot1.Initialize(this, new ItemBunch(equip.rightWeapon));
+        rightWeaponSlot2.Initialize(this, new ItemBunch(equip.altRightWeapon));
+        leftWeaponSlot1.Initialize(this, new ItemBunch(equip.leftWeapon));
+        leftWeaponSlot2.Initialize(this, new ItemBunch(equip.altLeftWeapon));
 
 
         #endregion //characterDoll
@@ -205,10 +202,7 @@ public class EquipmentWindow : InterfaceWindow
 
     }
 
-    /// <summary>
-    /// Функция добавления нового предмета в рюкзак
-    /// </summary>
-    void AddItemInBag(ItemBunch itemBunch)
+    public void AddItemInBag(ItemBunch itemBunch)
     {
         for (int i = 0; i < bagSlots.Count; i++)
         {
@@ -220,31 +214,31 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
-    /// <summary>
-    /// Инициализировать слот
-    /// </summary>
+    //проверяет есть ли нужное количество сободных слотов
+    public bool HaveEmptySlots(byte count)
+    {
+        byte _count = 0;
+        for (int i = 0; i < bagSlots.Count; i++)
+        {
+            if (bagSlots[i].itemBunch == null)
+            {
+                _count++;
+            }
+        }
+        return count <= _count;
+    }
+
     public void InitializeSlot(Transform trans, string childName, ItemClass item)
     {
         ItemSlot slot = trans.FindChild(childName).GetComponent<ItemSlot>();
         slot.Initialize(this, new ItemBunch(item));
     }
 
-    private EquipmentSlot GetSlot(Transform trans, string childName)
-    {
-        return trans.FindChild(childName).GetComponent<EquipmentSlot>();
-    }
-
-    /// <summary>
-    /// Сменить какой-то предмет в экипировке персонажа
-    /// </summary>
     public void ChangeCharacterEquipment(ItemBunch itemBunch, string changeType)
     {
         player.ChangeItem(itemBunch, changeType);
     }
 
-    /// <summary>
-    /// В окне описания предмета задать описание интересующего предмета
-    /// </summary>
     public void ChangeDescription(bool _visualizeDescription)
     {
         if (_visualizeDescription)
@@ -259,43 +253,21 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
-    /// <summary>
-    /// Сменить положение изображения перетаскиваемого предмета
-    /// </summary>
-    public void ChangeMouseImagePosition()
-    {
-        Vector3 pos = Input.mousePosition;
-        pos.x -= cam.pixelWidth/2;
-        pos.x = pos.x / cam.pixelWidth * mouseAreaWidth;
-        pos.y -= cam.pixelHeight/2;
-        pos.y = pos.y / cam.pixelHeight*mouseAreaHeight;
-        mouseImage.transform.localPosition = pos;
-    }
-
     #region eventHandlers
 
-    /// <summary>
-    /// Обработчик события "Изменение ХП"
-    /// </summary>
     void HealthChangedEventHandler(object sender, OrganismEventArgs e)
     {
         healthText.text = "Здоровье " + e.HP.ToString() + "/" + e.MAXHP.ToString();
     }
 
-    /// <summary>
-    /// Обработчик события "Изменение параметров"
-    /// </summary>
     void ParametersChangedEventHandler(object sender, OrganismEventArgs e)
     {
         healthText.text = "Здоровье " + e.HP.ToString() + "/" + e.MAXHP.ToString();
-        parametersText.text="Защита: \n физическая "+ e.DEFENCE.pDefence.ToString()+"\n огненная "+ e.DEFENCE.fDefence.ToString()+
-                            "\n ядовитая "+ e.DEFENCE.aDefence.ToString()+"\n теневая "+ e.DEFENCE.dDefence.ToString()+ 
-                            "\n\n Устойчивость "+ e.DEFENCE.stability + "\n\n Скорость "+e.VELOCITY.ToString();
+        parametersText.text = "Защита: \n физическая " + e.DEFENCE.pDefence.ToString() + "\n огненная " + e.DEFENCE.fDefence.ToString() +
+                            "\n ядовитая " + e.DEFENCE.aDefence.ToString() + "\n теневая " + e.DEFENCE.dDefence.ToString() +
+                            "\n\n Устойчивость " + e.DEFENCE.stability + "\n\n Скорость " + e.VELOCITY.ToString();
     }
 
-    /// <summary>
-    /// Обработчик события "Смена экипировки"
-    /// </summary>
     void ActiveItemChangedEventHandler(object sender, ItemChangedEventArgs e)
     {
         if (string.Equals(e.ItemType, "rightWeapon"))
@@ -310,21 +282,9 @@ public class EquipmentWindow : InterfaceWindow
             leftWeaponSlot1.Initialize(this, leftWeaponSlot2.itemBunch);
             leftWeaponSlot2.Initialize(this, _itemBunch);
         }
-        else if (string.Equals(e.ItemType, "usable"))
-        {
-            foreach (ItemSlot slot in usableItemSlots)
-            {
-                if (slot.itemBunch != null? slot.itemBunch.quantity <= 0: true)
-                {
-                    slot.Remove();
-                }
-            }
-        }
+
     }
 
-    /// <summary>
-    /// Обработчик события "изменение числа ресурсов"
-    /// </summary>
     void ResourceChangedEventHandler(object sender, ResourceChangedEventArgs e)
     {
         goldText.text = e.Gold.ToString();

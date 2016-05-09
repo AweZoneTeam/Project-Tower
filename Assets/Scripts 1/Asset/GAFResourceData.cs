@@ -26,6 +26,7 @@ namespace GAF.Assets
 
 		public GAFResourceData(string _Name)
 		{
+			Debug.Log ("FFFF");
 			m_SearchName = _Name;
 		}
 

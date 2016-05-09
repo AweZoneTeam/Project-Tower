@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GAF.Core;
 
 /// <summary>
 /// Набор действий сложных персонажей, которые сильно меняют игровой процесс
@@ -61,8 +62,9 @@ public class PersonActions : DmgObjActions
     public orientationEnum movingDirection;
     protected bool moving;
     protected bool death=false;
-
     protected Vector2 climbingDirection = new Vector2(0f, 0f);
+	//ДОБАВИЛ
+	float _hitTime;
 
     #region speeds
 
@@ -134,6 +136,20 @@ public class PersonActions : DmgObjActions
     /// Повернуть персонажа 
     /// </summary>
     /// <param name="direction"></param>
+	public virtual void Turn(ActionClass a)
+    {
+        direction.dir = a.dir;
+        Vector3 newScale = this.gameObject.transform.localScale;
+        if (SpFunctions.RealSign(newScale.x) != (int)a.dir)
+        {
+            newScale.x *= -1;
+            this.gameObject.transform.localScale = newScale;
+        }
+    }
+
+    /// <summary>
+    /// Повернуться
+    /// </summary>
     public virtual void Turn(orientationEnum _direction)
     {
         direction.dir = _direction;
@@ -146,6 +162,17 @@ public class PersonActions : DmgObjActions
     }
 
     /// <summary>
+    /// Начать передвижение
+    /// </summary>
+	public virtual void StartWalking(ActionClass a)
+    {
+        if (!moving)
+        {
+            moving = true;
+        }
+		movingDirection = a.dir;
+    }
+
     /// Начать передвижение
     /// </summary>
     public virtual void StartWalking(orientationEnum _direction)
@@ -192,10 +219,16 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Присесть (либо выйти из состояния приседа)
     /// </summary>
-    public virtual void Crouch(bool yes)
+	public virtual void Crouch(bool yes)
     {
     }
     
+    /// <summary>
+    /// Совершить кувырок
+    /// </summary>
+	public virtual void Flip(ActionClass a)
+    { }
+
     /// <summary>
     /// Совершить кувырок
     /// </summary>
@@ -227,8 +260,23 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Совершить прыжок
     /// </summary>
+	public virtual void Jump(ActionClass a)
+    {
+    }
+
+    /// <summary>
+    /// Совершить прыжок
+    /// </summary>
     public virtual void Jump()
     {
+    }
+
+    /// <summary>
+    /// Спрыгнуть с платформы
+    /// </summary>
+	public virtual void JumpDown(ActionClass a)
+    {
+        StartCoroutine(JumpDownRoutine());
     }
 
     /// <summary>
@@ -324,6 +372,14 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Учёт ситуации и произведение нужной в данный момент атаки
     /// </summary>
+	public virtual void Attack(ActionClass a)
+    {
+        StartCoroutine(AttackProcess());
+    }
+
+    /// <summary>
+    /// Учёт ситуации и произведение нужной в данный момент атаки
+    /// </summary>
     public virtual void Attack()
     {
         StartCoroutine(AttackProcess());
@@ -413,6 +469,44 @@ public class PersonActions : DmgObjActions
     public virtual void SetHitData(string hitName)
     {       
     }
+
+	public override void Hitted ()
+	{
+		base.Hitted ();
+		//ДОБАВИЛ-------------------------------------------------------
+		_hitTime = 0.1f;
+		GAFMovieClip[] gafs = GetComponentsInChildren<GAFMovieClip>();
+		foreach(GAFMovieClip gaf in gafs)
+		{
+			if(gaf.individualMaterials!=null)
+				gaf.settings.animationColor = Color.red;
+		}
+		//---------------------------------------------------------------
+	}
+
+	//ДОБАВИЛ
+	public virtual void FixedUpdate()
+	{
+		if(_hitTime>0)
+		{
+			_hitTime-=Time.deltaTime;
+		}
+		else
+		{
+			{
+				GAFMovieClip[] gafs = GetComponentsInChildren<GAFMovieClip>();
+				foreach(GAFMovieClip gaf in gafs)
+				{
+					if(gaf.individualMaterials!=null)
+						gaf.settings.animationColor = Color.white;
+				}
+			}
+		}
+	}
+
+	public virtual void Update()
+	{
+	}
 
     /// <summary>
     /// Задать поле статов

@@ -109,18 +109,19 @@ public class BuffClass : ScriptableObject
 
     /// <summary>
     /// Функция, что вызывается при снятии баффа
-    /// </summary>
-    public virtual void Deactivate()
-    {
-        foreach (ReactionSign act in actionList)
-        {
-            act.reAction(act.id, act.argument);
-        }
-    }
+	/// </summary>
+	public virtual void Deactivate()
+	{
+		foreach (ReactionSign act in actionList)
+		{
+			if(act.reAction!=null)
+				act.reAction(act.id, act.argument);
+		}
+	}
 
-    #region interface
+	#region interface
 
-    /// <summary>
+	/// <summary>
     /// Увеличить статы персонажу
     /// </summary>
     public void AddStats(string id, int argument)
