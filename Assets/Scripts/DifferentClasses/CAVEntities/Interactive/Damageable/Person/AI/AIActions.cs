@@ -133,11 +133,12 @@ public class AIActions : PersonActions
     /// <summary>
     /// Идти в указанном направлении
     /// </summary>
-    public override void StartWalking(ActionClass a)
+    public override void StartWalking(orientationEnum _direction)
     {
-        base.StartWalking(a);
-        Move(a.dir, runSpeed);
+        base.StartWalking(_direction);
+        Move(_direction, runSpeed);
     }
+
 
     /// <summary>
     /// Остановить передвижение
