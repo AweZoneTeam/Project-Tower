@@ -20,6 +20,7 @@ public class LightPostEffect2D : MonoBehaviour
         {
             return;
         }
+        Debug.LogError("kek1");
         lightCam.CopyFrom(thisCam);
         lightCam.backgroundColor = Color.black;
         lightCam.clearFlags = CameraClearFlags.Color;
@@ -69,6 +70,7 @@ public class LightPostEffect2D : MonoBehaviour
             lightCam = new GameObject().AddComponent<Camera>();
             lightCam.enabled = false;
             lightCam.gameObject.hideFlags = HideFlags.HideAndDontSave;
+            Debug.Log("Kek4");
         }
 
         return true;

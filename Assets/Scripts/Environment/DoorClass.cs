@@ -9,12 +9,6 @@ using System.Collections;
 public class DoorClass: MonoBehaviour
 {
 
-    #region consts
-
-    public const float changeRoomOffset = 5f;//Добавка к изменению расстояния при переходе через дверь.
-
-    #endregion //consts
-
     #region eventHandlers
 
     public EventHandler<JournalEventArgs> DoorOpenJournalEvent;
@@ -25,7 +19,7 @@ public class DoorClass: MonoBehaviour
 
     public doorEnum doorType;//Тип двери
     public AreaClass roomPath;//Куда ведёт данная дверь
-    public DoorClass pairDoor;//Дверь с противоположной стороны стены... По сути та же самая дверь
+    public Vector3 nextPosition;//Где будет находитmся персонаж при переходе в следующую комнату
     public LockScript locker;//Какой замок стоит на двери
 
     #endregion //fields

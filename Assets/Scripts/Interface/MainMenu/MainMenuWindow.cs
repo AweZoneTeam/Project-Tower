@@ -13,9 +13,9 @@ public class MainMenuWindow : MenuWindow
         if (string.Equals(Application.loadedLevelName, "Main Menu"))
         {
 #if UNITY_EDITOR
-            SceneManager.LoadScene("ProjectTower");
+            SceneManager.LoadScene("KnightVsSkeleton");
 #endif
-            Application.LoadLevel("ProjectTower");
+            Application.LoadLevel("KnightVsSkeleton");
         }
         else
         {
@@ -30,9 +30,9 @@ public class MainMenuWindow : MenuWindow
     public void NewGame()
     {
 #if UNITY_EDITOR
-        SceneManager.LoadScene("ProjectTower");
+        SceneManager.LoadScene("KnightVsSkeleton");
 #endif
-        Application.LoadLevel("ProjectTower");
+        Application.LoadLevel("KnightVsSkeleton");
     }
 
     /// <summary>

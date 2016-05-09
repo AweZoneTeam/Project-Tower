@@ -23,7 +23,16 @@ public class EnterIdentifier : MonoBehaviour
         if (string.Equals(other.gameObject.tag, Tags.enter))
         {
             EnterClass enter = other.gameObject.GetComponent <EnterClass>();
-            if (!enters.Contains(enter))
+            bool k = true;
+            for (int i = 0; i < enters.Count; i++)
+            {
+                if (enters[i] == enter)
+                {
+                    k = false;
+                    break;
+                }
+            }
+            if (k)
             {
                 enters.Add(enter);
                 if (GameStatistics.currentArea != enter.nextRoom)
@@ -39,12 +48,24 @@ public class EnterIdentifier : MonoBehaviour
         if (string.Equals(other.gameObject.tag, Tags.enter))
         {
             EnterClass enter = other.gameObject.GetComponent<EnterClass>();
-            if (enters.Contains(enter))
+            bool k = false;
+            for (int i = 0; i < enters.Count; i++)
+            {
+                if (enters[i] == enter)
+                {
+                    k = true;
+                    break;
+                }
+            }
+            if (k)
             {
                 enters.Remove(enter);
                 if (enters.Count > 0)
                 {
-                    ChangeRoom(enters[0].nextRoom);
+                    if (GameStatistics.currentArea == enter.nextRoom)
+                    {
+                        ChangeRoom(enter.nextRoom);
+                    }
                 }
             }
         }
@@ -52,12 +73,8 @@ public class EnterIdentifier : MonoBehaviour
 
     public void ChangeRoom(AreaClass nextRoom)
     {
-        Transform parent = transform.parent.parent;
-        Vector3 pos = parent.position;
-        cam.ChangeRoom(GameStatistics.currentArea,nextRoom);
-        parent.position = new Vector3(pos.x, pos.y, nextRoom.id.coordZ);
-        parent.GetComponent<KeyboardActorController>().currentRoom = nextRoom;
         SpFunctions.ChangeRoomData(nextRoom);
+        cam.ChangeRoom();
     }
 
 }

@@ -116,7 +116,7 @@ public class PersonVisual : DmgObjVisual
     /// <summary>
     /// Анимировать передвижение по лестнице
     /// </summary>
-    public virtual void LadderMove()
+    public virtual void StairMove()
     {
     }
 
@@ -131,13 +131,6 @@ public class PersonVisual : DmgObjVisual
     /// Анимировать передвижение по выступу
     /// </summary>
     public virtual void LedgeMove(float _time)
-    {
-    }
-
-    /// <summary>
-    /// Анимировать движение с коробкой
-    /// </summary>
-    public virtual void BoxMove()
     {
     }
 

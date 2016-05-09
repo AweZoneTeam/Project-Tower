@@ -75,19 +75,12 @@ public class RoomChangedEventArgs : EventArgs
 /// </summary>
 public class ItemChangedEventArgs : EventArgs
 {
-    public ItemChangedEventArgs(ItemBunch _itemBunch, string _type)
-    {
-        itemBunch = _itemBunch;
-        itemType = _type;
-    }
-
     public ItemChangedEventArgs(ItemClass _item, string _type)
     {
         item = _item;
         itemType = _type;
     }
 
-    private ItemBunch itemBunch;
     private ItemClass item;
     private string itemType;
 
@@ -95,12 +88,6 @@ public class ItemChangedEventArgs : EventArgs
     {
         get { return item; }
         set { item = value; }
-    }
-
-    public ItemBunch ItemBunch
-    {
-        get { return itemBunch; }
-        set { itemBunch = value; }
     }
 
     public string ItemType

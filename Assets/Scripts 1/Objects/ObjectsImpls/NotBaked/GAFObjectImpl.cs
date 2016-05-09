@@ -12,8 +12,6 @@ using UnityEngine;
 using GAF.Core;
 using GAF.Data;
 
-using System.Collections.Generic;
-
 namespace GAF.Objects
 {
 	public class GAFObjectImpl : IGAFObjectImpl
@@ -21,7 +19,6 @@ namespace GAF.Objects
 		#region Members
 
 		private GameObject m_Object = null;
-        private List<GAFPivot> pivots = new List<GAFPivot>();
 
 		#endregion // Members
 
@@ -29,13 +26,11 @@ namespace GAF.Objects
 
 		public GAFObjectImpl(
 			  GameObject		_ThisObject
-            , List<GAFPivot>    _pivots
-            , GAFObjectData		_Data
+			, GAFObjectData		_Data
 			, Renderer			_Renderer
 			, MeshFilter		_Filter) : base(_Data, _Renderer, _Filter)
 		{
 			m_Object = _ThisObject;
-            pivots = _pivots;
 
 			resetRenderer();
 			resetMesh();
@@ -71,11 +66,6 @@ namespace GAF.Objects
 				return m_Object;
 			}
 		}
-
-        public List<GAFPivot> Pivots
-        {
-            get { return pivots; }
-        }
 
 		#endregion // Protected properties
 
@@ -218,21 +208,14 @@ namespace GAF.Objects
 					currentState.tX != _State.tX ||
 					currentState.tY != _State.tY)
 				{
-					var	clip  = serializedProperties.clip; 
+					var	clip  = serializedProperties.clip;
 					var	scale = clip.settings.pixelsPerUnit / clip.settings.scale;
 
 					serializedProperties.statePosition = new Vector3(_State.tX / scale, -_State.tY / scale, _State.zOrder / scale * clip.settings.zLayerScale);
 					m_Object.transform.localPosition = serializedProperties.statePosition + serializedProperties.offset + (Vector3)clip.settings.pivotOffset;
 					currentState.zOrder = _State.zOrder;
-
-                    if (pivots != null)
-                    {
-                        for (int i = 0; i < pivots.Count; i++)
-                        {
-                            pivots[i].SetPosition(m_Object.transform.position, _State);
-                        }
-                    }
 				}
+
 				if (_Refresh ||
 					currentState.a != _State.a ||
 					currentState.b != _State.b ||

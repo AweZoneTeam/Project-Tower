@@ -11,7 +11,6 @@ using UnityEngine;
 
 using GAF.Core;
 using GAF.Data;
-using System.Collections.Generic;
 
 namespace GAF.Objects
 {
@@ -33,13 +32,10 @@ namespace GAF.Objects
 
 		[HideInInspector][SerializeField] private GAFObjectData	m_Data = null;
 
-
 		[HideInInspector]
 		[System.NonSerialized]
 		private GAFObjectImpl m_Impl = null;
-
-        public List<GAFPivot> pivots;
-
+	
 		#endregion // Members
 
 		#region Base Methods Impl
@@ -57,7 +53,7 @@ namespace GAF.Objects
 			if (m_Impl != null)
 				m_Impl.cleanUp();
 
-			m_Impl = GAFObjectImplsFactory.getImpl(gameObject, pivots, m_Data, cachedRenderer, cachedFilter);
+			m_Impl = GAFObjectImplsFactory.getImpl(gameObject, m_Data, cachedRenderer, cachedFilter);
 		}
 
 		public void updateToState(GAFObjectStateData _State, bool _Refresh)

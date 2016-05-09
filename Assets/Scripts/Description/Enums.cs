@@ -17,6 +17,11 @@ public enum orientationEnum
 public enum groundnessEnum { grounded = 1, crouch, preGround, inAir };
 
 /// <summary>
+/// состояние из которого производится атака
+/// </summary>
+public enum attackState { stay, walk, run, crouch, up, jump, jumpDawn, NO };
+
+/// <summary>
 /// В какую модель поведения использует данный представитель искусственного интеллекта
 /// </summary>
 public enum behaviourEnum {calm, agression, search};
@@ -34,6 +39,6 @@ public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall};
 /// <summary>
 /// Номера приоритетности у взаимодействующих с персонажем объектов. Нужно ли это, покажет время
 /// </summary>
-public enum interactionEnum {noInter, ladder, rope, thicket, ledge, platform, edge, lowEdge, interactive};
+public enum interactionEnum {noInter, stair, rope, thicket, ledge, platform, edge, lowEdge, interactive};
 
 public enum doorEnum { left, right, back, forward, down, up, everywhere };//За какой тип двери отвечает каждый номер типа

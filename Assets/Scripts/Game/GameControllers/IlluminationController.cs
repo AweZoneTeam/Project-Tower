@@ -48,8 +48,8 @@ public class IlluminationController : MonoBehaviour
         {
             RenderSettings.skybox.SetFloat("_Blend", 0f);
         }
-        sun.gameObject.transform.eulerAngles = new Vector3((GameTime.timer - GameTime.dayTime * 3 / 4) * -1f * sunSpeed, 180f, 0f);
-        moon.gameObject.transform.eulerAngles = new Vector3((GameTime.timer - GameTime.dayTime / 4) * -1f * sunSpeed, 180f, 0f);
+        sun.gameObject.transform.eulerAngles = new Vector3((GameTime.timer -GameTime.dayTime / 4) * sunSpeed, 180f, 0f);
+        moon.gameObject.transform.eulerAngles = new Vector3((GameTime.timer - GameTime.dayTime*3 / 4) * sunSpeed, 180f, 0f);
         ambBrightness = phase < 0.5f ? dayIntensity * (phase * 2) + nightIntensity * (1f - phase * 2) :
                                                                 dayIntensity * (2f - (phase * 2)) + nightIntensity * (phase * 2-1f);
         ambientLight.SetFloat("_Scale", ambBrightness);

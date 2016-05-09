@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SkeletonVisual : AIVisual
+public class SkeletonVisual : EnemyVisual
 {
 
     #region consts

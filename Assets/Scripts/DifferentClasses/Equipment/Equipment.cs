@@ -113,7 +113,7 @@ public class EquipmentClass: BagClass
                 availableItems.Add(useItems[i]);
             }
         }
-        if (availableItems.Count > 0)
+        if (availableItems.Count >0)
         {
             if (availableItems.IndexOf(useItem) + 1 == availableItems.Count)
             {
@@ -123,12 +123,7 @@ public class EquipmentClass: BagClass
             {
                 useItem = availableItems[availableItems.IndexOf(useItem) + 1];
             }
-            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "usable"));
-        }
-        else
-        {
-            useItem = null;
-            OnActiveItemChanged(new ItemChangedEventArgs((ItemBunch)null, "usable"));
+            OnActiveItemChanged(new ItemChangedEventArgs(useItem.item, "usable"));
         }
     }
 
@@ -136,8 +131,16 @@ public class EquipmentClass: BagClass
     /// Сменить предмет в инвентаре
     /// </summary>
     public List<ItemClass> ChangeEquipmentElement(ItemBunch itemBunch, string itemType)
-    {
-        ItemClass item = itemBunch.item;
+	{
+		ItemClass item;
+		if(itemBunch == null)
+		{
+			item = null;
+		}
+		else
+		{
+        	item = itemBunch.item;
+		}
         List<ItemClass> removeItems=new List<ItemClass>();
 
         #region weapons
@@ -261,11 +264,11 @@ public class EquipmentClass: BagClass
                 if (useItems.IndexOf(useItem) == index)
                 {
                     useItem = itemBunch;
-                    OnActiveItemChanged(new ItemChangedEventArgs(itemBunch, "usable"));
                 }
             }
             removeItems.Add(useItems[index].item);
-            useItems[index]= itemBunch;
+            useItems.Insert(index, itemBunch);
+            OnActiveItemChanged(new ItemChangedEventArgs(item, "usable"));
         }
 
         #endregion //usableItems

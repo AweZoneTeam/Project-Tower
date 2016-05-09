@@ -159,16 +159,6 @@ public class InterObjAnimator : MonoBehaviour
     public void Animate(string animName)
     {
         anim = FindAnimData(animName);
-        if (parts.Count > 0)
-        {
-            if (!parts[0].mov.isPlaying())
-            {
-                foreach (PartController part in parts)
-                {
-                    part.mov.play();
-                }
-            }
-        }
         SpFunctions.AnimateIt(parts, anim);
         Sinchronize();
     }
@@ -184,11 +174,10 @@ public class InterObjAnimator : MonoBehaviour
             {
                 for (int i = 0; i < parts.Count; i++)
                 {
-                    parts[i].mov.stop();
+                    parts[i].mov.gotoAndStop(parts[i].mov.getCurrentFrameNumber()); 
                 }
             }
         }
-        Sinchronize();
     }
 
     public bool CompareAnimation(string animName)

@@ -39,7 +39,7 @@ public class DmgObjActions : InterObjActions
     /// <summary>
     /// Как персонаж реагирует на удар
     /// </summary>
-    public virtual void Hitted()
+	public virtual void Hitted()
     {
     }
 

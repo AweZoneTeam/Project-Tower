@@ -133,9 +133,11 @@ namespace GAF.Core
 
 		public void setMaterialColor(Color _Color)
 		{
+			Debug.Log(_Color);
 			for (int i = 0; i < m_IndividualMaterials.Length; i++)
 			{
 				m_IndividualMaterials[i].SetColor("_CustomColor", _Color);
+
 			}
 		}
 

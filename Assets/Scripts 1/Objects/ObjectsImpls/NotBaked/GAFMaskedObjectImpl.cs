@@ -11,7 +11,6 @@ using UnityEngine;
 
 using GAF.Core;
 using GAF.Data;
-using System.Collections.Generic;
 
 namespace GAF.Objects
 {
@@ -30,11 +29,10 @@ namespace GAF.Objects
 
 		public GAFMaskedObjectImpl(
 			  GameObject _ThisObject
-            , List<GAFPivot> _pivots
-            , GAFObjectData _Data
+			, GAFObjectData _Data
 			, Renderer _Renderer
 			, MeshFilter _Filter)
-			: base(_ThisObject, _pivots, _Data, _Renderer, _Filter)
+			: base(_ThisObject, _Data, _Renderer, _Filter)
 		{
 			m_MaskedMaterial = new Material(Shader.Find("GAF/GAFMaskedObject"));
 			m_MaskedMaterial.mainTexture = texture;
@@ -46,11 +44,10 @@ namespace GAF.Objects
 		public GAFMaskedObjectImpl(
 			  Material		_MaskedMaterial
 			, GameObject	_ThisObject
-            , List<GAFPivot>      _pivots
-            , GAFObjectData	_Data
+			, GAFObjectData	_Data
 			, Renderer		_Renderer
 			, MeshFilter	_Filter)
-			: base(_ThisObject, _pivots, _Data, _Renderer, _Filter)
+			: base(_ThisObject, _Data, _Renderer, _Filter)
 		{
 			m_MaskedMaterial = _MaskedMaterial;
 			m_SharedMaterial = material;

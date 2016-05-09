@@ -151,5 +151,11 @@ namespace GAF.Assets
 		}
 
 		#endregion // Properties
+
+		public GAFTexturesResource GetClone()
+		{
+			return (GAFTexturesResource)MemberwiseClone ();
+		}
+
 	}
 }

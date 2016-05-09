@@ -27,7 +27,7 @@ public class StairActions : InterObjActions
                 {
                     PersonController person = (PersonController)interactor;
                     EnvironmentStats _stats = person.GetEnvStats();
-                    _stats.interaction = interactionEnum.ladder;
+                    _stats.interaction = interactionEnum.stair;
                 }
             }
         }
