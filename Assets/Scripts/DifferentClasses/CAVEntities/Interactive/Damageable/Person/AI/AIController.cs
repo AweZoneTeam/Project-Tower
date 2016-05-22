@@ -238,7 +238,7 @@ public class AIController : PersonController, IPersonWatching
     {
         person.RoomChangedEvent -= TargetChangeRoom;
     }
-
+    
     /// <summary>
     /// Если главная цель выйдет в соседнюю комнату, то ИИ это заметит и начнёт искать цель в следующей комнате
     /// </summary>
@@ -1013,7 +1013,7 @@ public class AIController : PersonController, IPersonWatching
             enemies.Add(newEnemy);
         }
     }
-
+    
     #endregion //scriptActions
 
     #region Analyze

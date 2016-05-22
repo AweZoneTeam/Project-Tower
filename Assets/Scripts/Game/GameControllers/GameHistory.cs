@@ -80,12 +80,13 @@ public class JournalScriptStock
         jConditionBase.Add("doorOpened", DoorOpenInit);
         jConditionBase.Add("enemyIsDead", EnemyDeathInit);
         jConditionBase.Add("enterUsed", EnterUseInit);
+        jConditionBase.Add("speech", SpeechInit);
 
         jDeInitBase.Add("startGame", GameBeginDeInit);
         jDeInitBase.Add("doorOpened", DoorOpenDeInit);
         jDeInitBase.Add("enemyIsDead", EnemyDeathDeInit);
         jDeInitBase.Add("enterUsed", EnterUseDeInit);
-
+        jDeInitBase.Add("speech", SpeechInit);
     }
 
     /// <summary>
@@ -111,7 +112,7 @@ public class JournalScriptStock
         }
 
         jTarget = jInit.eventReason;
-
+        Debug.Log(_script.name);
         //В первую очередь, подпишемся на журнальные объекты
         if (jConditionBase.ContainsKey(_script.jDataConditionName))
         {
@@ -246,7 +247,27 @@ public class JournalScriptStock
     void EnterUseInit(JournalEventScript _script, GameObject obj)
     {
         obj.GetComponent<EnterClass>().EnterUseJournalEvent += _script.HandleJournalEvent;
-    } 
+    }
+
+    /// <summary>
+    /// Вызвать событие при определённой реплике
+    /// </summary>
+    void SpeechInit(JournalEventScript _script, GameObject obj)
+    {
+        if (obj.GetComponent<NPCActions>() != null)
+        {
+            NPCActions NPC = obj.GetComponent<NPCActions>();
+            for (int i = 0; i < NPC.speeches.Count; i++)
+            {
+                Debug.Log(NPC.speeches[i].name);
+                if (NPC.speeches[i].name == _script.id)
+                {
+                    Debug.Log("Подписался!");
+                    NPC.speeches[i].SpeechJournalEvent += _script.HandleJournalEvent;
+                }
+            }
+        }
+    }
 
     #endregion //initFunctions
 
