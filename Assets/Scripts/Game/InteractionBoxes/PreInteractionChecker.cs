@@ -11,8 +11,6 @@ public class PreInteractionChecker : MonoBehaviour
 
     protected const float platformOffsetY = 4f;
 
-    protected float zCoordinateOffset = 0.5f;//величина обхода других персонажей
-
     #endregion //consts
 
     #region fields
@@ -20,10 +18,10 @@ public class PreInteractionChecker : MonoBehaviour
     protected PersonController person;
     public PersonController Person { set { person = value; } }
 
+    protected EnvironmentStats envStats;
+
     protected Rigidbody rigid;
     public Rigidbody Rigid { set { rigid = value; } }
-
-    protected LayerMask whatIsCharacter = LayerMask.GetMask("character");//Какие объекты считать за персонажей
 
     protected List<PlatformClass> platforms = new List<PlatformClass>();
 
@@ -35,17 +33,18 @@ public class PreInteractionChecker : MonoBehaviour
 
     #region parametres
 
-    protected float zCoordinate = 0f;
+    protected float zCoordinate = 0f;//Какую эксклюзивную z-координату занимает коллайдер персонажа (эксклюзивная, значит, что персонаж не будет сталкиваться с другими персонажами)
 
     public float ZCoordinate
     {
         get { return zCoordinate; }
-        set { zCoordinate = 0f; }
+        set {
+                zCoordinate = value;
+                person.ChangeColliderZCoordinate(zCoordinate);
+            }
     }
 
-    protected traceEnum trace=traceEnum.forward;//на какой дорожке находится коллайдер персонажа? на передней или задней?
-
-    public traceEnum Trace {get { return trace; }}
+    protected bool onPlatform = false;//Находится ли персонаж на платформе и смещён ли его коллайдер соответственно
 
     #endregion //parametres
 
@@ -53,29 +52,27 @@ public class PreInteractionChecker : MonoBehaviour
     {
         if (platforms.Count > 0)
         {
-            if ((platformCheck.position.y >= platforms[0].transform.position.y + platformOffsetY / 4) && (zCoordinate != platforms[0].zCoordinate))
+            if ((platformCheck.position.y >= platforms[0].transform.position.y + platformOffsetY / 4) && (zCoordinate != platforms[0].zCoordinate) &&
+                (envStats.interaction==interactionEnum.noInter))
             {
-                zCoordinate = platforms[0].zCoordinate;
-                person.ChangeColliderZCoordinate(zCoordinate + (int)trace*zCoordinateOffset);
+                person.ChangeColliderZCoordinate(zCoordinate + platforms[0].zCoordinate);
             }
             else if ((platformCheck.position.y + platformOffsetY < platforms[0].transform.position.y) && (zCoordinate == platforms[0].zCoordinate))
             {
-                zCoordinate = 0f;
-                person.ChangeColliderZCoordinate(zCoordinate + (int)trace*zCoordinateOffset);
+                person.ChangeColliderZCoordinate(zCoordinate);
             }
         }
     }
 
     public virtual void Initialize()
     {
-        trace = traceEnum.forward;
-        zCoordinate = 0f;
         platformCheck = transform.parent.FindChild("PlatformCheck");
         platforms = new List<PlatformClass>();
         characters = new List<PreInteractionChecker>();
         if (person != null)
         {
-            person.ChangeColliderZCoordinate(zCoordinate + (int)trace * zCoordinateOffset);
+            person.ChangeColliderZCoordinate(zCoordinate);
+            envStats = person.GetEnvStats();
         }
     }
 
@@ -89,39 +86,11 @@ public class PreInteractionChecker : MonoBehaviour
             PlatformClass platform = other.gameObject.GetComponent<PlatformClass>();
             if (!platforms.Contains(platform))
             {
-                platforms.Add(platform)
-                    ;
+                platforms.Add(platform);
             }
         }
 
         #endregion //PlatformInteractions
-
-        #region characterInteractions
-
-        if (other.gameObject.layer==LayerMask.NameToLayer("characterInteraction"))
-        {
-            PreInteractionChecker intChecker = other.gameObject.GetComponent<PreInteractionChecker>();
-            if (intChecker?!characters.Contains(other.gameObject.GetComponent<PreInteractionChecker>()):false)
-            {
-                bool forwardTrace = true, backwardTrace = true;
-                characters.Add(intChecker);
-                foreach (PreInteractionChecker checker in characters)
-                {
-                    if (checker.Trace == traceEnum.backward)
-                    {
-                        backwardTrace = false;
-                    }
-                    else if (checker.Trace == traceEnum.forward)
-                    {
-                        forwardTrace = false;
-                    }
-                    trace = forwardTrace ? traceEnum.forward : (backwardTrace ? traceEnum.backward : trace);
-                    person.ChangeColliderZCoordinate(zCoordinate + (int)trace * zCoordinateOffset);
-                }    
-            }
-        }
-
-        #endregion //characterInteractions
 
     }
 
@@ -136,39 +105,11 @@ public class PreInteractionChecker : MonoBehaviour
             if (platforms.Contains(platform))
             {
                 platforms.Remove(platform);
-                zCoordinate = 0f;
-                person.ChangeColliderZCoordinate(zCoordinate + (int)trace * zCoordinateOffset);
+                person.ChangeColliderZCoordinate(zCoordinate);
             }
         }
 
         #endregion //PlatformInteractions
-
-        #region characterInteractions
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("characterInteraction"))
-        {
-            PreInteractionChecker intChecker = other.gameObject.GetComponent<PreInteractionChecker>();
-            if (intChecker ? characters.Contains(other.gameObject.GetComponent<PreInteractionChecker>()) : false)
-            {
-                bool forwardTrace = true, backwardTrace = true;
-                characters.Remove(intChecker);
-                foreach (PreInteractionChecker checker in characters)
-                {
-                    if (checker.Trace == traceEnum.backward)
-                    {
-                        backwardTrace = false;
-                    }
-                    else if (checker.Trace == traceEnum.forward)
-                    {
-                        forwardTrace = false;
-                    }
-                    trace = forwardTrace ? traceEnum.forward : (backwardTrace ? traceEnum.backward : trace);
-                    person.ChangeColliderZCoordinate(zCoordinate + (int)trace * zCoordinateOffset);
-                }
-            }
-        }
-
-        #endregion //characterInteractions
 
     }
 

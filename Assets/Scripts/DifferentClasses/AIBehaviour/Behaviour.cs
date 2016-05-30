@@ -15,6 +15,7 @@ public class AIActionData
     public List<ConditionSign> whyToDo=new List<ConditionSign>();//Условия совершения действия
     public int posibility;// Вероятность, что действие будет совершено - это обычное число, что используется для определения, какое именно действие из возможных будет совершено
     public List<AIActionSign> whatToDo = new List<AIActionSign>();//Какие элементарные функции вызываются.
+    public List<AIActionSign> whatToDoAfter = new List<AIActionSign>();//Какие элементарные функции вызываются, когда проходит actionTime
     public bool unavailable=false;//Если действие уже активированно или на нём висит кулдаун, то его нельзя активировать. Для этого нужна эта переменная
     public float actionTime;//Сколько времени длится действие
     public float cooldown;//Сколько времени длится кулдаун 
@@ -52,6 +53,23 @@ public class AIActionData
         for (int i = 0; i < whatToDo.Count; i++)
         {
             actSign = whatToDo[i];
+            if (actSign.aiAction != null)
+            {
+                actSign.aiAction(actSign.id, actSign.argument);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Метод, что вызывает все элементарные функции, составляющие деятельность после истечения actionTime
+    /// </summary>
+    public void DoActionAfter()
+    {
+        AIActionSign actSign;
+        bool k = true;
+        for (int i = 0; i < whatToDoAfter.Count; i++)
+        {
+            actSign = whatToDoAfter[i];
             if (actSign.aiAction != null)
             {
                 actSign.aiAction(actSign.id, actSign.argument);
@@ -194,6 +212,8 @@ public class ItemChargeData : ChargeData
 public class ItemActionData: ActionData
 {
     public GameObject itemObject;//Игровой объект, что ассоциируется с этим действием (бомба, что бросится при "Броске бомбы")
+    public bool grounded;//если true, то предмет исользуется только на земле
+    public bool crouching;//если true, то предмет исользуется только в приседе
     public bool consumed=true;//Если true, то при использовании предмета, он будет расходоваться
 
     public ItemActionData()

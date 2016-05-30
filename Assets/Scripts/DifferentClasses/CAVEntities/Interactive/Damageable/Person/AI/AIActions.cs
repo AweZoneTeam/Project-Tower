@@ -55,37 +55,52 @@ public class AIActions : PersonActions
     /// </summary>
     public override void Pursue()
     {
-        if (target.position.x < transform.position.x)
-        {
-            Turn(orientationEnum.left);
-        }
-        else if (target.position.x > transform.position.x)
-        {
-            Turn(orientationEnum.right);
-        }
-        if ((!precipiceIsForward)&&(envStats.obstacleness!=obstaclenessEnum.wall))
+        if (envStats.interaction == interactionEnum.noInter)
         {
             if (target.position.x < transform.position.x)
             {
-                StartWalking(orientationEnum.left);
+                Turn(orientationEnum.left);
             }
             else if (target.position.x > transform.position.x)
             {
-                StartWalking(orientationEnum.right);
+                Turn(orientationEnum.right);
             }
-        }
-        if (precipiceIsForward)
-        {
-            if (jumpIsPossible)
+            if ((!precipiceIsForward) && (envStats.obstacleness != obstaclenessEnum.wall))
             {
-                if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
+                if (target.position.x < transform.position.x)
                 {
-                    Jump();
+                    StartWalking(orientationEnum.left);
+                }
+                else if (target.position.x > transform.position.x)
+                {
+                    StartWalking(orientationEnum.right);
                 }
             }
-            else
+            if (precipiceIsForward)
             {
-                StopWalking();
+                if (jumpIsPossible)
+                {
+                    if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
+                    {
+                        Jump(null);
+                    }
+                }
+                else
+                {
+                   StopWalking();
+                }
+            }
+        }
+        else if (envStats.interaction == interactionEnum.ladder)
+        {
+            Turn(orientationEnum.right);
+            if (target.position.y < transform.position.y)
+            {
+                VerticalMove(false, ladderSpeed);
+            }
+            else if (target.position.y > transform.position.y)
+            {
+                VerticalMove(true, ladderSpeed);
             }
         }
     }
@@ -120,7 +135,7 @@ public class AIActions : PersonActions
             {
                 if ((envStats.groundness == groundnessEnum.grounded) && (!jumped))
                 {
-                    Jump();
+                    Jump(null);
                 }
             }
             else
@@ -146,7 +161,15 @@ public class AIActions : PersonActions
     public override void StopWalking()
     {
         base.StopWalking();
-        Vector3 targetVelocity = new Vector3(0f, rigid.velocity.y, rigid.velocity.z);
+        Vector3 targetVelocity = Vector3.zero;
+        if (envStats.interaction == interactionEnum.ladder)
+        {
+            targetVelocity = new Vector3(0f, 0f, rigid.velocity.z);
+        }
+        else
+        {
+            targetVelocity = new Vector3(0f, rigid.velocity.y, rigid.velocity.z);
+        }
         if (Vector3.Distance(rigid.velocity, targetVelocity) < velEps)
         {
             rigid.velocity = targetVelocity;
@@ -194,9 +217,11 @@ public class AIActions : PersonActions
             hBox.transform.localPosition = hitData.hitPosition;
             hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             yield return new WaitForSeconds(hitData.hitTime - hitData.beginTime);
-            Debug.Log(hitData);
-            hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
-            yield return new WaitForSeconds(hitData.beginTime);
+            if (hitData != null)
+            {
+                hitBox.SetHitBox(hitData.beginTime - hitData.endTime, hitData);
+                yield return new WaitForSeconds(hitData.beginTime);
+            }
             hitData = null;
         }
     }

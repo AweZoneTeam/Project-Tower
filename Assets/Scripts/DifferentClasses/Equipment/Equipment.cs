@@ -32,6 +32,7 @@ public class EquipmentClass: BagClass
     #region eventHandlers
 
     public EventHandler<ItemChangedEventArgs> ActiveItemChangedEvent;
+    public EventHandler<ItemChangedEventArgs> BagChangedEvent;
     public EventHandler<ResourceChangedEventArgs> ResourceChangedEvent;
 
     #endregion //eventHandlers
@@ -60,12 +61,22 @@ public class EquipmentClass: BagClass
 
     public int GetKeysNumber(int index)
     {
-        return keys[index];
+        if (index < 0)
+        { 
+            return 1;
+        }
+        else
+        {
+            return keys[index];
+        }
     }
 
     public void UseKey(int index)
     {
-        keys[index]--;
+        if (index >= 0)
+        {
+            keys[index]--;
+        }
     }
 
     /// <summary>
@@ -354,6 +365,7 @@ public class EquipmentClass: BagClass
                 }
             }
             bag.Add(itemBunch);
+            OnBagChanged(new ItemChangedEventArgs(itemBunch, itemBunch.item.type));
         }
     }
 
@@ -376,6 +388,19 @@ public class EquipmentClass: BagClass
     public void OnActiveItemChanged(ItemChangedEventArgs e)
     {
         EventHandler<ItemChangedEventArgs> handler = ActiveItemChangedEvent;
+
+        if (handler != null)
+        {
+            handler(this, e);
+        }
+    }
+
+    /// <summary>
+    /// Вызывается, как только в рюкзак добавляется новый набор предметов.
+    /// </summary>
+    public void OnBagChanged(ItemChangedEventArgs e)
+    {
+        EventHandler<ItemChangedEventArgs> handler = BagChangedEvent;
 
         if (handler != null)
         {

@@ -55,6 +55,9 @@ public class PersonActions : DmgObjActions
     protected delegate void itemAction(PersonActions person, ActionData aData, float _chargeValue);
     protected static Dictionary<string, itemAction> itemActionList = new Dictionary<string, itemAction> { { "setUp", SetUpItem }, { "throw", ThrowItem} };
 
+    [HideInInspector]
+    public bool wallIsAbove;
+
     #endregion //fields
 
     #region parametres
@@ -193,7 +196,7 @@ public class PersonActions : DmgObjActions
     }
 
     /// <summary>
-    /// Двигаться с заданной скоростью
+    /// Двигаться с заданной горизонтальной скоростью
     /// </summary>
     protected virtual void Move(orientationEnum _direction, float _speed)
     {
@@ -205,6 +208,31 @@ public class PersonActions : DmgObjActions
         else if (_direction == orientationEnum.right)
         {
             targetVelocity = new Vector3(_speed, rigid.velocity.y, rigid.velocity.z);
+        }
+        if (Vector3.Distance(rigid.velocity, targetVelocity) < velEps)
+        {
+            rigid.velocity = targetVelocity;
+        }
+        else
+        {
+            rigid.velocity = Vector3.Lerp(rigid.velocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+        }
+    }
+
+    /// <summary>
+    /// Двигаться с заданной вертикальной скоростью
+    /// </summary>
+    protected virtual void VerticalMove(bool up, float _speed)
+    {
+        rigid.velocity = new Vector3(0f, rigid.velocity.y, rigid.velocity.z);
+        Vector3 targetVelocity = new Vector3(0f, 0f, 0f);
+        if (up)
+        {
+            targetVelocity = new Vector3(rigid.velocity.x, _speed, rigid.velocity.z);
+        }
+        else
+        {
+            targetVelocity = new Vector3(rigid.velocity.x, -_speed, rigid.velocity.z);
         }
         if (Vector3.Distance(rigid.velocity, targetVelocity) < velEps)
         {
@@ -401,11 +429,19 @@ public class PersonActions : DmgObjActions
     public virtual void UseItem(ItemBunch itemBunch)
     {
         UsableItemClass item = (UsableItemClass)itemBunch.item;
-        if (item.grounded ? envStats.groundness == groundnessEnum.grounded : (envStats.groundness != groundnessEnum.crouch))
+        if (item.itemActions != null)
         {
-            if (itemActionList.ContainsKey(item.itemAction.actionName))
+            bool k = false;
+            foreach (ItemActionData _itemAction in item.itemActions)
             {
-                StartCoroutine(ItemProcess(item.itemAction,0f));
+                if (_itemAction.grounded ? envStats.groundness == groundnessEnum.grounded : (_itemAction.crouching? envStats.groundness == groundnessEnum.crouch : envStats.groundness != groundnessEnum.crouch))
+                {
+                    if (itemActionList.ContainsKey(_itemAction.actionName))
+                    {
+                        StartCoroutine(ItemProcess(_itemAction, 0f));
+                    }
+                    break;
+                }
             }
         }
     }
@@ -436,7 +472,7 @@ public class PersonActions : DmgObjActions
     {
         ItemActionData iData = (ItemActionData)aData;
         GameObject drop = Instantiate(iData.itemObject);
-        drop.transform.position = new Vector3(person.transform.position.x, person.transform.position.y, person.transform.position.z + iData.argument);
+        drop.transform.position = new Vector3(person.transform.position.x+iData.argument*SpFunctions.RealSign(person.transform.localScale.x), person.transform.position.y, person.transform.position.z);
     }
 
     protected static void ThrowItem(PersonActions person, ActionData aData, float _chargeValue)
@@ -459,6 +495,18 @@ public class PersonActions : DmgObjActions
         base.Death();
         death= true;
         cAnim.Death();
+    }
+
+    /// <summary>
+    /// Включить или выключить коллайдеры
+    /// </summary>
+    public virtual void SwitchCollider(bool _enabled)
+    {
+        BoxCollider[] cols = GetComponents<BoxCollider>();
+        for (int i = 0; i < cols.Length; i++)
+        {
+            cols[i].isTrigger = !_enabled;
+        }
     }
 
     #endregion //Interface

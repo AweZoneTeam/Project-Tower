@@ -59,14 +59,27 @@ public class EnterIdentifier : MonoBehaviour
         Transform parent = transform.parent.parent;
         Vector3 pos = parent.position;
         PersonController person = parent.GetComponent<PersonController>();
-        if (person is KeyboardActorController)
+        if (_enter.nextRoom != null)
         {
-            cam.ChangeRoom(GameStatistics.currentArea, _enter.nextRoom);
-            _enter.OnEnterUse(new JournalEventArgs());
+            if (person is KeyboardActorController)
+            {
+                cam.ChangeRoom(GameStatistics.currentArea, _enter.nextRoom);
+                _enter.OnEnterUse(new JournalEventArgs());
+                SpFunctions.ChangeRoomData(_enter.nextRoom);
+            }
+            parent.position = new Vector3(pos.x, pos.y, _enter.nextRoom.id.coordZ);
+            person.ChangeRoom(_enter.nextRoom);
+            if (_enter.subRoom != null)
+            {
+                if (person is KeyboardActorController)
+                {
+                    cam.ChangeRoom(GameStatistics.currentArea, _enter.subRoom);
+                    SpFunctions.ChangeRoomData(_enter.subRoom);
+                }
+                parent.position = new Vector3(pos.x, pos.y, _enter.subRoom.id.coordZ);
+                person.ChangeRoom(_enter.subRoom);
+            }
         }
-        parent.position = new Vector3(pos.x, pos.y, _enter.nextRoom.id.coordZ);
-        person.currentRoom = _enter.nextRoom;
-        SpFunctions.ChangeRoomData(_enter.nextRoom);      
     }
 
 }

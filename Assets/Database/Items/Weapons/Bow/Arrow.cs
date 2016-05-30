@@ -1,13 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Arrow : MonoBehaviour {
 
-	void Update()
+    #region fields
+
+    protected List<string> enemies = new List<string>();
+    protected Rigidbody rigid;
+
+    #endregion //fields
+
+    void Start()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
+
+    void Update()
 	{
 		if(GetComponent<Rigidbody>().velocity.magnitude>0)
 		{
-			transform.rotation = Quaternion.LookRotation(GetComponent<Rigidbody>().velocity);
+            transform.rotation = Quaternion.LookRotation(GetComponent<Rigidbody>().velocity);
 		}
 	}
 
@@ -16,12 +29,17 @@ public class Arrow : MonoBehaviour {
     /// </summary>
 	void OnTriggerEnter(Collider other)
 	{
-		if(string.Equals(other.tag, "Enemy"))
+		if(enemies.Contains(other.tag))
 		{
 			GetComponent<RemovingObj>().lifeTime = 3;
 			transform.parent = other.transform;
 			GetComponent<Rigidbody>().isKinematic = true;
 		}
 	}
+
+    public void SetEnemies(List<string> _enemies)
+    {
+        enemies = _enemies;
+    }
 
 }

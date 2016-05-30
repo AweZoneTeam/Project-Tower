@@ -11,12 +11,6 @@ public enum orientationEnum
     max=10
 }
 
-public enum traceEnum
-{
-    backward=-1,
-    forward=1
-}
-
 /// <summary>
 /// Енам, содержащий основные 6 направлений
 /// </summary>
@@ -45,7 +39,7 @@ public enum hittedEnum {noHit, microStun, pushedForward, pushedUp, pushedDown, m
 /// <summary>
 /// Какой (самый "интересный") тип препятствия окружает персонажа 
 /// </summary>
-public enum obstaclenessEnum {noObstcl, lowObstcl, highObstcl, wall};
+public enum obstaclenessEnum {noObstcl, lowObstcl, medObstcl, highObstcl, wall};
 
 /// <summary>
 /// Номера приоритетности у взаимодействующих с персонажем объектов. Нужно ли это, покажет время
@@ -61,3 +55,5 @@ public enum doorEnum { left, right, back, forward, down, up, everywhere };
 /// Ориентация поверхности, на которой стоит персонаж
 /// </summary>
 public enum groundOrientationEnum {down, right, up, left};
+
+public enum doorConnectionEnum {ground, air, ladder, stairs, zero, obstacle };

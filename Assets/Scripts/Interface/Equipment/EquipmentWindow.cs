@@ -196,6 +196,7 @@ public class EquipmentWindow : InterfaceWindow
         orgStats.HealthChangedEvent += HealthChangedEventHandler;
         orgStats.ParametersChangedEvent += ParametersChangedEventHandler;
         equip.ActiveItemChangedEvent += ActiveItemChangedEventHandler;
+        equip.BagChangedEvent += BagChangedEventHandler;
         equip.ResourceChangedEvent += ResourceChangedEventHandler;
 
         #endregion //events
@@ -204,12 +205,15 @@ public class EquipmentWindow : InterfaceWindow
 
     public void AddItemInBag(ItemBunch itemBunch)
     {
-        for (int i = 0; i < bagSlots.Count; i++)
+        if (itemBunch != null)
         {
-            if (bagSlots[i].itemBunch == null)
+            for (int i = 0; i < bagSlots.Count; i++)
             {
-                bagSlots[i].AddItem(itemBunch);
-                break;
+                if (bagSlots[i].itemBunch == null)
+                {
+                    bagSlots[i].AddItem(itemBunch);
+                    break;
+                }
             }
         }
     }
@@ -283,6 +287,11 @@ public class EquipmentWindow : InterfaceWindow
             leftWeaponSlot2.Initialize(this, _itemBunch);
         }
 
+    }
+
+    void BagChangedEventHandler(object sender, ItemChangedEventArgs e)
+    {
+        AddItemInBag(e.ItemBunch);
     }
 
     void ResourceChangedEventHandler(object sender, ResourceChangedEventArgs e)

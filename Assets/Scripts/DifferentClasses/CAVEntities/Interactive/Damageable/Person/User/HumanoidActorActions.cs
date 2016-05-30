@@ -13,7 +13,8 @@ public class HumanoidActorActions : PersonActions
     const float maxLowObstacleHeight = 8f;
     const float lowObstacleSpeed = 30f;
 
-    const float highObstacleTime = 1f;
+    const float highObstacleTime = .7f;
+    const float crouchTime = 2f;
     const float highObstacleSpeed = 30f;
     const float maxHighObstacleHeight = 17f;
 
@@ -25,7 +26,7 @@ public class HumanoidActorActions : PersonActions
     const float platformClimbTime = 0.85f;
     const float platformClimbSpeed = 18f;
 
-    protected const float camMaxDistance = 20f;
+    protected const float camMaxDistance = 40f;
 
     #endregion //consts
 
@@ -177,7 +178,7 @@ public class HumanoidActorActions : PersonActions
 
             if (envStats.interaction == interactionEnum.noInter)
             {
-                if (envStats.groundness == groundnessEnum.crouch)
+                if ((envStats.groundness == groundnessEnum.crouch)||(!aboveWallCheck.gameObject.activeSelf)||(wallIsAbove))
                 {
                     upperBody.isTrigger = true;
                 }
@@ -339,6 +340,7 @@ public class HumanoidActorActions : PersonActions
         upperBody = cols[1];
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck");
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck");
+        aboveWallCheck = transform.FindChild("Indicators").FindChild("AboveWallCheck");
         employment = maxEmployment;
     }
 
@@ -350,12 +352,17 @@ public class HumanoidActorActions : PersonActions
         if (sightDirection.y > 0f)
         {
             cAnim.Look(new Vector2(0f, 1f));
+            cam.SetOffsetPosition(camMaxDistance / 2 * sightDirection);
         }
         else if (sightDirection.y < 0f)
         {
             cAnim.Look(new Vector2(0f, -1f));
+            cam.SetOffsetPosition(camMaxDistance * sightDirection);
         }
-        cam.SetOffsetPosition(camMaxDistance * sightDirection);
+        else
+        {
+            cam.SetOffsetPosition(camMaxDistance * sightDirection);
+        }
     }
 
     /// <summary>
@@ -500,7 +507,8 @@ public class HumanoidActorActions : PersonActions
     public override void HangHighObstacle()
     {
         rigid.useGravity = false;
-        rigid.velocity = new Vector3(rigid.velocity.x,0f,rigid.velocity.z);
+        SwitchCollider(false);
+        rigid.velocity = new Vector3(0f,0f,rigid.velocity.z);
         if (cAnim != null)
         {
             cAnim.Hanging(0f);
@@ -543,18 +551,29 @@ public class HumanoidActorActions : PersonActions
         }
         if (height > 0f)
         {
+            envStats.interaction = interactionEnum.edge;
             rigid.velocity = new Vector3(0f, highObstacleSpeed, rigid.velocity.z);
+            SwitchCollider(false);
             if (cAnim != null)
             {
                 cAnim.Hanging(1f);
             }
             rigid.useGravity = false;
+            StartCoroutine(AfterClimbProcess(highObstacleTime*height/20f));
         }
-        if (height==0f)
-        {
-            rigid.velocity= new Vector3((int)direction.dir * highObstacleSpeed/2, 5f, rigid.velocity.z);
-            rigid.useGravity = true;
-        }
+    }
+
+    protected virtual IEnumerator AfterClimbProcess(float _climbTime)
+    {
+        yield return new WaitForSeconds(_climbTime);
+        rigid.velocity = new Vector3((int)direction.dir * highObstacleSpeed, 5f, rigid.velocity.z);
+        rigid.useGravity = true;
+        envStats.interaction = interactionEnum.noInter;
+        SwitchCollider(true);
+        upperBody.isTrigger = true;
+        aboveWallCheck.gameObject.SetActive(false);
+        yield return new WaitForSeconds(crouchTime);
+        aboveWallCheck.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -571,6 +590,7 @@ public class HumanoidActorActions : PersonActions
         {
             rigid.useGravity = true;
             envStats.interaction = interactionEnum.noInter;
+            SwitchCollider(true);
             SetMaxSpeed(runSpeed);
             moving = false;
         }
@@ -832,15 +852,19 @@ public class HumanoidActorActions : PersonActions
         {
             return;
         }
-        if (item!=null? (item.grounded ? envStats.groundness == groundnessEnum.grounded : (envStats.groundness != groundnessEnum.crouch)):false)
+        foreach (ItemActionData _itemAction in item.itemActions)
         {
-            if (itemActionList.ContainsKey(item.itemAction.actionName))
+            if (item != null ? (_itemAction.grounded ? envStats.groundness == groundnessEnum.grounded : (_itemAction.crouching? envStats.groundness == groundnessEnum.crouch : envStats.groundness != groundnessEnum.crouch)) : false)
             {
-                StartCoroutine(ItemProcess(item.itemAction, 0f));
-            }
-            if (item.itemAction.consumed)
-            {
-                itemBunch.quantity--;
+                if (itemActionList.ContainsKey(_itemAction.actionName))
+                {
+                    StartCoroutine(ItemProcess(_itemAction, 0f));
+                }
+                if (_itemAction.consumed)
+                {
+                    itemBunch.quantity--;
+                }
+                break;
             }
         }
     }
@@ -887,11 +911,11 @@ public class HumanoidActorActions : PersonActions
         employment += chargeAction.employment;
         if (chargeValue < chargeAction.deadZone)
         {
-            if (itemActionList.ContainsKey(item.itemAction.actionName))
+            if (item.itemActions.Count > 0 ? itemActionList.ContainsKey(item.itemActions[0].actionName) : false)
             {
-                StartCoroutine(ItemProcess(item.itemAction, 0f));
+                StartCoroutine(ItemProcess(item.itemActions[0], 0f));
             }
-            if (item.itemAction.consumed)
+            if (item.itemActions.Count>0? item.itemActions[0].consumed:false)
             {
                 itemBunch.quantity--;
             }

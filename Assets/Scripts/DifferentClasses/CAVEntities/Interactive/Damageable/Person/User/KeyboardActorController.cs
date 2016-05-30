@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +13,7 @@ public class KeyboardActorController : PersonController
 
     private const float doorDistance = 4.5f;
 
-    private const float obstacleRadius = 1f;
+    private const float obstacleRadius = 2f;
 
     protected const int fastRunMaxCount = 2;
     protected const float fastRunInputTime = 0.3f;
@@ -53,7 +54,7 @@ public class KeyboardActorController : PersonController
     protected EquipmentClass equip;//Экипировка персонажа
 
     protected Transform aboveWallCheck;
-    protected GroundChecker lowWallCheck, highWallCheck;
+    protected GroundChecker lowWallCheck, highWallCheck,edgeCheck;
 
     #endregion //fields
 
@@ -73,8 +74,10 @@ public class KeyboardActorController : PersonController
 
     public override void Update()
     {
+        Type type=gameObject.GetComponent<InterObjController>().GetType();
         if (!GameStatistics.paused)
         {
+            
             if ((orgStats.hitted > 0f) && (orgStats.health > 0f))
             {
                 Hitted();
@@ -344,18 +347,19 @@ public class KeyboardActorController : PersonController
                                         envStats.interaction = interactionEnum.lowEdge;
                                     }
                                 }
-                                if (envStats.obstacleness == obstaclenessEnum.highObstcl)
+                                else if (envStats.obstacleness == obstaclenessEnum.medObstcl)
                                 {
                                     if (Input.GetButtonDown("Jump"))
                                     {
                                         pActions.AvoidHighObstacle(CheckHeight());
                                         envStats.interaction = interactionEnum.edge;
                                     }
-                                    if (highWallCheck.GetCount() > 0)
-                                    {
-                                        pActions.HangHighObstacle();
-                                        envStats.interaction = interactionEnum.edge;
-                                    }
+                                }
+                                else if (envStats.obstacleness == obstaclenessEnum.highObstcl)
+                                {
+                                    pActions.HangHighObstacle();
+                                    hanging = true;
+                                    envStats.interaction = interactionEnum.edge;
                                 }
                             }
 
@@ -412,14 +416,15 @@ public class KeyboardActorController : PersonController
 
                     else if (envStats.interaction == interactionEnum.edge)
                     {
-                        if (Input.GetButtonDown("Jump") || (rigid.velocity.y > 5f))
+                        if (hanging &&(Input.GetButtonDown("Jump")))
                         {
                             pActions.AvoidHighObstacle(CheckHeight());
+                            hanging = false;
                         }
-                        if (envStats.obstacleness == obstaclenessEnum.noObstcl)
+                        if (Input.GetButtonDown("Interact"))
                         {
-                            pActions.AvoidHighObstacle(0f);
-                            envStats.interaction = interactionEnum.noInter;
+                            hanging = false;
+                            pActions.Hang(false);
                         }
                     }
 
@@ -432,6 +437,10 @@ public class KeyboardActorController : PersonController
                         if (rigid.velocity.y > 5f)
                         {
                             pActions.AvoidLowObstacle(CheckHeight());
+                        }
+                        else if (Input.GetButtonDown("Interact"))
+                        {
+                            envStats.interaction = interactionEnum.noInter;
                         }
                         if (envStats.obstacleness == obstaclenessEnum.noObstcl)
                         {
@@ -491,7 +500,7 @@ public class KeyboardActorController : PersonController
                         if (interactionObject is MoveableBoxActions)
                         {
                             orientationEnum orientation = (orientationEnum)SpFunctions.RealSign(Input.GetAxis("Horizontal"));
-                            if (Input.GetButton("Horizontal"))
+                            if ((Input.GetButton("Horizontal"))&&(!((MoveableBoxActions)interactionObject).empty))
                             {
                                 pActions.StartWalking(orientation);
                             }
@@ -597,6 +606,7 @@ public class KeyboardActorController : PersonController
         aboveWallCheck = transform.FindChild("Indicators").FindChild("AboveWallCheck");
         lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
+        edgeCheck = transform.FindChild("Indicators").FindChild("EdgeCheck").gameObject.GetComponent<GroundChecker>();
     }
 
 
@@ -726,6 +736,14 @@ public class KeyboardActorController : PersonController
                     ChangeRoom(door.roomPath);
                     pActions.GoThroughTheDoor(door);
                 }
+                else
+                {
+                    door.locker.TryToOpen(equip);
+                    if (door.locker.opened)
+                    {
+                        door.pairDoor.locker.opened = true;
+                    }
+                }
             }
         }
         base.DoorInteraction();
@@ -790,20 +808,26 @@ public class KeyboardActorController : PersonController
     /// </summary>
     protected override void CheckObstacles()
     {
-        if ((lowWallCheck.GetCount()> 0) &&
+        if ((lowWallCheck.GetCount() > 0) &&
             (frontWallCheck.GetCount() == 0))
         {
             envStats.obstacleness = obstaclenessEnum.lowObstcl;
         }
-        else if ((frontWallCheck.GetCount()> 0) &&
-                 (highWallCheck.GetCount()== 0))
+        else if ((highWallCheck.GetCount() > 0))
         {
-            envStats.obstacleness = obstaclenessEnum.highObstcl;
+            if (CheckEdge())
+            {
+                envStats.obstacleness = obstaclenessEnum.highObstcl;
+            }
+            else if (frontWallCheck.GetCount() > 0)
+            {
+                envStats.obstacleness = obstaclenessEnum.wall;
+            }
         }
-        else if ((frontWallCheck.GetCount() > 0) &&
-                 (highWallCheck.GetCount() > 0))
+        else if ((highWallCheck.GetCount() == 0) &&
+         (frontWallCheck.GetCount() > 0))
         {
-            envStats.obstacleness = obstaclenessEnum.wall;
+            envStats.obstacleness = obstaclenessEnum.medObstcl;
         }
         else
         {
@@ -816,7 +840,9 @@ public class KeyboardActorController : PersonController
     /// </summary>
     protected override void DefineInteractable()
     {
-        if ((envStats.interaction != interactionEnum.noInter) && (envStats.interaction != interactionEnum.interactive))
+        if ((envStats.interaction != interactionEnum.noInter) && 
+            (envStats.interaction != interactionEnum.interactive)&&
+            (envStats.interaction!=interactionEnum.edge))
         {
             if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
             {
@@ -843,18 +869,36 @@ public class KeyboardActorController : PersonController
 
     protected virtual bool WallIsAbove()
     {
-        return Physics.OverlapSphere(aboveWallCheck.position, obstacleRadius, whatIsGround).Length>0;
+        pActions.wallIsAbove = Physics.OverlapSphere(aboveWallCheck.position, obstacleRadius, whatIsGround).Length > 0;
+        return pActions.wallIsAbove;
     }
 
     protected virtual float CheckHeight()
     {
         float delY = 0.3f;
-        Vector3 pos = lowWallCheck.transform.position;
+        Vector3 pos;
+        if (envStats.obstacleness == obstaclenessEnum.highObstcl)
+        {
+            pos = highWallCheck.transform.position;
+        }
+        else
+        {
+            pos = lowWallCheck.transform.position;
+        }
         while (Physics.OverlapSphere(pos, obstacleRadius, whatIsGround).Length>0)
         {
             pos = new Vector3(pos.x, pos.y + delY, pos.z);
         }
         return (pos.y - lowWallCheck.transform.position.y);
+    }
+
+    /// <summary>
+    /// Проверить, можно ли зацепиться за верхнее препятствие
+    /// </summary>
+    /// <returns></returns>
+    protected virtual bool CheckEdge()
+    {
+        return edgeCheck.GetCount() == 0;
     }
 
     /// <summary>

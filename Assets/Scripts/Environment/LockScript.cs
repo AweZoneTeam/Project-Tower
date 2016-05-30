@@ -28,23 +28,18 @@ public class LockScript{
     /// <summary>
     /// Произвести попытку открыть замок, если в заданной экипировке есть подходящий ключ
     /// </summary>
-    public virtual bool TryToOpen(EquipmentClass equip)
+    public virtual void TryToOpen(EquipmentClass equip)
     {
-        bool k=true;
-        if (lockType != 0)
+        if (equip.GetKeysNumber(lockType - 1) > 0)
         {
-            if (equip.GetKeysNumber(lockType - 1) > 0)
+            if (!opened)
             {
-                k = false;
-                if (!opened)
-                {
-                    equip.UseKey(lockType-1);
-                    k=true;
-                }
+                equip.UseKey(lockType-1);
+                opened = true;
             }
         }
-        return k;
     }
+
 }
 
 /// <summary>
@@ -83,17 +78,15 @@ public class SpecialLockScript: LockScript
     /// <summary>
     /// Произвести попытку открыть замок, если в заданной экипировке есть подходящий ключ
     /// </summary>
-    public override bool TryToOpen(EquipmentClass equip)
+    public override void TryToOpen(EquipmentClass equip)
     {
         List<ItemBunch> items = equip.GetItems();
-        bool k = false;
         for (int i = 0; i < items.Count; i++)
         {
             if (string.Equals(keyID, items[i].item.name))
             {
-                k = true;
+                opened = true;
             }
         }
-        return k;
     }
 }

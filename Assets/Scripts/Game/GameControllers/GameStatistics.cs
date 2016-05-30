@@ -32,6 +32,7 @@ public class GameStatistics : MonoBehaviour
     #region parametres
 
     public static AreaClass currentArea; //В какой комнате (пространстве) персонаж находится на данный момент
+    public static IlluminationController lumControl;//Контроллер освещения
     public int deathNumber; //Сколько раз уже главный герой проигрывал.
 
     public static bool paused = false;
@@ -70,11 +71,12 @@ public class GameStatistics : MonoBehaviour
         }
         else
         {
-            GameTime.timer = 135f;
-            PlayerPrefs.SetFloat("Timer", 135f);
+            GameTime.timer = 140f;
+            PlayerPrefs.SetFloat("Timer", 140f);
             GameTime.SetTime(defMonth, defDay, defHour, defMin);
         }
         currentArea = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>().currentRoom;
+        lumControl = GetComponent<IlluminationController>();
         paused = true;
         SpFunctions.Pause("menu");
         deathNumber = 0;
@@ -118,7 +120,7 @@ public class GameStatistics : MonoBehaviour
 /// </summary>
 public static class GameTime
 {
-    public const float dayTime = 36f;//Сколько секунд реального времени длится день?
+    public const float dayTime = 180f;//Сколько секунд реального времени длится день?
 
     public static float timer;
     public static List<Month> months = new List<Month>(new Month[]{ new Month("January", 31), new Month("February", 28),

@@ -9,6 +9,7 @@ public class RoomClass : AreaClass
 {
 
     #region consts
+
     //Здесь описаны параметры для комнаты минимального размера. Это нужно для автоматического корректирования размера комнат.
     const float minDepth = 47f;
     const float minLength = 85f;
@@ -16,12 +17,20 @@ public class RoomClass : AreaClass
     const float wallThickness = 2f;
     private Vector2 sideDoorSize = new Vector2(5f, 25f);
     private Vector2 backDoorSize = new Vector2(20f, 25f);
+    
     #endregion //consts
 
     #region content
+
     public List<WallClass> walls = new List<WallClass>();
     public List<DoorClass> doors = new List<DoorClass>();
+
     #endregion //content
+
+    public RoomClass(AreaClass _area): base(_area)
+    {
+                
+    }
 
 }
 

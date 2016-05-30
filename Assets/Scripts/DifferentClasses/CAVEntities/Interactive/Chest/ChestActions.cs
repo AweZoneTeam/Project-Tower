@@ -22,24 +22,17 @@ public class ChestActions : InterObjActions, ILeverActivated
             {
                 chestLock = new SpecialLockScript("",false);
             }
-            if (chestLock.opened)
-            {
-                anim.OpenedCondition();
-            }
-            else
-            {
-                anim.ClosedCondition();
-            }
+            anim.Activate(chestLock.opened);
         }
     }
 
-    /// <summary>
+    /// <summary>   
     /// Функция, которую вызовет нажатие на тот рычаг, к которому подключен сундук
     /// </summary>
     public void LeverActivation()
     {
         chestLock.opened = true;
-        anim.OpenedCondition();
+        anim.Activate(true);
     }
 
     /// <summary>
@@ -68,16 +61,17 @@ public class ChestActions : InterObjActions, ILeverActivated
                 if (chestLock is SpecialLockScript)
                 {
                     SpecialLockScript sChestLock = (SpecialLockScript)chestLock;
-                    chestLock.opened = sChestLock.TryToOpen(equip);
+                    sChestLock.TryToOpen(equip);
+                    //chestLock.opened = sChestLock.opened;
                 }
                 else
                 { 
-                    chestLock.opened = chestLock.TryToOpen(equip);
+                    chestLock.TryToOpen(equip);
                 }
             }
             if (chestLock.opened)
             {
-                anim.OpenedCondition();
+                anim.Activate(true);
             }
         }
     }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// </summary>
 public class WallChecker : GroundChecker
 {
-    private List<string> whatIsGround = new List<string> {"ground", "door", "character"};
+    private List<string> whatIsGround = new List<string> {"ground", "door"};
 
     protected override void Initialize()
     {

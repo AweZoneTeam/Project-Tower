@@ -23,4 +23,13 @@ public class InterObjVisual : MonoBehaviour
     {
         direction = _direction; 
     }
+
+    /// <summary>
+    /// Функция, что отображает активацию объекта
+    /// </summary>
+    public virtual void Activate(bool active)
+    {
+    }
+
+
 }

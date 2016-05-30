@@ -281,6 +281,7 @@ public static class SpFunctions {
             obj.SetActive(false);
         }
         GameStatistics.currentArea = room;
+        GameStatistics.lumControl.SetIntensity(room.DayAmbIntensity, room.NightAmbIntensity);
         foreach (GameObject obj in GameStatistics.currentArea.hideForeground)
         {
             obj.SetActive(false);

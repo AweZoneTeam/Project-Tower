@@ -18,6 +18,9 @@ public class PersonController : DmgObjController, IPersonWatching
     protected const float groundRadius = 1f;
     protected const float preGroundRadius = 2f;
 
+    protected const float edgeThickness = 10f;
+    protected const float edgeDistance = 2f;
+
     protected const float interRadius = 1f;
 
     protected const float minDmgFallSpeed = 80f;
@@ -78,6 +81,8 @@ public class PersonController : DmgObjController, IPersonWatching
     protected bool fallDamaged = false;
     protected float fallDamage = 0f;
 
+    protected bool hanging = false;
+
     [SerializeField]protected int employment;
 
     public LayerMask whatIsGround;
@@ -131,7 +136,11 @@ public class PersonController : DmgObjController, IPersonWatching
         }
         if (currentRoom != null)
         {
-            currentRoom.container.Add(this);
+            if (!currentRoom.container.Contains(this))
+            {
+                currentRoom.container.Add(this);
+            }
+            interactions.ZCoordinate = currentRoom.GetZCoordinate();
         }
         hitBox = GetComponentInChildren<HitController>();
         if (hitBox != null)
@@ -239,21 +248,22 @@ public class PersonController : DmgObjController, IPersonWatching
     protected virtual void DoorInteraction()
     {
         OnRoomChanged(new RoomChangedEventArgs(currentRoom));
-        if (interactions != null)
-        {
-            interactions.ZCoordinate=0;
-        }
     }
 
     /// <summary>
     /// Сменить комнату
     /// </summary>
-    protected virtual void ChangeRoom(AreaClass nextRoom)
+    public virtual void ChangeRoom(AreaClass nextRoom)
     {
         if (currentRoom != null)
         {
+            currentRoom.RemoveZCoordinate(interactions.ZCoordinate);
             currentRoom.container.Remove(this);
             currentRoom = nextRoom;
+            if (interactions != null)
+            {
+                interactions.ZCoordinate = currentRoom.GetZCoordinate();
+            }
             currentRoom.container.Add(this);
         }
     }
@@ -271,6 +281,14 @@ public class PersonController : DmgObjController, IPersonWatching
     /// </summary>
     protected virtual void TargetChangeRoom(object sender, RoomChangedEventArgs e)
     {
+    }
+
+    /// <summary>
+    /// Спрятать персонажа от зрения других персонажей
+    /// </summary>
+    public virtual void Hide(bool hide)
+    {
+        GetComponent<CapsuleCollider>().enabled = !hide;
     }
 
     //Функция, что анализирует обстановку, окружающую персонажа

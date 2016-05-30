@@ -17,6 +17,8 @@ public class AIController : PersonController, IPersonWatching
     protected const float sightRadius = 60f;
     protected const float hearingRadius = 20f;
 
+    protected const float waypointMinDistance = 15f;
+
     protected const float g = 100f;
 
     #endregion //consts
@@ -24,6 +26,9 @@ public class AIController : PersonController, IPersonWatching
     #region dictionaries
 
     protected Dictionary<string, jDataActionDelegate> jActionBase = new Dictionary<string, jDataActionDelegate> ();
+
+    protected Dictionary<string, Timer> timers = new Dictionary<string, Timer>();//таймеры, которыми пользуется искусственный интеллект для выжидания
+    protected List<string> timerNames = new List<string>();//Названия используемых таймеров
 
     public virtual Dictionary<string, jDataActionDelegate> GetJActionBase()
     {
@@ -46,6 +51,12 @@ public class AIController : PersonController, IPersonWatching
 
     #endregion //eventHandlers
 
+    #region indicators
+
+    protected BoxCollider enterIdentifier;
+
+    #endregion //indicators
+
     #region fields
 
     public int k1 = 0;
@@ -61,6 +72,8 @@ public class AIController : PersonController, IPersonWatching
     protected TargetWithCondition whoAttacksMe;//Кто атаковал персонажа
     public TargetWithCondition WhoAttacksMe {set { whoAttacksMe = value; } }
     protected float targetDistance;//Расстояние до текущей цели
+
+    public List<RouteClass> routes = new List<RouteClass>();//Маршруты, которыми пользуется данный персонаж
 
     //public behaviourEnum behaviour;//Какую модель поведения применяет ИИ в данный момент (Calm,Agressive) 
 
@@ -97,6 +110,12 @@ public class AIController : PersonController, IPersonWatching
 
         if (!death)
         {
+            //Контроль контроля проходов
+            if (enterIdentifier != null)
+            {
+                enterIdentifier.enabled = (currentTarget != null ? string.Equals(currentTarget.targetType, "enemy") : false);
+            }
+
             if (currentBehaviour != null)
             {
                 ImplementBehaviour(currentBehaviour);
@@ -110,6 +129,9 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected virtual void FormActionDictionaries()
     {
+
+        #region conditionBase
+
         conditionBase = new Dictionary<string, AICondition>();
         conditionBase.Add("distance to target", CheckTargetDistance);
         conditionBase.Add("distance x to target", CheckTargetX);
@@ -126,6 +148,14 @@ public class AIController : PersonController, IPersonWatching
         conditionBase.Add("target type", CheckTargetType);
         conditionBase.Add("main target type", CheckMainTargetType);
         conditionBase.Add("health", CheckHeatlh);
+        conditionBase.Add("game time", CheckGameTime);
+        conditionBase.Add("timer is resetted?", CheckTimerResetted);
+        conditionBase.Add("timer is stopped?", CheckTimerStopped);
+        conditionBase.Add("timer is working?", CheckTimerWorking);
+
+        #endregion //conditionBase
+
+        #region actionBase
 
         actionBase = new Dictionary<string, AIAction>();
         actionBase.Add("change behaviour", ChangeBehaviour);
@@ -135,8 +165,12 @@ public class AIController : PersonController, IPersonWatching
         actionBase.Add("choose attacker", ConcentrateOnAttacker);
         actionBase.Add("choose main target", ConcentrateOnMainTarget);
         actionBase.Add("use door", DoorInteraction);
+        actionBase.Add("use lever", LeverInteraction);
         actionBase.Add("use enter", EnterInteraction);
+        actionBase.Add("use ladder", LadderInteraction);
+        actionBase.Add("stop use ladder", StopLadderItteraction);
         actionBase.Add("use waypoint", WaypointInteraction);
+        actionBase.Add("use turnpoint", TurnpointInteraction);
         actionBase.Add("use target", UnknownWaypointInteraction);
         actionBase.Add("lose target", LoseTarget);
         actionBase.Add("perception", Perception);
@@ -146,13 +180,25 @@ public class AIController : PersonController, IPersonWatching
         actionBase.Add("attack", Attack);
         actionBase.Add("say", SaySomething);
         actionBase.Add("tell about target", SayEveryOneAboutTarget);
+        actionBase.Add("find mechanism", FindLever);
         actionBase.Add("test", TestFunction);
         actionBase.Add("turn", Turn);
         actionBase.Add("turnMove", TurnMoveDirection);
         actionBase.Add("jump", Jump);
         actionBase.Add("go home", GoHome);
+        actionBase.Add("use route", UseRoute);
+        actionBase.Add("start timer", StartTimer);
+        actionBase.Add("reset timer", ResetTimer);
+        actionBase.Add("reset all timers", ResetAllTimers);
+
+        #endregion //actionBase
+
+        #region journalActionBase
 
         jActionBase.Add("makeAnEnemy", MakeAnEnemy);
+
+        #endregion //journalActionBase
+
     }
 
     /// <summary>
@@ -191,6 +237,14 @@ public class AIController : PersonController, IPersonWatching
                         _behaviour.activities[j].whatToDo[k].aiAction = actionBase[s].Invoke;
                     }
                 }
+                for (int k = 0; k < _behaviour.activities[j].whatToDoAfter.Count; k++)
+                {
+                    if (actionBase.ContainsKey(_behaviour.activities[j].whatToDoAfter[k].actionName))
+                    {
+                        s = _behaviour.activities[j].whatToDoAfter[k].actionName;
+                        _behaviour.activities[j].whatToDoAfter[k].aiAction = actionBase[s].Invoke;
+                    }
+                }
             }
         }
     }
@@ -199,6 +253,10 @@ public class AIController : PersonController, IPersonWatching
     {
         base.Initialize();
         hearing = GetComponentInChildren<HearingScript>();
+        if (transform.FindChild("Indicators").FindChild("EnterBox") != null)
+        {
+            enterIdentifier = transform.FindChild("Indicators").FindChild("EnterBox").GetComponent<BoxCollider>();
+        }
         if (hearing!=null)
         {
             hearing.HearingRadius = hearingRadius;
@@ -440,7 +498,56 @@ public class AIController : PersonController, IPersonWatching
         GameObject startPoint = new GameObject("StartPoint");
         startPoint.transform.position = startPosition;
         mainTarget = new TargetWithCondition(startPoint, "waypoint");
-        waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(transform.position,currentRoom,mainTarget,startRoom);
+        waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(this,currentRoom,mainTarget,startRoom);
+    }
+
+    protected virtual void UseRoute(string id, int argument)
+    {
+        int hour = GameTime.hour;
+        waypoints.Clear();
+        RouteClass currentRoute = null;
+        foreach (RouteClass route in routes)
+        {
+            if (string.Equals(route.routeName, id))
+            {
+                currentRoute = route;
+                break;
+            }
+        }
+        if (currentRoute == null)
+        {
+            return;
+        }
+        TargetWithCondition nextTarget = null;
+        if (currentRoute.waypoints.Count > 1)
+        {
+            List<TargetWithCondition> nextWaypoints = currentRoute.waypoints;
+            nextTarget = nextWaypoints[0];
+            for (int i = 1; i < nextWaypoints.Count; i++)
+            {
+                if (Vector3.Distance(transform.position, nextWaypoints[i].position) < Vector3.Distance(transform.position, nextTarget.position))
+                {
+                    nextTarget = nextWaypoints[i];
+                }
+            }
+            if (nextWaypoints.IndexOf(nextTarget) > nextWaypoints.Count)
+            {
+                nextTarget = nextWaypoints[0];
+            }
+            else
+            {
+                nextTarget = nextWaypoints[nextWaypoints.IndexOf(nextTarget)];
+            }
+        }
+        else
+        {
+            nextTarget = currentRoute.waypoints[0];
+        }
+        if (Vector3.Distance(nextTarget.position, transform.position)>waypointMinDistance)
+        {
+            waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(this, currentRoom, nextTarget, nextTarget.areaPosition);
+            waypoints = PrepareWaypoints(waypoints);
+        }
     }
 
     /// <summary>
@@ -604,11 +711,11 @@ public class AIController : PersonController, IPersonWatching
         DoorClass door=currentTarget.target.GetComponent<DoorClass>();
         if (door!=null)
         {
-            if (door.locker.opened)
-            {
+            //if (door.locker.opened)
+            //{
                 ChangeRoom(door.roomPath);
                 pActions.GoThroughTheDoor(door);
-            }
+            //}
         }
         if (waypoints!=null?waypoints.Contains(currentTarget):false)
         {
@@ -622,6 +729,65 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected virtual void WaypointInteraction(string id, int argument)
     {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            if (currentTarget.argument == 0)
+            {
+                Destroy(currentTarget.target);
+            }
+            ConcentrateOnWaypoint("next", 0);
+        }
+    }
+
+    /// <summary>
+    /// Как персонаж ведёт себя с вэйпоинтом с заданным поворотом
+    /// </summary>
+    protected virtual void TurnpointInteraction(string id, int argument)
+    {
+        Turn(currentTarget.id, currentTarget.argument);
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            Destroy(currentTarget.target);
+            ConcentrateOnWaypoint("next", 0);
+        }
+    }
+
+    /// <summary>
+    /// Как персонаж взаимодействует с рычагами
+    /// </summary>
+    protected virtual void LeverInteraction(string id, int argument)
+    {
+        InterObjController lever = currentTarget.target.GetComponent<InterObjController>();
+        if (lever != null)
+        {
+            lever.Interact(this);
+        }
+        if (waypoints != null ? waypoints.Contains(currentTarget) : false)
+        {
+            ConcentrateOnWaypoint("next", 0);
+        }
+    }
+
+    /// <summary>
+    /// Как персонаж взаимодействует с лестницами
+    /// </summary>
+    protected virtual void LadderInteraction(string id, int argument)
+    {
+        rigid.useGravity = false;
+        envStats.interaction = interactionEnum.ladder;
+        if (waypoints != null ? waypoints.Contains(currentTarget) : false)
+        {
+            ConcentrateOnWaypoint("next", 0);
+        }
+    }
+
+    /// <summary>
+    /// Прекратить взаимодействие с лестницей
+    /// </summary>
+    protected virtual void StopLadderItteraction(string id, int argument)
+    {
+        rigid.useGravity = true;
+        envStats.interaction = interactionEnum.noInter;
         if (currentTarget != null ? (currentTarget.target != null) : false)
         {
             Destroy(currentTarget.target);
@@ -644,9 +810,25 @@ public class AIController : PersonController, IPersonWatching
             {
                 EnterInteraction("", 0);
             }
+            else if (string.Equals(currentTarget.targetType, "lever"))
+            {
+                LeverInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "ladder"))
+            {
+                LadderInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "ladderEnd"))
+            {
+                StopLadderItteraction("", 0);
+            }
             else if (string.Equals(currentTarget.targetType, "waypoint"))
             {
                 WaypointInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "turnpoint"))
+            {
+                TurnpointInteraction("", 0);
             }
         }
     }
@@ -661,6 +843,8 @@ public class AIController : PersonController, IPersonWatching
             EnterClass enter;
             if ((enter = currentTarget.target.GetComponent<EnterClass>()) != null)
             {
+                Vector3 pos = transform.position;
+                transform.position = new Vector3(pos.x, pos.y, enter.nextRoom.id.coordZ);
                 ChangeRoom(enter.nextRoom);
                 ConcentrateOnWaypoint("next", 0);
             }
@@ -683,6 +867,50 @@ public class AIController : PersonController, IPersonWatching
         k1++;
     }
 
+    /// <summary>
+    /// Поставить таймер
+    /// </summary>
+    protected virtual void StartTimer(string id, int argument)
+    {
+        if (!timerNames.Contains(id))
+        {
+            timers.Add(id, new Timer(argument * 1f));
+            timerNames.Add(id);
+        }
+        if (argument == 0)
+        {
+            StartCoroutine(timers[id].TimerWork());
+        }
+        else
+        {
+            StartCoroutine(timers[id].TimerWork(argument*1f));
+        }
+    }
+
+    /// <summary>
+    /// Сбросить таймер
+    /// </summary>
+    protected virtual void ResetTimer(string id, int argument)
+    {
+        if (!timerNames.Contains(id))
+        {
+            timers.Add(id, new Timer(argument * 1f));
+            timerNames.Add(id);
+        }
+        timers[id].TimeReset();        
+    }
+
+    /// <summary>
+    /// Сбросить все таймеры
+    /// </summary>
+    protected virtual void ResetAllTimers(string id, int arguement)
+    {
+        foreach (string timerName in timerNames)
+        {
+            timers[timerName].TimeReset();
+        }
+    }
+
     #endregion //actions
 
     /// <summary>
@@ -694,6 +922,7 @@ public class AIController : PersonController, IPersonWatching
         activity.DoAction();
         yield return new WaitForSeconds(activity.actionTime);
         employment += activity.employment;
+        activity.DoActionAfter();
         yield return new WaitForSeconds(activity.cooldown);
         activity.unavailable = false;
     }
@@ -793,15 +1022,35 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected virtual void SayEveryOneAboutTarget(string id, int argument)
     {
-        foreach (PersonController person in currentRoom.container)
+        foreach (InterObjController person in currentRoom.container)
         {
             if (string.Equals(person.tag, gameObject.tag))
             {
                 AIController ai = (AIController)person;
-                if (ai.currentTarget == null? true: (currentTarget.target == null))
+                if (ai!=null?(ai.currentTarget == null? true: (currentTarget.target == null)):false)
                 {
                     ai.mainTarget=mainTarget;
                     ai.currentTarget = mainTarget;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Поиск рычага, на который можно нажать
+    /// </summary>
+    protected virtual void FindLever(string id, int argument)
+    {
+        foreach (InterObjController person in currentRoom.container)
+        {
+            if (person.GetComponent<MechanismActions>()!=null)
+            {
+                MechanismActions lever = person.GetComponent<MechanismActions>();
+                if (!lever.activated)
+                {
+                    waypoints = new List<TargetWithCondition>();
+                    waypoints.Add(new TargetWithCondition(person.gameObject, "lever"));
+                    break;
                 }
             }
         }
@@ -883,6 +1132,50 @@ public class AIController : PersonController, IPersonWatching
             return SpFunctions.ComprFunctionality(Mathf.Abs((currentTarget.target.transform.position - transform.position).y), id, argument);
         }
         else return false;
+    }
+
+    /// <summary>
+    /// Проверить, сколько времени прошло
+    /// </summary>
+    protected virtual bool CheckGameTime(string id, int argument)
+    {
+        return SpFunctions.ComprFunctionality(GameTime.hour,id,argument);
+    }
+
+    /// <summary>
+    /// Проверить, сброшен ли таймер
+    /// </summary>
+    protected virtual bool CheckTimerResetted(string id, int argument)
+    {
+        if (timers.ContainsKey(id))
+        {
+            return timers[id].value == -1 ? true : false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Проверить, остановлен ли таймер
+    /// </summary>
+    protected virtual bool CheckTimerStopped(string id, int argument)
+    {
+        if (timers.ContainsKey(id))
+        {
+            return timers[id].value == 0 ? true : false;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Проверить, работает ли таймер
+    /// </summary>
+    protected virtual bool CheckTimerWorking(string id, int argument)
+    {
+        if (timers.ContainsKey(id))
+        {
+            return timers[id].value > 0 ? true : false;
+        }
+        return false;
     }
 
     /// <summary>
@@ -999,6 +1292,89 @@ public class AIController : PersonController, IPersonWatching
     }
 
     #endregion //condition
+
+    /// <summary>
+    /// Произвести обработку вэйпоинтов
+    /// </summary>
+    protected virtual List<TargetWithCondition> PrepareWaypoints(List<TargetWithCondition> _waypoints)
+    {
+        GameObject target = null;
+        for (int i=0;i<_waypoints.Count;i++)
+        {
+            if (string.Equals(_waypoints[i].targetType, "ladder"))
+            {
+                target = _waypoints[i].target;
+                GameObject ladderEnd = new GameObject("ladderEnd");
+                if (waypoints[i + 1].target.transform.position.y > target.transform.position.y)
+                {
+                    ladderEnd.transform.position = target.transform.position + new Vector3(0f, target.transform.GetChild(0).GetComponent<StairActions>().height, 0f);
+                }
+                else
+                {
+                    ladderEnd.transform.position = target.transform.position;
+                }
+                waypoints.Insert(i+1,new TargetWithCondition(ladderEnd, "ladderEnd"));
+            }
+            else if (string.Equals(_waypoints[i].targetType, "stairs"))
+            {
+                target = _waypoints[i].target;
+                Transform targetTrans = target.transform;
+                bool up = target.transform.position.y<_waypoints[i+1].target.transform.position.y;
+                List<GameObject> stairTurns = new List<GameObject>();
+                for (int j = 0; j < targetTrans.childCount; j++)
+                {
+                    if (targetTrans.GetChild(j).gameObject.name.Contains("StairTurnPoint"))
+                    {
+                        stairTurns.Add(targetTrans.GetChild(j).gameObject);
+                    }
+                }
+                string stairType = "Forward";
+                GameObject turn1=null, turn2=null;
+                while (stairTurns.Count > 0)
+                {
+                    float value;
+                    if (up)
+                    {
+                        value = -100000;
+                        foreach (GameObject obj in stairTurns)
+                        {
+                            if (obj.transform.position.y > value)
+                            {
+                                turn1 = obj;
+                                value = obj.transform.position.y;
+                            }
+                            else if (obj.transform.position.y == value)
+                            {
+                                turn2 = obj;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        value = 100000;
+                        foreach (GameObject obj in stairTurns)
+                        {
+                            if (obj.transform.position.y < value)
+                            {
+                                turn1 = obj;
+                                value = obj.transform.position.y;
+                            }
+                            else if (obj.transform.position.y == value)
+                            {
+                                turn2 = obj;
+                            }
+                        }
+                    }
+                    _waypoints.Insert(i+1,new TargetWithCondition((turn1.name.Contains(stairType) ? turn1 : turn2), "enter"));
+                    stairType = (string.Equals(stairType, "Backward") ? "Forward" : "Backward");
+                    stairTurns.Remove(turn1);
+                    stairTurns.Remove(turn2);
+                }
+                _waypoints.RemoveAt(i);
+            }
+        }
+        return _waypoints;
+    }
 
     #region scriptActions
 

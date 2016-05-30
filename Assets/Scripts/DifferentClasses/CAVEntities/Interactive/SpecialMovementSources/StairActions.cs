@@ -7,6 +7,11 @@ using System.Collections;
 public class StairActions : InterObjActions
 {
 
+    #region parametres
+
+    public float height;
+
+    #endregion //parametres
 
     /// <summary>
     /// Произвести взаимодействие

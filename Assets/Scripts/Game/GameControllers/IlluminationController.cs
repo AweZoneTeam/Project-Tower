@@ -8,11 +8,24 @@ using System.Collections.Generic;
 public class IlluminationController : MonoBehaviour
 {
     #region consts
+
     const float sunIntensity = 1.5f;
     const float moonIntensity = 0.15f;
-    const float nightIntensity = 0.2f;
-    const float dayIntensity = 1f;
+    const float defNightIntensity = 0.2f;
+    const float defDayIntensity = 1f;
+
     #endregion //consts
+
+    #region parametres
+
+    protected float dayIntensity=defDayIntensity, nightIntensity=defNightIntensity;
+
+    private float sunSpeed;//Коэффициент линейной зависимости относительного положение Солнца от игрового времени
+    public float ambBrightness;//Насколько ярок свет окружения  
+
+    #endregion //parametres
+
+    #region fields
 
     public Light sun, moon; //Солнце и сама Луна собственной персоной
 
@@ -21,12 +34,11 @@ public class IlluminationController : MonoBehaviour
 
     private Camera cam;
 
-    private float sunSpeed;//Коэффициент линейной зависимости относительного положение Солнца от игрового времени
-    public float ambBrightness;//Насколько ярок свет окружения  
+    #endregion //fields
 
     void Start()
     {
-
+        SetIntensity(defDayIntensity, defNightIntensity);
         sunSpeed = 360f / GameTime.dayTime;
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<Camera>();
         sun.intensity = sunIntensity;
@@ -53,6 +65,15 @@ public class IlluminationController : MonoBehaviour
         ambBrightness = phase < 0.5f ? dayIntensity * (phase * 2) + nightIntensity * (1f - phase * 2) :
                                                                 dayIntensity * (2f - (phase * 2)) + nightIntensity * (phase * 2-1f);
         ambientLight.SetFloat("_Scale", ambBrightness);
+    }
+
+    /// <summary>
+    /// Задать интенсивности дневного и ночного света
+    /// </summary>
+    public void SetIntensity(float _dayIntensity, float _nightIntensity)
+    {
+        dayIntensity = _dayIntensity;
+        nightIntensity = _nightIntensity;
     }
     
 }

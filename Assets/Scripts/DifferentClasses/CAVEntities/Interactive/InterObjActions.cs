@@ -9,7 +9,7 @@ public class InterObjActions : MonoBehaviour
 
     #region fields
     protected Direction direction;
-    private InterObjVisual anim;
+    protected InterObjVisual anim;
     protected InterObjController interactor;
     #endregion //fields
 
@@ -29,6 +29,7 @@ public class InterObjActions : MonoBehaviour
     }
 
     #region Interface
+
     /// <summary>
     /// Произвести взаимодействие
     /// </summary>
@@ -49,5 +50,28 @@ public class InterObjActions : MonoBehaviour
     {
         interactor = _interactor;
     }
+
+    /// <summary>
+    /// Функция, обычно вызываемая при нажатии на объект другим объектом
+    /// </summary>
+    public virtual void OnPushDown()
+    {
+    }
+
+    /// <summary>
+    /// Функция, обычно вызываемая, когда на объекте кто-то стоит
+    /// </summary>
+    public virtual void OnPush()
+    {
+    }
+
+    /// <summary>
+    /// Функция, обычно вызываемая, когда кто-то сошёл с объекта
+    /// </summary>
+    public virtual void OnPushUp()
+    {
+    }
+
     #endregion //Interface
+
 }

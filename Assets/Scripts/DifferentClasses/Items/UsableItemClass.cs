@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -11,7 +12,7 @@ using UnityEditor;
 public class UsableItemClass : ItemClass
 {
     public string useItemType;
-    public ItemActionData itemAction;//Какое действие вызовется при начале использования предмета (подготовка к броску)
+    public List<ItemActionData> itemActions=new List<ItemActionData>();//Список действий, которые можно произвести предметом (обычно ограничивается одним элементом)
     public bool grounded;//если true, то предмет исользуется только на земле
     public bool charge;//Можно ли этот предмет зарядить?
     public ItemChargeData chargeData;//Как происходит "заряд предмета"
@@ -32,7 +33,6 @@ public class UsableItemEditor : Editor
     {
         DrawDefaultInspector();
         UsableItemClass item = (UsableItemClass)target;
-        ItemActionData itemData = item.itemAction;
         if (!item.charge)
         {
             item.chargeData=null;

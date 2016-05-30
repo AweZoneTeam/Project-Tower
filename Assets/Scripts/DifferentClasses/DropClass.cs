@@ -23,18 +23,24 @@ public class DropClass : MonoBehaviour {
     {
         rigid = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
-        col.isTrigger = false;
+        if (rigid != null)
+        {
+            col.isTrigger = false;
+        }
         groundCheck = transform.FindChild("GroundCheck");
     }
 
     public void FixedUpdate()
     {
-        Collider[] cols1= Physics.OverlapSphere(transform.position, groundRadius, whatIsGround);
-        if ((Physics.OverlapSphere(groundCheck.position, groundRadius, whatIsGround).Length>0)&&(!col.isTrigger))
+        if (rigid != null)
         {
-            col.isTrigger = true;
-            rigid.isKinematic = true;
-        }     
+            Collider[] cols1 = Physics.OverlapSphere(transform.position, groundRadius, whatIsGround);
+            if ((Physics.OverlapSphere(groundCheck.position, groundRadius, whatIsGround).Length > 0) && (!col.isTrigger))
+            {
+                col.isTrigger = true;
+                rigid.isKinematic = true;
+            }
+        }  
     }
 
 }

@@ -18,6 +18,8 @@ public class EnterClass : MonoBehaviour
 
     public doorEnum enterType;//Тип прохода
     public AreaClass nextRoom;// Комната, в которую ведёт проход
+    public AreaClass subRoom;//Подпространство, в которое ведёт проход.
+    public EnterClass pairEnter;//Парный проход из комнаты, в которую ведёт данный проход
 
     #endregion //fields
 

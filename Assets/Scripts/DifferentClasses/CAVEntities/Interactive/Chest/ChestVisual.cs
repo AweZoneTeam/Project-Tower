@@ -18,23 +18,23 @@ public class ChestVisual : InterObjVisual
     }
 
     #region AnimatedActions
-    /// <summary>
-    /// Анимировать закрытие
-    /// </summary>
-    public void ClosedCondition()
-    {
-        if (iAnim != null)
-        {
-            iAnim.Animate("Closed");
-        }
-    }
 
     /// <summary>
-    /// Анимировать процесс открытия
+    /// Анимировать активацию и деактивацию
     /// </summary>
-    public void OpenedCondition()
+    public override void Activate(bool active)
     {
-        StartCoroutine(OpenChest());
+        if (active)
+        {
+            StartCoroutine(OpenChest());
+        }
+        else
+        {
+            if (iAnim != null)
+            {
+                iAnim.Animate("Closed");
+            }
+        }
     }
 
     IEnumerator OpenChest()//Процесс открытия сундука
@@ -46,5 +46,6 @@ public class ChestVisual : InterObjVisual
             iAnim.Animate("Opened");
         }
     }
+
     #endregion //AnimatedActions
 }

@@ -77,16 +77,19 @@ public class SpiderActions : AIActions
     /// </summary>
     public override void Pursue()
     {
-        if (grOrientation.grOrientation == groundOrientationEnum.down)
+        if (target != null)
         {
-            if (target.position.x != transform.position.x)
+            if (grOrientation.grOrientation == groundOrientationEnum.down)
             {
-                StartWalking((orientationEnum)(SpFunctions.RealSign(target.position.x - transform.position.x)));
+                if (target.position.x != transform.position.x)
+                {
+                    StartWalking((orientationEnum)(SpFunctions.RealSign(target.position.x - transform.position.x)));
+                }
             }
-        }
-        else
-        {
-            StartWalking(movingDirection);
+            else
+            {
+                StartWalking(movingDirection);
+            }
         }
     }
 

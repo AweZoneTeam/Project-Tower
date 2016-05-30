@@ -450,13 +450,46 @@ public class Timer
         return (timer.value <= _value);
     }
 
+    /// <summary>
+    /// Запустить таймер
+    /// </summary>
     public void TimeStart()
     {
         value = maxValue;
     }
 
+    /// <summary>
+    /// Сбросить таймер
+    /// </summary>
     public void TimeReset()
     {
         value = -1f;
     }
+
+    /// <summary>
+    /// Запустить таймер работать автоматически
+    /// </summary>
+    public IEnumerator TimerWork()
+    {
+        value = maxValue;
+        yield return new WaitForSeconds(maxValue);
+        if (value != -1)
+        {
+            value = 0f;
+        }
+    }
+
+    /// <summary>
+    /// Запустить таймер работать автоматически на указанное время
+    /// </summary>
+    public IEnumerator TimerWork(float workTime)
+    {
+        value = workTime;
+        yield return new WaitForSeconds(workTime);
+        if (value != -1)
+        {
+            value = 0f;
+        }
+    }
+
 }
