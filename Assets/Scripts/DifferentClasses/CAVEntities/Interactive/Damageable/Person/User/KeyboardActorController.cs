@@ -24,6 +24,35 @@ public class KeyboardActorController : PersonController
 
     #endregion //consts
 
+    #region dictionaries
+
+    /// <summary>
+    /// Типовые сообщения о возможности прекратить взаимодействие с интерактивным объектом
+    /// </summary>
+    protected static Dictionary<interactionEnum, string> interuptionMessages = new Dictionary<interactionEnum, string> { { interactionEnum.edge, "Отпустить обрыв" },
+                                                                                                                  { interactionEnum.ladder, "Отпустить лестницу"},
+                                                                                                                  { interactionEnum.ledge, "Отпустить выступ"},
+                                                                                                                  { interactionEnum.platform, "Отпустить платформу"},
+                                                                                                                  { interactionEnum.rope, "Отпустить верёвку"},
+                                                                                                                  { interactionEnum.thicket, "Отпустить заросли" } };
+    /// <summary>
+    /// Типовые сообщения о возможности открыть дверь
+    /// </summary>
+    protected static Dictionary<doorEnum, string> doorOpenMessages = new Dictionary<doorEnum, string> { { doorEnum.back, "Открыть дверь на заднем плане" },
+                                                                                                               { doorEnum.forward, "Открыть дверь на переднем плане" },
+                                                                                                               { doorEnum.left, "Открыть дверь слева" },
+                                                                                                               { doorEnum.right, "Открыть дверь справа"} };
+    /// <summary>
+    /// Типовые сообщения о возможности пройти через дверь
+    /// </summary>
+    protected static Dictionary<doorEnum, string> doorGoThroughMessages = new Dictionary<doorEnum, string> { { doorEnum.back, "Открыть дверь на заднем плане" },
+                                                                                                               { doorEnum.forward, "Открыть дверь на переднем плане" },
+                                                                                                               { doorEnum.left, "Открыть дверь слева" },
+                                                                                                               { doorEnum.right, "Открыть дверь справа"} };
+
+
+    #endregion //dictionaries
+
     #region enums
 
     protected enum directionClaveEnum { leftHold = -2, leftDown = -1, notPressed = 0, rightDown = 1, rightHold = 2 };
@@ -52,6 +81,10 @@ public class KeyboardActorController : PersonController
 
     [SerializeField]
     protected EquipmentClass equip;//Экипировка персонажа
+
+    protected InteractionInfo currentInteraction = null;
+    public InteractionInfo CurrentInteraction { set { currentInteraction = value; SpFunctions.SendMessage(new MessageSentEventArgs(value == null ? "" : value.interactionMessage, value == null ? 4 : 3, 0f)); }}
+    [SerializeField]protected List<GameObject> doors = new List<GameObject>();//Двери, с которыми персонаж может провзаимодействовать
 
     protected Transform aboveWallCheck;
     protected GroundChecker lowWallCheck, highWallCheck,edgeCheck;
@@ -262,11 +295,44 @@ public class KeyboardActorController : PersonController
                             {
                                 HAA.EndCharge(((Shield)HAA.secondaryWeapon).defStats);
                             }
+                            else if (HAA.secondaryWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)
+                                {
+                                    HAA.EndCharge(attack);
+                                }
+                                else
+                                {
+                                    if (attack.chargeAttack.finalTime > 0)
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                }
+                            }
                         }
 
                         if (Input.GetButtonDown("SecondAttack"))
                         {
-
+                            if (HAA.secondaryWeapon is SimpleWeapon)
+                            {
+                                attackState state = GetAttackState();
+                                attack = ((SimpleWeapon)HAA.secondaryWeapon).GetAttack(state.ToString());
+                                if (attack != null)
+                                {
+                                    if (attack.chargeAttack.finalTime <= 0)//считать что если время накопление анаки не больше нуля то чардж атаки нет
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                    else
+                                    {
+                                        if (HAA.chargeValue >= 0)
+                                        {
+                                            HAA.chargeValue = 0f;
+                                            HAA.canCharge = false;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (Input.GetButton("SecondAttack") && attack != null)
@@ -275,6 +341,32 @@ public class KeyboardActorController : PersonController
                             {
                                 HAA.StartCharge(((Shield)HAA.secondaryWeapon).defStats);
                             }
+                            else if (HAA.secondaryWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue >= 0)
+                                {
+                                    HAA.isFightMode = true;
+                                    HAA.chargeValue += Time.deltaTime;
+                                    if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                    {
+                                        HAA.StartCharge(attack);
+                                    }
+                                    if (HAA.canCharge)
+                                    {
+                                        if (HAA.chargeValue >= attack.chargeAttack.finalTime && attack.chargeAttack.autoFinal)
+                                        {
+                                            HAA.EndCharge(attack);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                        {
+                                            HAA.chargeValue = attack.chargeAttack.deadTime;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (Input.GetButtonUp("SecondAttack") && attack != null)
@@ -282,6 +374,24 @@ public class KeyboardActorController : PersonController
                             if (HAA.secondaryWeapon is Shield)
                             {
                                 HAA.EndCharge(((Shield)HAA.secondaryWeapon).defStats);
+                            }
+                            else if (HAA.secondaryWeapon is SimpleWeapon && attack != null)
+                            {
+                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)
+                                {
+                                    HAA.EndCharge(attack);
+                                }
+                                else
+                                {
+                                    if (attack.chargeAttack.finalTime > 0)
+                                    {
+                                        HAA.Attack(attack);
+                                    }
+                                }
+                                if (HAA.chargeValue > 0f)
+                                {
+                                    HAA.chargeValue = 0f;
+                                }
                             }
                         }
 
@@ -388,11 +498,6 @@ public class KeyboardActorController : PersonController
                             pActions.Jump(null);
                         }
 
-                        if (Input.GetButtonDown("Interact"))
-                        {
-                            Interact(this);
-                        }
-
                         pActions.Crouch((Input.GetButton("Crouch")) || (WallIsAbove()));
 
                         if ((envStats.groundness == groundnessEnum.inAir) && (rigid.velocity.y < -30f) && (rigid.velocity.y > minLedgeSpeed))
@@ -421,11 +526,6 @@ public class KeyboardActorController : PersonController
                             pActions.AvoidHighObstacle(CheckHeight());
                             hanging = false;
                         }
-                        if (Input.GetButtonDown("Interact"))
-                        {
-                            hanging = false;
-                            pActions.Hang(false);
-                        }
                     }
 
                     #endregion //EdgeState
@@ -437,10 +537,6 @@ public class KeyboardActorController : PersonController
                         if (rigid.velocity.y > 5f)
                         {
                             pActions.AvoidLowObstacle(CheckHeight());
-                        }
-                        else if (Input.GetButtonDown("Interact"))
-                        {
-                            envStats.interaction = interactionEnum.noInter;
                         }
                         if (envStats.obstacleness == obstaclenessEnum.noObstcl)
                         {
@@ -477,10 +573,6 @@ public class KeyboardActorController : PersonController
                         {
                             pActions.StopWalking();
                         }
-                        if (Input.GetButtonDown("Interact"))
-                        {
-                            pActions.Hang(false);
-                        }
 
                         if (envStats.interaction == interactionEnum.platform)
                         {
@@ -508,20 +600,26 @@ public class KeyboardActorController : PersonController
                             {
                                 pActions.StopWalking();
                             }
-                            if (Input.GetButtonDown("Interact"))
-                            {
-                                interactionObject.Interact();
-                            }
                         }
                     }
 
                     #endregion //interactiveObjects
 
+                    if (Input.GetButtonDown("Interact"))
+                    {
+                        Interact(this);
+                    }
+
+                    if (Input.GetButtonDown("ChangeInteraction"))
+                    {
+                        ChangeInteraction();
+                    }
+
                     if (interactions.GetDropList() != null ? interactions.GetDropList().Count > 0 : false)
                     {
                         if (interactions.GetDropList()[0].autoPick)
                         {
-                            TakeDrop();
+                            TakeDrop(0);
                         }
                     }
                     /* if (Input.GetButtonDown("Attack"))//Стоит ли вводить атаки во всех возможных положениях персонажа?
@@ -566,6 +664,8 @@ public class KeyboardActorController : PersonController
                     equip.ChangeRightWeapon();
                     AddPart(equip.rightWeapon, children, anim);
                     SetChildren(anim.parts, children);
+                    pActions.SetWeapon(equip.rightWeapon, "Main");
+                    pActions.SetWeapon(equip.leftWeapon, "Secondary");
                 }
 
                 if (Input.GetButtonDown("ChangeLWeapon"))
@@ -580,6 +680,8 @@ public class KeyboardActorController : PersonController
                     equip.ChangeLeftWeapon();
                     AddPart(equip.leftWeapon, children, anim);
                     SetChildren(anim.parts, children);
+                    pActions.SetWeapon(equip.rightWeapon,"Main");
+                    pActions.SetWeapon(equip.leftWeapon, "Secondary");
                 }
 
                 if (Input.GetButtonDown("ChangeItem"))
@@ -608,7 +710,6 @@ public class KeyboardActorController : PersonController
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
         edgeCheck = transform.FindChild("Indicators").FindChild("EdgeCheck").gameObject.GetComponent<GroundChecker>();
     }
-
 
     /// <summary>
     /// Возвращает инвентарь персонажа
@@ -679,87 +780,91 @@ public class KeyboardActorController : PersonController
         if ((pActions != null) && (interactions!=null))
         {
             pActions.StopWalking();
-            List<InterObjController> interactionList = interactions.GetInteractionList();
-            List<DropClass> dropList = interactions.GetDropList();
-            if (interactionList != null? interactionList.Count>0:false)
+            if (currentInteraction != null)
             {
-                interactionList[0].Interact(this);
-            }
-            else if (dropList!= null? dropList.Count>0:false)
-            {
-                if (dropList.Count > 0)
+                switch (currentInteraction.interactionType)
                 {
-                    TakeDrop();
+                    case interactionInfoEnum.interupt:
+                        {
+                            pActions.Hang(false);
+                            currentInteraction = null;
+                            break;
+                        }
+                    case interactionInfoEnum.door:
+                        {
+                            DoorInteraction();
+                            break;
+                        }
+                    case interactionInfoEnum.intObj:
+                        {
+                            InterObjController interObj = currentInteraction.interObj.GetComponent<InterObjController>();
+                            if (interObj != null)
+                            {
+                                interObj.Interact(interactor);
+                            }
+                            currentInteraction = null;
+                            break;
+                        }
+                    case interactionInfoEnum.drop:
+                        {
+                            DropClass drop = currentInteraction.interObj.GetComponent<DropClass>();
+                            TakeDrop(drop);
+                            currentInteraction = null;
+                            break;
+                        }
                 }
-            }
-            else
-            {
-                DoorInteraction();
             }
         }
     }
 
     protected override void DoorInteraction()
     {
-        Transform trans = sight;
-        float zDistance = Mathf.Abs(currentRoom.position.z + currentRoom.size.z / 2 - trans.position.z) - 0.5f;
-        RaycastHit hit = new RaycastHit();
-        DoorClass door;
-        if (Physics.Raycast(new Ray(trans.position, (int)direction.dir * trans.right), out hit, doorDistance))
+        DoorClass door=currentInteraction==null? null :currentInteraction.interObj.GetComponent<DoorClass>();
+        currentInteraction = null;
+        if (door != null)
         {
-            door = hit.collider.gameObject.GetComponent<DoorClass>();
-            if (door != null)
+            if (door.locker.opened)
             {
+                ChangeRoom(door.roomPath);
+                pActions.GoThroughTheDoor(door);
+            }
+            else
+            {
+                door.locker.TryToOpen(equip);
                 if (door.locker.opened)
                 {
-                    ChangeRoom(door.roomPath);
-                    pActions.GoThroughTheDoor(door);
-                }
-                else
-                {
-                    door.locker.TryToOpen(equip);
-                    if (door.locker.opened)
-                    {
-                        door.pairDoor.locker.opened = true;
-                    }
+                    door.pairDoor.locker.opened = true;
                 }
             }
         }
-
-        if (Physics.Raycast(new Ray(trans.position, Input.GetKey(KeyCode.W) ? new Vector3(0f, 0f, -1f) : new Vector3(0f, 0f, 1f)), out hit, zDistance,LayerMask.GetMask("ground")))
-        {
-            door = hit.collider.gameObject.GetComponent<DoorClass>();
-            if (door != null)
-            {
-                if (door.locker.opened)
-                {
-                    ChangeRoom(door.roomPath);
-                    pActions.GoThroughTheDoor(door);
-                }
-                else
-                {
-                    door.locker.TryToOpen(equip);
-                    if (door.locker.opened)
-                    {
-                        door.pairDoor.locker.opened = true;
-                    }
-                }
-            }
-        }
+        envStats.interaction = interactionEnum.noInter;
+        rigid.useGravity = true;
         base.DoorInteraction();
     }
 
-    void TakeDrop()
+    void TakeDrop(int dropIndex)
     {
         List<DropClass> dropList = interactions.GetDropList();
-        DropClass drop = dropList[0];
+        DropClass drop = dropList[dropIndex];
         List<ItemBunch> items = drop.drop;
         for (int i = 0; i < items.Count; i++)
         {
             equip.TakeItem(items[i]);
         }
-        dropList.RemoveAt(0);
+        dropList.RemoveAt(dropIndex);
         Destroy(drop.gameObject);
+    }
+
+    void TakeDrop(DropClass _drop)
+    {
+        List<DropClass> dropList = interactions.GetDropList();
+        List<ItemBunch> items = _drop.drop;
+        for (int i = 0; i < items.Count; i++)
+        {
+            equip.TakeItem(items[i]);
+        }
+        dropList.Remove(_drop);
+        Destroy(_drop.gameObject);
     }
 
     /// <summary>
@@ -840,9 +945,12 @@ public class KeyboardActorController : PersonController
     /// </summary>
     protected override void DefineInteractable()
     {
-        if ((envStats.interaction != interactionEnum.noInter) && 
-            (envStats.interaction != interactionEnum.interactive)&&
-            (envStats.interaction!=interactionEnum.edge))
+
+        #region specialMovement
+
+        if ((envStats.interaction != interactionEnum.noInter) &&
+            (envStats.interaction != interactionEnum.interactive) &&
+            (envStats.interaction != interactionEnum.edge))
         {
             if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
             {
@@ -864,7 +972,249 @@ public class KeyboardActorController : PersonController
             {
                 envStats.interaction = interactionEnum.platform;
             }
+            if (currentInteraction == null)
+            {
+                CurrentInteraction = new InteractionInfo(interactionInfoEnum.interupt, interuptionMessages[envStats.interaction], null);
+            }
         }
+        else if (currentInteraction!=null?currentInteraction.interactionType==interactionInfoEnum.interupt:false)
+        {
+            CurrentInteraction= null;
+        }
+
+        #endregion //specialMovement
+
+        #region doors
+
+        Transform trans = sight;
+        float zDistance = Mathf.Abs(currentRoom.position.z + currentRoom.size.z / 2 - trans.position.z) - 0.5f;
+        RaycastHit hit = new RaycastHit();
+        List<GameObject> doors1 = new List<GameObject>();
+        DoorClass door;
+        if (Physics.Raycast(new Ray(trans.position, (int)direction.dir * trans.right), out hit, doorDistance))
+        {
+            door = hit.collider.gameObject.GetComponent<DoorClass>();
+            if (door != null)
+            {
+                doors1.Add(door.gameObject);
+            }
+        }
+
+        if (Physics.Raycast(new Ray(trans.position,  new Vector3(0f, 0f, -1f)), out hit, zDistance, LayerMask.GetMask("ground")))
+        {
+            door = hit.collider.gameObject.GetComponent<DoorClass>();
+            if (door != null)
+            {
+                doors1.Add(door.gameObject);
+            }
+        }
+
+        if (Physics.Raycast(new Ray(trans.position, new Vector3(0f, 0f, 1f)), out hit, zDistance, LayerMask.GetMask("ground")))
+        {
+            door = hit.collider.gameObject.GetComponent<DoorClass>();
+            if (door != null)
+            {
+                doors1.Add(door.gameObject);
+            }
+        }
+
+        foreach (GameObject _door in doors1)
+        {
+            if (!doors.Contains(_door))
+            {
+                doors.Add(_door);
+            }
+        }
+
+        foreach (GameObject _door in doors)
+        {
+            if (!doors1.Contains(_door))
+            {
+                doors.Remove(_door);
+            }
+        }
+
+        if (currentInteraction != null ? currentInteraction.interactionType == interactionInfoEnum.door : true)
+        {
+            DoorClass door1;
+            if (currentInteraction==null ? true: !doors.Contains(currentInteraction.interObj))
+            {
+                if (doors.Count > 0)
+                {
+                    door1 = doors[0].GetComponent<DoorClass>();
+                    CurrentInteraction = new InteractionInfo(interactionInfoEnum.door, door1.locker.opened ? doorOpenMessages[door1.doorType] : doorGoThroughMessages[door1.doorType], doors[0]);
+                }
+                else
+                {
+                    CurrentInteraction = null;
+                }
+            }
+        }
+
+        #endregion //doors
+
+        #region interactiveObjects
+
+        if (currentInteraction == null? true : currentInteraction.interactionType==interactionInfoEnum.intObj)
+        {
+            List<InterObjController> _interactions = interactions.GetInteractionList();
+            if (currentInteraction != null)
+            {
+                if (!_interactions.Contains(currentInteraction.interObj.GetComponent<InterObjController>()))
+                {
+                    CurrentInteraction = null;
+                }
+            }
+            if (currentInteraction == null)
+            {
+                foreach (InterObjController interaction in _interactions)
+                {
+                    if ((envStats.interaction != interactionEnum.noInter) && (envStats.interaction != interactionEnum.interactive))
+                    {
+                        if ((SpMoveSourceController)interaction == null)
+                        {
+                            CurrentInteraction = new InteractionInfo(interactionInfoEnum.intObj, interaction.Info, interaction.gameObject);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        CurrentInteraction = new InteractionInfo(interactionInfoEnum.intObj, interaction.Info, interaction.gameObject); 
+                        break;
+                    }
+                }
+            }
+        }
+
+        #endregion //interactiveObjects
+
+        #region drop
+
+        if (currentInteraction == null ? true : currentInteraction.interactionType == interactionInfoEnum.drop)
+        {
+            List<DropClass> drops = interactions.GetDropList();
+            if (currentInteraction != null)
+            {
+                if (!drops.Contains(currentInteraction.interObj.GetComponent<DropClass>()))
+                {
+                    CurrentInteraction = null;
+                }
+            }
+            if ((currentInteraction==null)&&(drops.Count>0))
+            {
+                CurrentInteraction = new InteractionInfo(interactionInfoEnum.drop, "Взять " + drops[0].gameObject.name, drops[0].gameObject);
+            }
+        }
+
+        #endregion //drop
+
+
+    }
+
+    /// <summary>
+    /// Функция, вызываемая, когда игрок хочет поменять объект взаимодействия
+    /// </summary>
+    protected virtual void ChangeInteraction()
+    {
+        int regNumb = 0;
+        if (currentInteraction == null ? true : (int)currentInteraction.interactionType<2)
+        {
+            goto regDoors;
+        }
+        else if (currentInteraction.interactionType==interactionInfoEnum.intObj)
+        {
+            goto regInteractiveObjects;
+        }
+        else if (currentInteraction.interactionType == interactionInfoEnum.drop)
+        {
+            goto regDrop;
+        }
+
+    regSpMovement:
+        #region specialMovement
+
+        {
+            if ((envStats.interaction != interactionEnum.noInter) &&
+                (envStats.interaction != interactionEnum.interactive) &&
+                (envStats.interaction != interactionEnum.edge))
+            {
+                CurrentInteraction = new InteractionInfo(interactionInfoEnum.interupt, interuptionMessages[envStats.interaction], null);
+                return;
+            }
+            regNumb++;
+            if (regNumb > 4)
+            {
+                return;
+            }
+            CurrentInteraction = null;
+        }
+    #endregion //specialMovement
+
+    regDoors:
+        #region doors
+        {
+            if (doors != null)
+            {
+                int doorIndex;
+                doorIndex = currentInteraction != null ? (currentInteraction.interactionType == interactionInfoEnum.door ? doors.IndexOf(currentInteraction.interObj) + 1 : -1) : -1;
+                if (doors.Count > doorIndex+1)
+                {
+                    DoorClass door1 = doors[doorIndex+1].GetComponent<DoorClass>();
+                    CurrentInteraction = new InteractionInfo(interactionInfoEnum.door, door1.locker.opened ? doorOpenMessages[door1.doorType] : doorGoThroughMessages[door1.doorType], door1.gameObject);
+                    return;
+                }
+            }
+            regNumb++;
+            if (regNumb > 4)
+            {
+                return;
+            }
+            CurrentInteraction = null;
+        }
+    #endregion //doors
+
+    regInteractiveObjects:
+        #region interactiveObjects
+        {
+            List<InterObjController> _interactions = interactions.GetInteractionList();
+            int interactionIndex = currentInteraction != null ? (currentInteraction.interactionType == interactionInfoEnum.intObj ? _interactions.IndexOf(currentInteraction.interObj.GetComponent<InterObjController>()) : -1) : -1;
+            if (_interactions.Count > interactionIndex + 1)
+            {
+                InterObjController intObj1 = _interactions[interactionIndex+1];
+                CurrentInteraction = new InteractionInfo(interactionInfoEnum.intObj, intObj1.Info, intObj1.gameObject);
+                return;
+            }
+            regNumb++;
+            if (regNumb > 4)
+            {
+                return;
+            }
+            CurrentInteraction = null;
+        }
+    #endregion //interactiveObjects
+
+    regDrop:
+        #region drop
+
+        {
+            List<DropClass> _drops = interactions.GetDropList();
+            int dropIndex = currentInteraction != null ? (currentInteraction.interactionType == interactionInfoEnum.drop ? _drops.IndexOf(currentInteraction.interObj.GetComponent<DropClass>()) : -1) : -1;
+            if (_drops.Count > dropIndex + 1)
+            {
+                DropClass drop1 = _drops[dropIndex+1];
+                CurrentInteraction = new InteractionInfo(interactionInfoEnum.drop, "Взять "+drop1.gameObject.name, drop1.gameObject);
+                return;
+            }
+            regNumb++;
+            if (regNumb > 4)
+            {
+                return;
+            }
+            CurrentInteraction = null;
+            goto regSpMovement;
+        }
+
+        #endregion //drop
     }
 
     protected virtual bool WallIsAbove()

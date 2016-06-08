@@ -1,0 +1,26 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1894362767	Foot_Player			\Default Work Unit\Foot_Player	
+
+Switch Group	ID	Name			Wwise Object Path	Notes
+	3865314626	Material			\Default Work Unit\Material	
+
+Switch	ID	Name	Switch Group			Notes
+	841620460	Concrete	Material			
+	1216965916	Stone	Material			
+	2058049674	Wood	Material			
+	4248645337	Grass	Material			
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	63120174	FS_Tile_04	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Tile\FS_Tile_04_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Tile\FS_Tile_04		34794
+	73203247	FS_Dirt_04	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_04_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Dirt\FS_Dirt_04		54340
+	383067235	FS_Concrete_01	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Concrete\FS_Concrete_01_82E4E980.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Concrete\FS_Concrete_01		28332
+	405563255	FS_Concrete_03	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Concrete\FS_Concrete_03_ECE9D46A.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Concrete\FS_Concrete_03		29014
+	433556971	FS_Tile_03	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Tile\FS_Tile_03_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Tile\FS_Tile_03		58540
+	470007040	FS_Concrete_02	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Concrete\FS_Concrete_02_001D9819.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Concrete\FS_Concrete_02		27848
+	481431332	FS_Dirt_01	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_01_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Dirt\FS_Dirt_01		43842
+	522000878	FS_Tile_02	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Tile\FS_Tile_02_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Tile\FS_Tile_02		53668
+	529403229	FS_Tile_01	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Tile\FS_Tile_01_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Tile\FS_Tile_01		37506
+	565352196	FS_Concrete_04	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Concrete\FS_Concrete_04_09559DE1.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Concrete\FS_Concrete_04		28316
+	751911638	FS_Dirt_02	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_02_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Dirt\FS_Dirt_02		75860
+	933732286	FS_Dirt_03	C:\Users\Svetlana\Desktop\Footsteps test project\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_03_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Footsteps\Dirt\FS_Dirt_03		75860
+

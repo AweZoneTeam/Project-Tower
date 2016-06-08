@@ -1,0 +1,19 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1367775454	Fire_Shotgun_Player			\Default Work Unit\Fire_Shotgun_Player	
+
+Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
+	150121663	Wwise Silence	Wwise Silence		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Silence\Wwise Silence	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	47468586	ShotgunShellsConcrete_4	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_4_AA0EE85F.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Head\ShotgunShellsConcrete_4		17650
+	101310036	Shotgun_Pump_In	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun_Pump_DDC98EF4.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun_Pump_In		22112
+	279401839	ShotgunShellsConcrete_2	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_2_C9019281.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Tail\ShotgunShellsConcrete_2		103150
+	311899020	ShotgunShellsConcrete_1	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_1_599E6FA9.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Head\ShotgunShellsConcrete_1		18518
+	328964265	Shotgun_Pump_Out	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun_Pump_7CAE16A7.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun_Pump_Out		16198
+	353454111	ShotgunShellsConcrete_4	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_4_526AF77C.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Tail\ShotgunShellsConcrete_4		122392
+	528849503	ShotgunShellsConcrete_3	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_3_94FCC8C7.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Tail\ShotgunShellsConcrete_3		100402
+	603801576	ShotgunShellsConcrete_1	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_1_8B5C274B.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Tail\ShotgunShellsConcrete_1		36022
+	900882877	ShotgunShellsConcrete_2	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_2_A47AD244.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Head\ShotgunShellsConcrete_2		32406
+	900944804	ShotgunShellsConcrete_3	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Shells\ShotgunShellsConcrete_3_4B3B1B73.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Shells\Shotgun Shells Head\ShotgunShellsConcrete_3		33418
+	914552085	Shotgun Blast	C:\Users\Dave\Desktop\Wwise Lessons\Lesson 4\Wwise Project Lesson 4\.cache\Windows\SFX\Shotgun Blast_DDC98EF4.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shotgun Blast		179026
+

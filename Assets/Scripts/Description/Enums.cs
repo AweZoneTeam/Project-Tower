@@ -47,6 +47,11 @@ public enum obstaclenessEnum {noObstcl, lowObstcl, medObstcl, highObstcl, wall};
 public enum interactionEnum {noInter, ladder, rope, thicket, ledge, platform, edge, lowEdge, interactive};
 
 /// <summary>
+/// Возможные типы взаимодействий, назначенные на баттон interact
+/// </summary>
+public enum interactionInfoEnum {interupt, door, intObj, drop };
+
+/// <summary>
 /// За какой тип двери отвечает каждый номер типа
 /// </summary>
 public enum doorEnum { left, right, back, forward, down, up, everywhere };

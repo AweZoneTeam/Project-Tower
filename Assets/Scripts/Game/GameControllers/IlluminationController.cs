@@ -9,8 +9,8 @@ public class IlluminationController : MonoBehaviour
 {
     #region consts
 
-    const float sunIntensity = 1.5f;
-    const float moonIntensity = 0.15f;
+    const float sunIntensity = 1f;
+    const float moonIntensity = 0.5f;
     const float defNightIntensity = 0.2f;
     const float defDayIntensity = 1f;
 

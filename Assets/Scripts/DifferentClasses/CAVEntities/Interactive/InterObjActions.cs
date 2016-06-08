@@ -8,9 +8,11 @@ public class InterObjActions : MonoBehaviour
 {
 
     #region fields
+
     protected Direction direction;
     protected InterObjVisual anim;
     protected InterObjController interactor;
+
     #endregion //fields
 
     public virtual void Initialize()

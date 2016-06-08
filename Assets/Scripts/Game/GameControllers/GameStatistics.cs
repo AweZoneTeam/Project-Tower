@@ -71,8 +71,8 @@ public class GameStatistics : MonoBehaviour
         }
         else
         {
-            GameTime.timer = 140f;
-            PlayerPrefs.SetFloat("Timer", 140f);
+            GameTime.timer = 70f;
+            PlayerPrefs.SetFloat("Timer", 70f);
             GameTime.SetTime(defMonth, defDay, defHour, defMin);
         }
         currentArea = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>().currentRoom;

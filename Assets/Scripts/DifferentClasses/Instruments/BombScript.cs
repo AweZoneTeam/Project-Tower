@@ -39,7 +39,7 @@ public class BombScript : MonoBehaviour
         mov = GetComponent<GAFMovieClip>();
         hitBox = GetComponentInChildren<HitController>();
         explode = false;
-        //hitBox.SetEnemies(null);
+        hitBox.SetEnemies(null);
         StartCoroutine(PreExplosionProcess(preExplosionTime));
     }
 
@@ -65,8 +65,7 @@ public class BombScript : MonoBehaviour
         mov.setSequence("Explosion", true);
         mov.settings.targetFPS = explosionFPS;
         GameObject hBox = hitBox.gameObject;
-        hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
-        this.hitBox.SetHitBox(explosionTime, hitData);
+        hitBox.SetHitBox(explosionTime, hitData);
         yield return new WaitForSeconds(explosionTime);
         Destroy(gameObject);
     }

@@ -820,8 +820,6 @@ public class HumanoidActorActions : PersonActions
         if (hitBox != null)
         {
             GameObject hBox = hitBox.gameObject;
-            hBox.transform.localPosition = hitData.hitPosition;
-            hBox.GetComponent<BoxCollider>().size = hitData.hitSize;
             employment -= _employment;
             StopWalking();
             if (hitData.hitForce.magnitude > 0)

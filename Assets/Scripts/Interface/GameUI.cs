@@ -217,6 +217,16 @@ public class GameUI : InterfaceWindow
     /// </summary>
     void HandleMessageSentEvent(object sender, MessageSentEventArgs e)
     {
+        if (e.TextNumb == 3)
+        {
+            messagePanel.SetActive(true);
+            message2.text = e.Message;
+        }
+        else if (e.TextNumb == 4)
+        {
+            message2.text = "";
+            messagePanel.SetActive(false);
+        }
         StartCoroutine(GetMessage(e.Message, e.TextNumb, e.TextTime));
     }
 

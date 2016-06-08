@@ -274,21 +274,33 @@ public static class SpFunctions {
     {
         foreach (GameObject obj in GameStatistics.currentArea.hideForeground)
         {
-            obj.SetActive(true);
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
         }
         foreach (GameObject obj in GameStatistics.currentArea.lightSources)
         {
-            obj.SetActive(false);
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
         }
         GameStatistics.currentArea = room;
         GameStatistics.lumControl.SetIntensity(room.DayAmbIntensity, room.NightAmbIntensity);
         foreach (GameObject obj in GameStatistics.currentArea.hideForeground)
         {
-            obj.SetActive(false);
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
         }
         foreach (GameObject obj in GameStatistics.currentArea.lightSources)
         {
-            obj.SetActive(true);
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
         }
     }
 

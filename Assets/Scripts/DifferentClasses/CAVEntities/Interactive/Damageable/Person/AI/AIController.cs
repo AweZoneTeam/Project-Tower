@@ -59,7 +59,7 @@ public class AIController : PersonController, IPersonWatching
 
     #region fields
 
-    public int k1 = 0;
+    //public int k1 = 0;
 
     protected HearingScript hearing;//Слух персонажа
 
@@ -614,7 +614,6 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected virtual void Attack (string id, int argument)
     {
-        k1++;
         pActions.SetHitData(id);
         pActions.Attack();
     }
@@ -864,7 +863,7 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected virtual void TestFunction(string id, int argument)
     {
-        k1++;
+        //k1++;
     }
 
     /// <summary>

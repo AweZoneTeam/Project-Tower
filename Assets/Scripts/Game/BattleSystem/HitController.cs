@@ -26,7 +26,7 @@ public class HitController : MonoBehaviour
         if ((actTime >= 0f) && (col.enabled == true)) {
             actTime -= Time.deltaTime;
         }
-        if (actTime < 0f) {
+        if ((actTime <= 0f) && (actTime != -1f)) {
             col.enabled = false;
             list.Clear();
             actTime = 0f;
@@ -41,6 +41,20 @@ public class HitController : MonoBehaviour
     {
         actTime = _actTime;
         hitData = _hitData;
+        transform.localPosition = hitData.hitPosition;
+        col.size = hitData.hitSize;
+        col.enabled = true;
+    }
+
+    /// <summary>
+    /// Настройка ХитБокса
+    /// </summary>
+    public void SetHitBox(bool activate, HitClass _hitData)
+    {
+        actTime = activate?-1f:0f;
+        hitData = _hitData;
+        transform.localPosition = hitData.hitPosition;
+        col.size = hitData.hitSize;
         col.enabled = true;
     }
 

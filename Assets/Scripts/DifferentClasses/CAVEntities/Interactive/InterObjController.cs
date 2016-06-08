@@ -10,9 +10,14 @@ using UnityEditor;
 public class InterObjController : MonoBehaviour
 {
     #region fields
+
     protected Direction direction;
     protected InterObjActions intActions;
-   
+
+    [SerializeField]
+    protected string info;//Информация о том, как взаимодействовать с данным объектом.
+    public string Info { get { return info; } }
+
     //protected InterObjVisual anim;
     #endregion //fields
 
