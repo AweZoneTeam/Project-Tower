@@ -32,6 +32,8 @@ public class HumanoidActorActions : PersonActions
     #region parametres
 
     public float flipForce = 2000f;
+    public float defJumpForce = 50f;
+    float currentScale;
 
 	public bool touchingGround;
 	public BoxCollider2D groundCol;
@@ -53,7 +55,8 @@ public class HumanoidActorActions : PersonActions
 
     #endregion //fields
 
-    #region queue//очередь инпутов
+    //очередь инпутов
+    #region queue
 
     public ActionQueue actionQueue = new ActionQueue();
 
@@ -328,6 +331,7 @@ public class HumanoidActorActions : PersonActions
     public override void Initialize()
     {
         base.Initialize();
+        interactor = GetComponent<InterObjController>();
         FuncDictionry();
         cam = GameObject.FindGameObjectWithTag(Tags.cam).GetComponent<CameraController>();
         rigid = GetComponent<Rigidbody>();
@@ -339,7 +343,60 @@ public class HumanoidActorActions : PersonActions
         upperBody = cols[1];
         frontWallCheck = transform.FindChild("Indicators").FindChild("FrontWallCheck");
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck");
+        lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck");
         employment = maxEmployment;
+    }
+
+    public override void RemoveMount()
+    {
+          
+        float scale = 1f / currentScale;
+        currentScale = 1;
+        runSpeed = defRunSpeed;
+        jumpForce = defJumpForce;
+        secondaryWeapon = null;
+        lowWallCheck.parent.transform.localScale =
+            new Vector3(
+                lowWallCheck.parent.transform.localScale.x,
+                lowWallCheck.parent.transform.localScale.y * scale,
+                lowWallCheck.parent.transform.localScale.z
+                );
+        foreach (BoxCollider col in GetComponents<BoxCollider>())
+        {
+            col.size = new Vector3(col.size.x, col.size.y * scale, col.size.z);
+            col.center = new Vector3(col.center.x, col.center.y * scale, col.center.z);
+        }
+        CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
+        List<PartController> childs = new List<PartController>();
+        ((KeyboardActorController)interactor).DeletePart("Mount", childs, anim);
+        ((KeyboardActorController)interactor).SetChildren(anim.parts, childs);
+    }
+
+    /// <summary>
+    /// Сесть на маунта
+    /// </summary>
+    public override void UseMount(MountActions mount)
+    {
+        lowWallCheck.parent.transform.localScale =
+            new Vector3(
+                lowWallCheck.parent.transform.localScale.x,
+                lowWallCheck.parent.transform.localScale.y * mount.height,
+                lowWallCheck.parent.transform.localScale.z
+                );
+        foreach (BoxCollider col in GetComponents<BoxCollider>())
+        {
+            col.size = new Vector3(col.size.x, col.size.y * mount.height, col.size.z);
+            col.center = new Vector3(col.center.x, col.center.y * mount.height, col.center.z);
+        }
+        currentScale = mount.height;
+        transform.position += new Vector3(0f, 10f, 0f);
+        runSpeed = mount.tameSpeed;
+        jumpForce = mount.tameJumpForce;
+        secondaryWeapon = mount.weapon;
+        CharacterAnimator anim = GetComponentInChildren<CharacterAnimator>();
+        List<PartController> childs = new List<PartController>();
+        ((KeyboardActorController)interactor).AddPart(mount.part, childs, anim);
+        ((KeyboardActorController)interactor).SetChildren(anim.parts, childs);
     }
 
     /// <summary>

@@ -12,7 +12,7 @@ public class InteractionChecker : PreInteractionChecker {
 
     protected List<DropClass> dropList=new List<DropClass>();
 
-    protected List<string> interactiveTags= new List<string> {"Interactive", "NPC"};
+    protected List<string> interactiveTags= new List<string> {"Interactive", "NPC", "Enemy"};
 
     public override void OnTriggerEnter(Collider other)
     {

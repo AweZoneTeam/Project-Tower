@@ -126,6 +126,22 @@ public class PersonActions : DmgObjActions
     #region Interface
 
     /// <summary>
+    /// Сесть на маунта
+    /// </summary>
+    public virtual void UseMount(MountActions mount)
+    {
+
+    }
+
+    /// <summary>
+    /// Спешиться
+    /// </summary>
+    public virtual void RemoveMount()
+    {
+
+    }
+
+    /// <summary>
     /// Посмотреть в указанном направлении
     /// </summary>
     public virtual void Observe(Vector2 sightDirection)

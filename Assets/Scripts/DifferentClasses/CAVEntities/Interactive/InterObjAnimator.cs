@@ -221,11 +221,14 @@ public class InterObjAnimator : MonoBehaviour
                 frameGap = (int)parts[0].mov.getCurrentFrameNumber() - (int)parts[0].mov.currentSequence.startFrame;
                 for (int i = 1; i < parts.Count; i++)
                 {
-                    aInfo = parts[i].interp.animTypes[anim.type].animInfo[anim.numb];
-                    parts[i].mov.gotoAndStop((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
-                    if (!aInfo.stepByStep || !aInfo.stopStepByStep)
+                    if (parts[i].mov.currentSequence != null)
                     {
-                        parts[i].mov.setPlaying(true);
+                        aInfo = parts[i].interp.animTypes[anim.type].animInfo[anim.numb];
+                        parts[i].mov.gotoAndStop((uint)((int)parts[i].mov.currentSequence.startFrame + frameGap));
+                        if (!aInfo.stepByStep || !aInfo.stopStepByStep)
+                        {
+                            parts[i].mov.setPlaying(true);
+                        }
                     }
                     /*else if (aInfo.stepByStep)
                     {

@@ -32,7 +32,9 @@ public class PersonController : DmgObjController, IPersonWatching
     #region eventHandlers
 
     public event EventHandler<RoomChangedEventArgs> RoomChangedEvent;
-      
+    public event EventHandler<MountEventArgs> OnUseMount;
+    public event EventHandler<MountEventArgs> OnRemoveMount;
+
     #endregion //eventHandlers
 
     #region indicators
@@ -72,6 +74,8 @@ public class PersonController : DmgObjController, IPersonWatching
     #endregion //fields
 
     #region parametres
+
+    protected MountActions currentMount;
 
     public AreaClass currentRoom;//В какой комнате находится персонаж в данный момент
 
@@ -243,6 +247,24 @@ public class PersonController : DmgObjController, IPersonWatching
         {
             interactions.ZCoordinate=0;
         }
+    }
+
+    /// <summary>
+    /// Использование маунта
+    /// </summary>
+    public virtual void UseMount(MountActions m)
+    {
+        if (OnUseMount != null)
+            OnUseMount(this, new MountEventArgs(m));
+        currentMount = m;
+    }
+    /// <summary>
+    /// Слезть с маунта
+    /// </summary>
+    public virtual void RemoveMount()
+    {
+        if (OnRemoveMount != null)
+            OnRemoveMount(this, null);
     }
 
     /// <summary>

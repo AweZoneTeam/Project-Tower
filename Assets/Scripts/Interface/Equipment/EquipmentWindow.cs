@@ -68,7 +68,7 @@ public class EquipmentWindow : InterfaceWindow
 
     #region characterDoll
 
-    private ItemSlot rightWeaponSlot1, rightWeaponSlot2, leftWeaponSlot1, leftWeaponSlot2;
+    public ItemSlot rightWeaponSlot1, rightWeaponSlot2, leftWeaponSlot1, leftWeaponSlot2;
 
     #endregion //characterDoll
 
@@ -214,7 +214,9 @@ public class EquipmentWindow : InterfaceWindow
         }
     }
 
-    //проверяет есть ли нужное количество сободных слотов
+    /// <summary>
+    /// проверяет есть ли нужное количество сободных слотов
+    /// </summary>
     public bool HaveEmptySlots(byte count)
     {
         byte _count = 0;
@@ -282,7 +284,6 @@ public class EquipmentWindow : InterfaceWindow
             leftWeaponSlot1.Initialize(this, leftWeaponSlot2.itemBunch);
             leftWeaponSlot2.Initialize(this, _itemBunch);
         }
-
     }
 
     void ResourceChangedEventHandler(object sender, ResourceChangedEventArgs e)

@@ -31,6 +31,7 @@ public class GameStatistics : MonoBehaviour
 
     #region parametres
 
+    public CheckpointActions lastCheckPoint;
     public static AreaClass currentArea; //В какой комнате (пространстве) персонаж находится на данный момент
     public int deathNumber; //Сколько раз уже главный герой проигрывал.
 
