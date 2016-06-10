@@ -3,6 +3,11 @@ using System.Collections;
 
 public class CheckpointActions : InterObjActions
 {
+
+    #region parameters
+    public AreaClass currentRoom;
+    #endregion
+
     /// <summary>
     /// Произвести взаимодействие
     /// </summary>

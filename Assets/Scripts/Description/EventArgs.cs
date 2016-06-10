@@ -238,3 +238,12 @@ public class JournalRefreshEventArgs : EventArgs
         set { jData = value; }
     }
 }
+
+public class MountEventArgs : EventArgs
+{
+    public MountActions mount;
+    public MountEventArgs(MountActions _m)
+    {
+        mount = _m;
+    }
+}

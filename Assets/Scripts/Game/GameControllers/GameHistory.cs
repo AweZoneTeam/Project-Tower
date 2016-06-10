@@ -75,17 +75,19 @@ public class JournalScriptStock
 
         jActionBase.Add("add", SendNewData);
         jActionBase.Add("completeQuest", QuestComplete);
+        jActionBase.Add("give item", TakeItem);
 
         jConditionBase.Add("startGame", GameBeginInit);
         jConditionBase.Add("doorOpened", DoorOpenInit);
         jConditionBase.Add("enemyIsDead", EnemyDeathInit);
         jConditionBase.Add("enterUsed", EnterUseInit);
+        jConditionBase.Add("speech", SpeechInit);
 
         jDeInitBase.Add("startGame", GameBeginDeInit);
         jDeInitBase.Add("doorOpened", DoorOpenDeInit);
         jDeInitBase.Add("enemyIsDead", EnemyDeathDeInit);
         jDeInitBase.Add("enterUsed", EnterUseDeInit);
-
+        jDeInitBase.Add("speech", SpeechInit);
     }
 
     /// <summary>
@@ -111,7 +113,7 @@ public class JournalScriptStock
         }
 
         jTarget = jInit.eventReason;
-
+        Debug.Log(_script.name);
         //В первую очередь, подпишемся на журнальные объекты
         if (jConditionBase.ContainsKey(_script.jDataConditionName))
         {
@@ -212,6 +214,21 @@ public class JournalScriptStock
         this.OnQuestCompleted(new JournalRefreshEventArgs(data));
     }
 
+    /// <summary>
+    /// Некоторые предметы попадают в инвентарь
+    /// </summary>
+    /// <param name="_action"></param>
+    public void TakeItem(JournalEventAction _action)
+    {
+        DropClass drop = _action.obj.GetComponent<DropClass>();
+        EquipmentClass equip=((EquipmentClass)SpFunctions.GetPlayer().GetEquipment());
+        for (int i = 0; i < drop.drop.Count; i++)
+        {
+            SpFunctions.SendMessage(new MessageSentEventArgs("Вы получили " + drop.drop[i].item.itemName, 2, 2f));
+            equip.TakeItem(drop.drop[i]);
+        }
+    }
+
     #endregion //journalActions
 
     #region initFunctions
@@ -246,7 +263,26 @@ public class JournalScriptStock
     void EnterUseInit(JournalEventScript _script, GameObject obj)
     {
         obj.GetComponent<EnterClass>().EnterUseJournalEvent += _script.HandleJournalEvent;
-    } 
+    }
+
+    /// <summary>
+    /// Вызвать событие при определённой реплике
+    /// </summary>
+    void SpeechInit(JournalEventScript _script, GameObject obj)
+    {
+        if (obj.GetComponent<NPCActions>() != null)
+        {
+            NPCActions NPC = obj.GetComponent<NPCActions>();
+            for (int i = 0; i < NPC.speeches.Count; i++)
+            {
+                Debug.Log(NPC.speeches[i].name);
+                if (NPC.speeches[i].name == _script.id)
+                {
+                    NPC.speeches[i].SpeechJournalEvent += _script.HandleJournalEvent;
+                }
+            }
+        }
+    }
 
     #endregion //initFunctions
 

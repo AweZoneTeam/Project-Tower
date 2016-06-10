@@ -31,6 +31,7 @@ public class GameStatistics : MonoBehaviour
 
     #region parametres
 
+    public CheckpointActions lastCheckPoint;
     public static AreaClass currentArea; //В какой комнате (пространстве) персонаж находится на данный момент
     public static IlluminationController lumControl;//Контроллер освещения
     public int deathNumber; //Сколько раз уже главный герой проигрывал.
@@ -71,8 +72,8 @@ public class GameStatistics : MonoBehaviour
         }
         else
         {
-            GameTime.timer = 70f;
-            PlayerPrefs.SetFloat("Timer", 70f);
+            GameTime.timer = 90f;
+            PlayerPrefs.SetFloat("Timer", 90f);
             GameTime.SetTime(defMonth, defDay, defHour, defMin);
         }
         currentArea = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>().currentRoom;

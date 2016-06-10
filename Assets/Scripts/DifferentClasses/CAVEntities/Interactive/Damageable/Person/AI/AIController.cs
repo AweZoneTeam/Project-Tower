@@ -195,7 +195,9 @@ public class AIController : PersonController, IPersonWatching
 
         #region journalActionBase
 
-        jActionBase.Add("makeAnEnemy", MakeAnEnemy);
+        jActionBase.Add("make an enemy", MakeAnEnemy);
+        jActionBase.Add("change behaviour", ChangeBehaviour);
+        jActionBase.Add("make talk", MakeTalk);
 
         #endregion //journalActionBase
 
@@ -296,7 +298,7 @@ public class AIController : PersonController, IPersonWatching
     {
         person.RoomChangedEvent -= TargetChangeRoom;
     }
-
+    
     /// <summary>
     /// Если главная цель выйдет в соседнюю комнату, то ИИ это заметит и начнёт искать цель в следующей комнате
     /// </summary>
@@ -504,7 +506,10 @@ public class AIController : PersonController, IPersonWatching
     protected virtual void UseRoute(string id, int argument)
     {
         int hour = GameTime.hour;
-        waypoints.Clear();
+        if (waypoints != null)
+        {
+            waypoints.Clear();
+        }
         RouteClass currentRoute = null;
         foreach (RouteClass route in routes)
         {
@@ -752,6 +757,16 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Исчезнуть
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="argument"></param>
+    protected virtual void Disappear(string id, int argument)
+    {
+        GoAway();
+    }
+
+    /// <summary>
     /// Как персонаж взаимодействует с рычагами
     /// </summary>
     protected virtual void LeverInteraction(string id, int argument)
@@ -828,6 +843,10 @@ public class AIController : PersonController, IPersonWatching
             else if (string.Equals(currentTarget.targetType, "turnpoint"))
             {
                 TurnpointInteraction("", 0);
+            }
+            else if (string.Equals(currentTarget.targetType, "disappear"))
+            {
+                Disappear("", 0);
             }
         }
     }
@@ -1386,6 +1405,38 @@ public class AIController : PersonController, IPersonWatching
         if (!enemies.Contains(newEnemy))
         {
             enemies.Add(newEnemy);
+        }
+    }
+
+    /// <summary>
+    /// Сменить модель поведения
+    /// </summary>
+    protected virtual void ChangeBehaviour(JournalEventAction _action)
+    {
+        BehaviourClass _behaviour;
+        for (int i = 0; i < behaviours.Count; i++)
+        {
+            _behaviour = behaviours[i].behaviour;
+            if (string.Equals(_action.id, behaviours[i].path))
+            {
+                currentBehaviour = _behaviour;
+                break;
+            }
+        }
+        //Переосмотреть цели
+        whoAttacksMe = null;
+        currentTarget = null;
+        waypoints = null;
+    }
+
+    /// <summary>
+    /// Сделать персонажа способным (или неспособным вести диалог)
+    /// </summary>
+    protected virtual void MakeTalk(JournalEventAction _action)
+    {
+        if ((NPCActions)pActions!= null)
+        {
+            ((NPCActions)pActions).canTalk = string.Equals("yes", _action.id);
         }
     }
 

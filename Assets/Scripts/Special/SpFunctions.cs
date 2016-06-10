@@ -166,6 +166,11 @@ public static class SpFunctions {
 		return vect1 - vect3;
 	}
 
+    public static KeyboardActorController GetPlayer()
+    {
+        return GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>();
+    }
+
 	/// <summary>
 	/// Функция, которая рыскает по данному списку анимационных частей,
 	///  причём учитывая все зависимые части, и возвращает часть с данным именем
@@ -336,6 +341,12 @@ public static class SpFunctions {
             Time.timeScale = 0f;
             GameStatistics.paused = true;
         }
+    }
+
+    public static void BeginDialog(NPCActions _NPC)
+    {
+        InterfaceController interControl = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<InterfaceController>();
+        interControl.OpenDialogWindow(_NPC);
     }
 
     /// <summary>

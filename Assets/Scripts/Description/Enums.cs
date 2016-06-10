@@ -44,7 +44,7 @@ public enum obstaclenessEnum {noObstcl, lowObstcl, medObstcl, highObstcl, wall};
 /// <summary>
 /// Номера приоритетности у взаимодействующих с персонажем объектов. Нужно ли это, покажет время
 /// </summary>
-public enum interactionEnum {noInter, ladder, rope, thicket, ledge, platform, edge, lowEdge, interactive};
+public enum interactionEnum {noInter, ladder, rope, thicket, ledge, platform, edge, lowEdge, mount, interactive};
 
 /// <summary>
 /// Возможные типы взаимодействий, назначенные на баттон interact

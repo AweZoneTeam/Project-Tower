@@ -34,7 +34,8 @@ public class KeyboardActorController : PersonController
                                                                                                                   { interactionEnum.ledge, "Отпустить выступ"},
                                                                                                                   { interactionEnum.platform, "Отпустить платформу"},
                                                                                                                   { interactionEnum.rope, "Отпустить верёвку"},
-                                                                                                                  { interactionEnum.thicket, "Отпустить заросли" } };
+                                                                                                                  { interactionEnum.thicket, "Отпустить заросли" },
+                                                                                                                  { interactionEnum.mount, "Спешиться"} };
     /// <summary>
     /// Типовые сообщения о возможности открыть дверь
     /// </summary>
@@ -65,6 +66,12 @@ public class KeyboardActorController : PersonController
 
     //текущая выполняемая атака
     AttackClass attack = new AttackClass();
+    
+    //использует ли персонаж маунта
+    bool mounted;
+
+    //окно инвентаря
+    public EquipmentWindow equipWindow;
 
     public int fastRunInputCount = 0;
     protected float fastRunInputTimer = 0f;
@@ -127,34 +134,32 @@ public class KeyboardActorController : PersonController
 
                     #region UsualState
 
-                    if (envStats.interaction == interactionEnum.noInter)
+                    if ((envStats.interaction == interactionEnum.noInter)|| (envStats.interaction == interactionEnum.mount))
                     {
 
                         #region mainWeapon
-
+                        //это условие обрабатывае ситуацию когда быстро(за один кадр) был отжита и нажата кнопка атаки(
                         if (Input.GetButtonUp("Attack") && Input.GetButtonDown("Attack"))
                         {
                             if (HAA.mainWeapon is SimpleWeapon && attack != null)
                             {
-                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)
+                                if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.finalTime > 0f)//чардж копился
                                 {
                                     HAA.EndCharge(attack);
                                 }
-                                else
+                                else//чардж не копился
                                 {
-                                    if (attack.chargeAttack.finalTime > 0)
-                                    {
-                                        HAA.Attack(attack);
-                                    }
+                                    HAA.Attack(attack);
                                 }
+                                attack = null;
                             }
                             if (HAA.secondaryWeapon is Bow)
                             {
-                                if (HAA.canCharge && HAA.chargeValue < 0)
+                                if (HAA.canCharge && HAA.chargeValue < 0)//персонаж прицеливался
                                 {
                                     HAA.EndCharge(((Bow)HAA.secondaryWeapon).arrowStats);
                                 }
-                                else
+                                else//персонаж не прицеливался
                                 {
                                     HAA.Attack(((Bow)HAA.secondaryWeapon).arrowStats);
                                 }
@@ -173,11 +178,11 @@ public class KeyboardActorController : PersonController
                                     {
                                         HAA.Attack(attack);
                                     }
-                                    else
+                                    else//чардж есть
                                     {
-                                        if (HAA.chargeValue >= 0)
-                                        {
-                                            HAA.chargeValue = 0f;
+                                        if (HAA.chargeValue >= 0)//теоретически это условие не выполнится никогда так как 
+                                        {                        //после всякого чарджа он и так всё обнуляет
+                                            HAA.chargeValue = 0f;//но осторожность не повредит
                                             HAA.canCharge = false;
                                         }
                                     }
@@ -189,11 +194,11 @@ public class KeyboardActorController : PersonController
                         {
                             if (HAA.mainWeapon is SimpleWeapon && attack != null)
                             {
-                                if (HAA.chargeValue >= 0)
+                                if (HAA.chargeValue >= 0)//если персонаж не прицеливаемся
                                 {
                                     HAA.isFightMode = true;
                                     HAA.chargeValue += Time.deltaTime;
-                                    if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                    if (HAA.chargeValue > attack.chargeAttack.deadTime)// && attack.chargeAttack.deadTime > 0 убрал пока
                                     {
                                         HAA.StartCharge(attack);
                                     }
@@ -206,7 +211,7 @@ public class KeyboardActorController : PersonController
                                     }
                                     else
                                     {
-                                        if (HAA.chargeValue > attack.chargeAttack.deadTime && attack.chargeAttack.deadTime > 0)
+                                        if (HAA.chargeValue > attack.chargeAttack.deadTime)// && attack.chargeAttack.deadTime > 0 убрал пока
                                         {
                                             HAA.chargeValue = attack.chargeAttack.deadTime;
                                         }
@@ -777,7 +782,7 @@ public class KeyboardActorController : PersonController
     /// </summary>
     public override void Interact(InterObjController interactor)
     {
-        if ((pActions != null) && (interactions!=null))
+        if ((pActions != null) && (currentInteraction!=null))
         {
             pActions.StopWalking();
             if (currentInteraction != null)
@@ -786,8 +791,15 @@ public class KeyboardActorController : PersonController
                 {
                     case interactionInfoEnum.interupt:
                         {
-                            pActions.Hang(false);
-                            currentInteraction = null;
+                            if (envStats.interaction == interactionEnum.mount)
+                            {
+                                RemoveMount();
+                            }
+                            else
+                            {
+                                pActions.Hang(false);
+                                currentInteraction = null;
+                            }
                             break;
                         }
                     case interactionInfoEnum.door:
@@ -837,7 +849,10 @@ public class KeyboardActorController : PersonController
                 }
             }
         }
-        envStats.interaction = interactionEnum.noInter;
+        if (envStats.interaction != interactionEnum.mount)
+        {
+            envStats.interaction = interactionEnum.noInter;
+        }
         rigid.useGravity = true;
         base.DoorInteraction();
     }
@@ -887,6 +902,45 @@ public class KeyboardActorController : PersonController
         }
     }
 
+    /// <summary>
+    /// спешиться
+    /// </summary>
+    public override void RemoveMount()
+    {
+        base.RemoveMount();
+        mounted = false;
+        pActions.RemoveMount();
+    }
+
+    /// <summary>
+    /// спешиться
+    /// </summary>
+    public override void UseMount(MountActions mount)
+    {
+        base.UseMount(mount);
+        OnRemoveMount += currentMount.Appear;
+        if (equip.leftWeapon != null)
+        {
+            Debug.Log("левого оружия нет");
+            if (equipWindow.HaveEmptySlots(1))
+            {
+                mounted = true;
+                Debug.Log("Есть пустой слот");
+                equipWindow.AddItemInBag(equipWindow.leftWeaponSlot1.itemBunch);
+                equipWindow.leftWeaponSlot1.DeleteItem();
+                if(equip.leftWeapon.weaponType == "bow" || equip.leftWeapon.weaponType == "twoHandedSword")
+                {
+                    equipWindow.rightWeaponSlot1.DeleteItem();
+                }
+            }
+            else
+            {
+                Debug.Log("Нет пустого слота");
+                return;
+            }
+        }
+        pActions.UseMount(mount);
+    }
     #endregion //Interact
 
     #region Analyze
@@ -952,25 +1006,28 @@ public class KeyboardActorController : PersonController
             (envStats.interaction != interactionEnum.interactive) &&
             (envStats.interaction != interactionEnum.edge))
         {
-            if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
+            if (envStats.interaction != interactionEnum.mount)
             {
-                envStats.interaction = interactionEnum.thicket;
-            }
-            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("rope")).Length > 0)
-            {
-                envStats.interaction = interactionEnum.rope;
-            }
-            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ladder")).Length > 0)
-            {
-                envStats.interaction = interactionEnum.ladder;
-            }
-            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ledge")).Length > 0)
-            {
-                envStats.interaction = interactionEnum.ledge;
-            }
-            else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("platform")).Length > 0)
-            {
-                envStats.interaction = interactionEnum.platform;
+                if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("thicket")).Length > 0)
+                {
+                    envStats.interaction = interactionEnum.thicket;
+                }
+                else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("rope")).Length > 0)
+                {
+                    envStats.interaction = interactionEnum.rope;
+                }
+                else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ladder")).Length > 0)
+                {
+                    envStats.interaction = interactionEnum.ladder;
+                }
+                else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("ledge")).Length > 0)
+                {
+                    envStats.interaction = interactionEnum.ledge;
+                }
+                else if (Physics.OverlapSphere(interCheck.position, interRadius, LayerMask.GetMask("platform")).Length > 0)
+                {
+                    envStats.interaction = interactionEnum.platform;
+                }
             }
             if (currentInteraction == null)
             {
@@ -1553,7 +1610,7 @@ public class KeyboardActorController : PersonController
                     if (part != null)
                     {
                         parts.Add(part);
-                        if (dependedPartTypes.Contains(part.partType))
+                        if (dependedPartTypes.Contains(part.partType)) 
                         {
                             childParts.Add(part);
                         }
@@ -1563,10 +1620,33 @@ public class KeyboardActorController : PersonController
         }
     }
 
+
+    /// <summary>
+    /// Функция, вызываемая при добавлении новой части
+    /// </summary>
+    public void AddPart(GameObject partObj, List<PartController> childParts, CharacterAnimator anim)
+    {
+        List<PartController> parts = anim.parts;
+        PartController part = null;
+        GameObject obj = Instantiate(partObj) as GameObject;
+        part = obj.GetComponent<PartController>();
+        obj.transform.parent = anim.transform;
+        obj.transform.localPosition = part.transform.position;
+        obj.transform.localScale = new Vector3(1f, 1f, 1f);
+        if (part != null)
+        {
+            parts.Add(part);
+            if (dependedPartTypes.Contains(part.partType))
+            {
+                childParts.Add(part);
+            }
+        }
+    }
+
     /// <summary>
     /// Функция, вызываемая для удаления не использующихся частей
     /// </summary>
-    protected void DeletePart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
+    public void DeletePart(ItemClass item, List<PartController> childParts, CharacterAnimator anim)
     {
         if (item != null)
         {
@@ -1583,7 +1663,7 @@ public class KeyboardActorController : PersonController
                         break;
                     }
                 }
-                if (part!=null)
+                if (part != null)
                 {
                     parts.Remove(part);
                     if (part.childParts != null)
@@ -1602,10 +1682,40 @@ public class KeyboardActorController : PersonController
         }
     }
 
+    public void DeletePart(string partName, List<PartController> childParts, CharacterAnimator anim)
+    {
+        List<PartController> parts = anim.parts;
+        PartController part = null;
+        foreach (PartController _part in parts)
+        {
+            Debug.Log(partName + "    " + _part.gameObject.name);
+            if (_part.gameObject.name.Contains(partName))
+            {
+                part = _part;
+                break;
+            }
+        }
+        if (part != null)
+        {
+            parts.Remove(part);
+            if (part.childParts != null)
+            {
+                foreach (PartController _part in part.childParts)
+                {
+                    if (!childParts.Contains(_part))
+                    {
+                        childParts.Add(_part);
+                    }
+                }
+            }
+            DestroyImmediate(part.gameObject);
+        }
+    }
+
     /// <summary>
     /// Функция, используемая для установления зависимостей между частями
     /// </summary>
-    protected void SetChildren(List<PartController> parts,List<PartController> childParts)
+    public void SetChildren(List<PartController> parts,List<PartController> childParts)
     {
         foreach (PartController child in childParts)
         {

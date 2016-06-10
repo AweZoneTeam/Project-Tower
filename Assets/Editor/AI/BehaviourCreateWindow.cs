@@ -10,11 +10,12 @@ public class BehaviourCreateWindow : EditorWindow
 {
     public string behaviourName = "New Behaviour";
 
-    private string behaviourPath = "Assets/Database/Behaviours/";
+    public string behaviourPath = "Assets/Database/Behaviours/";
 
     void OnGUI()
     {
         behaviourName = EditorGUILayout.TextField(behaviourName);
+        behaviourPath = EditorGUILayout.TextField(behaviourPath);
         if (GUILayout.Button("Create New"))
         {
             CreateNewBehavior();

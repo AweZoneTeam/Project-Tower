@@ -398,6 +398,7 @@ public class DoorPointClass
 /// <summary>
 /// Класс, представляющий собой точки графа, который и будет картой уровня в представлении ИИ
 /// </summary>
+[System.Serializable]
 public class MapPointClass
 {
     public DoorPointClass doorPoint1, doorPoint2;//Так как двери нередко (всегда) бывают парными и каждая из них имеет связи только с дверями той же комнаты, то нужен класс, который объедини парные двери и по сути свяжет комнаты друг  другом. 

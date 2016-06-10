@@ -56,6 +56,7 @@ public class JournalEventAction
     public string jDataActionName;//имя действия над журнальным событием
     public string id;    //параметры, что использует
     public int argument;//данное действие
+    public GameObject obj;//с каким префабом произвести действие
     public jDataActionDelegate jDataAction;//ссылка на функцию, которая соответствует названию выше
 
 }

@@ -97,6 +97,12 @@ class ProjectTowerWindow : Editor
         EditorWindow.GetWindow(typeof(BehaviourCreateWindow));
     }
 
+    [MenuItem("Project Tower/AI/Create Speech")]
+    public static void CreateSpeech()
+    {
+        EditorWindow.GetWindow(typeof(SpeechCreateWindow));
+    }
+
     void OnGUI()
     {
 

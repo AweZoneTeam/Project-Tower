@@ -35,7 +35,9 @@ public class PersonController : DmgObjController, IPersonWatching
     #region eventHandlers
 
     public event EventHandler<RoomChangedEventArgs> RoomChangedEvent;
-      
+    public event EventHandler<MountEventArgs> OnUseMount;
+    public event EventHandler<MountEventArgs> OnRemoveMount;
+
     #endregion //eventHandlers
 
     #region indicators
@@ -75,6 +77,8 @@ public class PersonController : DmgObjController, IPersonWatching
     #endregion //fields
 
     #region parametres
+
+    protected MountActions currentMount;
 
     public AreaClass currentRoom;//В какой комнате находится персонаж в данный момент
 
@@ -251,6 +255,24 @@ public class PersonController : DmgObjController, IPersonWatching
     }
 
     /// <summary>
+    /// Использование маунта
+    /// </summary>
+    public virtual void UseMount(MountActions m)
+    {
+        if (OnUseMount != null)
+            OnUseMount(this, new MountEventArgs(m));
+        currentMount = m;
+    }
+    /// <summary>
+    /// Слезть с маунта
+    /// </summary>
+    public virtual void RemoveMount()
+    {
+        if (OnRemoveMount != null)
+            OnRemoveMount(this, null);
+    }
+
+    /// <summary>
     /// Сменить комнату
     /// </summary>
     public virtual void ChangeRoom(AreaClass nextRoom)
@@ -267,7 +289,19 @@ public class PersonController : DmgObjController, IPersonWatching
             currentRoom.container.Add(this);
         }
     }
-    
+
+    /// <summary>
+    /// Функция, что уничтожает объект и учитывает его исчезновение
+    /// </summary>
+    public virtual void GoAway()
+    {
+        if (currentRoom.container.Contains(this))
+        {
+            currentRoom.container.Remove(this);
+        }
+        Destroy(gameObject);
+    }
+
     /// <summary>
     /// Как контроллеры, следящие за целью должны отреагировать на совершение данного объекта действия
     /// </summary>
