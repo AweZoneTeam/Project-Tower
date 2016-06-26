@@ -180,6 +180,75 @@ public class SpiderController : AIController
         return _waypoints;
     }
 
+    /// <summary>
+    /// Проинициализировать объект, используя сохраненные данные
+    /// </summary>
+    public override void AfterInitialize(InterObjData intInfo, Map map, Dictionary<string, InterObjController> savedIntObjs)
+    {
+        base.AfterInitialize(intInfo, map, savedIntObjs);
+
+        SpiderData spInfo = (SpiderData)intInfo;
+        if (spInfo != null)
+        {
+            grOrientation.grOrientation = (groundOrientationEnum)spInfo.grOrientation;
+        }
+
+    }
+
+    /// <summary>
+    /// Получить информацию о персонаже
+    /// </summary>
+    public override InterObjData GetInfo()
+    {
+        SpiderData intInfo = new SpiderData();
+        intInfo.objId = objId;
+        if (spawnId != null ? !string.Equals(spawnId, string.Empty) : false)
+        {
+            intInfo.spawnId = spawnId;
+        }
+        else
+        {
+            intInfo.spawnId = string.Empty;
+        }
+        intInfo.position = transform.position;
+        intInfo.roomPosition = currentRoom.id.areaName;
+        intInfo.orientation = (int)direction.dir;
+        intInfo.maxHealth = orgStats.maxHealth;
+        intInfo.health = orgStats.health;
+
+        intInfo.buffs = new List<string>();
+        foreach (BuffClass buff in buffList)
+        {
+            if (!buff.armorSetBuff)
+            {
+                intInfo.buffs.Add(buff.buffName);
+            }
+        }
+
+        intInfo.behaviour = behaviours.Find(x => string.Equals(x.behaviour.behaviourName, currentBehaviour.behaviourName)).path;
+        intInfo.mainTarget = new TargetData(mainTarget);
+        intInfo.currentTarget = new TargetData(currentTarget);
+        intInfo.enemies = enemies;
+
+        NPCActions npc = null;
+        if ((npc=GetComponent<NPCActions>())!=null)
+        {
+            intInfo.canTalk = npc.canTalk;
+            if (npc.speeches.Count > 0)
+            {
+                intInfo.startSpeech = npc.speeches[0].speechName;
+            }
+            else
+            {
+                intInfo.startSpeech = string.Empty;
+            }
+        }
+
+        intInfo.grOrientation = (int)grOrientation.grOrientation;
+
+        return intInfo;
+    }
+
     #region Analyze
 
     /// <summary>

@@ -1,0 +1,1892 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <GameStats>
+    <GameTime>
+      <Month>7</Month>
+      <Day>15</Day>
+      <Hour>20</Hour>
+      <Min>51</Min>
+      <Moment>156.467072</Moment>
+    </GameTime>
+    <LastCheckpoint>A.2.2</LastCheckpoint>
+    <CurrentRoom>A.2.2</CurrentRoom>
+    <DeathTimes>0</DeathTimes>
+  </GameStats>
+  <MainCharacterData>
+    <Position>
+      <x>-53.88227</x>
+      <y>76.677</y>
+      <z>0</z>
+    </Position>
+    <RoomPosition>A.2.2</RoomPosition>
+    <Orientation>-1</Orientation>
+    <MaxHealth>100</MaxHealth>
+    <Health>100</Health>
+    <Buffs>
+      <Buff>ForgetfulKnightSetBuff</Buff>
+    </Buffs>
+  </MainCharacterData>
+  <JournalInfo>
+    <Characters>
+      <Character>Зик</Character>
+    </Characters>
+    <Beasts />
+    <Locations>
+      <Location>Башня Антеох</Location>
+    </Locations>
+    <ActiveQuests />
+    <CompletedQuests />
+    <FailedQuests />
+  </JournalInfo>
+  <EquipmentInfo>
+    <Helmet />
+    <Cuirass>Обычная кираса Забывчивого Рыцаря</Cuirass>
+    <Pants>Обычные штаны Забывчивого Рыцаря</Pants>
+    <Boots>Обычные сапоги Забывчивого Рыцаря</Boots>
+    <Gloves>Обычные перчатки Забывчивого Рыцаря</Gloves>
+    <RightWeapon1>Меч Смеющегося Древа</RightWeapon1>
+    <LeftWeapon1>Smile Tree Shield</LeftWeapon1>
+    <RightWeapon2 />
+    <LeftWeapon2 />
+    <UseItem1>
+      <Index>-1</Index>
+      <Item>Спусковая верёвка</Item>
+      <Quantity>1</Quantity>
+    </UseItem1>
+    <UseItem2>
+      <Index>-1</Index>
+      <Item>Бомба</Item>
+      <Quantity>9</Quantity>
+    </UseItem2>
+    <UseItem3>
+      <Index>-1</Index>
+      <Item />
+      <Quantity>0</Quantity>
+    </UseItem3>
+    <UseItem4>
+      <Index>-1</Index>
+      <Item />
+      <Quantity>0</Quantity>
+    </UseItem4>
+    <BagInfo>
+      <BagSlotInfo>
+        <Index>0</Index>
+        <Item>Обычный лук</Item>
+        <Quantity>1</Quantity>
+      </BagSlotInfo>
+    </BagInfo>
+    <Gold>0</Gold>
+    <IronKeys>0</IronKeys>
+    <SilverKeys>1</SilverKeys>
+    <GoldKeys>0</GoldKeys>
+  </EquipmentInfo>
+  <GameEventInfo>
+    <JournalEvents>
+      <JournalEvent>Дать верёвку</JournalEvent>
+      <JournalEvent>Мне некогда разговаривать!</JournalEvent>
+    </JournalEvents>
+  </GameEventInfo>
+  <LocationInfo>
+    <RoomsData>
+      <RoomData>
+        <RoomName>AnteoxMountain</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>A.0.1</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>A.1.1</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.1.2</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>3</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>4</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>5</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.1.2(Backward)</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.2.1</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="CharacterData">
+            <ID>A.2.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-185.56</x>
+              <y>82.7</y>
+              <z>0.8000002</z>
+            </Position>
+            <RoomPosition>A.2.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>25</MaxHealth>
+            <Health>25</Health>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.2.2</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="true">
+            <ID>A.2.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-88.5</x>
+              <y>77.3</y>
+              <z>0</z>
+            </Position>
+            <RoomPosition>A.2.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>100</MaxHealth>
+            <Health>100</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Enemy</Enemy>
+            </Enemies>
+            <StartSpeech />
+          </ObjectData>
+          <ObjectData>
+            <ID>A.2.2/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-56</x>
+              <y>86.9</y>
+              <z>5</z>
+            </Position>
+            <RoomPosition>A.2.2</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="false">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.2.3</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData>
+            <ID>A.2.3/0</ID>
+            <SpawnID />
+            <Position>
+              <x>29</x>
+              <y>75.4799957</y>
+              <z>-4.3026</z>
+            </Position>
+            <RoomPosition>A.2.3</RoomPosition>
+            <Orientation>-1</Orientation>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="false">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.3.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.3.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-63.3395653</x>
+              <y>145.3</y>
+              <z>0</z>
+            </Position>
+            <RoomPosition>A.3.1</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-63.29996</x>
+                <y>281</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom>A.3.1</TargetRoom>
+              <TargetType>turnpoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-63.29996</x>
+                <y>281</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom>A.3.1</TargetRoom>
+              <TargetType>turnpoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.3.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="ChestData">
+            <ID>B.3.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-175.19</x>
+              <y>140.99</y>
+              <z>38.75</z>
+            </Position>
+            <RoomPosition>B.3.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Обычное Копьё</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.3.2</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.3.2</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.4.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="ChestData">
+            <ID>A.4.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-173.48</x>
+              <y>209.59</y>
+              <z>0.25</z>
+            </Position>
+            <RoomPosition>A.4.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Обычный лук</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.4.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="CharacterData">
+            <ID>B.4.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-155.56</x>
+              <y>205.209991</y>
+              <z>35.87</z>
+            </Position>
+            <RoomPosition>B.4.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>25</MaxHealth>
+            <Health>25</Health>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="false">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.4.2</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="MechanismData">
+            <ID>A.4.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-79.2</x>
+              <y>210.55</y>
+              <z>1.25</z>
+            </Position>
+            <RoomPosition>A.4.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <Activated>false</Activated>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.4.2</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="MechanismData">
+            <ID>B.4.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-56.88</x>
+              <y>216.03</y>
+              <z>48.58</z>
+            </Position>
+            <RoomPosition>B.4.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <Activated>false</Activated>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="false">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.4.1</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData>
+            <ID>C.4.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-9.5</x>
+              <y>224</y>
+              <z>83.25</z>
+            </Position>
+            <RoomPosition>C.4.1</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+          <ObjectData>
+            <ID>C.4.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>15.9400005</x>
+              <y>220.9</y>
+              <z>88.2</z>
+            </Position>
+            <RoomPosition>C.4.1</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.4.2</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="ChestData">
+            <ID>C.4.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>128</x>
+              <y>276.4</y>
+              <z>77.25</z>
+            </Position>
+            <RoomPosition>C.4.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Спусковая верёвка</Item>
+                <Quantity>3</Quantity>
+              </ChestItem>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Железный ключ</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>A.5.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="MechanismData">
+            <ID>A.5.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-165.5</x>
+              <y>282.8</y>
+              <z>1.75</z>
+            </Position>
+            <RoomPosition>A.5.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Activated>false</Activated>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.5.1</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.5.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-149.45</x>
+              <y>280.15</y>
+              <z>38.5</z>
+            </Position>
+            <RoomPosition>B.5.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="ChestData">
+            <ID>B.5.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-173.48</x>
+              <y>277.75</y>
+              <z>38.75</z>
+            </Position>
+            <RoomPosition>B.5.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Кираса офицера Тёмной Луны</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Сапоги офицера Тёмной Луны</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Штаны офицера Тёмной Луны</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Перчатки офицера Тёмной Луны</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.5.2</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData>
+            <ID>A.5.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>48.1</x>
+              <y>277.4</y>
+              <z>3.25</z>
+            </Position>
+            <RoomPosition>A.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+          </ObjectData>
+          <ObjectData>
+            <ID>A.5.2/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-11.4</x>
+              <y>277.4</y>
+              <z>3.25</z>
+            </Position>
+            <RoomPosition>A.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>41.97489</x>
+              <y>281.3</y>
+              <z>0</z>
+            </Position>
+            <RoomPosition>A.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-93</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>door</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/3</ID>
+            <SpawnID />
+            <Position>
+              <x>49.2090454</x>
+              <y>281.3</y>
+              <z>0</z>
+            </Position>
+            <RoomPosition>A.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-93</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>door</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="false">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.5.2</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.6.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>22.0264435</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>17.99</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.6.2/2</ID>
+            <SpawnID />
+            <Position>
+              <x>20.6053715</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>17.99</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.6.2/3</ID>
+            <SpawnID />
+            <Position>
+              <x>-15.9617939</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-63.58</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.6.2/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-4.57630634</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-63.58</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-3.83347225</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-8.04</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.6.2/4</ID>
+            <SpawnID />
+            <Position>
+              <x>-4.57630634</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-63.58</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/5</ID>
+            <SpawnID />
+            <Position>
+              <x>1.77325964</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-8.04</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-8.04</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/4</ID>
+            <SpawnID />
+            <Position>
+              <x>8.882062</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-8.04</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-8.04</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+            </Enemies>
+          </ObjectData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>A.6.1/2</ID>
+            <SpawnID />
+            <Position>
+              <x>16.47212</x>
+              <y>281.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.5.2</RoomPosition>
+            <Orientation>-1</Orientation>
+            <MaxHealth>40</MaxHealth>
+            <Health>40</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>-93</x>
+                <y>281</y>
+                <z>39</z>
+              </TargetPosition>
+              <TargetRoom>B.5.2</TargetRoom>
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName />
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetRoom />
+              <TargetType>waypoint</TargetType>
+              <TargetArgument>1</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Animals</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="false">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.5.1</RoomName>
+        <MaxRegisterNumber>1</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="SpiderData" CanTalk="false">
+            <ID>C.5.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>11.7999992</x>
+              <y>278.61322</y>
+              <z>77</z>
+            </Position>
+            <RoomPosition>C.5.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>100</MaxHealth>
+            <Health>100</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Enemy</Enemy>
+            </Enemies>
+            <GroundOrientation>0</GroundOrientation>
+          </ObjectData>
+          <ObjectData xsi:type="ChestData">
+            <ID>C.5.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>-48.4</x>
+              <y>276.9</y>
+              <z>77.25</z>
+            </Position>
+            <RoomPosition>C.5.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Динамит</Item>
+                <Quantity>5</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>B.6.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="CharacterData">
+            <ID>B.6.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-58.61</x>
+              <y>353.88</y>
+              <z>39.32</z>
+            </Position>
+            <RoomPosition>B.6.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>25</MaxHealth>
+            <Health>25</Health>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>A.6.1</RoomName>
+        <MaxRegisterNumber>6</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData>
+            <ID>A.6.1/6</ID>
+            <SpawnID />
+            <Position>
+              <x>0.5</x>
+              <y>396.1</y>
+              <z>0</z>
+            </Position>
+            <RoomPosition>A.6.1</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.6.2</RoomName>
+        <MaxRegisterNumber>6</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="FlammableObjData">
+            <ID>B.6.2/5</ID>
+            <SpawnID>OilTrail</SpawnID>
+            <Position>
+              <x>6.5</x>
+              <y>341.73</y>
+              <z>38.75</z>
+            </Position>
+            <RoomPosition>B.6.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <Burned>false</Burned>
+          </ObjectData>
+          <ObjectData xsi:type="FlammableObjData">
+            <ID>B.6.2/6</ID>
+            <SpawnID />
+            <Position>
+              <x>47.8</x>
+              <y>348</y>
+              <z>39.5</z>
+            </Position>
+            <RoomPosition>B.6.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <Burned>false</Burned>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.6.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>C.6.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-69.97</x>
+              <y>347.435028</y>
+              <z>77</z>
+            </Position>
+            <RoomPosition>C.6.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>160</MaxHealth>
+            <Health>81</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Enemy</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.6.2</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>C.6.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>115</x>
+              <y>349.28</y>
+              <z>77</z>
+            </Position>
+            <RoomPosition>C.6.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>30</MaxHealth>
+            <Health>30</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Enemy</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>C.6.3</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>C.6.3/0</ID>
+            <SpawnID />
+            <Position>
+              <x>230.4</x>
+              <y>347.870026</y>
+              <z>77</z>
+            </Position>
+            <RoomPosition>C.6.3</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>300</MaxHealth>
+            <Health>300</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Enemy</Enemy>
+              <Enemy>Animal</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+      <RoomData>
+        <RoomName>B.7.1</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.7.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>-166.230011</x>
+              <y>417.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.7.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>100</MaxHealth>
+            <Health>100</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Enemy</Enemy>
+            </Enemies>
+            <StartSpeech />
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.7.2</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.7.2/0</ID>
+            <SpawnID />
+            <Position>
+              <x>17.57</x>
+              <y>415.375</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.7.2</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>300</MaxHealth>
+            <Health>300</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Player</Enemy>
+              <Enemy>Enemy</Enemy>
+              <Enemy>NPC</Enemy>
+            </Enemies>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>1</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.7.3</RoomName>
+        <MaxRegisterNumber>0</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData xsi:type="AIData" CanTalk="false">
+            <ID>B.7.3/0</ID>
+            <SpawnID />
+            <Position>
+              <x>117.5</x>
+              <y>417.3</y>
+              <z>39</z>
+            </Position>
+            <RoomPosition>B.7.3</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>100</MaxHealth>
+            <Health>100</Health>
+            <Buffs />
+            <Behaviour>Calm</Behaviour>
+            <MainTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </MainTarget>
+            <CurrentTarget>
+              <TargetName>!</TargetName>
+              <TargetPosition>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+              </TargetPosition>
+              <TargetArgument>0</TargetArgument>
+            </CurrentTarget>
+            <Enemies>
+              <Enemy>Enemy</Enemy>
+              <Enemy>Animal</Enemy>
+            </Enemies>
+            <StartSpeech />
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="true">
+            <Index>0</Index>
+          </DoorInfo>
+          <DoorInfo Opened="false">
+            <Index>1</Index>
+          </DoorInfo>
+          <DoorInfo Opened="true">
+            <Index>2</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>C.7.1</RoomName>
+        <MaxRegisterNumber>-1</MaxRegisterNumber>
+        <ObjectsData />
+        <DropsData />
+        <DoorsInfo>
+          <DoorInfo Opened="false">
+            <Index>0</Index>
+          </DoorInfo>
+        </DoorsInfo>
+      </RoomData>
+      <RoomData>
+        <RoomName>B.8.1</RoomName>
+        <MaxRegisterNumber>3</MaxRegisterNumber>
+        <ObjectsData>
+          <ObjectData>
+            <ID>B.8.1/0</ID>
+            <SpawnID />
+            <Position>
+              <x>96.3</x>
+              <y>509.521271</y>
+              <z>41.25</z>
+            </Position>
+            <RoomPosition>B.8.1</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+          <ObjectData xsi:type="CharacterData">
+            <ID>B.8.1/1</ID>
+            <SpawnID />
+            <Position>
+              <x>96.3</x>
+              <y>464.1</y>
+              <z>41.25</z>
+            </Position>
+            <RoomPosition>B.8.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <MaxHealth>1</MaxHealth>
+            <Health>1</Health>
+          </ObjectData>
+          <ObjectData xsi:type="ChestData">
+            <ID>B.8.1/2</ID>
+            <SpawnID />
+            <Position>
+              <x>-79.71</x>
+              <y>577.06</y>
+              <z>0.313453674</z>
+            </Position>
+            <RoomPosition>B.8.1</RoomPosition>
+            <Orientation>1</Orientation>
+            <Opened>false</Opened>
+            <ChestContent>
+              <ChestItem>
+                <Index>-1</Index>
+                <Item>Дымчатое копьё</Item>
+                <Quantity>1</Quantity>
+              </ChestItem>
+            </ChestContent>
+          </ObjectData>
+          <ObjectData>
+            <ID>B.8.1/3</ID>
+            <SpawnID />
+            <Position>
+              <x>-16</x>
+              <y>494.6</y>
+              <z>42.75</z>
+            </Position>
+            <RoomPosition>B.8.1</RoomPosition>
+            <Orientation>1</Orientation>
+          </ObjectData>
+        </ObjectsData>
+        <DropsData />
+        <DoorsInfo />
+      </RoomData>
+    </RoomsData>
+  </LocationInfo>
+  <MapInfo>
+    <MapLayers>
+      <MapLayer>
+        <LayerName>A</LayerName>
+        <RoomMaps>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>AnteoxMountain</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>A.1.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.1.2 (Backward)</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>A.1.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>A.2.1</RoomName>
+            <Icons>
+              <Icon>
+                <IconType>Enemy</IconType>
+                <IconPosition>
+                  <x>-89.26431</x>
+                  <y>-145.3536</y>
+                  <z>0</z>
+                </IconPosition>
+              </Icon>
+            </Icons>
+          </RoomMap>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>A.2.2</RoomName>
+            <Icons>
+              <Icon>
+                <IconType>Lock</IconType>
+                <IconPosition>
+                  <x>31.3059349</x>
+                  <y>-11.2652054</y>
+                  <z>0</z>
+                </IconPosition>
+              </Icon>
+              <Icon>
+                <IconType>Character</IconType>
+                <IconPosition>
+                  <x>-41.45292</x>
+                  <y>-142.201614</y>
+                  <z>0</z>
+                </IconPosition>
+              </Icon>
+              <Icon>
+                <IconType>Checkpoint</IconType>
+                <IconPosition>
+                  <x>-18.5422821</x>
+                  <y>-136.491119</y>
+                  <z>0</z>
+                </IconPosition>
+              </Icon>
+            </Icons>
+          </RoomMap>
+          <RoomMap TerraIncognitta="false">
+            <RoomName>A.2.3</RoomName>
+            <Icons>
+              <Icon>
+                <IconType>Lock</IconType>
+                <IconPosition>
+                  <x>-27.1622</x>
+                  <y>-11.2652893</y>
+                  <z>0</z>
+                </IconPosition>
+              </Icon>
+            </Icons>
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.3.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.3.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.4.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.4.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.5.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.5.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>A.6.1</RoomName>
+            <Icons />
+          </RoomMap>
+        </RoomMaps>
+      </MapLayer>
+      <MapLayer>
+        <LayerName>B</LayerName>
+        <RoomMaps>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.3.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.3.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.4.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.4.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.5.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.5.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.6.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.6.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.7.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.7.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.7.3</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>B.8.1</RoomName>
+            <Icons />
+          </RoomMap>
+        </RoomMaps>
+      </MapLayer>
+      <MapLayer>
+        <LayerName>C</LayerName>
+        <RoomMaps>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.4.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.4.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.5.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.6.1</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.6.2</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.6.3</RoomName>
+            <Icons />
+          </RoomMap>
+          <RoomMap TerraIncognitta="true">
+            <RoomName>C.7.1</RoomName>
+            <Icons />
+          </RoomMap>
+        </RoomMaps>
+      </MapLayer>
+    </MapLayers>
+  </MapInfo>
+</GameData>

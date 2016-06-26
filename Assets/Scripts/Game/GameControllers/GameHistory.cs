@@ -13,12 +13,13 @@ public class GameHistory : MonoBehaviour
 
     public JournalScriptStock journalEvents = new JournalScriptStock();
 
+    #endregion //fields
+
+
     public void Start()
     {
-        journalEvents.Initialize();
+        //journalEvents.Initialize();
     }
-
-    #endregion //fields
 
 }
 

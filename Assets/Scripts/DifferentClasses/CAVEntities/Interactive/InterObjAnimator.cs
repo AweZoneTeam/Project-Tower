@@ -51,6 +51,18 @@ public class InterObjAnimator : MonoBehaviour
         }
     }*/
 
+    public void Awake()
+    {
+        if (GetComponentInChildren<InterObjAudio>() != null)
+        {
+            GameObject audioSource = GetComponentInChildren<InterObjAudio>().gameObject;
+            foreach (PartController part in parts)
+            {
+                part.SetAudioSource(audioSource);
+            }
+        }
+    }
+
     public virtual void FixedUpdate()
     {
         Sinchronize();

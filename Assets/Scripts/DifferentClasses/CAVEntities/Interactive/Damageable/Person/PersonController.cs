@@ -67,6 +67,7 @@ public class PersonController : DmgObjController, IPersonWatching
 
     protected PersonActions pActions;
     protected PersonVisual cAnim;
+    protected CharacterAudio cAudio;
     protected PreInteractionChecker interactions;
     protected HitController hitBox;//То, чем персонаж атакует
 
@@ -79,8 +80,6 @@ public class PersonController : DmgObjController, IPersonWatching
     #region parametres
 
     protected MountActions currentMount;
-
-    public AreaClass currentRoom;//В какой комнате находится персонаж в данный момент
 
     protected bool fallDamaged = false;
     protected float fallDamage = 0f;
@@ -132,6 +131,11 @@ public class PersonController : DmgObjController, IPersonWatching
         if (cAnim != null)
         {
             SetVisual();
+            cAudio = cAnim.GetComponentInChildren<CharacterAudio>();
+            if (cAudio != null)
+            {
+                SetAudio();
+            }
         }
         interactions = transform.FindChild("Indicators").gameObject.GetComponentInChildren<PreInteractionChecker>();
         if (interactions != null)
@@ -140,10 +144,6 @@ public class PersonController : DmgObjController, IPersonWatching
         }
         if (currentRoom != null)
         {
-            if (!currentRoom.container.Contains(this))
-            {
-                currentRoom.container.Add(this);
-            }
             interactions.ZCoordinate = currentRoom.GetZCoordinate();
         }
         hitBox = GetComponentInChildren<HitController>();
@@ -153,8 +153,6 @@ public class PersonController : DmgObjController, IPersonWatching
         }
     }
     
-
-
     protected override void SetAction()
     {
         pActions.Initialize();
@@ -170,16 +168,17 @@ public class PersonController : DmgObjController, IPersonWatching
         cAnim.SetEnvStats(envStats);
     }
 
+    protected override void SetAudio()
+    {
+        base.SetAudio();
+        cAudio.Initialize();
+    }
+
     protected virtual void SetInteractions()
     {
         interactions.Person = this;
         interactions.Rigid = rigid;
         interactions.Initialize();
-    }
-
-    public virtual AreaClass GetRoomPosition()
-    {
-        return currentRoom;
     }
 
     public virtual void SetRoomPosition(AreaClass _room)
@@ -275,7 +274,7 @@ public class PersonController : DmgObjController, IPersonWatching
     /// <summary>
     /// Сменить комнату
     /// </summary>
-    public virtual void ChangeRoom(AreaClass nextRoom)
+    public override void ChangeRoom(AreaClass nextRoom)
     {
         if (currentRoom != null)
         {
@@ -299,7 +298,7 @@ public class PersonController : DmgObjController, IPersonWatching
         {
             currentRoom.container.Remove(this);
         }
-        Destroy(gameObject);
+        DestroyInterObj();
     }
 
     /// <summary>
@@ -341,6 +340,10 @@ public class PersonController : DmgObjController, IPersonWatching
     {
         if (Physics.OverlapSphere(groundCheck.position,groundRadius,whatIsGround).Length>0)
         {
+            if (cAudio != null)
+            {
+                cAudio.AnalyzeUnderMaterial(LayerMask.LayerToName(Physics.OverlapSphere(groundCheck.position, groundRadius, whatIsGround)[0].gameObject.layer));
+            }
             if (envStats.groundness!=groundnessEnum.crouch)
             {
                 envStats.groundness = groundnessEnum.grounded;
@@ -396,6 +399,13 @@ public class PersonController : DmgObjController, IPersonWatching
     }
 
     /// <summary>
+    /// Специальная функция, что учитывает механику интерактивных объектов при работе других функций
+    /// </summary>
+    public virtual void ConsiderInteractable()
+    {
+    }
+
+    /// <summary>
     /// Учесть препятствия, ставшие на пути персонажа
     /// </summary>
     protected virtual void CheckObstacles()
@@ -431,6 +441,62 @@ public class PersonController : DmgObjController, IPersonWatching
         }
     }
 
+    /// <summary>
+    /// Проинициализировать объект, используя сохранённые данные
+    /// </summary>
+    public override void AfterInitialize(InterObjData intInfo, Map map, Dictionary<string, InterObjController> savedIntObjs)
+    {
+        base.AfterInitialize(intInfo, map, savedIntObjs);
+        PersonData pInfo = (PersonData)intInfo;
+        BuffDatabase bBase = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponentInChildren<BuffDatabase>();
+
+        if (pInfo != null)
+        {
+            if (bBase != null)
+            {
+                foreach (string buff in pInfo.buffs)
+                {
+                    if (bBase.BuffDict.ContainsKey(buff))
+                    {
+                        buffList.AddBuff(new BuffClass(bBase.BuffDict[buff], buffList));
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Получить информацию об объекте
+    /// </summary>
+    public override InterObjData GetInfo()
+    {
+        PersonData intInfo = new PersonData();
+        intInfo.objId = objId;
+        if (spawnId != null ? !string.Equals(spawnId, string.Empty) : false)
+        {
+            intInfo.spawnId = spawnId;
+        }
+        else
+        {
+            intInfo.spawnId = string.Empty;
+        }
+        intInfo.position = transform.position;
+        intInfo.roomPosition = currentRoom.id.areaName;
+        intInfo.orientation = (int)direction.dir;
+        intInfo.maxHealth = orgStats.maxHealth;
+        intInfo.health = orgStats.health;
+
+        intInfo.buffs = new List<string>();
+        foreach (BuffClass buff in buffList)
+        {
+            if (!buff.armorSetBuff)
+            {
+                intInfo.buffs.Add(buff.buffName);
+            }
+        }
+        return intInfo;
+    }
+
     #endregion //Interface
 
     #region events
@@ -440,7 +506,6 @@ public class PersonController : DmgObjController, IPersonWatching
         EventHandler<RoomChangedEventArgs> handler = RoomChangedEvent;
         if (handler != null)
         {
-            e.Room = currentRoom;
             handler(this, e);
         }
     }

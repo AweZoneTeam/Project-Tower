@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	4152596996	N_Event			\Default Work Unit\N_Event	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	689045712	RealStep_0	D:\Chisto Moya Papka!!!\Games\MyGames\WwiseExperiment\WwiseExperiment1\WwiseExperiment\.cache\Windows\SFX\RealStep_0_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\RealStep_0		82352
+

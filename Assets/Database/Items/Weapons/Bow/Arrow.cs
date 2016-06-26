@@ -7,12 +7,14 @@ public class Arrow : MonoBehaviour {
     #region fields
 
     protected List<string> enemies = new List<string>();
+    protected HitController hitBox;
     protected Rigidbody rigid;
 
     #endregion //fields
 
     void Start()
     {
+        hitBox = GetComponent<HitController>();
         rigid = GetComponent<Rigidbody>();
     }
 
@@ -40,6 +42,11 @@ public class Arrow : MonoBehaviour {
     public void SetEnemies(List<string> _enemies)
     {
         enemies = _enemies;
+        if (hitBox == null)
+        {
+            hitBox = GetComponent<HitController>();
+        }
+        hitBox.SetEnemies(_enemies);
     }
 
 }

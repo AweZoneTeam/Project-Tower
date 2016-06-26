@@ -350,12 +350,54 @@ public static class SpFunctions {
     }
 
     /// <summary>
+    /// Сохранить игру
+    /// </summary>
+    public static void OpenSaveWindow(bool save)
+    {
+        SaveMenu saveMenu = GameObject.FindGameObjectWithTag(Tags.interfaceWindows).GetComponentInChildren<SaveMenu>();
+        saveMenu.ChangeMod(save ? "Save" : "Load");
+        ChangeWindow("saves");
+    }
+
+    /// <summary>
+    /// Сохранить игру
+    /// </summary>
+    public static void OpenSaveWindow(bool save, CheckpointActions checkpoint)
+    {
+        GameStatistics gameStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatistics>();
+        if (gameStats.lastCheckPoint != null)
+        {
+            gameStats.lastCheckPoint.Activated = false;
+        }
+        gameStats.lastCheckPoint = checkpoint;
+        SaveMenu saveMenu = GameObject.FindGameObjectWithTag(Tags.interfaceWindows).GetComponentInChildren<SaveMenu>();
+        saveMenu.ChangeMod(save ? "Save" : "Load");
+        ChangeWindow("saves");
+    }
+
+    /// <summary>
     /// Сделать игровое сообщение
     /// </summary>
     public static void SendMessage(MessageSentEventArgs e)
     {
         GameStatistics gameStats = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatistics>();
         gameStats.OnMessageSent(e);
+    }
+
+    /// <summary>
+    /// Начать показывать здоровье данного босса (или наоборот скрыть)
+    /// </summary>
+    public static void SetUpBossHealth(BossController boss, bool setUp)
+    {
+        GameUI gameUI = GameObject.FindGameObjectWithTag(Tags.interfaceWindows).GetComponentInChildren<GameUI>();
+        if (setUp)
+        {
+            gameUI.SetBossHp(boss);
+        }
+        else
+        {
+            gameUI.UnsetBossHp(boss);
+        }
     }
 
     public static int RealSign(float x)

@@ -25,23 +25,16 @@ public static class AkWwiseProjectInfo
 
 				// Create the asset only when not running in batch mode.
 				string[] arguments = Environment.GetCommandLineArgs();
-				if (m_Data == null && Array.IndexOf(arguments, "-batchmode") == -1)
+				if (m_Data == null && (Array.IndexOf(arguments, "-batchmode") == -1 || Environment.GetEnvironmentVariable("WWISE_UNITY_TESTSUITE") != null))
 				{
                     if (!Directory.Exists(Path.Combine(Application.dataPath, "Wwise/Editor/ProjectData")))
                     {
                         Directory.CreateDirectory(Path.Combine(Application.dataPath, "Wwise/Editor/ProjectData"));
                     }
 
-					if( !File.Exists(Application.dataPath + "/Wwise/Editor/ProjectData/AkWwiseProjectData.asset"))
-					{
-						m_Data = ScriptableObject.CreateInstance<AkWwiseProjectData>();
-						string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath("Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset");
-						AssetDatabase.CreateAsset(m_Data, assetPathAndName);
-					}
-					else
-					{
-						return null;
-					}
+					m_Data = ScriptableObject.CreateInstance<AkWwiseProjectData>();
+					string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath("Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset");
+					AssetDatabase.CreateAsset(m_Data, assetPathAndName);
 				}
 			}
 			catch( Exception e )

@@ -13,6 +13,9 @@ public class LockScript{
     public int lockType; //Какой тип ключа требует этот замок
     public bool opened; // Был ли замок отпёрт, или всё ещё требует ключ
 
+    [SerializeField]
+    protected string keyID; //какой нужен ключ, чтобы отпереть этот замок(актуально, если тип замка - 4)
+
     public LockScript()
     {
         lockType = (int)lockTypes.nothing;
@@ -34,7 +37,7 @@ public class LockScript{
         {
             if (!opened)
             {
-                equip.UseKey(lockType-1);
+                equip.UseKey(lockType - 1);
                 opened = true;
             }
         }
@@ -48,8 +51,6 @@ public class LockScript{
 [System.Serializable]
 public class SpecialLockScript: LockScript
 {
-
-    private string keyID; //какой нужен ключ, чтобы отпереть этот замок
     
     public SpecialLockScript()
     {

@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 
 [AddComponentMenu("Wwise/AkGameObj")]
-///@brief This component represents a sound emitter in your scene.  It will track its position and other game syncs such as Switches, RTPC and environment values.  You can add this to any object that will emit sound.  Note that if it is not present, Wwise will add it automatically, with the default values, to any Unity Game Object that is passed to Wwise API (see AkSoundEngine.cs).  
+///@brief This component represents a sound emitter in your scene.  See \ref unity_use_AkGameObj. It will track its position and other game syncs such as Switches, RTPC and environment values.  You can add this to any object that will emit sound.  Note that if it is not present, Wwise will add it automatically, with the default values, to any Unity Game Object that is passed to Wwise.  
 /// \sa
 /// - \ref soundengine_gameobj
 /// - \ref soundengine_events
@@ -73,7 +73,10 @@ public class AkGameObj : MonoBehaviour
                 position.z,
                 transform.forward.x,
                 transform.forward.y,
-                transform.forward.z);
+                transform.forward.z,
+				transform.up.x,
+				transform.up.y,
+				transform.up.z);
 
             if (isEnvironmentAware)
             {
@@ -148,21 +151,25 @@ public class AkGameObj : MonoBehaviour
 	    Vector3 position = GetPosition();
 
 		//Didn't move.  Do nothing.
-		if (m_posData.position == position && m_posData.forward == transform.forward)
+		if (m_posData.position == position && m_posData.forward == transform.forward && m_posData.up == transform.up)
 	        return;
 
 		m_posData.position = position;
 		m_posData.forward = transform.forward;            
+		m_posData.up = transform.up;            
 
 	    //Update position
-	    AkSoundEngine.SetObjectPosition(
-	        gameObject,
-	        position.x,
-	        position.y,
-	        position.z,
-	        transform.forward.x,
-	        transform.forward.y,
-	        transform.forward.z);
+            AkSoundEngine.SetObjectPosition(
+                gameObject,
+                position.x,
+                position.y,
+                position.z,
+                transform.forward.x,
+                transform.forward.y,
+                transform.forward.z,
+				transform.up.x,
+				transform.up.y,
+				transform.up.z);
 
 		if (isEnvironmentAware)
 		{

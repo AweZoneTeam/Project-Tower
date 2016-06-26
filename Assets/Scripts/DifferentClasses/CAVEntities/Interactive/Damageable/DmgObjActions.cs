@@ -9,10 +9,12 @@ public class DmgObjActions : InterObjActions
 {
 
     #region consts
+
     const float dropX1 = -1500f;
     const float dropX2 = 1500f;
     const float dropY1 = 1000f;
     const float dropY2 = 4000f;
+
     #endregion //consts
 
     #region fields
@@ -49,6 +51,7 @@ public class DmgObjActions : InterObjActions
     public virtual void Death()
     {
         Drop();
+        GetComponent<InterObjController>().DestroyInterObj();
     }
 
     /// <summary>
@@ -56,11 +59,13 @@ public class DmgObjActions : InterObjActions
     /// </summary>
     public virtual void Drop()
     {
+        AreaClass currentRoom = GetComponent<InterObjController>().GetRoomPosition();
         GameObject obj;
         for (int i = 0; i < dropList.Count; i++)
         {
             obj = Instantiate(dropList[i], transform.position, transform.rotation) as GameObject;
             obj.GetComponent<Rigidbody>().AddForce(new Vector3(Random.Range(dropX1, dropX2), Random.Range(dropY1, dropY2), 0f));
+            currentRoom.drops.Add(obj.GetComponent<DropClass>());
         }
     }
 

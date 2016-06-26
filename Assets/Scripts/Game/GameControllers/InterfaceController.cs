@@ -6,10 +6,13 @@ using System.Collections;
 /// </summary>
 public class InterfaceController : MonoBehaviour
 {
+
     #region consts
+
     const float xOffset = 470f;
     const float yOffset = 210f;
     const float zOffset = 30f;
+
     #endregion //consts
 
     public InterfaceExchangeWindow exchWindow;//Окно обмена предметами
@@ -19,9 +22,11 @@ public class InterfaceController : MonoBehaviour
     private Canvas auxActiveWindow;
 
     private MenuWindow menu;
+    private SaveMenu saves;
     private Settings settings;
     public JournalWindow journal;
     private EquipmentWindow equipment;
+    private MapWindow mapWindow;
     private DialogWindow dialog;
     private GameObject allWindows;
     private GameObject cam;
@@ -45,11 +50,18 @@ public class InterfaceController : MonoBehaviour
         if (allWindows.GetComponentInChildren<InterfaceExchangeWindow>() != null)
         {
             exchWindow = allWindows.GetComponentInChildren<InterfaceExchangeWindow>();
+            exchWindow.gameObject.GetComponent<Canvas>().enabled = false;
         }
         if (allWindows.GetComponentInChildren<MenuWindow>()!=null)
         {
             menu = allWindows.GetComponentInChildren<MenuWindow>();
+            menu.Initialize();
             activeWindow = menu.GetComponent<Canvas>();
+        }
+        if (allWindows.GetComponentInChildren<SaveMenu>() != null)
+        {
+            saves = allWindows.GetComponentInChildren<SaveMenu>();
+            saves.Initialize();
         }
         if (allWindows.GetComponentInChildren<Settings>() != null)
         {
@@ -67,7 +79,10 @@ public class InterfaceController : MonoBehaviour
         {
             dialog = allWindows.GetComponentInChildren<DialogWindow>();
         }
-        exchWindow.gameObject.GetComponent<Canvas>().enabled=false;
+        if (allWindows.GetComponentInChildren<MapWindow>() != null)
+        {
+           mapWindow = allWindows.GetComponentInChildren<MapWindow>();
+        }
     }
 
     public void OpenExchangeWindow(BagClass bag, EquipmentClass _equip, Transform _exchanger1, Transform _exchanger2)
@@ -113,6 +128,10 @@ public class InterfaceController : MonoBehaviour
         {
             activeWindow = menu.GetComponent<Canvas>();
         }
+        else if (string.Equals("saves", windowName))
+        {
+            activeWindow = saves.GetComponent<Canvas>();
+        }
         else if (string.Equals("settings", windowName))
         {
             activeWindow = settings.GetComponent<Canvas>();
@@ -128,6 +147,11 @@ public class InterfaceController : MonoBehaviour
         else if (string.Equals("dialog", windowName))
         {
             activeWindow = dialog.GetComponent<Canvas>();
+        }
+        else if (string.Equals("map", windowName))
+        {
+            activeWindow = mapWindow.GetComponent<Canvas>();
+            mapWindow.RefreshRoomMap();
         }
         activeWindow.enabled = true;
     }

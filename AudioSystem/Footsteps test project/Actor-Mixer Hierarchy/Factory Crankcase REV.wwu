@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{2281D8A6-A025-4F76-A975-15F183186BFC}" SchemaVersion="72">
+	<AudioObjects>
+		<WorkUnit Name="Factory Crankcase REV" ID="{2281D8A6-A025-4F76-A975-15F183186BFC}" PersistMode="Standalone">
+			<ExcludedPlatformList>
+				<Platform>Windows</Platform>
+			</ExcludedPlatformList>
+			<ChildrenList>
+				<Sound Name="Chevrolet Camaro SS" ID="{A124402C-0D2C-4A6D-B3E3-586EDB73E4B9}" ShortID="187295068" Type="SoundFX">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{CD705AA2-E8EF-4364-8FC0-5CAAB78BB3B8}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{8BA25012-125C-4F04-9C84-9B2794DD2B77}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<SourcePlugin Name="CrankcaseAudio REV" ID="{552033DD-2B43-47F4-95DC-DE43BC543B6C}" ShortID="617540493" PluginName="CrankcaseAudio REV" CompanyID="261" PluginID="416">
+							<ChildrenList>
+								<PluginMediaSource Name="Chevrolet_Camaro_SS" ID="{865FC641-0BEA-4C9D-BA8A-DFF8BA313B67}" ShortID="614481336">
+									<ParentPluginID>27267154</ParentPluginID>
+									<PropertyList>
+										<Property Name="DataFileName" Type="string" Value="Chevrolet_Camaro_SS.model"/>
+									</PropertyList>
+								</PluginMediaSource>
+							</ChildrenList>
+							<Language>SFX</Language>
+							<PluginInnerObjectList>
+								<List Name="AccelDecelModelControlData">
+									<PluginInnerObject Name="" ID="{3B3BAA0A-F1C2-474A-88B3-B1D7411A631C}" PluginName="AccelDecelModelControlData" CompanyID="261" PluginID="418">
+										<PropertyList>
+											<Property Name="AccelVolume_Off" Type="Real32">
+												<ValueList>
+													<Value>0.46</Value>
+												</ValueList>
+											</Property>
+											<Property Name="DecelVolume_Off" Type="Real32">
+												<ValueList>
+													<Value>0.46</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopDuration" Type="Real32">
+												<ValueList>
+													<Value>0.7</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopRange" Type="int32">
+												<ValueList>
+													<Value>3</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopsEngineDuck" Type="Real32">
+												<ValueList>
+													<Value>0.3</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopsFreqMax" Type="Real32">
+												<ValueList>
+													<Value>0.2</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopsFreqMin" Type="Real32">
+												<ValueList>
+													<Value>0.01</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopsVolumeMax" Type="Real32">
+												<ValueList>
+													<Value>1</Value>
+												</ValueList>
+											</Property>
+											<Property Name="PopsVolumeMin" Type="Real32">
+												<ValueList>
+													<Value>1</Value>
+												</ValueList>
+											</Property>
+										</PropertyList>
+									</PluginInnerObject>
+								</List>
+								<List Name="EngineSimulationControlData">
+									<PluginInnerObject Name="" ID="{CC814417-F6F9-4198-9B91-378506C19C1B}" PluginName="EngineSimulationControlData" CompanyID="261" PluginID="417">
+										<PropertyList>
+											<Property Name="ClutchRPMMergeTime" Type="Real32">
+												<ValueList>
+													<Value>0.3</Value>
+												</ValueList>
+											</Property>
+											<Property Name="ClutchRPMSpike" Type="Real32">
+												<ValueList>
+													<Value>0.66</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftAttackThrottleTime" Type="Real32">
+												<ValueList>
+													<Value>0.1</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftDuration" Type="Real32">
+												<ValueList>
+													<Value>0.4</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftWobbleDuration" Type="Real32">
+												<ValueList>
+													<Value>0.45</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftWobblePitchAmp" Type="Real32">
+												<ValueList>
+													<Value>0.5</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftWobblePitchFreq" Type="Real32">
+												<ValueList>
+													<Value>50</Value>
+												</ValueList>
+											</Property>
+											<Property Name="UpShiftWobbleVolFreq" Type="Real32">
+												<ValueList>
+													<Value>10</Value>
+												</ValueList>
+											</Property>
+										</PropertyList>
+									</PluginInnerObject>
+									<PluginInnerObject Name="" ID="{5AA871CB-E185-46EA-9C70-1F5920E947E5}" PluginName="EngineSimulationControlData" CompanyID="261" PluginID="417"/>
+								</List>
+							</PluginInnerObjectList>
+						</SourcePlugin>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="CrankcaseAudio REV" ID="{552033DD-2B43-47F4-95DC-DE43BC543B6C}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
+	</AudioObjects>
+</WwiseDocument>

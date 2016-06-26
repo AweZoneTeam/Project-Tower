@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEditor;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using GAF.Core;
 
@@ -15,9 +16,18 @@ public class LeftAnimator : EditorWindow
                                                                              //тела в данной анимации
     public string sLeftSequence = "left sequence", sRightSequence = "right sequence", sLeftPSequence = "left parent sequence", sRightPSequence = "right parent sequence";//Строчки, нужные для ручного ввода анимаций
     public int rCurrentIndex=0, lCurrentIndex=0, rPCurrentIndex = 0, lPCurrentIndex = 0;//Числа, которые нужны для выбора той или иной 
-                                                                                       //последовательности из предложеных в GAFMovieClip
-    public Object audioClip;//Один из аудиоклипов, проигрываемых в данной частью в данном фрейме данной анимации
-	public int layer=0;//layer - порядок прорисовки анимационной части персонажа начиная с данного кадра данной анимации
+                                                                                        //последовательности из предложеных в GAFMovieClip
+
+    #region animationSounds&WwisePicker
+
+    protected string soundUnit=string.Empty;//Название Unit'а в Wwise
+    public string soundEvent=string.Empty;//Название ивента, что будет проигрываться в выбранном кадре
+    int sUnitIndex;
+    int sEventIndex;
+
+    #endregion //animationSounds&WwisePicker
+
+    public int layer=0;//layer - порядок прорисовки анимационной части персонажа начиная с данного кадра данной анимации
     public int defaultLayer=0;//defaultLayer - порядок прорисовки анимационной части по дефолту, тот порядок, который используется обычно
 	public bool loop=false;//сделать ли данную анимацию зацикленной?
     public int FPS = 30;//Сколько кадров в секунду проигрывать в анимации?
@@ -25,11 +35,14 @@ public class LeftAnimator : EditorWindow
     public int numb = 0, type = 0;//Идентификационные номера анимации
     public int currentFrame;//С каким кадром анимации мы сейчас работаем
     public int mainFrame=0, prevMainFrame=0;//Какой кадр анимации должны иметь все остальные части тела
-	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёт false, когда научишься отслеживать эти изменения
+	public bool saved=true;//параметр, который говорит, были ли сохранены послежние изменениня или нет. Вернёт false, когда научишься отслеживать эти изменения ||UPD: смотри GUI.changed
+
 	public GameObject character;//Какой персонаж сейчас интересует левый редактор
+
 	public PartController characterPart;//Какая часть тела в центре внимация всего редактора анимаций
     public PartController parentPart;//Какая часть тела является родительской по отношению к characterPart
-	public animationInfo characterAnimation; // Какая анимация сейчас обрабаытвается редактором
+    public animationInfo characterAnimation; // Какая анимация сейчас обрабаытвается редактором
+
     public string animationTurnTo = "Play";//Строка, которая будет находится на кнопке, включающую/выключающую проигрывание анимации в редакторе
 
 	[HideInInspector]
@@ -159,9 +172,11 @@ public class LeftAnimator : EditorWindow
                 currentSequence = mov.sequenceIndexToName(mov.getCurrentSequenceIndex());
                 AnimationInterpretator interp = characterPart.interp;
                 List<string> sequenceNames = mov.asset.getSequences(mov.timelineID).ConvertAll(_sequence => _sequence.name);
-                
+
                 #region setSequences
+
                 #region setRightSequence
+
                 EditorGUILayout.BeginHorizontal();
                 {
                     rCurrentIndex = EditorGUILayout.Popup(rCurrentIndex, sequenceNames.ToArray());
@@ -186,9 +201,11 @@ public class LeftAnimator : EditorWindow
                     AnimClass animclass = cAnim.FindAnimData(animationName);
                     SetSequenceToAllParts(sRightSequence, animclass.type, animclass.numb, true);
                 }
+
                 #endregion //SetRightSequence
 
                 #region setLeftSequence
+
                 EditorGUILayout.BeginHorizontal();
                 {
                     lCurrentIndex = EditorGUILayout.Popup(lCurrentIndex, sequenceNames.ToArray());
@@ -213,7 +230,9 @@ public class LeftAnimator : EditorWindow
                     AnimClass animclass = cAnim.FindAnimData(animationName);
                     SetSequenceToAllParts(sLeftSequence, animclass.type, animclass.numb, false);
                 }
+
                 #endregion //setLeftSequence
+
                 #endregion //SetSequences
 
                 #region SetParentSequences
@@ -294,15 +313,21 @@ public class LeftAnimator : EditorWindow
                 #endregion //setFPS
 
                 #region setAudio
+
                 EditorGUILayout.BeginHorizontal();
                 {
-                    audioClip = EditorGUILayout.ObjectField(audioClip, typeof(AudioClip),true);
+                    soundUnit = AkWwiseProjectInfo.GetData().EventWwu[EditorGUILayout.Popup(sUnitIndex, AkWwiseProjectInfo.GetData().EventWwu.ConvertAll<string>(x => x.PhysicalPath).ToArray())].PhysicalPath;
+                    if (!soundUnit.Equals(string.Empty))
+                    {
+                        soundEvent = AkWwiseProjectInfo.GetData().EventWwu[sUnitIndex].List[EditorGUILayout.Popup(sEventIndex,AkWwiseProjectInfo.GetData().EventWwu[sUnitIndex].List.ConvertAll<string>(x=>x.Name).ToArray())].Name;
+                    }
                     if (GUILayout.Button("Set Audio"))
                     {
-                        SetSound((AudioClip)audioClip);
+                        SetSound(soundEvent);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+
                 #endregion //setAudio
 
                 #region setLoop
@@ -454,7 +479,7 @@ public class LeftAnimator : EditorWindow
             }
 			rightAnim.animTypes = cAnim.animTypes;			
 		}
-		rightAnim.character = character;
+        rightAnim.character = character;
 		//saved = false;
 	}
 
@@ -517,6 +542,21 @@ public class LeftAnimator : EditorWindow
         }
         cAnim.visualData = asset;
         asset.visual = PrefabUtility.CreatePrefab(path +"Visuals/"+ _name + ".prefab", character);
+
+        if (character.GetComponentInChildren<AkEvent>() == null)
+        {
+            GameObject characterAudio = new GameObject("CharacterAudio");
+            characterAudio.transform.parent = character.transform;
+            characterAudio.transform.localPosition = Vector3.zero;
+            if (cAnim is CharacterAnimator)
+            {
+                characterAudio.AddComponent<CharacterAudio>();
+            }
+            else
+            {
+                characterAudio.AddComponent<InterObjAudio>();
+            }
+        }
         SaveChanges();
         rightAnim.animTypes = cAnim.animTypes;
         rightAnim.character = character;
@@ -590,7 +630,7 @@ public class LeftAnimator : EditorWindow
     /// Функция, которая ставит в данном интерпретаторе в данном кадре на проигрывание данный звук
     /// </summary>
     /// <param name="аудиодорожка"></param>
-    void SetSound(AudioClip _audio)
+    void SetSound(string soundEvent)
     {
         int k = -1;
         for (int i = 0; i < characterAnimation.soundData.Count; i++)
@@ -605,7 +645,7 @@ public class LeftAnimator : EditorWindow
             characterAnimation.soundData.Add(new animationSoundData(false, currentFrame));
             k = characterAnimation.soundData.Count - 1;
         }
-        characterAnimation.soundData[k].audios.Add(_audio);
+        characterAnimation.soundData[k].soundEvent=soundEvent;
     }
 
     /// <summary>

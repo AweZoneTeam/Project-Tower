@@ -12,6 +12,7 @@ using UnityEditor;
 /// </summary>
 public class AIController : PersonController, IPersonWatching
 {
+
     #region consts
 
     protected const float sightRadius = 60f;
@@ -66,9 +67,14 @@ public class AIController : PersonController, IPersonWatching
     protected Vector3 startPosition;//Начальная позиция персонажа
     protected AreaClass startRoom;//Начальная комната пероснажа
     protected TargetWithCondition mainTarget;//Объект, что является истинной целью ИИ. Выполнение действия с данной целью является корнем поведения ИИ
+    public TargetWithCondition MainTarget {get { return mainTarget; } }
+
     protected List<TargetWithCondition> waypoints=new List<TargetWithCondition>();//Очередь из последовательности объектов, что являются точками интереса ИИ. ИИ последовательно выполняет действия с этими объектами.                      
                                                                                  //Таким образом я хочу сделать что-то вроде памяти ИИ. Ну и ещё это часть вспомогательного механизма, двигающего ИИ
+
     protected TargetWithCondition currentTarget;//Чем интересуется ИИ в данный момент
+    public TargetWithCondition CurrentTarget {get { return currentTarget; } }
+
     protected TargetWithCondition whoAttacksMe;//Кто атаковал персонажа
     public TargetWithCondition WhoAttacksMe {set { whoAttacksMe = value; } }
     protected float targetDistance;//Расстояние до текущей цели
@@ -146,7 +152,9 @@ public class AIController : PersonController, IPersonWatching
         conditionBase.Add("main target is current", MainTargetIsCurrent);
         conditionBase.Add("target on sight?", CheckTargetIsOnSight);
         conditionBase.Add("target type", CheckTargetType);
+        conditionBase.Add("target tag", CheckTargetTag);
         conditionBase.Add("main target type", CheckMainTargetType);
+        conditionBase.Add("main target tag", CheckMainTargetTag);
         conditionBase.Add("health", CheckHeatlh);
         conditionBase.Add("game time", CheckGameTime);
         conditionBase.Add("timer is resetted?", CheckTimerResetted);
@@ -187,6 +195,7 @@ public class AIController : PersonController, IPersonWatching
         actionBase.Add("jump", Jump);
         actionBase.Add("go home", GoHome);
         actionBase.Add("use route", UseRoute);
+        actionBase.Add("make route", CreateRoute);
         actionBase.Add("start timer", StartTimer);
         actionBase.Add("reset timer", ResetTimer);
         actionBase.Add("reset all timers", ResetAllTimers);
@@ -321,10 +330,14 @@ public class AIController : PersonController, IPersonWatching
     /// </summary>
     protected override void TargetChangeRoom(object sender, RoomChangedEventArgs e)
     {
-        currentTarget = null;
-        ChangeBehaviour("Search", 0);
-        waypoints = new List<TargetWithCondition>();
-        waypoints.Add(new TargetWithCondition(currentRoom.GetDoor(e.Room), "door"));
+        DoorClass door=null;
+        if (currentRoom.GetDoor(e.Room)!=null?(door = currentRoom.GetDoor(e.Room).GetComponent<DoorClass>()) != null:false)
+        {
+            currentTarget = null;
+            ChangeBehaviour("Search", 0);
+            waypoints = new List<TargetWithCondition>();
+            waypoints.Add(new TargetWithCondition(door.gameObject, "door"));
+        }
     }
 
     /// <summary>
@@ -551,6 +564,19 @@ public class AIController : PersonController, IPersonWatching
         if (Vector3.Distance(nextTarget.position, transform.position)>waypointMinDistance)
         {
             waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(this, currentRoom, nextTarget, nextTarget.areaPosition);
+            waypoints = PrepareWaypoints(waypoints);
+            mainTarget = nextTarget;
+        }
+    }
+
+    /// <summary>
+    /// Составить путь до главной цели 
+    /// </summary>
+    protected virtual void CreateRoute(string id, int argument)
+    {
+        if (Vector3.Distance(mainTarget.position, transform.position) > waypointMinDistance)
+        {
+            waypoints = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<Map>().GetWay(this, currentRoom, mainTarget, mainTarget.areaPosition);
             waypoints = PrepareWaypoints(waypoints);
         }
     }
@@ -1252,6 +1278,29 @@ public class AIController : PersonController, IPersonWatching
     }
 
     /// <summary>
+    /// Проверка на соответствие типа текущей цели заданному тэгу
+    /// </summary>
+    protected virtual bool CheckTargetTag(string id, int argument)
+    {
+        if (currentTarget != null ? (currentTarget.target != null) : false)
+        {
+            if (argument == -1)
+            {
+                return (!string.Equals(id, currentTarget.target.tag));
+            }
+            else
+            {
+                return (string.Equals(id, currentTarget.target.tag));
+            }
+        }
+        if (argument == -1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
     /// Проверить тип главной цели персонажа
     /// </summary>
     protected virtual bool CheckMainTargetType(string id, int argument)
@@ -1265,6 +1314,29 @@ public class AIController : PersonController, IPersonWatching
             else
             {
                 return (string.Equals(id, mainTarget.targetType));
+            }
+        }
+        if (argument == -1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Проверка на соответствие типа главной цели заданному тэгу
+    /// </summary>
+    protected virtual bool CheckMainTargetTag(string id, int argument)
+    {
+        if (mainTarget != null ? (mainTarget.target != null) : false)
+        {
+            if (argument == -1)
+            {
+                return (!string.Equals(id, mainTarget.target.tag));
+            }
+            else
+            {
+                return (string.Equals(id, mainTarget.target.tag));
             }
         }
         if (argument == -1)
@@ -1500,6 +1572,163 @@ public class AIController : PersonController, IPersonWatching
     }
 
     #endregion //Analyze
+
+    /// <summary>
+    /// Проинициализировать объект, используя сохранённые данные
+    /// </summary>
+    public override void AfterInitialize(InterObjData intInfo, Map map, Dictionary<string, InterObjController> savedIntObjs)
+    {
+        base.AfterInitialize(intInfo, map, savedIntObjs);
+
+        AIData aiInfo = (AIData)intInfo;
+        if (aiInfo != null)
+        {
+            ChangeBehaviour(aiInfo.behaviour, 0);
+
+            #region mainTarget
+
+            if (!string.Equals(aiInfo.mainTarget.targetName, "!"))
+            {
+                if (string.Equals(aiInfo.mainTarget.targetName, string.Empty))
+                {
+                    GameObject target = new GameObject("Waypoint");
+                    mainTarget = new TargetWithCondition(null, aiInfo.mainTarget.targetType, aiInfo.mainTarget.targetArgument);
+                    mainTarget.position = aiInfo.mainTarget.targetPosition;
+                    if (string.Equals(aiInfo.mainTarget.targetRoom, string.Empty))
+                    {
+                        mainTarget.areaPosition = map.rooms.Find(x => (string.Equals(aiInfo.mainTarget.targetRoom, x.id.areaName)));
+                    }
+                    target.transform.position = mainTarget.position;
+                }
+                else
+                {
+                    if (savedIntObjs.ContainsKey(aiInfo.mainTarget.targetName))
+                    {
+                        GameObject target = savedIntObjs[aiInfo.mainTarget.targetName].gameObject;
+                        mainTarget = new TargetWithCondition(null, aiInfo.mainTarget.targetType, aiInfo.mainTarget.targetArgument);
+                        mainTarget.position = target.transform.position;
+                        if (string.Equals(aiInfo.mainTarget.targetRoom, string.Empty))
+                        {
+                            mainTarget.areaPosition = map.rooms.Find(x => (string.Equals(aiInfo.mainTarget.targetRoom, x.id.areaName)));
+                        }
+                    }
+                }
+            }
+            #endregion //mainTarget
+
+            #region currentTarget
+            if (!string.Equals(aiInfo.currentTarget.targetName, "!"))
+            {
+                if (string.Equals(aiInfo.currentTarget.targetName, string.Empty))
+                {
+                    GameObject target = new GameObject("Waypoint");
+                    currentTarget = new TargetWithCondition(null, aiInfo.currentTarget.targetType, aiInfo.currentTarget.targetArgument);
+                    currentTarget.position = aiInfo.currentTarget.targetPosition;
+                    if (string.Equals(aiInfo.currentTarget.targetRoom, string.Empty))
+                    {
+                        currentTarget.areaPosition = map.rooms.Find(x => (string.Equals(aiInfo.currentTarget.targetRoom, x.id.areaName)));
+                    }
+                    target.transform.position = currentTarget.position;
+                }
+                else
+                {
+                    if (savedIntObjs.ContainsKey(aiInfo.currentTarget.targetName))
+                    {
+                        GameObject target = savedIntObjs[aiInfo.currentTarget.targetName].gameObject;
+                        currentTarget = new TargetWithCondition(null, aiInfo.currentTarget.targetType, aiInfo.currentTarget.targetArgument);
+                        currentTarget.position = target.transform.position;
+                        if (string.Equals(aiInfo.currentTarget.targetRoom, string.Empty))
+                        {
+                            currentTarget.areaPosition = map.rooms.Find(x => (string.Equals(aiInfo.currentTarget.targetRoom, x.id.areaName)));
+                        }
+                    }
+                }
+            }
+
+            #endregion //currentTarget
+
+            enemies = aiInfo.enemies;
+
+            NPCActions npc=null;
+            if ((npc = GetComponent<NPCActions>()) != null)
+            {
+                SpeechDatabase sBase = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponentInChildren<SpeechDatabase>();
+                npc.canTalk = aiInfo.canTalk;
+                if (!string.Equals(aiInfo.startSpeech, string.Empty))
+                {
+                    if (sBase.SpeechDict.ContainsKey(gameObject.name))
+                    {
+                        Dictionary<string, NPCSpeech> speeches = sBase.SpeechDict[gameObject.name];
+                        if (speeches.ContainsKey(aiInfo.startSpeech))
+                        {
+                            if (npc.speeches.Count == 0)
+                            {
+                                npc.speeches.Add(speeches[aiInfo.startSpeech]);
+                            }
+                            else
+                            {
+                                npc.speeches[0] = speeches[aiInfo.startSpeech];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// Получить информацию об объекте
+    /// </summary>
+    /// <returns></returns>
+    public override InterObjData GetInfo()
+    {
+        AIData intInfo = new AIData();
+        intInfo.objId = objId;
+        if (spawnId != null ? !string.Equals(spawnId, string.Empty) : false)
+        {
+            intInfo.spawnId = spawnId;
+        }
+        else
+        {
+            intInfo.spawnId = string.Empty;
+        }
+        intInfo.position = transform.position;
+        intInfo.roomPosition = currentRoom.id.areaName;
+        intInfo.orientation = (int)direction.dir;
+        intInfo.maxHealth = orgStats.maxHealth;
+        intInfo.health = orgStats.health;
+
+        intInfo.buffs = new List<string>();
+        foreach (BuffClass buff in buffList)
+        {
+            if (!buff.armorSetBuff)
+            {
+                intInfo.buffs.Add(buff.buffName);
+            }
+        }
+
+        intInfo.behaviour = behaviours.Find(x => string.Equals(x.behaviour.behaviourName, currentBehaviour.behaviourName)).path;
+        intInfo.mainTarget = new TargetData(mainTarget);
+        intInfo.currentTarget = new TargetData(currentTarget);
+        intInfo.enemies = enemies;
+
+        NPCActions npc = null;
+        if ((npc = GetComponent<NPCActions>()) != null)
+        {
+            intInfo.canTalk = npc.canTalk;
+            if (npc.speeches.Count > 0)
+            {
+                intInfo.startSpeech = npc.speeches[0].speechName;
+            }
+            else
+            {
+                intInfo.startSpeech = string.Empty;
+            }
+        }
+        return intInfo;
+    }
 
     #region getters
 

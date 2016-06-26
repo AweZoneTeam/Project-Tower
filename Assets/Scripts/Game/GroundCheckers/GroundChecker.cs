@@ -9,7 +9,7 @@ public class GroundChecker : MonoBehaviour
 {
     [SerializeField]protected List<GameObject> collisions=new List<GameObject>();
 
-    private List<string> whatIsGround=new List<string> {"ground" };
+    private List<string> whatIsGround=new List<string> {"ground","wood","grass", "metal"};
     protected List<int> layers=new List<int>();
 
     protected virtual void Awake()

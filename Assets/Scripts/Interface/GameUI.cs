@@ -12,6 +12,7 @@ public class GameUI : InterfaceWindow
     #region consts
 
     private const float maxHealthWidth = 230f;
+    private const float bossMaxHealthWidth = 625f;
 
     #endregion //consts
 
@@ -29,6 +30,10 @@ public class GameUI : InterfaceWindow
     private Image rightWeaponImage, leftWeaponImage, itemImage;
     private GameObject messagePanel;
     private Text message1, message2;
+
+    private RectTransform bossHealthBar;
+    private Text bossName, bossHealth;
+    private GameObject emptyBossHpBar;
 
     private PersonController player;
     private Transform playerTrans;
@@ -122,6 +127,15 @@ public class GameUI : InterfaceWindow
         GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatistics>().MessageSentEvent += HandleMessageSentEvent;
         #endregion //messagePanel
 
+        #region bossHealth
+
+        bossHealthBar = transform.Find("BossHealth").GetComponent<RectTransform>();
+        bossName = transform.Find("BossNameText").GetComponent<Text>();
+        bossHealth = transform.Find("BossHealthText").GetComponent<Text>();
+        emptyBossHpBar = transform.Find("EmptyBossHpBar").gameObject;
+
+        #endregion //bossHealth
+
     }
 
     /// <summary>
@@ -131,6 +145,15 @@ public class GameUI : InterfaceWindow
     {
         healthBar.sizeDelta = new Vector2(maxHealthWidth * e.HP / maxHealth, healthBar.sizeDelta.y);
         healthText.text = e.HP.ToString() + "/" + maxHealth.ToString();    
+    }
+
+    /// <summary>
+    /// Мониторим здоровье босса
+    /// </summary>
+    void HandleBossHealthChangedEvent(object sender, OrganismEventArgs e)
+    {
+        bossHealthBar.sizeDelta = new Vector2(bossMaxHealthWidth * e.HP / e.MAXHP, bossHealthBar.sizeDelta.y);
+        bossHealth.text = e.HP.ToString() + "/" + e.MAXHP.ToString();
     }
 
     /// <summary>
@@ -157,7 +180,7 @@ public class GameUI : InterfaceWindow
         {
             SetImage(ref leftWeaponImage, e.Item);
         }
-        else if (string.Equals(itemType, "usable"))
+        else if (itemType.Contains("activeUsable"))
         {
             SetImage(ref itemImage, e.ItemBunch);
         }
@@ -188,6 +211,38 @@ public class GameUI : InterfaceWindow
         {
             _image.sprite = _item.image;
             _image.color = new Color(1f, 1f, 1f, 1f);
+        }
+    }
+
+    /// <summary>
+    /// Отобразить хп выбранного босса
+    /// </summary>
+    public void SetBossHp(BossController boss)
+    {
+        OrganismStats bOrgStats = boss.GetOrgStats();
+        bossHealthBar.gameObject.SetActive(true);
+        bossHealthBar.sizeDelta = new Vector2(bossMaxHealthWidth * bOrgStats.health / bOrgStats.maxHealth, bossHealthBar.sizeDelta.y);
+        bossHealth.text = bOrgStats.health.ToString() + "/" + bOrgStats.maxHealth.ToString();
+        bossName.gameObject.SetActive(true);
+        bossName.text = boss.gameObject.name;
+        bossHealth.gameObject.SetActive(true);
+        emptyBossHpBar.gameObject.SetActive(true);
+        bOrgStats.HealthChangedEvent += HandleBossHealthChangedEvent;
+    }
+
+    /// <summary>
+    /// Перестать отображать хп босса
+    /// </summary>
+    public void UnsetBossHp(BossController boss)
+    {
+        if (bossHealthBar.gameObject.active)
+        {
+            OrganismStats bOrgStats = boss.GetOrgStats();
+            bossHealthBar.gameObject.SetActive(false);
+            bossName.gameObject.SetActive(false);
+            bossHealth.gameObject.SetActive(false);
+            emptyBossHpBar.gameObject.SetActive(false);
+            bOrgStats.HealthChangedEvent -= HandleBossHealthChangedEvent;
         }
     }
 

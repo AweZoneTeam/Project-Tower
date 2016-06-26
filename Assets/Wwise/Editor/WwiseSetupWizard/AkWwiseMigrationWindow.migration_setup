@@ -375,23 +375,23 @@ public class AkWwiseMigrationWindow : EditorWindow
     void MigrateGameObjects()
     {
         //Get the name of the currently opened scene 
-#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
         string currentScene = EditorApplication.currentScene.Replace('/', '\\');
 #else
 		UnityEngine.SceneManagement.Scene activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene();
 		string currentScene = activeScene.path.Replace('/', '\\');
-#endif
+#endif		
 		
         for (int i = 0; i < m_scenes.Length; i++)
         {
             //Save the current scene and open a new one
-#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
             EditorApplication.SaveScene();
             EditorApplication.OpenScene(m_scenes[i]);
 #else
 			UnityEditor.SceneManagement.EditorSceneManager.SaveScene(activeScene);
 			activeScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(m_scenes[i]);
-#endif
+#endif		
 
             foreach (string file in m_intermediateFiles)
             {
@@ -423,13 +423,13 @@ public class AkWwiseMigrationWindow : EditorWindow
         }
 
         //Reopen the scene that was opened before the migration process started
-#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 		EditorApplication.SaveScene();
 		EditorApplication.OpenScene(currentScene);
 #else
 		UnityEditor.SceneManagement.EditorSceneManager.SaveScene(activeScene);
 		activeScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(currentScene);
-#endif
+#endif		
 
         if ((m_installedIntegrationNumber + m_completedMigrations) == m_newIntegrationNumber)
         {
@@ -573,7 +573,7 @@ public class AkWwiseMigrationWindow : EditorWindow
             {
                 SetAllScriptExecutionOrder();
 #if UNITY_5
-				AkPluginActivator.ActivateProfile();
+				AkPluginActivator.RefreshPlugins();
 #endif				
 				Debug.Log("WwiseUnity: Migration: project reload required");
 				EditorUtility.DisplayDialog("Warning", "Please reload your Unity project to complete the Wwise Integration migration.", "Ok");

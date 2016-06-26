@@ -51,7 +51,7 @@ public class AkInitializer : MonoBehaviour
     public const int c_StreamingPoolSize = 1024;
     ///Streaming Pool size.  This contains the streaming buffers.  Default size is 1 MB, but you should adjust for your needs.
     public int streamingPoolSize = c_StreamingPoolSize;
-
+	
 	public const int c_PreparePoolSize = 0;
     ///Prepare Pool size.  This contains the banks loaded using PrepareBank (Banks decoded on load use this).  Default size is 0 MB, but you should adjust for your needs.
 	public int preparePoolSize = c_PreparePoolSize;
@@ -73,6 +73,20 @@ public class AkInitializer : MonoBehaviour
 #endif
     }
 
+    public static string GetDecodedBankFolder()
+    {
+    	return "DecodedBanks";
+    }
+    
+    public static string GetDecodedBankFullPath()
+    {
+#if (UNITY_ANDROID || UNITY_IOS) && ! UNITY_EDITOR
+		return Path.Combine(Application.persistentDataPath, GetDecodedBankFolder());
+#else
+		return Path.Combine (AkBasePathGetter.GetPlatformBasePath(), GetDecodedBankFolder());
+#endif
+    }
+	
     public static string GetCurrentLanguage()
     {
         return ms_Instance.language;
@@ -108,9 +122,13 @@ public class AkInitializer : MonoBehaviour
         AkStreamMgrSettings streamingSettings = new AkStreamMgrSettings();
         streamingSettings.uMemorySize = (uint)streamingPoolSize * 1024;
 
-        AkInitSettings initSettings = new AkInitSettings();
+        AkInitSettings initSettings = new AkInitSettings();       
         AkSoundEngine.GetDefaultInitSettings(initSettings);
         initSettings.uDefaultPoolSize = (uint)defaultPoolSize * 1024;
+#if (!UNITY_ANDROID && !UNITY_WSA) || UNITY_EDITOR // Exclude WSA. It only needs the name of the DLL, and no path.
+        initSettings.szPluginDLLPath = Path.Combine(Application.dataPath, "Plugins" + Path.DirectorySeparatorChar);
+#endif
+        
 
         AkPlatformInitSettings platformSettings = new AkPlatformInitSettings();
         AkSoundEngine.GetDefaultPlatformInitSettings(platformSettings);
@@ -120,7 +138,7 @@ public class AkInitializer : MonoBehaviour
         AkMusicSettings musicSettings = new AkMusicSettings();
         AkSoundEngine.GetDefaultMusicSettings(musicSettings);
 
-// Unity 5 only, UNity 4 doesn't provide a way to access the product name at runtime.
+// Unity 5 only, Unity 4 doesn't provide a way to access the product name at runtime.
 #if UNITY_5
 #if UNITY_EDITOR
         AkSoundEngine.SetGameName(Application.productName + " (Editor)");
@@ -128,7 +146,7 @@ public class AkInitializer : MonoBehaviour
 		AkSoundEngine.SetGameName(Application.productName);
 #endif
 #endif
-
+        
         AKRESULT result = AkSoundEngine.Init(memSettings, streamingSettings, deviceSettings, initSettings, platformSettings, musicSettings, (uint)preparePoolSize*1024);
         if (result != AKRESULT.AK_Success)
         {
@@ -152,6 +170,10 @@ public class AkInitializer : MonoBehaviour
 		
         AkSoundEngine.SetCurrentLanguage(language);
 
+#if (UNITY_ANDROID || UNITY_IOS) && ! UNITY_EDITOR
+		AkSoundEngine.AddBasePath (	Application.persistentDataPath + Path.DirectorySeparatorChar );	
+#endif
+	
         result = AkCallbackManager.Init();
         if (result != AKRESULT.AK_Success)
         {
@@ -267,6 +289,7 @@ public class AkInitializer : MonoBehaviour
     private static AkInitializer ms_Instance;
 
 #if !UNITY_EDITOR && !UNITY_WIIU && !UNITY_IOS
+    //Keep out of UNITY_EDITOR because the sound needs to keep playing when switching windows (remote debugging in Wwise, for example).
 	//On the WiiU, it seems Unity has a bug and never calls OnApplicationFocus(true).  This leaves us in "suspended mode".  So commented out for now.
 	//On iOS, application interruptions are handled in the sound engine already.
 	void OnApplicationPause(bool pauseStatus) 

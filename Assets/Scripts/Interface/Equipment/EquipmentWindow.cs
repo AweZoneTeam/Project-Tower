@@ -69,6 +69,7 @@ public class EquipmentWindow : InterfaceWindow
     #region characterDoll
 
     public ItemSlot rightWeaponSlot1, rightWeaponSlot2, leftWeaponSlot1, leftWeaponSlot2;
+    public ItemSlot useItemSlot1, useItemSlot2, useItemSlot3, useItemSlot4;
 
     #endregion //characterDoll
 
@@ -82,13 +83,14 @@ public class EquipmentWindow : InterfaceWindow
     #region bag
 
     private List<EquipmentSlot> bagSlots = new List<EquipmentSlot>();
+    public List<EquipmentSlot> BagSlots {get { return bagSlots; }}
     private Text goldText, ironKeyText, silverKeyText, goldKeyText;
 
     #endregion //bag
 
     #endregion //fields
 
-    public void Start()
+    public void Awake()
     {
         Initialize();
     }
@@ -132,23 +134,14 @@ public class EquipmentWindow : InterfaceWindow
         leftWeaponSlot1.Initialize(this);
         leftWeaponSlot2 = characterDollPanel.FindChild("LeftWeaponSlot2").GetComponent<ItemSlot>();
         leftWeaponSlot2.Initialize(this);
-
-        InitializeSlot(characterDollPanel, "HelmetSlot", equip.armor.helmet);
-        InitializeSlot(characterDollPanel, "CuirassSlot", equip.armor.cuirass);
-        InitializeSlot(characterDollPanel, "PantsSlot", equip.armor.pants);
-        InitializeSlot(characterDollPanel, "BootsSlot", equip.armor.boots);
-        InitializeSlot(characterDollPanel, "GlovesSlot", equip.armor.gloves);
-        InitializeSlot(characterDollPanel, "LeftRingSlot", equip.armor.leftRing);
-        InitializeSlot(characterDollPanel, "RightRingSlot", equip.armor.rightRing);
-        InitializeSlot(characterDollPanel, "UsableItemSlot1", equip.useItems[0].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot2", equip.useItems[1].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot3", equip.useItems[2].item);
-        InitializeSlot(characterDollPanel, "UsableItemSlot4", equip.useItems[3].item);
-        rightWeaponSlot1.Initialize(this, new ItemBunch(equip.rightWeapon));
-        rightWeaponSlot2.Initialize(this, new ItemBunch(equip.altRightWeapon));
-        leftWeaponSlot1.Initialize(this, new ItemBunch(equip.leftWeapon));
-        leftWeaponSlot2.Initialize(this, new ItemBunch(equip.altLeftWeapon));
-
+        useItemSlot1 = characterDollPanel.FindChild("UsableItemSlot1").GetComponent<ItemSlot>();
+        useItemSlot1.Initialize(this);
+        useItemSlot2 = characterDollPanel.FindChild("UsableItemSlot2").GetComponent<ItemSlot>();
+        useItemSlot2.Initialize(this);
+        useItemSlot3 = characterDollPanel.FindChild("UsableItemSlot3").GetComponent<ItemSlot>();
+        useItemSlot3.Initialize(this);
+        useItemSlot4 = characterDollPanel.FindChild("UsableItemSlot4").GetComponent<ItemSlot>();
+        useItemSlot4.Initialize(this);
 
         #endregion //characterDoll
 
@@ -175,19 +168,11 @@ public class EquipmentWindow : InterfaceWindow
             bagSlots.Add(equipSlot);
             equipSlot.Initialize(this);
         }
-        for (int i = 0; i < equip.bag.Count; i++)
-        {
-            AddItemInBag(equip.bag[i]);
-        }
         Transform keysPanel = equipmentPanel.FindChild("BagPanel").FindChild("KeysPanel");
         goldText = keysPanel.FindChild("GoldText").GetComponent<Text>();
-        goldText.text = equip.gold.ToString();
         ironKeyText = keysPanel.FindChild("IronKeyText").GetComponent<Text>();
-        ironKeyText.text = equip.keys[0].ToString();
         silverKeyText = keysPanel.FindChild("SilverKeyText").GetComponent<Text>();
-        silverKeyText.text = equip.keys[1].ToString();
         goldKeyText = keysPanel.FindChild("GoldKeyText").GetComponent<Text>();
-        goldKeyText.text = equip.keys[2].ToString();
 
         #endregion //bag
 
@@ -203,6 +188,56 @@ public class EquipmentWindow : InterfaceWindow
 
     }
 
+    /// <summary>
+    /// Проинициализировать куклу персонажа, используя его equipment
+    /// </summary>
+    public void InitializeCharacterDoll()
+    {
+        Transform equipmentPanel = transform.FindChild("EquipmentPanel");
+        Transform characterDollPanel = equipmentPanel.FindChild("CharacterDollPanel").FindChild("CharacterDoll");
+
+        InitializeSlot(characterDollPanel, "HelmetSlot", equip.armor.helmet);
+        InitializeSlot(characterDollPanel, "CuirassSlot", equip.armor.cuirass);
+        InitializeSlot(characterDollPanel, "PantsSlot", equip.armor.pants);
+        InitializeSlot(characterDollPanel, "BootsSlot", equip.armor.boots);
+        InitializeSlot(characterDollPanel, "GlovesSlot", equip.armor.gloves);
+        InitializeSlot(characterDollPanel, "LeftRingSlot", equip.armor.leftRing);
+        InitializeSlot(characterDollPanel, "RightRingSlot", equip.armor.rightRing);
+        useItemSlot1.Initialize(this, new ItemBunch(equip.useItems[0]!=null?equip.useItems[0].item:null));
+        useItemSlot2.Initialize(this, new ItemBunch(equip.useItems[1] != null ? equip.useItems[1].item : null));
+        useItemSlot3.Initialize(this, new ItemBunch(equip.useItems[2] != null ? equip.useItems[2].item : null));
+        useItemSlot4.Initialize(this, new ItemBunch(equip.useItems[3] != null ? equip.useItems[3].item : null));
+        rightWeaponSlot1.Initialize(this, new ItemBunch(equip.rightWeapon));
+        rightWeaponSlot2.Initialize(this, new ItemBunch(equip.altRightWeapon));
+        leftWeaponSlot1.Initialize(this, new ItemBunch(equip.leftWeapon));
+        leftWeaponSlot2.Initialize(this, new ItemBunch(equip.altLeftWeapon));
+    }
+
+    /// <summary>
+    /// Проинициализировать сумку персонажа, используя его equipment.bag
+    /// </summary>
+    public void InitializeBag(bool fillBag)
+    {
+        Transform equipmentPanel = transform.FindChild("EquipmentPanel");
+        Transform bagPanel = equipmentPanel.FindChild("BagPanel").FindChild("BagScroll").FindChild("Bag");
+        if (fillBag)//Если игрок в первый раз начинает игру, то будем считать, что его предметы в рюкзаке расположатся по порядкуы
+        {
+            for (int i = 0; i < equip.bag.Count; i++)
+            {
+                AddItemInBag(equip.bag[i]);
+            }
+        }
+
+        goldText.text = equip.gold.ToString();
+        ironKeyText.text = equip.keys[0].ToString();
+        silverKeyText.text = equip.keys[1].ToString();
+        goldKeyText.text = equip.keys[2].ToString();
+
+    }
+
+    /// <summary>
+    /// Добавить предмет в рюкзак в свободное место
+    /// </summary>
     public void AddItemInBag(ItemBunch itemBunch)
     {
         if (itemBunch != null)
@@ -215,6 +250,17 @@ public class EquipmentWindow : InterfaceWindow
                     break;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Добавить предмет в рюкзак в определённом месте
+    /// </summary>
+    public void AddItemInBag(ItemBunch itemBunch, int index)
+    {
+        if (itemBunch != null)
+        {
+            bagSlots[index].AddItem(itemBunch);
         }
     }
 
@@ -287,6 +333,25 @@ public class EquipmentWindow : InterfaceWindow
             ItemBunch _itemBunch = leftWeaponSlot1.itemBunch;
             leftWeaponSlot1.Initialize(this, leftWeaponSlot2.itemBunch);
             leftWeaponSlot2.Initialize(this, _itemBunch);
+        }
+        else if (e.ItemType.Contains("usableItem"))
+        {
+            if (string.Equals(e.ItemType, "usableItem1"))
+            {
+                useItemSlot1.Initialize(this, e.ItemBunch);
+            }
+            else if (string.Equals(e.ItemType, "usableItem2"))
+            {
+                useItemSlot2.Initialize(this, e.ItemBunch);
+            }
+            else if (string.Equals(e.ItemType, "usableItem3"))
+            {
+                useItemSlot3.Initialize(this, e.ItemBunch);
+            }
+            else if (string.Equals(e.ItemType, "usableItem4"))
+            {
+                useItemSlot4.Initialize(this, e.ItemBunch);
+            }
         }
     }
 

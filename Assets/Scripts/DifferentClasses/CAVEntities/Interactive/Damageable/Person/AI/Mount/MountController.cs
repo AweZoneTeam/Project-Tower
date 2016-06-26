@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MountController : AIController
 {
 
     #region parametrs
+
     public float tameHP;
     bool tamed;
+    
     #endregion//parametrs
 
     #region fields
+
     public KeyboardActorController host;
+    
     #endregion//fields
 
     protected override void FormActionDictionaries()
@@ -39,6 +44,13 @@ public class MountController : AIController
         }
     }
 
+    void Tame()
+    {
+        tamed = true;
+        gameObject.tag = "Mount";
+        enemies.Clear();
+    }
+
     public override void Interact(InterObjController interactor)
     {
         if (tamed)
@@ -60,6 +72,15 @@ public class MountController : AIController
             GameObject _checkPoint = GameObject.Find("GameController").GetComponent<GameStatistics>().lastCheckPoint.gameObject;
             transform.position = _checkPoint.transform.position;
             ChangeRoom(_checkPoint.GetComponent<CheckpointActions>().currentRoom);
+        }
+    }
+
+    public override void AfterInitialize(InterObjData intInfo, Map map, Dictionary<string, InterObjController> savedIntObjs)
+    {
+        base.AfterInitialize(intInfo, map, savedIntObjs);
+        if (orgStats.health <=tameHP)
+        {
+            Tame();
         }
     }
 

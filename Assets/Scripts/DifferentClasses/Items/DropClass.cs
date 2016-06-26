@@ -43,4 +43,28 @@ public class DropClass : MonoBehaviour {
         }  
     }
 
+    /// <summary>
+    /// Установить параметры дропа, учитывая сохраненную о нём информацию
+    /// </summary>
+    public void SetDrop(DropInfo info, EquipmentDatabase eBase)
+    {
+        transform.position = info.position;
+        autoPick = info.autoPick;
+
+        drop = new List<ItemBunch>();
+
+        foreach (BagSlotInfo slotInfo in info.itemBunches)
+        {
+            if (eBase.ItemDict.ContainsKey(slotInfo.item))
+            {
+                drop.Add(new ItemBunch(eBase.ItemDict[slotInfo.item], slotInfo.quantity));
+            }
+        }
+
+        transform.localScale = info.scale;
+        GetComponent<BoxCollider>().size = info.boxSize;
+        transform.FindChild("GroundCheck").position = info.groundCheckPosition;
+
+    }
+
 }

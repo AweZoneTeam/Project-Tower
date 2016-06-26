@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PluginInfo Project="Lesson 4" Platform="Windows" Motion="false">
-	<Plugins>
-		<Plugin Name="Wwise Silence" ID="6619138"/>
-	</Plugins>
-</PluginInfo>

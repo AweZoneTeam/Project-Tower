@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 
 [AddComponentMenu("Wwise/AkEnvironment")]
-/// @brief Use this component to define a reverb zone.  This needs to be added to a collider object to work properly.
+/// @brief Use this component to define a reverb zone.  This needs to be added to a collider object to work properly. \ref unity_use_AkEvironment_AkEvironmentPortal
 /// @details This component can be attached to any collider.  You can specify a roll-off to fade-in/out of the reverb.  
 /// The reverb parameters will be defined in the Wwise project, by the sound designer.  All AkGameObj that are 
 /// "environement"-aware will receive a send value when entering the attached collider.

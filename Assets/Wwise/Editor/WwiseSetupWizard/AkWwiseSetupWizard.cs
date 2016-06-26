@@ -16,7 +16,7 @@ public class WwiseSetupWizard : WwiseSetupWindow
     private static string m_newIntegrationVersion = string.Empty;
 
     private const uint SETUP_WINDOW_WIDTH = 1000;
-    private const uint SETUP_WINDOW_HEIGHT = 475;
+    private const uint SETUP_WINDOW_HEIGHT = 480;
 
     public static void Init()
     {
@@ -27,6 +27,7 @@ public class WwiseSetupWizard : WwiseSetupWindow
 			windowInstance = ScriptableObject.CreateInstance<WwiseSetupWizard> ();
             windowInstance.position = new Rect((Screen.currentResolution.width - SETUP_WINDOW_WIDTH) / 2, (Screen.currentResolution.height - SETUP_WINDOW_HEIGHT) / 2, SETUP_WINDOW_WIDTH, SETUP_WINDOW_HEIGHT);
             windowInstance.minSize = new Vector2(SETUP_WINDOW_WIDTH, SETUP_WINDOW_HEIGHT);
+			
 #if !UNITY_5 || UNITY_5_0
             windowInstance.title = "Wwise Setup";
 #else
@@ -115,7 +116,7 @@ For more information on a particular setting, hover your mouse over it.",
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("Start Installation", GUILayout.Width(200)))
         {
-			if( string.IsNullOrEmpty(Settings.WwiseProjectPath) || string.IsNullOrEmpty(Settings.SoundbankPath) )
+			if (string.IsNullOrEmpty(Settings.WwiseProjectPath) || string.IsNullOrEmpty(Settings.SoundbankPath) )
             {
                 EditorUtility.DisplayDialog("Error", "Please fill all mandatory settings", "Ok");
             }
@@ -188,7 +189,7 @@ For more information on a particular setting, hover your mouse over it.",
     }
 
     // Perform all necessary steps to use the Wwise Unity integration.
-    bool Setup()
+    public bool Setup()
     {
         bool NoErrorHappened = true;
 
@@ -232,7 +233,7 @@ For more information on a particular setting, hover your mouse over it.",
             NoErrorHappened = false;
         }
 #else
-        AkPluginActivator.ActivateProfile();
+        AkPluginActivator.ActivatePlugins(AkPluginActivator.CONFIG_PROFILE, true);
 #endif
 
         // 8. Verify DirectX is installed (windows only)
@@ -257,10 +258,14 @@ For more information on a particular setting, hover your mouse over it.",
         Repaint();
 
         // 13. Make sure the installed SDK matches the one that was build on the machine
-        ValidateVersion();
+        string[] arguments = Environment.GetCommandLineArgs();
+        if (Array.IndexOf(arguments, "-nographics") == -1)
+        {
+            ValidateVersion();
+        }
 
-        // 14. Move some files out of the assets folder
-        // todo.
+        // 14. Enable Xbox One profiling sockets
+		AkXboxOneUtils.EnableXboxOneNetworkSockets();
 
         // 15. Populate the picker
         AkWwiseProjectInfo.GetData(); // Load data

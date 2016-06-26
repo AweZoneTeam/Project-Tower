@@ -308,21 +308,20 @@ public class animationSoundData
 {
 	public bool played;//была ли эта запись уже сыграна?
 	public int time;//Кадр анимации, при котором проигрывается звук
-	public List<AudioClip> audios;//Какой звук проигрывается (если звуков несколько, то случайно выбирается один их них)
+    public string soundEvent;//Какой ивент вызывается при проигрывании кадра анимации
 
 	//Конструктор
 	public animationSoundData(animationSoundData soundData)
 	{
 		played = soundData.played;
 		time = soundData.time;
-		audios = soundData.audios;
+	    soundEvent = soundData.soundEvent;
 	}
 
     public animationSoundData(bool _played, int _time)
     {
         played = _played;
         time = _time;
-        audios = new List<AudioClip>();
     }
 }
 

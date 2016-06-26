@@ -59,14 +59,28 @@ public class RoomChangedEventArgs : EventArgs
     public RoomChangedEventArgs(AreaClass _room)
     {
         room = _room;
+        prevRoom = null;
     }
 
-    private AreaClass room;
+    public RoomChangedEventArgs(AreaClass _room, AreaClass _prevRoom)
+    {
+        room = _room;
+        prevRoom = _prevRoom;
+    }
+
+    private AreaClass room;//следующая комната
+    private AreaClass prevRoom;//предыдущая комната
 
     public AreaClass Room
     {
         get { return room; }
         set { room = value; }
+    }
+
+    public AreaClass PrevRoom
+    {
+        get { return prevRoom; }
+        set { prevRoom = value; }
     }
 }
 

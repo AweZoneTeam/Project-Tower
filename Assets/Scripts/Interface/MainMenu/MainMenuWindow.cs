@@ -1,9 +1,25 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class MainMenuWindow : MenuWindow
 {
+
+    #region fields
+
+    protected Button continueButton, loadButton;
+
+    #endregion //fields
+
+    public override void Initialize()
+    {
+        if (string.Equals(SceneManager.GetActiveScene().name, "Main Menu"))
+        {
+            continueButton = transform.FindChild("ContinueGame").GetComponent<Button>();
+            loadButton = transform.FindChild("LoadGame").GetComponent<Button>();
+        }
+    }
 
     /// <summary>
     /// Продолжить игру
@@ -23,6 +39,15 @@ public class MainMenuWindow : MenuWindow
         }
     }
 
+    /// <summary>
+    /// Специальная функция, деактивирующая кнопки загрузки и продолжения игры, если нет сохранений игры
+    /// </summary>
+    /// <param name="yes"></param>
+    public void OnlyNewGame(bool yes)
+    {
+        continueButton.enabled = !yes;
+        loadButton.enabled = !yes;
+    }
 
     /// <summary>
     /// Новая игра
@@ -33,13 +58,6 @@ public class MainMenuWindow : MenuWindow
         SceneManager.LoadScene("ProjectTower");
 #endif
         Application.LoadLevel("ProjectTower");
-    }
-
-    /// <summary>
-    /// Загрузить игру
-    /// </summary>
-    public void LoadGame()
-    {
     }
 
     /// <summary>

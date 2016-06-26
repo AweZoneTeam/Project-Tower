@@ -16,7 +16,7 @@ public class AIActions : PersonActions
 
     #endregion //fields
 
-    public void Update()
+    public override void Update()
     {
         if (!death)
         {

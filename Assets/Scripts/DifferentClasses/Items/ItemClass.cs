@@ -38,6 +38,21 @@ public class ItemBunch
         quantity = 1;
     }
 
+    public ItemBunch(ItemClass _item, int _quantity)
+    {
+        item = _item;
+        quantity = _quantity;
+    }
+
+    public void ConsumeItem()
+    {
+        quantity--;
+        if (quantity <= 0)
+        {
+            item = null;
+        }
+    }
+
 }
 
 /// <summary>

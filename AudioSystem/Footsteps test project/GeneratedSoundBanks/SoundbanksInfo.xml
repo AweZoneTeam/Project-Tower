@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="118">
+	<RootPaths>
+		<ProjectRoot>D:\Chisto Moya Papka!!!\Games\MyGames\project Tower\Unity project\Project Tower\Project-Tower\AudioSystem\Footsteps test project\</ProjectRoot>
+		<SourceFilesRoot>D:\Chisto Moya Papka!!!\Games\MyGames\project Tower\Unity project\Project Tower\Project-Tower\AudioSystem\Footsteps test project\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>D:\Chisto Moya Papka!!!\Games\MyGames\project Tower\Unity project\Project Tower\Project-Tower\AudioSystem\Footsteps test project\GeneratedSoundBanks\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>D:\Chisto Moya Papka!!!\Games\MyGames\project Tower\Unity project\Project Tower\Project-Tower\AudioSystem\Footsteps test project\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents/>
+	<StreamedFiles/>
+	<MediaFilesNotInAnyBank/>
+	<SoundBanks>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ObjectPath>Init</ObjectPath>
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
+		</SoundBank>
+		<SoundBank Id="3161908922" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Main</ObjectPath>
+			<ShortName>Main</ShortName>
+			<Path>Main.bnk</Path>
+			<IncludedEvents>
+				<Event Id="1894362767" Name="Foot_Player" ObjectPath="\Events\Default Work Unit\Foot_Player"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="63120174" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_04.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_04_9E69E797.wem</Path>
+				</File>
+				<File Id="73203247" Language="SFX">
+					<ShortName>Footsteps\Dirt\FS_Dirt_04.wav</ShortName>
+					<Path>SFX\Footsteps\Dirt\FS_Dirt_04_9E69E797.wem</Path>
+				</File>
+				<File Id="383067235" Language="SFX">
+					<ShortName>Footsteps\Concrete\FS_Concrete_01.wav</ShortName>
+					<Path>SFX\Footsteps\Concrete\FS_Concrete_01_82E4E980.wem</Path>
+				</File>
+				<File Id="405563255" Language="SFX">
+					<ShortName>Footsteps\Concrete\FS_Concrete_03.wav</ShortName>
+					<Path>SFX\Footsteps\Concrete\FS_Concrete_03_ECE9D46A.wem</Path>
+				</File>
+				<File Id="433556971" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_03.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_03_9E69E797.wem</Path>
+				</File>
+				<File Id="470007040" Language="SFX">
+					<ShortName>Footsteps\Concrete\FS_Concrete_02.wav</ShortName>
+					<Path>SFX\Footsteps\Concrete\FS_Concrete_02_001D9819.wem</Path>
+				</File>
+				<File Id="481431332" Language="SFX">
+					<ShortName>Footsteps\Dirt\FS_Dirt_01.wav</ShortName>
+					<Path>SFX\Footsteps\Dirt\FS_Dirt_01_9E69E797.wem</Path>
+				</File>
+				<File Id="522000878" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_02.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_02_9E69E797.wem</Path>
+				</File>
+				<File Id="529403229" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_01.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_01_9E69E797.wem</Path>
+				</File>
+				<File Id="565352196" Language="SFX">
+					<ShortName>Footsteps\Concrete\FS_Concrete_04.wav</ShortName>
+					<Path>SFX\Footsteps\Concrete\FS_Concrete_04_09559DE1.wem</Path>
+				</File>
+				<File Id="751911638" Language="SFX">
+					<ShortName>Footsteps\Dirt\FS_Dirt_02.wav</ShortName>
+					<Path>SFX\Footsteps\Dirt\FS_Dirt_02_9E69E797.wem</Path>
+				</File>
+				<File Id="933732286" Language="SFX">
+					<ShortName>Footsteps\Dirt\FS_Dirt_03.wav</ShortName>
+					<Path>SFX\Footsteps\Dirt\FS_Dirt_03_9E69E797.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>

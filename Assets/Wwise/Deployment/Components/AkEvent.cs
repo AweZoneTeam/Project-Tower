@@ -14,9 +14,6 @@ public enum AkUnsupportedCallbackType
 	AK_SpeakerVolumeMatrix				= 0x0010,
 	AK_MusicSyncAll 					= 0x7f00,
 	AK_CallbackBits 					= 0xfffff,
-	AK_EnableGetSourcePlayPosition 		= 0x100000,
-	AK_EnableGetMusicPlayPosition 		= 0x200000,
-	AK_EnableGetSourceStreamBuffering 	= 0x400000,
 	AK_Monitoring 						= 0x20000000,
 	AK_Bank 							= 0x40000000,
 	AK_AudioInterruption				= 0x22000000
@@ -74,8 +71,8 @@ public class AkEvent : AkUnityEventHandler
 			}
 		}
 	}
-
-	public override void HandleEvent(GameObject in_gameObject)
+    public uint playingId = AkSoundEngine.AK_INVALID_PLAYING_ID;
+    public override void HandleEvent(GameObject in_gameObject)
 	{        
 		GameObject gameObj = (useOtherObject && in_gameObject != null) ? in_gameObject : gameObject;
 
@@ -84,9 +81,9 @@ public class AkEvent : AkUnityEventHandler
         if(enableActionOnEvent)
 			AkSoundEngine.ExecuteActionOnEvent((uint)eventID, actionOnEventType, gameObj, (int)transitionDuration * 1000, curveInterpolation);
 		else if(m_callbackData != null)
-			AkSoundEngine.PostEvent((uint)eventID, gameObj, (uint)m_callbackData.uFlags, Callback, null, 0, null, AkSoundEngine.AK_INVALID_PLAYING_ID);
+			playingId = AkSoundEngine.PostEvent((uint)eventID, gameObj, (uint)m_callbackData.uFlags, Callback, null, 0, null, AkSoundEngine.AK_INVALID_PLAYING_ID);
 		else
-			AkSoundEngine.PostEvent((uint)eventID, gameObj);
+            playingId = AkSoundEngine.PostEvent((uint)eventID, gameObj);
     }
 
     public void Stop(int _transitionDuration, AkCurveInterpolation _curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear)

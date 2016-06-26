@@ -39,6 +39,13 @@ public class AkSoundEngine {
     } 
   }
 
+  public static uint AK_MIXER_FX_SLOT {
+    get {
+      uint ret = AkSoundEnginePINVOKE.CSharp_AK_MIXER_FX_SLOT_get();
+      return ret;
+    } 
+  }
+
   public static uint AK_SOUNDBANK_VERSION {
     get {
       uint ret = AkSoundEnginePINVOKE.CSharp_AK_SOUNDBANK_VERSION_get();
@@ -47,6 +54,11 @@ public class AkSoundEngine {
   }
 
 
+
+	public static AKRESULT SetObjectPosition(UnityEngine.GameObject in_gameObjectID, float PosX, float PosY, float PosZ, float FrontX, float FrontY, float FrontZ )
+	{
+		throw new NotImplementedException("SetObjectPosition now requires a top vector. Please change your scripts to use the SetObjectPosition overload that specifies the top vector.");
+	}
 
     private static System.Collections.Generic.HashSet<int> RegisteredGameObjects = new System.Collections.Generic.HashSet<int>();
 
@@ -351,14 +363,20 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AkChannelConfig GetSpeakerConfiguration(AkAudioOutputType in_eSinkType, uint in_iOutputID) {
-    AkChannelConfig ret = new AkChannelConfig(AkSoundEnginePINVOKE.CSharp_GetSpeakerConfiguration__SWIG_0((int)in_eSinkType, in_iOutputID), true);
+  public static AKRESULT GetAudioSettings(AkAudioSettings out_audioSettings) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetAudioSettings(AkAudioSettings.getCPtr(out_audioSettings));
 
     return ret;
   }
 
-  public static AkChannelConfig GetSpeakerConfiguration(AkAudioOutputType in_eSinkType) {
-    AkChannelConfig ret = new AkChannelConfig(AkSoundEnginePINVOKE.CSharp_GetSpeakerConfiguration__SWIG_1((int)in_eSinkType), true);
+  public static AkChannelConfig GetSpeakerConfiguration(AkAudioOutputType in_eOutputType, uint in_iOutputID) {
+    AkChannelConfig ret = new AkChannelConfig(AkSoundEnginePINVOKE.CSharp_GetSpeakerConfiguration__SWIG_0((int)in_eOutputType, in_iOutputID), true);
+
+    return ret;
+  }
+
+  public static AkChannelConfig GetSpeakerConfiguration(AkAudioOutputType in_eOutputType) {
+    AkChannelConfig ret = new AkChannelConfig(AkSoundEnginePINVOKE.CSharp_GetSpeakerConfiguration__SWIG_1((int)in_eOutputType), true);
 
     return ret;
   }
@@ -369,14 +387,14 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT GetPanningRule(out int out_ePanningRule, AkAudioOutputType in_eSinkType, uint in_iOutputID) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPanningRule__SWIG_0(out out_ePanningRule, (int)in_eSinkType, in_iOutputID);
+  public static AKRESULT GetPanningRule(out int out_ePanningRule, AkAudioOutputType in_eOutputType, uint in_iOutputID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPanningRule__SWIG_0(out out_ePanningRule, (int)in_eOutputType, in_iOutputID);
 
     return ret;
   }
 
-  public static AKRESULT GetPanningRule(out int out_ePanningRule, AkAudioOutputType in_eSinkType) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPanningRule__SWIG_1(out out_ePanningRule, (int)in_eSinkType);
+  public static AKRESULT GetPanningRule(out int out_ePanningRule, AkAudioOutputType in_eOutputType) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPanningRule__SWIG_1(out out_ePanningRule, (int)in_eOutputType);
 
     return ret;
   }
@@ -387,14 +405,14 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT SetPanningRule(AkPanningRule in_ePanningRule, AkAudioOutputType in_eSinkType, uint in_iOutputID) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetPanningRule__SWIG_0((int)in_ePanningRule, (int)in_eSinkType, in_iOutputID);
+  public static AKRESULT SetPanningRule(AkPanningRule in_ePanningRule, AkAudioOutputType in_eOutputType, uint in_iOutputID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetPanningRule__SWIG_0((int)in_ePanningRule, (int)in_eOutputType, in_iOutputID);
 
     return ret;
   }
 
-  public static AKRESULT SetPanningRule(AkPanningRule in_ePanningRule, AkAudioOutputType in_eSinkType) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetPanningRule__SWIG_1((int)in_ePanningRule, (int)in_eSinkType);
+  public static AKRESULT SetPanningRule(AkPanningRule in_ePanningRule, AkAudioOutputType in_eOutputType) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetPanningRule__SWIG_1((int)in_ePanningRule, (int)in_eOutputType);
 
     return ret;
   }
@@ -405,14 +423,14 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT GetSpeakerAngles(float[] io_pfSpeakerAngles, ref uint io_uNumAngles, out float out_fHeightAngle, AkAudioOutputType in_eSinkType, uint in_iOutputID) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetSpeakerAngles__SWIG_0(io_pfSpeakerAngles, ref io_uNumAngles, out out_fHeightAngle, (int)in_eSinkType, in_iOutputID);
+  public static AKRESULT GetSpeakerAngles(float[] io_pfSpeakerAngles, ref uint io_uNumAngles, out float out_fHeightAngle, AkAudioOutputType in_eOutputType, uint in_iOutputID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetSpeakerAngles__SWIG_0(io_pfSpeakerAngles, ref io_uNumAngles, out out_fHeightAngle, (int)in_eOutputType, in_iOutputID);
 
     return ret;
   }
 
-  public static AKRESULT GetSpeakerAngles(float[] io_pfSpeakerAngles, ref uint io_uNumAngles, out float out_fHeightAngle, AkAudioOutputType in_eSinkType) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetSpeakerAngles__SWIG_1(io_pfSpeakerAngles, ref io_uNumAngles, out out_fHeightAngle, (int)in_eSinkType);
+  public static AKRESULT GetSpeakerAngles(float[] io_pfSpeakerAngles, ref uint io_uNumAngles, out float out_fHeightAngle, AkAudioOutputType in_eOutputType) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetSpeakerAngles__SWIG_1(io_pfSpeakerAngles, ref io_uNumAngles, out out_fHeightAngle, (int)in_eOutputType);
 
     return ret;
   }
@@ -423,14 +441,14 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT SetSpeakerAngles(float[] in_pfSpeakerAngles, uint in_uNumAngles, float in_fHeightAngle, AkAudioOutputType in_eSinkType, uint in_iOutputID) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetSpeakerAngles__SWIG_0(in_pfSpeakerAngles, in_uNumAngles, in_fHeightAngle, (int)in_eSinkType, in_iOutputID);
+  public static AKRESULT SetSpeakerAngles(float[] in_pfSpeakerAngles, uint in_uNumAngles, float in_fHeightAngle, AkAudioOutputType in_eOutputType, uint in_iOutputID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetSpeakerAngles__SWIG_0(in_pfSpeakerAngles, in_uNumAngles, in_fHeightAngle, (int)in_eOutputType, in_iOutputID);
 
     return ret;
   }
 
-  public static AKRESULT SetSpeakerAngles(float[] in_pfSpeakerAngles, uint in_uNumAngles, float in_fHeightAngle, AkAudioOutputType in_eSinkType) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetSpeakerAngles__SWIG_1(in_pfSpeakerAngles, in_uNumAngles, in_fHeightAngle, (int)in_eSinkType);
+  public static AKRESULT SetSpeakerAngles(float[] in_pfSpeakerAngles, uint in_uNumAngles, float in_fHeightAngle, AkAudioOutputType in_eOutputType) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetSpeakerAngles__SWIG_1(in_pfSpeakerAngles, in_uNumAngles, in_fHeightAngle, (int)in_eOutputType);
 
     return ret;
   }
@@ -453,8 +471,20 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static AKRESULT RenderAudio(bool in_bAllowSyncRender) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_RenderAudio__SWIG_0(in_bAllowSyncRender);
+
+    return ret;
+  }
+
   public static AKRESULT RenderAudio() {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_RenderAudio();
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_RenderAudio__SWIG_1();
+
+    return ret;
+  }
+
+  public static AKRESULT RegisterPluginDLL(string in_DllName) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_RegisterPluginDLL(in_DllName);
 
     return ret;
   }
@@ -725,6 +755,42 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static AKRESULT PostMIDIOnEvent(uint in_eventID, UnityEngine.GameObject in_gameObjectID, AkMIDIPost in_pPosts, ushort in_uNumPosts) {
+    
+		AkAutoObject tempObj = null;   
+		uint tempin_gameObjectID = (uint)AutoRegisterAkGameObj(in_gameObjectID, ref tempObj);
+		
+    {
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_PostMIDIOnEvent(in_eventID, tempin_gameObjectID, AkMIDIPost.getCPtr(in_pPosts), in_uNumPosts);
+
+      return ret;
+    }
+  }
+
+  public static AKRESULT StopMIDIOnEvent(uint in_eventID, UnityEngine.GameObject in_gameObjectID) {
+    
+		AkAutoObject tempObj = null;   
+		uint tempin_gameObjectID = (uint)AutoRegisterAkGameObj(in_gameObjectID, ref tempObj);
+		
+    {
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_StopMIDIOnEvent__SWIG_0(in_eventID, tempin_gameObjectID);
+
+      return ret;
+    }
+  }
+
+  public static AKRESULT StopMIDIOnEvent(uint in_eventID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_StopMIDIOnEvent__SWIG_1(in_eventID);
+
+    return ret;
+  }
+
+  public static AKRESULT StopMIDIOnEvent() {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_StopMIDIOnEvent__SWIG_2();
+
+    return ret;
+  }
+
   public static AKRESULT PinEventInStreamCache(uint in_eventID, char in_uActivePriority, char in_uInactivePriority) {
     AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_PinEventInStreamCache__SWIG_0(in_eventID, in_uActivePriority, in_uInactivePriority);
 
@@ -977,6 +1043,18 @@ public class AkSoundEngine {
 
   }
 
+  public static bool GetBackgroundMusicMute() {
+    bool ret = AkSoundEnginePINVOKE.CSharp_GetBackgroundMusicMute();
+
+    return ret;
+  }
+
+  public static AKRESULT SendPluginCustomGameData(uint in_busID, uint in_uFXIndex, IntPtr in_pData, uint in_uSizeInBytes) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SendPluginCustomGameData(in_busID, in_uFXIndex, in_pData, in_uSizeInBytes);
+
+    return ret;
+  }
+
   public static AKRESULT UnregisterAllGameObj() {
     AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_UnregisterAllGameObj();
 
@@ -1002,6 +1080,30 @@ public class AkSoundEngine {
 		
     {
       AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetMultiplePositions__SWIG_1(tempin_GameObjectID, in_pPositions.m_Buffer, in_NumPositions);
+
+      return ret;
+    }
+  }
+
+  public static AKRESULT SetMultiplePositions(UnityEngine.GameObject in_GameObjectID, AkChannelEmitterArray in_pPositions, ushort in_NumPositions, MultiPositionType in_eMultiPositionType) {
+    
+		AkAutoObject tempObj = null;   
+		uint tempin_GameObjectID = (uint)AutoRegisterAkGameObj(in_GameObjectID, ref tempObj);
+		
+    {
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetMultiplePositions__SWIG_2(tempin_GameObjectID, in_pPositions.m_Buffer, in_NumPositions, (int)in_eMultiPositionType);
+
+      return ret;
+    }
+  }
+
+  public static AKRESULT SetMultiplePositions(UnityEngine.GameObject in_GameObjectID, AkChannelEmitterArray in_pPositions, ushort in_NumPositions) {
+    
+		AkAutoObject tempObj = null;   
+		uint tempin_GameObjectID = (uint)AutoRegisterAkGameObj(in_GameObjectID, ref tempObj);
+		
+    {
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetMultiplePositions__SWIG_3(tempin_GameObjectID, in_pPositions.m_Buffer, in_NumPositions);
 
       return ret;
     }
@@ -1793,6 +1895,18 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static AKRESULT SetBusConfig(uint in_audioNodeID, AkChannelConfig in_channelConfig) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetBusConfig__SWIG_0(in_audioNodeID, AkChannelConfig.getCPtr(in_channelConfig));
+
+    return ret;
+  }
+
+  public static AKRESULT SetBusConfig(string in_pszBusName, AkChannelConfig in_channelConfig) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetBusConfig__SWIG_1(in_pszBusName, AkChannelConfig.getCPtr(in_channelConfig));
+
+    return ret;
+  }
+
   public static AKRESULT SetObjectObstructionAndOcclusion(UnityEngine.GameObject in_ObjectID, uint in_uListener, float in_fObstructionLevel, float in_fOcclusionLevel) {
     
 		AkAutoObject tempObj = null;   
@@ -1835,8 +1949,20 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static AKRESULT AddSecondaryOutput(uint in_iOutputID, AkAudioOutputType in_iDeviceType, uint in_uListenerMask, uint in_uOutputFlags, uint in_audioDeviceShareset) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_AddSecondaryOutput__SWIG_0(in_iOutputID, (int)in_iDeviceType, in_uListenerMask, in_uOutputFlags, in_audioDeviceShareset);
+
+    return ret;
+  }
+
+  public static AKRESULT AddSecondaryOutput(uint in_iOutputID, AkAudioOutputType in_iDeviceType, uint in_uListenerMask, uint in_uOutputFlags) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_AddSecondaryOutput__SWIG_1(in_iOutputID, (int)in_iDeviceType, in_uListenerMask, in_uOutputFlags);
+
+    return ret;
+  }
+
   public static AKRESULT AddSecondaryOutput(uint in_iOutputID, AkAudioOutputType in_iDeviceType, uint in_uListenerMask) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_AddSecondaryOutput(in_iOutputID, (int)in_iDeviceType, in_uListenerMask);
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_AddSecondaryOutput__SWIG_2(in_iOutputID, (int)in_iDeviceType, in_uListenerMask);
 
     return ret;
   }
@@ -1935,13 +2061,13 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT GetPosition(UnityEngine.GameObject in_GameObjectID, AkSoundPosition out_rPosition) {
+  public static AKRESULT GetPosition(UnityEngine.GameObject in_GameObjectID, AkTransform out_rPosition) {
     
 		AkAutoObject tempObj = null;   
 		uint tempin_GameObjectID = (uint)AutoRegisterAkGameObj(in_GameObjectID, ref tempObj);
 		
     {
-      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPosition(tempin_GameObjectID, AkSoundPosition.getCPtr(out_rPosition));
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetPosition(tempin_GameObjectID, AkTransform.getCPtr(out_rPosition));
 
       return ret;
     }
@@ -1959,31 +2085,31 @@ public class AkSoundEngine {
     }
   }
 
-  public static AKRESULT GetListenerPosition(uint in_uIndex, AkListenerPosition out_rPosition) {
-    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetListenerPosition(in_uIndex, AkListenerPosition.getCPtr(out_rPosition));
+  public static AKRESULT GetListenerPosition(uint in_uIndex, AkTransform out_rPosition) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetListenerPosition(in_uIndex, AkTransform.getCPtr(out_rPosition));
 
     return ret;
   }
 
-  public static AKRESULT GetRTPCValue(uint in_rtpcID, UnityEngine.GameObject in_gameObjectID, out float out_rValue, ref int io_rValueType) {
+  public static AKRESULT GetRTPCValue(uint in_rtpcID, UnityEngine.GameObject in_gameObjectID, uint in_playingID, out float out_rValue, ref int io_rValueType) {
     
 		AkAutoObject tempObj = null;   
 		uint tempin_gameObjectID = (uint)AutoRegisterAkGameObj(in_gameObjectID, ref tempObj);
 		
     {
-      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetRTPCValue__SWIG_0(in_rtpcID, tempin_gameObjectID, out out_rValue, ref io_rValueType);
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetRTPCValue__SWIG_0(in_rtpcID, tempin_gameObjectID, in_playingID, out out_rValue, ref io_rValueType);
 
       return ret;
     }
   }
 
-  public static AKRESULT GetRTPCValue(string in_pszRtpcName, UnityEngine.GameObject in_gameObjectID, out float out_rValue, ref int io_rValueType) {
+  public static AKRESULT GetRTPCValue(string in_pszRtpcName, UnityEngine.GameObject in_gameObjectID, uint in_playingID, out float out_rValue, ref int io_rValueType) {
     
 		AkAutoObject tempObj = null;   
 		uint tempin_gameObjectID = (uint)AutoRegisterAkGameObj(in_gameObjectID, ref tempObj);
 		
     {
-      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetRTPCValue__SWIG_1(in_pszRtpcName, tempin_gameObjectID, out out_rValue, ref io_rValueType);
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetRTPCValue__SWIG_1(in_pszRtpcName, tempin_gameObjectID, in_playingID, out out_rValue, ref io_rValueType);
 
       return ret;
     }
@@ -2180,14 +2306,20 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static bool HasHeightChannels(uint in_uChannelMask) {
+    bool ret = AkSoundEnginePINVOKE.CSharp_HasHeightChannels(in_uChannelMask);
+
+    return ret;
+  }
+
   public static uint BackToSideChannels(uint in_uChannelMask) {
     uint ret = AkSoundEnginePINVOKE.CSharp_BackToSideChannels(in_uChannelMask);
 
     return ret;
   }
 
-  public static uint ChannelIndexToDisplayIndex(AkChannelOrdering in_eOrdering, uint in_uChannelMask, uint in_uChannelIdx) {
-    uint ret = AkSoundEnginePINVOKE.CSharp_ChannelIndexToDisplayIndex((int)in_eOrdering, in_uChannelMask, in_uChannelIdx);
+  public static uint StdChannelIndexToDisplayIndex(AkChannelOrdering in_eOrdering, uint in_uChannelMask, uint in_uChannelIdx) {
+    uint ret = AkSoundEnginePINVOKE.CSharp_StdChannelIndexToDisplayIndex((int)in_eOrdering, in_uChannelMask, in_uChannelIdx);
 
     return ret;
   }
@@ -2321,6 +2453,18 @@ public class AkSoundEngine {
     return ret;
   }
 
+  public static AKRESULT LoadAndDecodeBank(string in_pszString, bool in_bSaveDecodedBank, out uint out_bankID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_LoadAndDecodeBank(in_pszString, in_bSaveDecodedBank, out out_bankID);
+
+    return ret;
+  }
+
+  public static AKRESULT LoadAndDecodeBankFromMemory(IntPtr in_BankData, uint in_BankDataSize, bool in_bSaveDecodedBank, string in_DecodedBankName, bool in_bIsLanguageSpecific, out uint out_bankID) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_LoadAndDecodeBankFromMemory(in_BankData, in_BankDataSize, in_bSaveDecodedBank, in_DecodedBankName, in_bIsLanguageSpecific, out out_bankID);
+
+    return ret;
+  }
+
   public static AKRESULT UnloadFilePackage(uint in_uPackageID) {
     AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_UnloadFilePackage(in_uPackageID);
 
@@ -2339,16 +2483,22 @@ public class AkSoundEngine {
     return ret;
   }
 
-  public static AKRESULT SetObjectPosition(UnityEngine.GameObject in_GameObjectID, float PosX, float PosY, float PosZ, float OrientationX, float OrientationY, float OrientationZ) {
+  public static AKRESULT SetObjectPosition(UnityEngine.GameObject in_GameObjectID, float PosX, float PosY, float PosZ, float FrontX, float FrontY, float FrontZ, float TopX, float TopY, float TopZ) {
     
 		AkAutoObject tempObj = null;   
 		uint tempin_GameObjectID = (uint)AutoRegisterAkGameObj(in_GameObjectID, ref tempObj);
 		
     {
-      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetObjectPosition(tempin_GameObjectID, PosX, PosY, PosZ, OrientationX, OrientationY, OrientationZ);
+      AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_SetObjectPosition(tempin_GameObjectID, PosX, PosY, PosZ, FrontX, FrontY, FrontZ, TopX, TopY, TopZ);
 
       return ret;
     }
+  }
+
+  public static AKRESULT GetSourceMultiplePlayPositions(uint in_PlayingID, uint[] out_audioNodeID, uint[] out_mediaID, int[] out_msTime, ref uint io_pcPositions, bool in_bExtrapolate) {
+    AKRESULT ret = (AKRESULT)AkSoundEnginePINVOKE.CSharp_GetSourceMultiplePlayPositions(in_PlayingID, out_audioNodeID, out_mediaID, out_msTime, ref io_pcPositions, in_bExtrapolate);
+
+    return ret;
   }
 
   public static AKRESULT SetListenerPosition(float FrontX, float FrontY, float FrontZ, float TopX, float TopY, float TopZ, float PosX, float PosY, float PosZ, uint in_ulListenerIndex) {
@@ -2404,7 +2554,6 @@ public class AkSoundEngine {
   public const uint AKMOTIONDEVICEID_RUMBLE = 406;
   public const uint AK_LISTENERS_MASK_ALL = 0xFFFFFFFF;
   public const int NULL = 0;
-  public const int AK_STANDARD_MAX_NUM_CHANNELS = (8);
   public const int AKCURVEINTERPOLATION_NUM_STORAGE_BIT = 5;
   public const int AK_MAX_AUX_PER_OBJ = (4);
   public const int AK_MAX_AUX_SUPPORTED = ((4) +4);
@@ -2440,6 +2589,7 @@ public class AkSoundEngine {
   public const int AK_WAVE_FORMAT_AT9 = 0xFFFC;
   public const int AK_WAVE_FORMAT_VORBIS = 0xFFFF;
   public const int AK_WAVE_FORMAT_AAC = 0xAAC0;
+  public const int WAVE_FORMAT_XMA2 = 0x166;
   public const int PANNER_NUM_STORAGE_BITS = 2;
   public const int POSSOURCE_NUM_STORAGE_BITS = 2;
   public const int AK_MAX_BITS_METERING_FLAGS = (5);
@@ -2604,8 +2754,14 @@ public class AkSoundEngine {
   public const int AK_SPEAKER_SETUP_AURO_13POINT1_751 = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|((0x1000|0x4000|0x8000|0x20000)|0x2000)|0x800)|0x8);
   public const int AK_SPEAKER_SETUP_DOLBY_5_0_2 = ((((0x1|0x2)|0x200|0x400)|0x4)|0x1000|0x4000);
   public const int AK_SPEAKER_SETUP_DOLBY_5_1_2 = (((((0x1|0x2)|0x200|0x400)|0x4)|0x1000|0x4000)|0x8);
+  public const int AK_SPEAKER_SETUP_DOLBY_6_0_2 = ((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x1000|0x4000);
+  public const int AK_SPEAKER_SETUP_DOLBY_6_1_2 = (((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x1000|0x4000)|0x8);
+  public const int AK_SPEAKER_SETUP_DOLBY_6_0_4 = (((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x1000|0x4000)|0x8000|0x20000);
+  public const int AK_SPEAKER_SETUP_DOLBY_6_1_4 = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x1000|0x4000)|0x8000|0x20000)|0x8);
   public const int AK_SPEAKER_SETUP_DOLBY_7_0_2 = (((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x1000|0x4000);
   public const int AK_SPEAKER_SETUP_DOLBY_7_1_2 = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x1000|0x4000)|0x8);
+  public const int AK_SPEAKER_SETUP_DOLBY_7_0_4 = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x1000|0x4000)|0x8000|0x20000);
+  public const int AK_SPEAKER_SETUP_DOLBY_7_1_4 = (((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x1000|0x4000)|0x8000|0x20000)|0x8);
   public const int AK_SPEAKER_SETUP_ALL_SPEAKERS = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x8)|0x100|(((0x1000|0x4000|0x8000|0x20000)|0x2000)|0x10000)|0x800);
   public const int AK_IDX_SETUP_FRONT_LEFT = (0);
   public const int AK_IDX_SETUP_FRONT_RIGHT = (1);
@@ -2672,5 +2828,8 @@ public class AkSoundEngine {
   public const int AK_SPEAKER_SETUP_6_1 = (((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x8));
   public const int AK_SPEAKER_SETUP_7_0 = (((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4));
   public const int AK_SPEAKER_SETUP_7_1 = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x8));
+  public const int AK_SPEAKER_SETUP_DEFAULT_PLANE = ((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x8));
+  public const int AK_SUPPORTED_STANDARD_CHANNEL_MASK = (((((((0x1|0x2)|0x200|0x400)|0x10|0x20)|0x4)|0x8)|0x100|(((0x1000|0x4000|0x8000|0x20000)|0x2000)|0x10000)|0x800));
+  public const int AK_STANDARD_MAX_NUM_CHANNELS = (8);
 }
 #endif // #if (UNITY_STANDALONE_WIN && !UNITY_EDITOR) || UNITY_EDITOR_WIN

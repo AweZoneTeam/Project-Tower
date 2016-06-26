@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="118">
+	<RootPaths>
+		<ProjectRoot>D:\Chisto Moya Papka!!!\Games\MyGames\WwiseExperiment\WwiseExperiment1\WwiseExperiment\</ProjectRoot>
+		<SourceFilesRoot>D:\Chisto Moya Papka!!!\Games\MyGames\WwiseExperiment\WwiseExperiment1\WwiseExperiment\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>D:\Chisto Moya Papka!!!\Games\MyGames\WwiseExperiment\WwiseExperiment\WwiseExperiment\GeneratedSoundBanks\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>D:\Chisto Moya Papka!!!\Games\MyGames\WwiseExperiment\WwiseExperiment1\WwiseExperiment\GeneratedSoundBanks\Windows\</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents/>
+	<StreamedFiles/>
+	<MediaFilesNotInAnyBank/>
+	<SoundBanks>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ObjectPath>Init</ObjectPath>
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
+		</SoundBank>
+		<SoundBank Id="2681087483" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\N_SoundBank</ObjectPath>
+			<ShortName>N_SoundBank</ShortName>
+			<Path>N_SoundBank.bnk</Path>
+			<IncludedEvents>
+				<Event Id="4152596996" Name="N_Event" ObjectPath="\Events\Default Work Unit\N_Event"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="689045712" Language="SFX">
+					<ShortName>RealStep_0.wav</ShortName>
+					<Path>SFX\RealStep_0_9E69E797.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>

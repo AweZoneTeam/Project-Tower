@@ -84,22 +84,73 @@ public class WwiseSetupWindow : EditorWindow
 			}
 			Repaint();
 		}
-		GUILayout.EndHorizontal();
-		
-		GUILayout.Label("Asset Management", EditorStyles.boldLabel);
+
+        GUILayout.EndHorizontal();
+
+        string labelTitle;
+
+#if UNITY_EDITOR_OSX
+        description = "Wwise Application:";
+        tooltip = "Location of the Wwise Application. This is required to generate the SoundBanks in Unity.";
+        labelTitle = "Wwise Application";
+#else
+        description = "Wwise Windows Installation Path:";
+        tooltip = "Location of the Wwise Windows Installation Path. This is required to generate the SoundBanks in Unity.";
+        labelTitle = "Wwise Windows Installation Path";
+#endif
+
+        GUILayout.Label(labelTitle);
+
+        GUILayout.BeginHorizontal("box");
+
+
+        GUILayout.Label(new GUIContent(description, tooltip), GUILayout.Width(330));
+
+        string wwiseInstallationPath;
+
+#if UNITY_EDITOR_OSX
+        wwiseInstallationPath = WwiseSetupWizard.Settings.WwiseInstallationPathMac;
+#else
+        wwiseInstallationPath = WwiseSetupWizard.Settings.WwiseInstallationPathWindows;
+#endif
+
+        EditorGUILayout.SelectableLabel(wwiseInstallationPath, "textfield", GUILayout.Height(17));
+
+        if (GUILayout.Button("...", GUILayout.Width(30)))
+        {
+#if UNITY_EDITOR_OSX
+            string installationPathNew = EditorUtility.OpenFilePanel("Select your Wwise application.", "/Applications/", "");
+#else
+            string installationPathNew = EditorUtility.OpenFolderPanel("Select your Wwise application.", Environment.GetEnvironmentVariable("ProgramFiles(x86)"), "");
+#endif
+
+            if (installationPathNew.Length != 0)
+            {
+                wwiseInstallationPath = Path.GetFullPath(installationPathNew);
+
+#if UNITY_EDITOR_OSX
+                WwiseSetupWizard.Settings.WwiseInstallationPathMac = wwiseInstallationPath;
+#else
+                WwiseSetupWizard.Settings.WwiseInstallationPathWindows = wwiseInstallationPath;
+#endif
+            }
+
+            Repaint();
+        }
+
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label("Asset Management", EditorStyles.boldLabel);
         GUILayout.BeginVertical("box");
         GUILayout.BeginHorizontal();
-        description = "SoundBank Path* (relative to StreamingAssets folder):";
+        description = "SoundBanks Path* (relative to StreamingAssets folder):";
         tooltip = "Location of the SoundBanks are for the game. This has to reside within the StreamingAssets folder.";
 		GUILayout.Label(new GUIContent(description, tooltip), GUILayout.Width(330));
-#if UNITY_EDITOR_OSX
-		WwiseSetupWizard.Settings.SoundbankPath = WwiseSetupWizard.Settings.SoundbankPath.Replace('\\', '/');
-#endif		
 		EditorGUILayout.SelectableLabel(WwiseSetupWizard.Settings.SoundbankPath, "textfield", GUILayout.Height(17));
 		if(GUILayout.Button("...", GUILayout.Width(30)))
 		{
             string OpenInPath = Path.GetDirectoryName(AkUtilities.GetFullPath(Application.streamingAssetsPath, WwiseSetupWizard.Settings.SoundbankPath));
-            string SoundbankPathNew = EditorUtility.OpenFolderPanel("Select your Soundbank destination folder", OpenInPath, "");
+            string SoundbankPathNew = EditorUtility.OpenFolderPanel("Select your SoundBanks destination folder", OpenInPath, "");
 			if( SoundbankPathNew.Length != 0 )
 			{
 				int 		stremingAssetsIndex = Application.dataPath.Split('/').Length;

@@ -29,6 +29,7 @@ public class PersonActions : DmgObjActions
     protected Rigidbody rigid;
 
     protected PersonVisual cAnim;
+    protected CharacterAudio cAudio;
 
     protected PreInteractionChecker interactions;
 
@@ -116,6 +117,10 @@ public class PersonActions : DmgObjActions
     public override void Initialize()
     {
         cAnim = GetComponentInChildren<PersonVisual>();
+        if (cAnim != null)
+        {
+            cAudio = cAnim.GetComponentInChildren<CharacterAudio>();
+        }
         platformCheck = transform.FindChild("Indicators").FindChild("PlatformCheck");
         sight = transform.FindChild("Sight");
         climbingDirection = new Vector2(0f, 0f);
@@ -147,7 +152,7 @@ public class PersonActions : DmgObjActions
     /// <summary>
     /// Посмотреть в указанном направлении
     /// </summary>
-    public virtual void Observe(Vector2 sightDirection)
+    public virtual void Observe(Vector2 sightDirection, bool animate)
     {
     }
 
@@ -489,6 +494,17 @@ public class PersonActions : DmgObjActions
         ItemActionData iData = (ItemActionData)aData;
         GameObject drop = Instantiate(iData.itemObject);
         drop.transform.position = new Vector3(person.transform.position.x+iData.argument*SpFunctions.RealSign(person.transform.localScale.x), person.transform.position.y, person.transform.position.z);
+
+        InterObjController intObj;
+        if ((intObj=drop.GetComponent<InterObjController>()) != null)
+        {
+            intObj.RegisterObject(person.GetComponent<InterObjController>().GetRoomPosition(), true);
+        }
+        if ((intObj = drop.GetComponentInChildren<InterObjController>()) != null)
+        {
+            intObj.RegisterObject(person.GetComponent<InterObjController>().GetRoomPosition(), true);
+        }
+
     }
 
     protected static void ThrowItem(PersonActions person, ActionData aData, float _chargeValue)
@@ -499,6 +515,16 @@ public class PersonActions : DmgObjActions
         item.transform.localScale = new Vector3(scale.x * Mathf.Sign(person.transform.localScale.x), scale.y, scale.z);
         Rigidbody rigid = item.GetComponentInChildren<Rigidbody>();
         rigid.AddForce(new Vector3(Mathf.Sign(person.transform.localScale.x) * iData.argument * _chargeValue, iData.argument * _chargeValue/2, 0f));
+
+        InterObjController intObj;
+        if ((intObj = item.GetComponent<InterObjController>()) != null)
+        {
+            intObj.RegisterObject(person.GetComponent<InterObjController>().GetRoomPosition(), true);
+        }
+        if ((intObj = item.GetComponentInChildren<InterObjController>()) != null)
+        {
+            intObj.RegisterObject(person.GetComponent<InterObjController>().GetRoomPosition(), true);
+        }
     }
 
     #endregion //itemActions
@@ -508,9 +534,10 @@ public class PersonActions : DmgObjActions
     /// </summary>
     public override void Death()
     {
-        base.Death();
+        Drop();
         death= true;
         cAnim.Death();
+        GetComponent<InterObjController>().DestroyInterObj(5f);
     }
 
     /// <summary>

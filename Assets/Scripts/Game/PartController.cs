@@ -20,7 +20,6 @@ public class PartController : MonoBehaviour
     //Данные об анимации проигрываемой в данный момент
     public string currentState="default", nextState="default";
 	public bool loop;
-    public int k1 = 0;
 	public int FPS;
 	[HideInInspector]
 	public float orientation;//В какую сторону повёрнут персонаж? Считаем, что все анимации сделаны на персонажа, повёрнутого вправо
@@ -29,8 +28,7 @@ public class PartController : MonoBehaviour
     public List<animationLayerOrderData> rOrderData = new List<animationLayerOrderData>();
     public List<animationLayerOrderData> lOrderData = new List<animationLayerOrderData>();
 
-	private SoundManager sManager;//К этому объекту обращаются с целью проиграть тот или иной звук
-	public AudioSource efxSource;//По идее у каждой части тела есть собственный аудиопроигрыватель
+    protected GameObject audioSource;
 
 	private uint k = 1;
 
@@ -40,9 +38,7 @@ public class PartController : MonoBehaviour
     [ExecuteInEditMode]
 	public void Awake () 
 	{
-		sManager=GameObject.FindGameObjectWithTag (Tags.gameController).GetComponent<SoundManager> ();
 #if UNITY_EDITOR
-        k1++;
         interp =AssetDatabase.LoadAssetAtPath(path, typeof(AnimationInterpretator)) as AnimationInterpretator;
 #endif
     }
@@ -102,13 +98,13 @@ public class PartController : MonoBehaviour
 		if (interp.animTypes [type].animInfo [numb].stopStepByStep)
 			mov.gotoAndStop(mov.getCurrentFrameNumber());
         //Здесь происходит озвучивание анимации
-        if (soundData != null)
+        if ((soundData != null)&&(audioSource!=null))
         {
             for (int i = 0; i < soundData.Count; i++)
             {
                 if ((soundData[i].time <= frame) && (!soundData[i].played))
                 {
-                    sManager.RandomizeSfx(efxSource, soundData[i].audios);
+                    AkSoundEngine.PostEvent(soundData[i].soundEvent, audioSource);
                     soundData[i].played = true;
                 }
                 else if (((soundData[i].time > frame) &&
@@ -210,5 +206,11 @@ public class PartController : MonoBehaviour
     {
         play = _play;
     }
+
+    public void SetAudioSource(GameObject _source)
+    {
+        audioSource = _source;
+    }
+
 }
     

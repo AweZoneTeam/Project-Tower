@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{B1AAECCD-1F51-4292-8BEC-1CF0133A6F12}" SchemaVersion="72">
+	<AudioObjects>
+		<WorkUnit Name="Default Work Unit" ID="{B1AAECCD-1F51-4292-8BEC-1CF0133A6F12}" PersistMode="Standalone">
+			<ChildrenList>
+				<Sound Name="RealStep_0" ID="{557A849A-49A1-487C-9ED0-3F203D4D167C}" ShortID="250618528" Type="SoundFX">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{BD7719A7-7CD2-4EA3-B5AA-CD45AE4BA299}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{FEDCD59E-923A-4F1A-88A1-0F06696122C9}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="RealStep_0" ID="{41D2C09A-9418-42A3-9C2F-86C0ECB1F19E}" ShortID="689045712">
+							<Language>SFX</Language>
+							<AudioFile>RealStep_0.wav</AudioFile>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="RealStep_0" ID="{41D2C09A-9418-42A3-9C2F-86C0ECB1F19E}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
+	</AudioObjects>
+</WwiseDocument>

@@ -30,6 +30,7 @@ public class AreaClass : MonoBehaviour
     public List<DoorPointClass> doorPoints = new List<DoorPointClass>();//Как связаны двери и проходы в комнате между собой. Этот массив используется для создания маршрутов в башне.
 
     public List<InterObjController> container=new List<InterObjController>();//Что содержит в себе это пространство. Содержание подпространств не учитывается.
+    public List<DropClass> drops = new List<DropClass>();//Какие дропающиеся предметы лежат в этой комнате?
     public List<GameObject> lightSources = new List<GameObject>();//Источники освещения в данном пространстве
 
     [SerializeField]protected float dayAmbIntensity=defDayIntensity, nightAmbIntensity=defNightIntensity;//Интенсивность окружающего (рассеянного) света в помещении днём и ночью
@@ -41,6 +42,9 @@ public class AreaClass : MonoBehaviour
     public Vector3 size;//Каковы размеры пространства: длина, глубина и высота
 
     public List<float> zCoordinates = new List<float>();//Какие z-координаты занимаются персонажами. (1 персонаж в комнате - 1 соответствующая ему z-координата )
+
+    protected int maxRegistrationNumber; //Сколько объектов уже зарегестрировалось в этой комнате
+    public int MaxRegistrationNumber {get { maxRegistrationNumber++; return maxRegistrationNumber; }set { maxRegistrationNumber = value; } }
 
     #endregion //fields
 
@@ -193,6 +197,23 @@ public class AreaClass : MonoBehaviour
         {
             zCoordinates.Remove(z1);
         }
+    }
+
+    /// <summary>
+    /// Зарегестрировать все объекты, что находятся в контейнере
+    /// </summary>
+    public virtual void RegisterContainer()
+    {
+        maxRegistrationNumber = -1;
+        foreach (InterObjController obj in container)
+        {
+            obj.RegisterObject(this, false);
+        }
+    }
+
+    public int GetMaxRegistrationNumber()
+    {
+        return maxRegistrationNumber;
     }
 
 }

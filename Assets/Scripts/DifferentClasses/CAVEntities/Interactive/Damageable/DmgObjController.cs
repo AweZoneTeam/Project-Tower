@@ -120,6 +120,44 @@ public class DmgObjController : InterObjController
         }
         return orgStats;
     }
+
+    /// <summary>
+    /// Проинициализировать объект, используя сохранённые данные
+    /// </summary>
+    public override void AfterInitialize(InterObjData intInfo, Map map, Dictionary<string, InterObjController> savedIntObjs)
+    {
+        base.AfterInitialize(intInfo, map, savedIntObjs);
+        CharacterData dmgInfo = (CharacterData)intInfo;
+        if (dmgInfo != null)
+        {
+            orgStats.maxHealth = dmgInfo.maxHealth;
+            orgStats.health = dmgInfo.health;
+        }
+    }
+
+    /// <summary>
+    /// Получить информацию об объекте
+    /// </summary>
+    public override InterObjData GetInfo()
+    {
+        CharacterData intInfo = new CharacterData();
+        intInfo.objId = objId;
+        if (spawnId != null ? !string.Equals(spawnId, string.Empty) : false)
+        {
+            intInfo.spawnId = spawnId;
+        }
+        else
+        {
+            intInfo.spawnId = string.Empty;
+        }
+        intInfo.position = transform.position;
+        intInfo.roomPosition = currentRoom.id.areaName;
+        intInfo.orientation = (int)direction.dir;
+        intInfo.maxHealth = orgStats.maxHealth;
+        intInfo.health = orgStats.health;
+        return intInfo;
+    }
+
 }
 
 #if UNITY_EDITOR

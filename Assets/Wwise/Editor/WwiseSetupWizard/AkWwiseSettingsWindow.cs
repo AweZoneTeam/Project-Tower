@@ -19,7 +19,9 @@ public class WwiseUpdateSettings : WwiseSetupWindow
 	{
 		// Get existing open window or if none, make a new one:
 		EditorWindow window = EditorWindow.GetWindow(typeof (WwiseUpdateSettings));
-		window.position = new Rect(100, 100, 850, 200);
+
+        window.position = new Rect(100, 100, 850, 260);
+
 #if !UNITY_5 || UNITY_5_0
 		window.title ="Wwise Settings";
 #else
@@ -72,11 +74,11 @@ public class WwiseUpdateSettings : WwiseSetupWindow
         GUILayout.FlexibleSpace();
 		if( GUILayout.Button("OK", GUILayout.Width(60)) )
 		{
-			if( string.IsNullOrEmpty(WwiseSetupWizard.Settings.SoundbankPath) )
+			if ( string.IsNullOrEmpty(WwiseSetupWizard.Settings.SoundbankPath) )
 			{
 				EditorUtility.DisplayDialog("Error", "Please fill in the required settings", "Ok");
 			}
-
+            
             if (WwiseUpdateSettings.m_oldCreateWwiseGlobal != WwiseSetupWizard.Settings.CreateWwiseGlobal)
             {
                 AkInitializer[] AkInitializers = UnityEngine.Object.FindObjectsOfType(typeof(AkInitializer)) as AkInitializer[];

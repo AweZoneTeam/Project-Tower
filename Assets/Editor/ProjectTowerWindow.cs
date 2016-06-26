@@ -103,6 +103,15 @@ class ProjectTowerWindow : Editor
         EditorWindow.GetWindow(typeof(SpeechCreateWindow));
     }
 
+    /// <summary>
+    /// Обновить данные о сохранениях (полностью очистить их)
+    /// </summary>
+    [MenuItem("Project Tower/Create SavesInfo")]
+    public static void CreateSavesInfo()
+    {
+        Serializator.SaveXmlSavesInfo(new SavesInfo(0f), "Assets/StreamingAssets/SavesInfo.xml");
+    }
+
     void OnGUI()
     {
 

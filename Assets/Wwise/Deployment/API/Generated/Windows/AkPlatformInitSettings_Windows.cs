@@ -128,6 +128,18 @@ public class AkPlatformInitSettings : IDisposable {
     } 
   }
 
+  public AkAudioAPI eAudioAPI {
+    set {
+      AkSoundEnginePINVOKE.CSharp_AkPlatformInitSettings_eAudioAPI_set(swigCPtr, (int)value);
+
+    } 
+    get {
+      AkAudioAPI ret = (AkAudioAPI)AkSoundEnginePINVOKE.CSharp_AkPlatformInitSettings_eAudioAPI_get(swigCPtr);
+
+      return ret;
+    } 
+  }
+
   public bool bGlobalFocus {
     set {
       AkSoundEnginePINVOKE.CSharp_AkPlatformInitSettings_bGlobalFocus_set(swigCPtr, value);

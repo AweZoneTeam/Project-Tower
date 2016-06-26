@@ -17,7 +17,7 @@ public class DestructableWallActions : DmgObjActions
     {
         GetComponent<BoxCollider>().isTrigger = true;
         dmgAnim.Death();
-        Destroy(gameObject, deathTime);
+        GetComponent<InterObjController>().DestroyInterObj(deathTime);
     }
    
 

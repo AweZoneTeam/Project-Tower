@@ -29,6 +29,8 @@ public class BuffClass : ScriptableObject
     public string buffName;
     public Sprite buffImage;
     public float buffTime = 0f;//Сколько времени длится бафф. Если 0, то сколько угодно.
+    public bool removable;//Если true, то этот бафф можно снять с помощью чекпоинта
+    public bool armorSetBuff;//Если true, то этот бафф накладывается при одевании особого сета
 
     public BuffTypeEnum buffType;
 

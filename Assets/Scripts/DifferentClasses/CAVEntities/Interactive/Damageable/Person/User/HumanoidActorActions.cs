@@ -146,15 +146,6 @@ public class HumanoidActorActions : PersonActions
 
     #endregion//fightingMode
 
-    public void OnCollisionEnter2D(Collision2D col)
-    {
-		touchingGround = true;
-	}
-
-	public void OnCollisionExit2D(Collision2D col) {
-		touchingGround = false;
-	}
-
     public override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -405,17 +396,20 @@ public class HumanoidActorActions : PersonActions
     /// <summary>
     /// Разглядеть
     /// </summary>
-    public override void Observe(Vector2 sightDirection)
+    public override void Observe(Vector2 sightDirection, bool animate)
     {
-        if (sightDirection.y > 0f)
+        if (animate)
         {
-            cAnim.Look(new Vector2(0f, 1f));
-            cam.SetOffsetPosition(camMaxDistance / 2 * sightDirection);
-        }
-        else if (sightDirection.y < 0f)
-        {
-            cAnim.Look(new Vector2(0f, -1f));
-            cam.SetOffsetPosition(camMaxDistance * sightDirection);
+            if (sightDirection.y > 0f)
+            {
+                cAnim.Look(new Vector2(0f, 1f));
+                cam.SetOffsetPosition(camMaxDistance / 2 * sightDirection);
+            }
+            else if (sightDirection.y < 0f)
+            {
+                cAnim.Look(new Vector2(0f, -1f));
+                cam.SetOffsetPosition(camMaxDistance * sightDirection);
+            }
         }
         else
         {
@@ -734,7 +728,6 @@ public class HumanoidActorActions : PersonActions
             }
             employment = 0;
             chargeValue = -100f;
-            GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = true;
         }
         canCharge = true;
     }
@@ -779,15 +772,14 @@ public class HumanoidActorActions : PersonActions
         {
             if (canCharge)
             {
-                GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = false;
                 GameObject arrow = Instantiate(((BowClass)action).arrow);
-                Debug.Log(transform.position + Vector3.up * 2.5f);
-                arrow.transform.position = transform.position + Vector3.up * 2.5f;
+                arrow.transform.position = sight.position;
                 arrow.GetComponent<HitController>().hitData = ((BowClass)action).hitData;
+                arrow.GetComponent<Arrow>().SetEnemies(GetComponent<PersonController>().enemies);
                 Vector3 force = new Vector3();
-                force.x = ((BowClass)action).shotForce * Mathf.Cos((chargeValue + 100) * Mathf.PI / 180f);
-                force.y = ((BowClass)action).shotForce * Mathf.Sin((chargeValue + 100) * Mathf.PI / 180f);
-                if (movingDirection == orientationEnum.left) force.x = force.x * -1f;
+                Vector3 arrowDirection = transform.FindChild("Aim").position - sight.position;
+                force.x = ((BowClass)action).shotForce * arrowDirection.x/arrowDirection.magnitude;
+                force.y = ((BowClass)action).shotForce * arrowDirection.y/arrowDirection.magnitude;
                 arrow.GetComponent<Rigidbody>().AddForce(force);
                 chargeValue = 0f;
                 canCharge = false;
@@ -858,11 +850,11 @@ public class HumanoidActorActions : PersonActions
     {
         employment -= _employment;
         yield return new WaitForSeconds(0.3f);
-        GameObject.Find("Aim").GetComponent<MeshRenderer>().enabled = false;
         GameObject arrow = Instantiate(((BowClass)act).arrow);
         Debug.Log(transform.position + Vector3.up * 2.5f);
         arrow.transform.position = transform.position + Vector3.up * 2.5f;
         arrow.GetComponent<HitController>().hitData = ((BowClass)act).hitData;
+        arrow.GetComponent<Arrow>().SetEnemies(GetComponent<PersonController>().enemies);
         Vector3 force = new Vector3();
         force.x = ((BowClass)act).shotForce;
         if (movingDirection == orientationEnum.left) force.x = force.x * -1f;
@@ -912,13 +904,17 @@ public class HumanoidActorActions : PersonActions
         {
             if (item != null ? (_itemAction.grounded ? envStats.groundness == groundnessEnum.grounded : (_itemAction.crouching? envStats.groundness == groundnessEnum.crouch : envStats.groundness != groundnessEnum.crouch)) : false)
             {
+                if (employment < _itemAction.employment)
+                {
+                    return;
+                }
                 if (itemActionList.ContainsKey(_itemAction.actionName))
                 {
                     StartCoroutine(ItemProcess(_itemAction, 0f));
                 }
                 if (_itemAction.consumed)
                 {
-                    itemBunch.quantity--;
+                    itemBunch.ConsumeItem();
                 }
                 break;
             }
@@ -967,6 +963,10 @@ public class HumanoidActorActions : PersonActions
         employment += chargeAction.employment;
         if (chargeValue < chargeAction.deadZone)
         {
+            if (employment < item.itemActions[0].employment)
+            {
+                return;
+            }
             if (item.itemActions.Count > 0 ? itemActionList.ContainsKey(item.itemActions[0].actionName) : false)
             {
                 StartCoroutine(ItemProcess(item.itemActions[0], 0f));
@@ -978,6 +978,10 @@ public class HumanoidActorActions : PersonActions
         }
         else if (chargeValue < chargeAction.maxValue)
         {
+            if (employment < chargeAction.unchargedAction.employment)
+            {
+                return;
+            }
             if (itemActionList.ContainsKey(chargeAction.unchargedAction.actionName))
             {
                 StartCoroutine(ItemProcess((ItemActionData)chargeAction.unchargedAction, chargeValue));
@@ -990,6 +994,10 @@ public class HumanoidActorActions : PersonActions
         }
         else
         {
+            if (employment < chargeAction.chargedAction.employment)
+            {
+                return;
+            }
             if (itemActionList.ContainsKey(chargeAction.chargedAction.actionName))
             {
                 StartCoroutine(ItemProcess((ItemActionData)chargeAction.chargedAction, chargeValue));

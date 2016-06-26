@@ -6,6 +6,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Класс, в котором собрана вся информация о комнатах, их содержимом, и как эти комнаты между собой связанны.
 /// Также этот класс ответственене за нахождение кратчайшего пути из любой комнаты в любую.
+/// Да и вообще, можно считать, что это менеджер всех комнат
 /// </summary>
 public class Map : MonoBehaviour
 {
@@ -32,12 +33,17 @@ public class Map : MonoBehaviour
                                                                                                                                                                                                                     {doorConnectionEnum.stairs, 4 },
                                                                                                                                                                                                                     {doorConnectionEnum.zero, 1 },
                                                                                                                                                                                                                     {doorConnectionEnum.obstacle,1001}} } };
+    protected Dictionary<string, InterObjController> startObjsDict = new Dictionary<string, InterObjController>();//Здесь находится словарь всех интерактивных объектов, что есть в самом начале игры
+    public Dictionary<string, InterObjController> StartObjsDict {get { return startObjsDict; }}
 
     #endregion //dictionaries
 
     #region fields
 
     public List<AreaClass> rooms=new List<AreaClass>();//Какие комнаты составляют карту уровня
+
+    [HideInInspector]
+    public List<InterObjController> startObjList = new List<InterObjController>();
 
     public List<MapPointClass> mapPoints=new List<MapPointClass>();//Точки, через которые карта прокладывает маршруты.
 
@@ -54,6 +60,24 @@ public class Map : MonoBehaviour
     public void Initialize()
     {
         FormMapPoints();
+        FormDictionaries();
+    }
+
+    void FormDictionaries()
+    {
+
+        startObjsDict = new Dictionary<string, InterObjController>();
+        startObjList = new List<InterObjController>(); 
+
+        foreach (AreaClass room in rooms)
+        {
+            room.RegisterContainer();
+            foreach (InterObjController obj in room.container)
+            {
+                startObjsDict.Add(obj.ObjId, obj);
+                startObjList.Add(obj);
+            }
+        }
     }
 
     /// <summary>
@@ -398,7 +422,6 @@ public class DoorPointClass
 /// <summary>
 /// Класс, представляющий собой точки графа, который и будет картой уровня в представлении ИИ
 /// </summary>
-[System.Serializable]
 public class MapPointClass
 {
     public DoorPointClass doorPoint1, doorPoint2;//Так как двери нередко (всегда) бывают парными и каждая из них имеет связи только с дверями той же комнаты, то нужен класс, который объедини парные двери и по сути свяжет комнаты друг  другом. 

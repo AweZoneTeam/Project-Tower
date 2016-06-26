@@ -112,34 +112,46 @@ public class EquipmentClass: BagClass
     }
 
     /// <summary>
-    /// Сменить используемый предмет
+    /// сменить используемый предмет
     /// </summary>
-    public void ChangeItem()
+    public void ChangeUsableItem(int index, ItemBunch itemBunch)
+    {
+        if (index < 4)
+        {
+            useItems[index] = itemBunch;
+            OnActiveItemChanged(new ItemChangedEventArgs(itemBunch, "usableItem" + (index+1).ToString()));
+        }
+    }
+
+    /// <summary>
+    /// Сменить активный используемый предмет
+    /// </summary>
+    public void ChangeActiveItem()
     {
         List<ItemBunch> availableItems = new List<ItemBunch>();
         for (int i = 0; i < useItems.Count; i++)
         {
-            if (useItems!=null? useItems[i].item != null: false)
+            if (useItems[i]!=null? useItems[i].item != null: false)
             {
                 availableItems.Add(useItems[i]);
             }
         }
         if (availableItems.Count > 0)
         {
-            if (availableItems.IndexOf(useItem) + 1 == availableItems.Count)
+            if (useItem==null? true: availableItems.IndexOf(useItem) + 1 == availableItems.Count)
             {
-                useItem = useItems[0];
+                useItem = availableItems[0];
             }
             else
             {
                 useItem = availableItems[availableItems.IndexOf(useItem) + 1];
             }
-            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "usable"));
+            OnActiveItemChanged(new ItemChangedEventArgs(useItem, "activeUsable"));
         }
         else
         {
             useItem = null;
-            OnActiveItemChanged(new ItemChangedEventArgs((ItemBunch)null, "usable"));
+            OnActiveItemChanged(new ItemChangedEventArgs((ItemBunch)null, "activeUsable"));
         }
     }
 
@@ -344,7 +356,7 @@ public class EquipmentClass: BagClass
         {
             for (int i=0;i<useItems.Count;i++)
             {
-                if (useItems[i].item == itemBunch.item)
+                if (useItems[i]!=null?useItems[i].item == itemBunch.item:false)
                 {
                     useItems[i] = StuckItems(itemBunch, useItems[i]);
                 }

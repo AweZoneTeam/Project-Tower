@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{00D80B01-F96B-4BF2-BCFB-59079CF41218}" SchemaVersion="72">
+	<Events>
+		<WorkUnit Name="Default Work Unit" ID="{00D80B01-F96B-4BF2-BCFB-59079CF41218}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="N_Event" ID="{F10262D2-1541-4E65-BB60-2307441EAA81}">
+					<ChildrenList>
+						<Action Name="Play" ID="{36FC505C-01A5-4C4F-9344-D596DCA3F174}" ShortID="652459948" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{E20CDEA7-6CC9-4C64-A4D8-67F67F3F0D55}" Global="false">
+									<ObjectRef Name="RealStep_0" ID="{557A849A-49A1-487C-9ED0-3F203D4D167C}" WorkUnitID="{B1AAECCD-1F51-4292-8BEC-1CF0133A6F12}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

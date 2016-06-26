@@ -22,6 +22,10 @@ public class KeyboardActorController : PersonController
 
     protected const float minLedgeSpeed = -90f;
 
+    protected const float aimSpeed = 10f;
+    protected const float aimMaxDistance = 50f;//Как далеко может отодвинуться прицел
+    protected const float aimMaxCamDistance = 30f;//Как далеко может отодвинуться прицел без движения камеры?
+
     #endregion //consts
 
     #region dictionaries
@@ -42,15 +46,20 @@ public class KeyboardActorController : PersonController
     protected static Dictionary<doorEnum, string> doorOpenMessages = new Dictionary<doorEnum, string> { { doorEnum.back, "Открыть дверь на заднем плане" },
                                                                                                                { doorEnum.forward, "Открыть дверь на переднем плане" },
                                                                                                                { doorEnum.left, "Открыть дверь слева" },
-                                                                                                               { doorEnum.right, "Открыть дверь справа"} };
+                                                                                                               { doorEnum.right, "Открыть дверь справа"},
+                                                                                                               { doorEnum.up,"Открыть дверь сверху"},
+                                                                                                               { doorEnum.down,"Открыть дверь снизу"},
+                                                                                                               {doorEnum.everywhere,"Открыть дверь"} };
     /// <summary>
     /// Типовые сообщения о возможности пройти через дверь
     /// </summary>
-    protected static Dictionary<doorEnum, string> doorGoThroughMessages = new Dictionary<doorEnum, string> { { doorEnum.back, "Открыть дверь на заднем плане" },
-                                                                                                               { doorEnum.forward, "Открыть дверь на переднем плане" },
-                                                                                                               { doorEnum.left, "Открыть дверь слева" },
-                                                                                                               { doorEnum.right, "Открыть дверь справа"} };
-
+    protected static Dictionary<doorEnum, string> doorGoThroughMessages = new Dictionary<doorEnum, string> { { doorEnum.back, "Пройти через дверь на заднем плане" },
+                                                                                                               { doorEnum.forward, "Пройти через дверь на переднем плане" },
+                                                                                                               { doorEnum.left, "Пройти через дверь слева" },
+                                                                                                               { doorEnum.right, "Пройти через дверь справа"},
+                                                                                                               { doorEnum.up,"Пройти через дверь сверху"},
+                                                                                                               { doorEnum.down,"Пройти через дверь снизу"},
+                                                                                                               {doorEnum.everywhere,"Пройти через дверь"} };
 
     #endregion //dictionaries
 
@@ -96,6 +105,8 @@ public class KeyboardActorController : PersonController
     protected Transform aboveWallCheck;
     protected GroundChecker lowWallCheck, highWallCheck,edgeCheck;
 
+    protected GameObject aim;//Прицел
+
     #endregion //fields
 
     //Инициализация полей и переменных
@@ -109,7 +120,7 @@ public class KeyboardActorController : PersonController
 
     public virtual void Start()
     {
-        InitializeEquipment();
+       //InitializeEquipment();
     }
 
     public override void Update()
@@ -138,6 +149,9 @@ public class KeyboardActorController : PersonController
                     {
 
                         #region mainWeapon
+
+                        #region upDown
+
                         //это условие обрабатывае ситуацию когда быстро(за один кадр) был отжита и нажата кнопка атаки(
                         if (Input.GetButtonUp("Attack") && Input.GetButtonDown("Attack"))
                         {
@@ -157,6 +171,7 @@ public class KeyboardActorController : PersonController
                             {
                                 if (HAA.canCharge && HAA.chargeValue < 0)//персонаж прицеливался
                                 {
+                                    aim.GetComponent<SpriteRenderer>().enabled = false;
                                     HAA.EndCharge(((Bow)HAA.secondaryWeapon).arrowStats);
                                 }
                                 else//персонаж не прицеливался
@@ -165,6 +180,10 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                         }
+
+                        #endregion //upDown
+
+                        #region down
 
                         if (Input.GetButtonDown("Attack"))
                         {
@@ -189,6 +208,10 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                         }
+
+                        #endregion //down
+
+                        #region hold
 
                         if (Input.GetButton("Attack"))
                         {
@@ -229,33 +252,41 @@ public class KeyboardActorController : PersonController
                                     }
                                     else
                                     {
-                                        if (HAA.movingDirection == orientationEnum.left)
-                                        {
-                                            HAA.chargeValue += Input.GetAxis("Horizontal");
-                                        }
-                                        if (HAA.movingDirection == orientationEnum.right)
-                                        {
-                                            HAA.chargeValue -= Input.GetAxis("Horizontal");
-                                        }
                                         HAA.isFightMode = true;
                                         if (HAA.chargeValue > -10f)
                                             HAA.chargeValue = -10f;
                                         if (HAA.chargeValue < -190f)
                                             HAA.chargeValue = -190f;
-                                        GameObject.Find("Aim").transform.localPosition = new Vector3
+                                        Vector3 aimPosition = aim.transform.position;
+                                        aim.transform.position += new Vector3
                                             (
-                                                7 * Mathf.Cos((HAA.chargeValue + 100) * Mathf.PI / 180f),
-                                                 2.5f + 7 * Mathf.Sin((HAA.chargeValue + 100) * Mathf.PI / 180f),
-                                                 0f
+                                                Input.GetAxis("Horizontal")*aimSpeed*Time.deltaTime,
+                                                 Input.GetAxis("Vertical") * aimSpeed * Time.deltaTime,
+                                                 0f 
                                             );
+                                        if ((int)direction.dir * aimPosition.x < (int)direction.dir * sight.position.x)
+                                        {
+                                            aimPosition = new Vector3(sight.position.x, aimPosition.y, aimPosition.z);
+                                        }
+                                        Vector3 aimDirection = aimPosition - sight.position;
+                                        if (aimDirection.magnitude > aimMaxDistance)
+                                        {
+                                            aim.transform.position = sight.transform.position + aimDirection * aimMaxDistance / aimDirection.magnitude;
+                                        }
                                     }
                                 }
                                 else
                                 {
+                                    aim.transform.position = sight.transform.position;
+                                    aim.GetComponent<SpriteRenderer>().enabled = true;
                                     HAA.StartCharge(((Bow)HAA.secondaryWeapon).arrowStats);
                                 }
                             }
                         }
+
+                        #endregion //hold
+
+                        #region up
 
                         if (Input.GetButtonUp("Attack"))
                         {
@@ -281,6 +312,7 @@ public class KeyboardActorController : PersonController
                             {
                                 if (HAA.canCharge && HAA.chargeValue < 0)
                                 {
+                                    aim.GetComponent<SpriteRenderer>().enabled = false;
                                     HAA.EndCharge(((Bow)HAA.secondaryWeapon).arrowStats);
                                 }
                                 else
@@ -290,9 +322,13 @@ public class KeyboardActorController : PersonController
                             }
                         }
 
+                        #endregion //up
+
                         #endregion//mainWeapon
 
                         #region secondaryWeapon
+
+                        #region upDown
 
                         if (Input.GetButtonUp("SecondAttack") && Input.GetButtonDown("SecondAttack") && attack != null)
                         {
@@ -315,6 +351,10 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                         }
+
+                        #endregion //upDown
+
+                        #region down
 
                         if (Input.GetButtonDown("SecondAttack"))
                         {
@@ -339,6 +379,10 @@ public class KeyboardActorController : PersonController
                                 }
                             }
                         }
+
+                        #endregion //down
+
+                        #region hold
 
                         if (Input.GetButton("SecondAttack") && attack != null)
                         {
@@ -374,6 +418,10 @@ public class KeyboardActorController : PersonController
                             }
                         }
 
+                        #endregion //hold
+
+                        #region up
+
                         if (Input.GetButtonUp("SecondAttack") && attack != null)
                         {
                             if (HAA.secondaryWeapon is Shield)
@@ -400,7 +448,9 @@ public class KeyboardActorController : PersonController
                             }
                         }
 
-                        #endregion//secondaryWeapon
+                        #endregion //up
+
+                        #endregion //secondaryWeapon
 
                         #region FastRunInput
 
@@ -636,21 +686,38 @@ public class KeyboardActorController : PersonController
 
                 #region CameraMovement
 
-                if (rigid.velocity.magnitude <= 5f)
+                if (!aim.GetComponent<SpriteRenderer>().enabled)
                 {
-                    float camValue = Input.GetAxis("CamMove");
-                    if (Mathf.Abs(camValue) >= 0.5f)
+                    //Движение камеры, когда нет прицеливания
+                    if (rigid.velocity.magnitude <= 5f)
                     {
-                        pActions.Observe(new Vector2(0f, Mathf.Sign(camValue)));
+                        float camValue = Input.GetAxis("CamMove");
+                        if (Mathf.Abs(camValue) >= 0.5f)
+                        {
+                            pActions.Observe(new Vector2(0f, Mathf.Sign(camValue)),true);
+                        }
+                        else
+                        {
+                            pActions.Observe(new Vector2(0f, 0f),false);
+                        }
                     }
                     else
                     {
-                        pActions.Observe(new Vector2(0f, 0f));
+                        pActions.Observe(new Vector2(0f, 0f),false);
                     }
                 }
                 else
                 {
-                    pActions.Observe(new Vector2(0f, 0f));
+                    //Движение камеры при прицеливании
+                    Vector3 aimDirection = aim.transform.position - sight.position;
+                    if (aimDirection.magnitude > aimMaxCamDistance)
+                    {
+                        pActions.Observe(aimDirection.normalized * (aimDirection.magnitude - aimMaxCamDistance) / (aimMaxDistance - aimMaxCamDistance), false);
+                    }
+                    else
+                    {
+                        pActions.Observe(Vector2.zero,false);
+                    }
                 }
 
                 #endregion //CameraMovement
@@ -691,7 +758,7 @@ public class KeyboardActorController : PersonController
 
                 if (Input.GetButtonDown("ChangeItem"))
                 {
-                    equip.ChangeItem();
+                    equip.ChangeActiveItem();
                 }
 
                 #endregion //ChangeItems
@@ -714,6 +781,8 @@ public class KeyboardActorController : PersonController
         lowWallCheck = transform.FindChild("Indicators").FindChild("LowWallCheck").gameObject.GetComponent<GroundChecker>();
         highWallCheck = transform.FindChild("Indicators").FindChild("HighWallCheck").gameObject.GetComponent<GroundChecker>();
         edgeCheck = transform.FindChild("Indicators").FindChild("EdgeCheck").gameObject.GetComponent<GroundChecker>();
+        aim = transform.FindChild("Aim").gameObject;
+        aim.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     /// <summary>
@@ -767,9 +836,8 @@ public class KeyboardActorController : PersonController
                 }
                 if (useItem.quantity == 0)
                 {
-                    equip.useItem = null;
-                    equip.useItems[equip.useItems.IndexOf(useItem)] = null;
-                    equip.ChangeItem();
+                    equip.ChangeActiveItem();
+                    equip.ChangeUsableItem(equip.useItems.IndexOf(useItem), null);
                 }
             }
         }
@@ -854,7 +922,23 @@ public class KeyboardActorController : PersonController
             envStats.interaction = interactionEnum.noInter;
         }
         rigid.useGravity = true;
-        base.DoorInteraction();
+    }
+
+    /// <summary>
+    /// Сменить комнату
+    /// </summary>
+    public override void ChangeRoom(AreaClass nextRoom)
+    {
+        if (currentRoom != null)
+        {
+            currentRoom.RemoveZCoordinate(interactions.ZCoordinate);
+            OnRoomChanged(new RoomChangedEventArgs(nextRoom, currentRoom));
+            currentRoom = nextRoom;
+            if (interactions != null)
+            {
+                interactions.ZCoordinate = currentRoom.GetZCoordinate();
+            }
+        }
     }
 
     void TakeDrop(int dropIndex)
@@ -908,7 +992,7 @@ public class KeyboardActorController : PersonController
     public override void RemoveMount()
     {
         base.RemoveMount();
-        mounted = false;
+        envStats.interaction = interactionEnum.noInter;
         pActions.RemoveMount();
     }
 
@@ -1083,11 +1167,12 @@ public class KeyboardActorController : PersonController
             }
         }
 
-        foreach (GameObject _door in doors)
+        for (int i=0;i<doors.Count;i++)
         {
-            if (!doors1.Contains(_door))
+            if (!doors1.Contains(doors[i]))
             {
-                doors.Remove(_door);
+                doors.Remove(doors[i]);
+                i--;
             }
         }
 
@@ -1166,6 +1251,30 @@ public class KeyboardActorController : PersonController
         #endregion //drop
 
 
+    }
+
+    /// <summary>
+    /// Спецальная вспомогательная функция для учёта механики различных интерактивных объектов в других функциях
+    /// </summary>
+    public override void ConsiderInteractable()
+    {
+        base.ConsiderInteractable();
+        if (interactionObject != null)
+        {
+            if (interactionObject is MoveableBoxActions)
+            {
+                StartCoroutine(BoxConsideration());
+            }
+        }
+    }
+
+    IEnumerator BoxConsideration()
+    {
+        yield return new WaitForSeconds(.2f);
+        if (!interactions.GetInteractionList().Contains(interactionObject.GetComponent<InterObjController>()))
+        {
+            interactions.GetInteractionList().Add(interactionObject.GetComponent<InterObjController>());
+        }
     }
 
     /// <summary>
@@ -1361,7 +1470,7 @@ public class KeyboardActorController : PersonController
     /// <summary>
     /// Инициализировать инвентарь 
     /// </summary>
-    protected void InitializeEquipment()
+    public void InitializeEquipment()
     {
         List<PartController> parts = new List<PartController>();
         CharacterAnimator cAnim=GetComponentInChildren<CharacterAnimator>();
@@ -1371,6 +1480,19 @@ public class KeyboardActorController : PersonController
         ConsiderArmor(armorSet.pants, true);
         ConsiderArmor(armorSet.gloves, true);
         ConsiderArmor(armorSet.boots, true);
+        if (equip.rightWeapon == null)
+        {
+            if (equip.leftWeapon = null)
+            {
+                equip.leftWeapon = defaultWeapon2;
+                equip.rightWeapon = defaultWeapon2;
+            }
+            else
+            {
+                equip.rightWeapon = defaultWeapon1;
+            }          
+        }
+
         if (equip.rightWeapon != null)
         {
             AddPart(equip.rightWeapon,parts, cAnim);
