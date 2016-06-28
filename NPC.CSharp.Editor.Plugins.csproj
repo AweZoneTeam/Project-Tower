@@ -201,6 +201,15 @@
     <None Include="Assets\AstarPathfindingProject\Readme.txt" />
     <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
     <None Include="Assets\AstarPathfindingProject\link.xml" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\Init.txt" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\Main.txt" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\PluginInfo.xml" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\SoundbanksInfo.xml" />
+    <None Include="Assets\AudioSystem\IncrementalSoundBankData.xml" />
+    <None Include="Assets\AudioSystem\SoundBanks\Init.txt" />
+    <None Include="Assets\AudioSystem\SoundBanks\Main.txt" />
+    <None Include="Assets\AudioSystem\SoundBanks\PluginInfo.xml" />
+    <None Include="Assets\AudioSystem\SoundBanks\SoundbanksInfo.xml" />
     <None Include="Assets\Docs\Readme.txt" />
     <None Include="Assets\Docs\What&apos;s new.txt" />
     <None Include="Assets\Plugins\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
@@ -351,6 +360,10 @@
     <None Include="Assets\Scripts\Shaders\LightSourceLerp.shader" />
     <None Include="Assets\Scripts\Shaders\LightSourceShader.shader" />
     <None Include="Assets\Scripts\Shaders\ShadowShader.shader" />
+    <None Include="Assets\StreamingAssets\desc.txt" />
+    <None Include="Assets\Wwise\NewVersion.txt" />
+    <None Include="Assets\Wwise\Readme.txt" />
+    <None Include="Assets\WwiseSettings.xml" />
     <None Include="Assets\dfdf.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

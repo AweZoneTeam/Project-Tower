@@ -205,6 +205,7 @@
     <Compile Include="Assets\AstarPathfindingProject\Editor\ModifierEditors\SmoothModifierEditor.cs" />
     <Compile Include="Assets\AstarPathfindingProject\Editor\SeekerEditor.cs" />
     <Compile Include="Assets\Editor\AI\BehaviourCreateWindow.cs" />
+    <Compile Include="Assets\Editor\AI\SpeechCreateWindow.cs" />
     <Compile Include="Assets\Editor\Buff Creator\BuffCreatorWindow.cs" />
     <Compile Include="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
     <Compile Include="Assets\Editor\ImageEffects\AntialiasingEditor.cs" />
@@ -246,6 +247,38 @@
     <Compile Include="Assets\Scripts 1\Core\Editor\GAFObjectsManagerEditor.cs" />
     <Compile Include="Assets\Scripts 1\Objects\Editor\GAFBakedObjectControllerEditor.cs" />
     <Compile Include="Assets\Scripts 1\Objects\Editor\GAFObjectEditor.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkAmbientInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkBankInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkBaseInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkEnvironmentInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkEnvironmentPortalInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkEventInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkGameObjectInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkInitializerInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkPortalManager.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkStateInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkSwitchInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkUnityEventHandlerInspector.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseComponents\AkWwiseXMLWatcher.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseMenu\Common\AkExampleAppBuilderBase.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseMenu\Common\AkUnityBuilderBase.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseMenu\Common\AkUnityPluginInstallerBase.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseMenu\Common\AkWwiseIdConverter.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseMenu\Windows\AkWwiseMenu_Windows.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseSetupWizard\AkPluginActivator.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseSetupWizard\AkUnitySettingsParser.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseSetupWizard\AkWwiseSettingsWindow.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseSetupWizard\AkWwiseSetupWindow.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseSetupWizard\AkWwiseSetupWizard.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseComponentPicker.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwisePicker.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseProjectData.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseProjectInfo.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseTreeView.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseWWUBuilder.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\AkWwiseXMLBuilder.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\TreeViewControl\TreeViewControl.cs" />
+    <Compile Include="Assets\Wwise\Editor\WwiseWindows\TreeViewControl\TreeViewItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
@@ -261,6 +294,15 @@
     <None Include="Assets\AstarPathfindingProject\Readme.txt" />
     <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
     <None Include="Assets\AstarPathfindingProject\link.xml" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\Init.txt" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\Main.txt" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\PluginInfo.xml" />
+    <None Include="Assets\AudioSystem\GeneratedSoundBanks\Windows\SoundbanksInfo.xml" />
+    <None Include="Assets\AudioSystem\IncrementalSoundBankData.xml" />
+    <None Include="Assets\AudioSystem\SoundBanks\Init.txt" />
+    <None Include="Assets\AudioSystem\SoundBanks\Main.txt" />
+    <None Include="Assets\AudioSystem\SoundBanks\PluginInfo.xml" />
+    <None Include="Assets\AudioSystem\SoundBanks\SoundbanksInfo.xml" />
     <None Include="Assets\Docs\Readme.txt" />
     <None Include="Assets\Docs\What&apos;s new.txt" />
     <None Include="Assets\Plugins\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
@@ -411,6 +453,10 @@
     <None Include="Assets\Scripts\Shaders\LightSourceLerp.shader" />
     <None Include="Assets\Scripts\Shaders\LightSourceShader.shader" />
     <None Include="Assets\Scripts\Shaders\ShadowShader.shader" />
+    <None Include="Assets\StreamingAssets\desc.txt" />
+    <None Include="Assets\Wwise\NewVersion.txt" />
+    <None Include="Assets\Wwise\Readme.txt" />
+    <None Include="Assets\WwiseSettings.xml" />
     <None Include="Assets\dfdf.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

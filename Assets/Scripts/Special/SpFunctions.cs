@@ -166,6 +166,7 @@ public static class SpFunctions {
 		return vect1 - vect3;
 	}
 
+    //ЛУЧШЕ СДЕЛАТЬ ОТДЕЛЬНОЙ ПЕРЕМЕННОЙ
     public static KeyboardActorController GetPlayer()
     {
         return GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>();

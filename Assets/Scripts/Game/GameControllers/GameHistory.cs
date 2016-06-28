@@ -113,7 +113,6 @@ public class JournalScriptStock
         }
 
         jTarget = jInit.eventReason;
-        Debug.Log(_script.name);
         //В первую очередь, подпишемся на журнальные объекты
         if (jConditionBase.ContainsKey(_script.jDataConditionName))
         {
@@ -229,6 +228,11 @@ public class JournalScriptStock
         }
     }
 
+    public void AddPartner(JournalEventArgs _action)
+    {
+
+    }
+
     #endregion //journalActions
 
     #region initFunctions
@@ -275,7 +279,6 @@ public class JournalScriptStock
             NPCActions NPC = obj.GetComponent<NPCActions>();
             for (int i = 0; i < NPC.speeches.Count; i++)
             {
-                Debug.Log(NPC.speeches[i].name);
                 if (NPC.speeches[i].name == _script.id)
                 {
                     NPC.speeches[i].SpeechJournalEvent += _script.HandleJournalEvent;

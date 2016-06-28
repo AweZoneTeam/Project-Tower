@@ -196,6 +196,7 @@ public class AIController : PersonController, IPersonWatching
         #region journalActionBase
 
         jActionBase.Add("make an enemy", MakeAnEnemy);
+        jActionBase.Add("partner", BecamePartner);
         jActionBase.Add("change behaviour", ChangeBehaviour);
         jActionBase.Add("make talk", MakeTalk);
 
@@ -1405,6 +1406,27 @@ public class AIController : PersonController, IPersonWatching
         if (!enemies.Contains(newEnemy))
         {
             enemies.Add(newEnemy);
+        }
+    }
+
+    /// <summary>
+    /// Добавить в свой список врагов нового
+    /// </summary>
+    protected virtual void BecamePartner(JournalEventAction _action)
+    {
+        PartnerController partner = GetComponent<PartnerController>();
+        HumanoidActorActions actions = GetComponent<HumanoidActorActions>();
+        if (partner != null && actions != null)
+        {
+            GameObject.FindGameObjectWithTag(Tags.player).GetComponent<KeyboardActorController>().AddPartner(GetComponent<PartnerController>());
+            actions.enabled = true;
+            actions.Initialize();
+            actions.movingDirection = pActions.movingDirection;
+            pActions.enabled = false;
+            pActions = actions;
+            actions.SetEnvStats(envStats);
+            partner.Awake();
+            partner.FindActions();
         }
     }
 

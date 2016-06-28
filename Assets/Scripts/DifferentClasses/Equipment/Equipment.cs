@@ -88,8 +88,7 @@ public class EquipmentClass: BagClass
         rightWeapon = altRightWeapon;
         altRightWeapon = weapon;
         OnActiveItemChanged(new ItemChangedEventArgs(rightWeapon, "rightWeapon"));
-
-        if (altLeftWeapon == rightWeapon)
+        if (altLeftWeapon == rightWeapon || leftWeapon == altRightWeapon)
         {
             ChangeLeftWeapon();
         }
@@ -104,7 +103,7 @@ public class EquipmentClass: BagClass
         leftWeapon = altLeftWeapon;
         altLeftWeapon = weapon;
         OnActiveItemChanged(new ItemChangedEventArgs(leftWeapon, "leftWeapon"));
-        if (altRightWeapon == leftWeapon)
+        if (altRightWeapon == leftWeapon || altLeftWeapon == rightWeapon)
         {
             ChangeRightWeapon();
         }

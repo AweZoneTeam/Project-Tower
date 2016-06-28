@@ -164,6 +164,7 @@ public class PersonActions : DmgObjActions
             newScale.x *= -1;
             this.gameObject.transform.localScale = newScale;
         }
+
     }
 
     /// <summary>
@@ -216,7 +217,7 @@ public class PersonActions : DmgObjActions
     /// </summary>
     protected virtual void Move(orientationEnum _direction, float _speed)
     {
-        Vector3 targetVelocity = new Vector3(0f, 0f, 0f);
+        Vector3 targetVelocity = new Vector3(0f, rigid.velocity.y, 0f);
         if (_direction == orientationEnum.left)
         {
             targetVelocity = new Vector3(-_speed, rigid.velocity.y, rigid.velocity.z);

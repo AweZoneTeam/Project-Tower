@@ -18,6 +18,7 @@ public class GameUI : InterfaceWindow
     #region parametres
 
     private float maxHealth = 0f;
+    private float partnerMaxHealth = 0f;
 
     #endregion //parametres
 
@@ -30,10 +31,15 @@ public class GameUI : InterfaceWindow
     private GameObject messagePanel;
     private Text message1, message2;
 
-    private PersonController player;
+    private Text partnerName, partnerHealthText;
+    private RectTransform partnerHealthBar;
+    private List<Image> partnerBuffsImages = new List<Image>();
+    private Image partnerRightWeaponImage, partnerLeftWeaponImage, partnerItemImage;
+
+    private PersonController player, partner;
     private Transform playerTrans;
 
-    private OrganismStats playerStats;
+    private OrganismStats playerStats, partnerStats;
 
     #endregion //fields
 
@@ -122,6 +128,88 @@ public class GameUI : InterfaceWindow
         GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<GameStatistics>().MessageSentEvent += HandleMessageSentEvent;
         #endregion //messagePanel
 
+        ((KeyboardActorController)player).OnAddPartner += AddPartner;
+        ((KeyboardActorController)player).OnRemovePartner += RemovePartner;
+
+    }
+
+    /// <summary>
+    /// Добавление интерфейса партнёра
+    /// </summary>
+    public void AddPartner(object sender, PartnerEventArgs _partner)
+    {
+        if (_partner == null) return;
+        if (partner != null)
+        {
+            RemovePartner(null, null);
+        }
+        transform.Find("Partner").gameObject.SetActive(true);
+        partner = _partner.partner;
+        transform.Find("Partner").Find("PName").GetComponent<Text>().text = ((PartnerController)partner).partnerName;
+
+        #region hpData
+
+        partnerStats = partner.GetOrgStats();
+        partnerMaxHealth = partnerStats.maxHealth;
+        partnerStats.HealthChangedEvent += HandlePartnerHealthChangedEvent;
+        partnerHealthText = GameObject.Find("PHealthText").GetComponent<Text>();
+        partnerHealthBar = GameObject.Find("PHealth").GetComponent<RectTransform>();
+
+        #endregion //hpData
+
+        #region buffsPanel
+
+        partnerBuffsImages.Clear();
+        Transform partnerBuffsPanel = GameObject.Find("PBuffsPanel").transform;
+        for (int i = 0; i < partnerBuffsPanel.childCount; i++)
+        {
+            partnerBuffsImages.Add(partnerBuffsPanel.GetChild(i).GetComponent<Image>());
+        }
+        partner.buffList.BuffsChangedEvent += HandlePartnerBuffsChangedEvent;
+
+        #endregion //buffsPanel
+
+        #region itemsPanel
+
+        Transform itemsPanel = GameObject.Find("PItemsPanel").transform;
+        partnerRightWeaponImage = itemsPanel.FindChild("RightWeaponPanel").FindChild("RightWeaponImage").GetComponent<Image>();
+        partnerLeftWeaponImage = itemsPanel.FindChild("LeftWeaponPanel").FindChild("LeftWeaponImage").GetComponent<Image>();
+        partnerItemImage = itemsPanel.FindChild("ItemPanel").FindChild("ItemImage").GetComponent<Image>();
+        EquipmentClass equip = (EquipmentClass)partner.GetEquipment();
+        if (equip.rightWeapon != null)
+        {
+            partnerRightWeaponImage.sprite = equip.rightWeapon.image;
+            partnerRightWeaponImage.color = new Color(1f, 1f, 1f, 1f);
+        }
+        if (equip.leftWeapon != null)
+        {
+            partnerLeftWeaponImage.sprite = equip.leftWeapon.image;
+            partnerLeftWeaponImage.color = new Color(1f, 1f, 1f, 1f);
+        }
+        if (equip.useItem != null)
+        {
+            if (equip.useItem.item != null)
+            {
+                partnerItemImage.sprite = equip.useItem.item.image;
+                partnerItemImage.color = new Color(1f, 1f, 1f, 1f);
+            }
+        }
+        equip.ActiveItemChangedEvent += HandlePartnerItemChangedEvent;
+
+        #endregion //itemsPanel
+    }
+
+    /// <summary>
+    /// Удаление интерфейса партнёра
+    /// </summary>
+    public void RemovePartner(object sender, PartnerEventArgs _p)
+    {
+        if (partner == null) return;
+        partnerStats.HealthChangedEvent -= HandlePartnerHealthChangedEvent;
+        partner.buffList.BuffsChangedEvent -= HandlePartnerBuffsChangedEvent;
+        ((EquipmentClass)partner.GetEquipment()).ActiveItemChangedEvent -= HandlePartnerItemChangedEvent;
+        transform.Find("Partner").gameObject.SetActive(false);
+        
     }
 
     /// <summary>
@@ -131,6 +219,15 @@ public class GameUI : InterfaceWindow
     {
         healthBar.sizeDelta = new Vector2(maxHealthWidth * e.HP / maxHealth, healthBar.sizeDelta.y);
         healthText.text = e.HP.ToString() + "/" + maxHealth.ToString();    
+    }
+
+    /// <summary>
+    /// Мониторим здоровье партнёра
+    /// </summary>
+    void HandlePartnerHealthChangedEvent(object sender, OrganismEventArgs e)
+    {
+        partnerHealthBar.sizeDelta = new Vector2(maxHealthWidth * e.HP / partnerMaxHealth, partnerHealthBar.sizeDelta.y);
+        partnerHealthText.text = e.HP.ToString() + "/" + partnerMaxHealth.ToString();
     }
 
     /// <summary>
@@ -151,7 +248,7 @@ public class GameUI : InterfaceWindow
         string itemType = e.ItemType;
         if (string.Equals(itemType, "rightWeapon"))
         {
-            SetImage( ref rightWeaponImage, e.Item);
+            SetImage(ref rightWeaponImage, e.Item);
         }
         else if (string.Equals(itemType, "leftWeapon"))
         {
@@ -160,6 +257,27 @@ public class GameUI : InterfaceWindow
         else if (string.Equals(itemType, "usable"))
         {
             SetImage(ref itemImage, e.ItemBunch);
+        }
+    }
+
+    /// <summary>
+    /// Мониторим вооружение партнёра
+    /// </summary>
+    void HandlePartnerItemChangedEvent(object sender, ItemChangedEventArgs e)
+    {
+        ItemClass item = e.Item;
+        string itemType = e.ItemType;
+        if (string.Equals(itemType, "rightWeapon"))
+        {
+            SetImage(ref partnerRightWeaponImage, e.Item);
+        }
+        else if (string.Equals(itemType, "leftWeapon"))
+        {
+            SetImage(ref partnerLeftWeaponImage, e.Item);
+        }
+        else if (string.Equals(itemType, "usable"))
+        {
+            SetImage(ref partnerItemImage, e.ItemBunch);
         }
     }
 
@@ -213,6 +331,27 @@ public class GameUI : InterfaceWindow
     }
 
     /// <summary>
+    /// Мониторим баффы напарника
+    /// </summary>
+    void HandlePartnerBuffsChangedEvent(object sender, BuffsChangedEventArgs e)
+    {
+        BuffsList buffs = partner.buffList;
+        for (int i = 0; i < partnerBuffsImages.Count; i++)
+        {
+            if (i < buffs.Count)
+            {
+                partnerBuffsImages[i].sprite = buffs[i].buffImage;
+                partnerBuffsImages[i].color = new Color(1f, 1f, 1f, 1f);
+            }
+            else
+            {
+                partnerBuffsImages[i].sprite = null;
+                partnerBuffsImages[i].color = new Color(1f, 1f, 1f, 0f);
+            }
+        }
+    }
+
+    /// <summary>
     /// Мониторить важные игровые сообщения, которые должен увидеть игрок.
     /// </summary>
     void HandleMessageSentEvent(object sender, MessageSentEventArgs e)
@@ -255,6 +394,7 @@ public class GameUI : InterfaceWindow
             messagePanel.SetActive(false);
         }
     }
+
 
     float GetHeight (float y)
     {

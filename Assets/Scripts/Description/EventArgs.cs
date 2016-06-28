@@ -247,3 +247,12 @@ public class MountEventArgs : EventArgs
         mount = _m;
     }
 }
+
+public class PartnerEventArgs : EventArgs
+{
+    public PartnerController partner;
+    public PartnerEventArgs(PartnerController _p)
+    {
+        partner = _p;
+    }
+}
