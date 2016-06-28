@@ -235,6 +235,7 @@
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\AI\NPC\NPCActions.cs" />
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\AI\SkeletonVisual.cs" />
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\CharacterAudio.cs" />
+    <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\Partner\PartnerController.cs" />
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\PersonActions.cs" />
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\PersonController.cs" />
     <Compile Include="Assets\Scripts\DifferentClasses\CAVEntities\Interactive\Damageable\Person\PersonVisual.cs" />

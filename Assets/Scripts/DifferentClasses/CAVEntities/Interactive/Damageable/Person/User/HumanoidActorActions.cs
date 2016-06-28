@@ -789,7 +789,7 @@ public class HumanoidActorActions : PersonActions
     }
 
     /// <summary>
-    /// Учёт ситуации и произведение нужной в данный момент атаки
+    /// Атака
     /// </summary>
     public override void Attack(ActionClass action)
     {

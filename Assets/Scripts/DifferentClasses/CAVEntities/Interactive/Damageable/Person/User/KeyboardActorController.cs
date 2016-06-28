@@ -106,8 +106,17 @@ public class KeyboardActorController : PersonController
     protected GroundChecker lowWallCheck, highWallCheck,edgeCheck;
 
     protected GameObject aim;//Прицел
+    PartnerController partner;
+    protected bool isPartnerAI;
 
     #endregion //fields
+
+    #region EventHandlers
+
+    public EventHandler<PartnerEventArgs> OnAddPartner;
+    public EventHandler<PartnerEventArgs> OnRemovePartner;
+
+    #endregion//EventHandlers
 
     //Инициализация полей и переменных
     public override void Awake()
@@ -138,6 +147,19 @@ public class KeyboardActorController : PersonController
             {
                 Death();
             }
+            if (Input.GetButtonDown("PConnect"))
+            {
+                if(isPartnerAI)
+                {
+                    partner.Connect();
+                    isPartnerAI = false;
+                }
+                else
+                {
+                    isPartnerAI = true;
+                    partner.Disconnect();
+                }
+            }
             if (pActions != null)
             {
                 if (!death)
@@ -145,7 +167,7 @@ public class KeyboardActorController : PersonController
 
                     #region UsualState
 
-                    if ((envStats.interaction == interactionEnum.noInter)|| (envStats.interaction == interactionEnum.mount))
+                    if ((envStats.interaction == interactionEnum.noInter) || (envStats.interaction == interactionEnum.mount))
                     {
 
                         #region mainWeapon
@@ -994,10 +1016,11 @@ public class KeyboardActorController : PersonController
         base.RemoveMount();
         envStats.interaction = interactionEnum.noInter;
         pActions.RemoveMount();
+        envStats.interaction = interactionEnum.interactive;
     }
 
     /// <summary>
-    /// спешиться
+    /// Сесть на маунта
     /// </summary>
     public override void UseMount(MountActions mount)
     {
@@ -1005,11 +1028,9 @@ public class KeyboardActorController : PersonController
         OnRemoveMount += currentMount.Appear;
         if (equip.leftWeapon != null)
         {
-            Debug.Log("левого оружия нет");
             if (equipWindow.HaveEmptySlots(1))
             {
                 mounted = true;
-                Debug.Log("Есть пустой слот");
                 equipWindow.AddItemInBag(equipWindow.leftWeaponSlot1.itemBunch);
                 equipWindow.leftWeaponSlot1.DeleteItem();
                 if(equip.leftWeapon.weaponType == "bow" || equip.leftWeapon.weaponType == "twoHandedSword")
@@ -1019,7 +1040,6 @@ public class KeyboardActorController : PersonController
             }
             else
             {
-                Debug.Log("Нет пустого слота");
                 return;
             }
         }
@@ -1857,6 +1877,19 @@ public class KeyboardActorController : PersonController
     }
 
     #endregion //equipment
+
+    public void AddPartner(PartnerController _p)
+    {
+        OnAddPartner.Invoke(this, new PartnerEventArgs(_p));
+        partner = _p;
+        RoomChangedEvent += _p.FollowPlayer;
+    }
+
+    public void RemovePartner()
+    {
+        OnRemovePartner.Invoke(this, new PartnerEventArgs(partner));
+        partner = null;
+    }
 
 }
 

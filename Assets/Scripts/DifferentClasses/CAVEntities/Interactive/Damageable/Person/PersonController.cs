@@ -262,6 +262,7 @@ public class PersonController : DmgObjController, IPersonWatching
             OnUseMount(this, new MountEventArgs(m));
         currentMount = m;
     }
+
     /// <summary>
     /// Слезть с маунта
     /// </summary>
