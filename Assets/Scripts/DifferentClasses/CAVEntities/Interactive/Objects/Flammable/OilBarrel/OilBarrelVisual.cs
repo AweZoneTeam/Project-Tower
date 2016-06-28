@@ -2,7 +2,7 @@
 using System.Collections;
 
 /// <summary>
-/// Визуальное оформление бочки с маслом
+/// Визуальное оформление бочки с маслом (или динамита)
 /// </summary>
 public class OilBarrelVisual : InterObjVisual
 {
@@ -13,4 +13,13 @@ public class OilBarrelVisual : InterObjVisual
     {
         iAnim.Animate("Explosion");
     }
+
+    /// <summary>
+    /// Санимировать состояние перед взрывом
+    /// </summary>
+    public void PreBurn()
+    {
+        iAnim.Animate("PreExplosion");
+    }
+
 }

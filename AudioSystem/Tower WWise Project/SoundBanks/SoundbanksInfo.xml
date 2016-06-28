@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="118">
+	<RootPaths>
+		<ProjectRoot>G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\</ProjectRoot>
+		<SourceFilesRoot>G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\SoundBanks\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents/>
+	<StreamedFiles/>
+	<MediaFilesNotInAnyBank/>
+	<SoundBanks>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ObjectPath>Init</ObjectPath>
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
+		</SoundBank>
+		<SoundBank Id="3161908922" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Main</ObjectPath>
+			<ShortName>Main</ShortName>
+			<Path>Main.bnk</Path>
+			<IncludedEvents>
+				<Event Id="382771862" Name="Play_Ambient_day_night" ObjectPath="\Events\Default Work Unit\Play_Ambient_day_night"/>
+				<Event Id="1009734104" Name="Play_Book_Lever" ObjectPath="\Events\Default Work Unit\Play_Book_Lever"/>
+				<Event Id="2017282760" Name="Play_Box_Pushing" ObjectPath="\Events\Default Work Unit\Play_Box_Pushing"/>
+				<Event Id="3454195573" Name="Play_Chest_Closing" ObjectPath="\Events\Default Work Unit\Play_Chest_Closing"/>
+				<Event Id="2095428330" Name="Play_Chest_Locked" ObjectPath="\Events\Default Work Unit\Play_Chest_Locked"/>
+				<Event Id="445356712" Name="Play_Chest_Opening" ObjectPath="\Events\Default Work Unit\Play_Chest_Opening"/>
+				<Event Id="3779672947" Name="Play_Door_Locked" ObjectPath="\Events\Default Work Unit\Play_Door_Locked"/>
+				<Event Id="1548782119" Name="Play_Door_Opening" ObjectPath="\Events\Default Work Unit\Play_Door_Opening"/>
+				<Event Id="2712047697" Name="Play_Fall" ObjectPath="\Events\Default Work Unit\Play_Fall"/>
+				<Event Id="3015324718" Name="Play_Fire" ObjectPath="\Events\Default Work Unit\Play_Fire"/>
+				<Event Id="3689126666" Name="Play_Jump" ObjectPath="\Events\Default Work Unit\Play_Jump"/>
+				<Event Id="1388134581" Name="Play_Lever_Push" ObjectPath="\Events\Default Work Unit\Play_Lever_Push"/>
+				<Event Id="4228305440" Name="Play_Lever_Turn" ObjectPath="\Events\Default Work Unit\Play_Lever_Turn"/>
+				<Event Id="2164723522" Name="Play_Rope_Move" ObjectPath="\Events\Default Work Unit\Play_Rope_Move"/>
+				<Event Id="2822207957" Name="Play_Run" ObjectPath="\Events\Default Work Unit\Play_Run"/>
+				<Event Id="3512900750" Name="Play_Spikes_Down" ObjectPath="\Events\Default Work Unit\Play_Spikes_Down"/>
+				<Event Id="1674837973" Name="Play_Spikes_Up" ObjectPath="\Events\Default Work Unit\Play_Spikes_Up"/>
+				<Event Id="745234296" Name="Play_Stairs" ObjectPath="\Events\Default Work Unit\Play_Stairs"/>
+				<Event Id="2538677774" Name="Play_Thicket_Move" ObjectPath="\Events\Default Work Unit\Play_Thicket_Move"/>
+				<Event Id="3283957683" Name="Play_Vertical_Stairs_Move" ObjectPath="\Events\Default Work Unit\Play_Vertical_Stairs_Move"/>
+				<Event Id="1589278981" Name="Play_Walk" ObjectPath="\Events\Default Work Unit\Play_Walk"/>
+				<Event Id="891603430" Name="Play_Wall_Explosion" ObjectPath="\Events\Default Work Unit\Play_Wall_Explosion"/>
+				<Event Id="1482641624" Name="Stop_Ambient_day_night" ObjectPath="\Events\Default Work Unit\Stop_Ambient_day_night"/>
+				<Event Id="36806770" Name="Stop_Box_Pushing" ObjectPath="\Events\Default Work Unit\Stop_Box_Pushing"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="5641074" Language="SFX">
+					<ShortName>amb_night_element_02_04.wav</ShortName>
+					<Path>SFX\amb_night_element_02_04_9E69E797.wem</Path>
+				</File>
+				<File Id="7605479" Language="SFX">
+					<ShortName>Footstep_Running_Hardwood_02.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardwood_02_9E69E797.wem</Path>
+				</File>
+				<File Id="58787948" Language="SFX">
+					<ShortName>Footstep_Running_Hardmetal_05.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardmetal_05_9E69E797.wem</Path>
+				</File>
+				<File Id="64608722" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_05.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_05_9E69E797.wem</Path>
+				</File>
+				<File Id="68612853" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_04.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_04_9E69E797.wem</Path>
+				</File>
+				<File Id="75935120" Language="SFX">
+					<ShortName>Footstep_Walking_Hardmetal_03.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardmetal_03_9E69E797.wem</Path>
+				</File>
+				<File Id="87964780" Language="SFX">
+					<ShortName>Footstep_Walking_Hardmetal_02.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardmetal_02_9E69E797.wem</Path>
+				</File>
+				<File Id="118931737" Language="SFX">
+					<ShortName>83 Metal Creak Art Of Foley 06 Sound Ideas.wav</ShortName>
+					<Path>SFX\83 Metal Creak Art Of Foley 06 Sound Ideas_24CAA377.wem</Path>
+				</File>
+				<File Id="124800583" Language="SFX">
+					<ShortName>amb_night_element_02_02.wav</ShortName>
+					<Path>SFX\amb_night_element_02_02_9E69E797.wem</Path>
+				</File>
+				<File Id="130571851" Language="SFX">
+					<ShortName>Footstep_Running_Hardwood_03.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardwood_03_9E69E797.wem</Path>
+				</File>
+				<File Id="141757090" Language="SFX">
+					<ShortName>Footstep_Walking_Hardmetal_01.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardmetal_01_9E69E797.wem</Path>
+				</File>
+				<File Id="149717445" Language="SFX">
+					<ShortName>fs_grue_forest_walk_01.wav</ShortName>
+					<Path>SFX\fs_grue_forest_walk_01_9E69E797.wem</Path>
+				</File>
+				<File Id="176084543" Language="SFX">
+					<ShortName>73 Metal Scrape Squeal Brick FS7 - Metal Sounds Sound Ideas.wav</ShortName>
+					<Path>SFX\73 Metal Scrape Squeal Brick FS7 - Metal Sounds Sound Ideas_F405564A.wem</Path>
+				</File>
+				<File Id="187277824" Language="SFX">
+					<ShortName>amb_night_element_03_01.wav</ShortName>
+					<Path>SFX\amb_night_element_03_01_9E69E797.wem</Path>
+				</File>
+				<File Id="190799008" Language="SFX">
+					<ShortName>Footstep_Running_Hardwood_05.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardwood_05_9E69E797.wem</Path>
+				</File>
+				<File Id="201806619" Language="SFX">
+					<ShortName>41 Hit Metal Rivet Blow Out6 FS7 - Metal Sounds Sound Ideas.wav</ShortName>
+					<Path>SFX\41 Hit Metal Rivet Blow Out6 FS7 - Metal Sounds Sound Ideas_AD8F0FB8.wem</Path>
+				</File>
+				<File Id="234781753" Language="SFX">
+					<ShortName>fs_grue_stone_run_03.wav</ShortName>
+					<Path>SFX\fs_grue_stone_run_03_9E69E797.wem</Path>
+				</File>
+				<File Id="278048770" Language="SFX">
+					<ShortName>fs_grue_forest_walk_03.wav</ShortName>
+					<Path>SFX\fs_grue_forest_walk_03_9E69E797.wem</Path>
+				</File>
+				<File Id="283440425" Language="SFX">
+					<ShortName>fs_grue_forest_run_01.wav</ShortName>
+					<Path>SFX\fs_grue_forest_run_01_9E69E797.wem</Path>
+				</File>
+				<File Id="284859364" Language="SFX">
+					<ShortName>fs_grue_stone_run_01.wav</ShortName>
+					<Path>SFX\fs_grue_stone_run_01_9E69E797.wem</Path>
+				</File>
+				<File Id="291050177" Language="SFX">
+					<ShortName>amb_night_element_02_01.wav</ShortName>
+					<Path>SFX\amb_night_element_02_01_9E69E797.wem</Path>
+				</File>
+				<File Id="308659137" Language="SFX">
+					<ShortName>Footstep_Walking_Hardmetal_04.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardmetal_04_9E69E797.wem</Path>
+				</File>
+				<File Id="308837433" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_03.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_03_9E69E797.wem</Path>
+				</File>
+				<File Id="315168335" Language="SFX">
+					<ShortName>WavLibraryNet_Sound7784.wav</ShortName>
+					<Path>SFX\WavLibraryNet_Sound7784_9E69E797.wem</Path>
+				</File>
+				<File Id="338056211" Language="SFX">
+					<ShortName>amb_forest_day_background_loop.wav</ShortName>
+					<Path>SFX\amb_forest_day_background_loop_4B8CC0C5.wem</Path>
+				</File>
+				<File Id="376506392" Language="SFX">
+					<ShortName>Footstep_Walking_Concrete_03.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Concrete_03_9E69E797.wem</Path>
+				</File>
+				<File Id="381927685" Language="SFX">
+					<ShortName>Footstep_Walking_Concrete_06.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Concrete_06_9E69E797.wem</Path>
+				</File>
+				<File Id="401827765" Language="SFX">
+					<ShortName>2010_21 (2).wav</ShortName>
+					<Path>SFX\2010_21 (2)_4E34579E.wem</Path>
+				</File>
+				<File Id="412466684" Language="SFX">
+					<ShortName>fs_grue_forest_walk_02.wav</ShortName>
+					<Path>SFX\fs_grue_forest_walk_02_9E69E797.wem</Path>
+				</File>
+				<File Id="412839366" Language="SFX">
+					<ShortName>rustle1.wav</ShortName>
+					<Path>SFX\rustle1_6743BC28.wem</Path>
+				</File>
+				<File Id="433655914" Language="SFX">
+					<ShortName>83 Metal Creak Art Of Foley 06 Sound Ideas.wav</ShortName>
+					<Path>SFX\83 Metal Creak Art Of Foley 06 Sound Ideas_88FBEF3F.wem</Path>
+				</File>
+				<File Id="437500180" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_04.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_04_9E69E797.wem</Path>
+				</File>
+				<File Id="459508744" Language="SFX">
+					<ShortName>amb_day_element_02_02.wav</ShortName>
+					<Path>SFX\amb_day_element_02_02_9E69E797.wem</Path>
+				</File>
+				<File Id="466258793" Language="SFX">
+					<ShortName>amb_night_element_01_04.wav</ShortName>
+					<Path>SFX\amb_night_element_01_04_9E69E797.wem</Path>
+				</File>
+				<File Id="533525734" Language="SFX">
+					<ShortName>amb_forest_night_background_loop_04.wav</ShortName>
+					<Path>SFX\amb_forest_night_background_loop_04_9E69E797.wem</Path>
+				</File>
+				<File Id="541365996" Language="SFX">
+					<ShortName>amb_night_element_02_03.wav</ShortName>
+					<Path>SFX\amb_night_element_02_03_9E69E797.wem</Path>
+				</File>
+				<File Id="541865947" Language="SFX">
+					<ShortName>hand_stairs.wav</ShortName>
+					<Path>SFX\hand_stairs_A5E36D4D.wem</Path>
+				</File>
+				<File Id="556254136" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_01.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_01_9E69E797.wem</Path>
+				</File>
+				<File Id="563271382" Language="SFX">
+					<ShortName>2010_18 (2).wav</ShortName>
+					<Path>SFX\2010_18 (2)_03458525.wem</Path>
+				</File>
+				<File Id="594287864" Language="SFX">
+					<ShortName>Footstep_Walking_Hardmetal_05.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardmetal_05_9E69E797.wem</Path>
+				</File>
+				<File Id="624057793" Language="SFX">
+					<ShortName>amb_day_element_02_04.wav</ShortName>
+					<Path>SFX\amb_day_element_02_04_9E69E797.wem</Path>
+				</File>
+				<File Id="657699971" Language="SFX">
+					<ShortName>WavLibraryNet_Sound16382.wav</ShortName>
+					<Path>SFX\WavLibraryNet_Sound16382_FF9673D9.wem</Path>
+				</File>
+				<File Id="660742919" Language="SFX">
+					<ShortName>amb_forest_night_background_loop_03.wav</ShortName>
+					<Path>SFX\amb_forest_night_background_loop_03_9E69E797.wem</Path>
+				</File>
+				<File Id="675519647" Language="SFX">
+					<ShortName>Footstep_Walking_Concrete_01.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Concrete_01_9E69E797.wem</Path>
+				</File>
+				<File Id="680389085" Language="SFX">
+					<ShortName>WavLibraryNet_Sound6005.wav</ShortName>
+					<Path>SFX\WavLibraryNet_Sound6005_208743AE.wem</Path>
+				</File>
+				<File Id="691302003" Language="SFX">
+					<ShortName>Footstep_Walking_Concrete_02.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Concrete_02_9E69E797.wem</Path>
+				</File>
+				<File Id="699452168" Language="SFX">
+					<ShortName>294991_SOUNDDOGS__dr.wav</ShortName>
+					<Path>SFX\294991_SOUNDDOGS__dr_F790448B.wem</Path>
+				</File>
+				<File Id="718412585" Language="SFX">
+					<ShortName>amb_night_element_01_03.wav</ShortName>
+					<Path>SFX\amb_night_element_01_03_9E69E797.wem</Path>
+				</File>
+				<File Id="728247529" Language="SFX">
+					<ShortName>fs_grue_forest_walk_04.wav</ShortName>
+					<Path>SFX\fs_grue_forest_walk_04_9E69E797.wem</Path>
+				</File>
+				<File Id="731338241" Language="SFX">
+					<ShortName>Footstep_Running_Hardwood_01.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardwood_01_9E69E797.wem</Path>
+				</File>
+				<File Id="734524389" Language="SFX">
+					<ShortName>WavLibraryNet_Sound8612.wav</ShortName>
+					<Path>SFX\WavLibraryNet_Sound8612_CAA21BE3.wem</Path>
+				</File>
+				<File Id="735829293" Language="SFX">
+					<ShortName>rustle.wav</ShortName>
+					<Path>SFX\rustle_C2758D64.wem</Path>
+				</File>
+				<File Id="747541592" Language="SFX">
+					<ShortName>fs_grue_forest_run_04.wav</ShortName>
+					<Path>SFX\fs_grue_forest_run_04_9E69E797.wem</Path>
+				</File>
+				<File Id="760376601" Language="SFX">
+					<ShortName>Footstep_Running_Hardmetal_02.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardmetal_02_9E69E797.wem</Path>
+				</File>
+				<File Id="807301160" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_02.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_02_9E69E797.wem</Path>
+				</File>
+				<File Id="808806554" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_02.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_02_9E69E797.wem</Path>
+				</File>
+				<File Id="815864033" Language="SFX">
+					<ShortName>fs_grue_forest_run_02.wav</ShortName>
+					<Path>SFX\fs_grue_forest_run_02_9E69E797.wem</Path>
+				</File>
+				<File Id="831398430" Language="SFX">
+					<ShortName>Footstep_Running_Hardmetal_03.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardmetal_03_9E69E797.wem</Path>
+				</File>
+				<File Id="858710073" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_01.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_01_9E69E797.wem</Path>
+				</File>
+				<File Id="875794643" Language="SFX">
+					<ShortName>83 Metal Creak Art Of Foley 06 Sound Ideas.wav</ShortName>
+					<Path>SFX\83 Metal Creak Art Of Foley 06 Sound Ideas_B5D357A3.wem</Path>
+				</File>
+				<File Id="876979834" Language="SFX">
+					<ShortName>amb_forest_night_background_loop_01.wav</ShortName>
+					<Path>SFX\amb_forest_night_background_loop_01_9E69E797.wem</Path>
+				</File>
+				<File Id="882145882" Language="SFX">
+					<ShortName>2010_18 (2).wav</ShortName>
+					<Path>SFX\2010_18 (2)_3A4596B8.wem</Path>
+				</File>
+				<File Id="901104553" Language="SFX">
+					<ShortName>01724.wav</ShortName>
+					<Path>SFX\01724_AC62070C.wem</Path>
+				</File>
+				<File Id="907568692" Language="SFX">
+					<ShortName>fs_grue_forest_run_03.wav</ShortName>
+					<Path>SFX\fs_grue_forest_run_03_9E69E797.wem</Path>
+				</File>
+				<File Id="913703664" Language="SFX">
+					<ShortName>fs_grue_stone_run_04.wav</ShortName>
+					<Path>SFX\fs_grue_stone_run_04_9E69E797.wem</Path>
+				</File>
+				<File Id="920305233" Language="SFX">
+					<ShortName>amb_day_element_02_01.wav</ShortName>
+					<Path>SFX\amb_day_element_02_01_9E69E797.wem</Path>
+				</File>
+				<File Id="925460839" Language="SFX">
+					<ShortName>amb_day_element_02_03.wav</ShortName>
+					<Path>SFX\amb_day_element_02_03_9E69E797.wem</Path>
+				</File>
+				<File Id="927482208" Language="SFX">
+					<ShortName>88 Metal Scrape Dull FS7 - Metal Sounds Sound Ideas.wav</ShortName>
+					<Path>SFX\88 Metal Scrape Dull FS7 - Metal Sounds Sound Ideas_968F8C51.wem</Path>
+				</File>
+				<File Id="953424399" Language="SFX">
+					<ShortName>Footstep_Walking_Concrete_04.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Concrete_04_9E69E797.wem</Path>
+				</File>
+				<File Id="965222355" Language="SFX">
+					<ShortName>amb_night_element_01_01.wav</ShortName>
+					<Path>SFX\amb_night_element_01_01_9E69E797.wem</Path>
+				</File>
+				<File Id="967820705" Language="SFX">
+					<ShortName>amb_night_element_01_02.wav</ShortName>
+					<Path>SFX\amb_night_element_01_02_9E69E797.wem</Path>
+				</File>
+				<File Id="970609734" Language="SFX">
+					<ShortName>amb_forest_night_background_loop_02.wav</ShortName>
+					<Path>SFX\amb_forest_night_background_loop_02_9E69E797.wem</Path>
+				</File>
+				<File Id="975710281" Language="SFX">
+					<ShortName>Footsteps\Tile\FS_Tile_03.wav</ShortName>
+					<Path>SFX\Footsteps\Tile\FS_Tile_03_9E69E797.wem</Path>
+				</File>
+				<File Id="981578687" Language="SFX">
+					<ShortName>Footstep_Walking_Hardwood_06.wav</ShortName>
+					<Path>SFX\Footstep_Walking_Hardwood_06_9E69E797.wem</Path>
+				</File>
+				<File Id="1025221284" Language="SFX">
+					<ShortName>83 Metal Creak Art Of Foley 06 Sound Ideas.wav</ShortName>
+					<Path>SFX\83 Metal Creak Art Of Foley 06 Sound Ideas_28A7EFE3.wem</Path>
+				</File>
+				<File Id="1061502705" Language="SFX">
+					<ShortName>Footstep_Running_Hardwood_04.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardwood_04_9E69E797.wem</Path>
+				</File>
+				<File Id="1063869970" Language="SFX">
+					<ShortName>Footstep_Running_Hardmetal_01.wav</ShortName>
+					<Path>SFX\Footstep_Running_Hardmetal_01_9E69E797.wem</Path>
+				</File>
+				<File Id="1070167244" Language="SFX">
+					<ShortName>fs_grue_stone_run_02.wav</ShortName>
+					<Path>SFX\fs_grue_stone_run_02_9E69E797.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>

@@ -23,4 +23,18 @@ public class FlammableActions : InterObjActions
         burned = true;
     }
 
+    /// <summary>
+    /// Действие, что совершается при поджигании объекта слабым огнём
+    /// </summary>
+    public virtual void SmallBurnAction()
+    {
+    }
+
+    /// <summary>
+    /// Действие, что совершается при поджигании объекта слабым огнём
+    /// </summary>
+    public virtual void SmallBurnAction(Vector3 flamePosition)
+    {
+    }
+
 }

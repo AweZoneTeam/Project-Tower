@@ -1,4 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SavesInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Saves />
+  <Saves>
+    <SaveInfo>
+      <SaveName>Mattt</SaveName>
+      <SaveTime>August 15 10:0</SaveTime>
+    </SaveInfo>
+  </Saves>
 </SavesInfo>

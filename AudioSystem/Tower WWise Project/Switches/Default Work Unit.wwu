@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{25AE827A-6214-4BBC-8FFF-45BD9E0C76AF}" SchemaVersion="72">
+	<Switches>
+		<WorkUnit Name="Default Work Unit" ID="{25AE827A-6214-4BBC-8FFF-45BD9E0C76AF}" PersistMode="Standalone">
+			<ChildrenList>
+				<SwitchGroup Name="Surface" ID="{FAAD38F3-A178-4E8C-B170-B6CC720D3DB3}">
+					<ChildrenList>
+						<Switch Name="Stone" ID="{66EEFBF3-B8C7-4DB5-861F-B1310069859B}"/>
+						<Switch Name="Grass" ID="{7B9E7C56-6634-405A-9E08-47965A179248}"/>
+						<Switch Name="Metall" ID="{B5074843-2C17-4A56-B2A3-34A94DE8C392}"/>
+						<Switch Name="Wood" ID="{BD472044-F325-4800-BF60-B4C321E273A1}"/>
+						<Switch Name="Tile" ID="{665FDBF7-CA02-49C3-919D-47F5DB7F0B26}"/>
+					</ChildrenList>
+				</SwitchGroup>
+				<SwitchGroup Name="Character" ID="{A03A8F39-39A1-4018-BE23-1C57A2F3EAD2}">
+					<ChildrenList>
+						<Switch Name="Hero" ID="{06565048-7B74-4180-B8D5-A69513BC74A2}"/>
+						<Switch Name="Tech_Knight" ID="{99333454-CED7-4D20-9501-24A092FEF0F7}"/>
+						<Switch Name="Princess_Knight" ID="{4B4777B4-A969-4B02-A9EA-876CEB7E8278}"/>
+						<Switch Name="Storm_Lilac_Knight" ID="{EE5C453F-D6EB-4024-A69C-D4A095EFE9C1}"/>
+						<Switch Name="Black_Knight" ID="{A15A24E7-AB4D-4927-B3A0-F35901CB2995}"/>
+						<Switch Name="Horse_Black_Knight" ID="{57756E9C-6821-41A3-A28A-962B94820C7F}"/>
+						<Switch Name="Satyr" ID="{40E7CFC0-04F6-4C54-BBD0-28FDED6B69C1}"/>
+						<Switch Name="Skeleton" ID="{29EA60B7-B00C-4BF8-AABC-6963B49BA367}"/>
+						<Switch Name="Spider" ID="{45414BE7-4EDB-4F66-B980-52B8E838EB5D}"/>
+						<Switch Name="Pangolin" ID="{90B8D55A-A1AC-484E-983A-758BFC6E0147}"/>
+					</ChildrenList>
+				</SwitchGroup>
+				<SwitchGroup Name="Armor" ID="{D855900A-E0C1-4BD2-81F7-7744488510A3}">
+					<ChildrenList>
+						<Switch Name="Light" ID="{D70900C9-310A-4154-AB51-57DBE6160F55}"/>
+						<Switch Name="Heavy" ID="{19722A92-46F9-46A7-9665-0EA7033A9C15}"/>
+					</ChildrenList>
+				</SwitchGroup>
+				<SwitchGroup Name="Boot_type" ID="{1C7A70AE-977C-4652-AC72-69A5C05CAB10}">
+					<ChildrenList>
+						<Switch Name="Light" ID="{0CAFF18F-CF6E-4C6F-B586-3642C10F63A8}"/>
+						<Switch Name="Heavy" ID="{B35E7B92-9CDF-476C-872F-F88D5EF756CF}"/>
+					</ChildrenList>
+				</SwitchGroup>
+				<SwitchGroup Name="Special_Characters" ID="{B6A86C6D-41CB-4F77-8072-87A1B6B4D59E}">
+					<ChildrenList>
+						<Switch Name="Princess_Knight" ID="{DB2E2E94-7C89-46D2-889A-ABAA3A28DD40}"/>
+						<Switch Name="Hero" ID="{2B04447A-52D4-458C-A01D-60F7EB0D24B2}"/>
+					</ChildrenList>
+				</SwitchGroup>
+			</ChildrenList>
+		</WorkUnit>
+	</Switches>
+</WwiseDocument>

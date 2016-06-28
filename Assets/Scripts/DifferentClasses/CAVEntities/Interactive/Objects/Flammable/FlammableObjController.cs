@@ -14,6 +14,13 @@ public class FlammableObjController : InterObjController
 
     #endregion //fields
 
+    #region parametres
+
+    public float minFlameHit;//Какой должен быть минимальный огонь, чтобы запустился процесс горения. Если огонь по значению меньше, то вызовется другое действие 
+                            //(например, динамит можно поджечь, но если огонь слишком силён, то динамит сразу взорвётся)
+
+    #endregion //parametres
+
     /// <summary>
     /// Функция, ответственная за поджог
     /// </summary>
@@ -24,9 +31,16 @@ public class FlammableObjController : InterObjController
             HitController hitControl;
             if ((hitControl = other.GetComponent<HitController>()) != null)
             {
-                if (hitControl.hitData != null ? hitControl.hitData.fDamage > 0 : false)
+                if (hitControl.hitData != null)
                 {
-                    MakeItBurn(other.transform.position);
+                    if (hitControl.hitData.fDamage > minFlameHit)
+                    {
+                        MakeItBurn(other.transform.position);
+                    }
+                    else
+                    {
+                        MakeItBurnSmall(other.transform.position);
+                    }
                 }
             }
         }
@@ -53,6 +67,28 @@ public class FlammableObjController : InterObjController
         if ((FlammableActions)intActions != null)
         {
             ((FlammableActions)intActions).BurnAction(flamePosition);
+        }
+    }
+
+    /// <summary>
+    /// Действия, что происходят при слабом огне
+    /// </summary>
+    public virtual void MakeItBurnSmall()
+    {
+        if ((FlammableActions)intActions != null)
+        {
+            ((FlammableActions)intActions).SmallBurnAction();
+        }
+    }
+
+    /// <summary>
+    /// Действия, что происходят при слабом огне
+    /// </summary>
+    public virtual void MakeItBurnSmall(Vector3 flamePosition)
+    {
+        if ((FlammableActions)intActions != null)
+        {
+            ((FlammableActions)intActions).SmallBurnAction();
         }
     }
 

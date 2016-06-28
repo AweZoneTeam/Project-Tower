@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{F6C3EB6C-3BF1-4723-B8B8-39AEDD17AA19}" SchemaVersion="72">
+	<SoundcasterSessions>
+		<WorkUnit Name="Default Work Unit" ID="{F6C3EB6C-3BF1-4723-B8B8-39AEDD17AA19}" PersistMode="Standalone">
+			<ChildrenList>
+				<SoundcasterSession Name="New Soundcaster Session" ID="{D2DF311F-310F-45E3-B73C-46F7EDA2729E}">
+					<ModuleList>
+						<Module>
+							<ObjectRef Name="Play_Ambient_day_night" ID="{82BB440C-F07A-4475-AB8B-7047F0BC33D4}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}"/>
+							<Position X="0" Y="0"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Stop_Ambient_day_night" ID="{4EF9F762-A5C0-417E-A537-640B103E5074}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}"/>
+							<Position X="1" Y="0"/>
+						</Module>
+					</ModuleList>
+					<RTPCValueList ShowAll="true">
+						<RTPCValue>
+							<GameParameterRef Name="Time_of_Day" ID="{BA9B50C2-0926-49F7-BED7-9049DF073999}"/>
+							<Value>6.8</Value>
+						</RTPCValue>
+					</RTPCValueList>
+					<CurrentStateList ShowAll="true"/>
+					<CurrentSwitchList ShowAll="true">
+						<CurrentSwitchRef Name="Horse_Black_Knight" ID="{57756E9C-6821-41A3-A28A-962B94820C7F}"/>
+						<CurrentSwitchRef Name="Light" ID="{0CAFF18F-CF6E-4C6F-B586-3642C10F63A8}"/>
+						<CurrentSwitchRef Name="Light" ID="{D70900C9-310A-4154-AB51-57DBE6160F55}"/>
+						<CurrentSwitchRef Name="Stone" ID="{66EEFBF3-B8C7-4DB5-861F-B1310069859B}"/>
+						<CurrentSwitchRef Name="Hero" ID="{2B04447A-52D4-458C-A01D-60F7EB0D24B2}"/>
+					</CurrentSwitchList>
+				</SoundcasterSession>
+			</ChildrenList>
+		</WorkUnit>
+	</SoundcasterSessions>
+</WwiseDocument>

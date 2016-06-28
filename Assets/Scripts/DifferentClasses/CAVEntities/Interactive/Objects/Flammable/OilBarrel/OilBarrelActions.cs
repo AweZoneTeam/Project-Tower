@@ -21,6 +21,7 @@ public class OilBarrelActions : FlammableActions
 
     public float explosionTime = .6f;//Сколько времени длится сам взрыв
     public float preExplosionTime;//Сколько времени должно пройти перед взрывом бомбы
+    public float burnTime;//Сколько времени должно пройти, чтобы объект поджёгся
 
     #endregion //parametres
 
@@ -50,11 +51,37 @@ public class OilBarrelActions : FlammableActions
     }
 
     /// <summary>
-    /// Действия, вызываемые при поджоге
+    /// Действия, вызываемые при слабом поджоге
     /// </summary>
     public override void BurnAction(Vector3 flamePosition)
     {
         StartCoroutine(PreExplosionProcess(preExplosionTime));
+    }
+
+    /// <summary>
+    /// Действия, вызываемые при слабом поджоге
+    /// </summary>
+    public override void SmallBurnAction()
+    {
+        StartCoroutine(PreBurnProcess(burnTime));
+    }
+
+    /// <summary>
+    /// Действия, вызываемые при слабом поджоге
+    /// </summary>
+    public override void SmallBurnAction(Vector3 flamePosition)
+    {
+        StartCoroutine(PreBurnProcess(burnTime));
+    }
+
+    IEnumerator PreBurnProcess(float _time)
+    {
+        yield return new WaitForSeconds(_time);
+        if ((OilBarrelVisual)anim != null)
+        {
+            ((OilBarrelVisual)anim).PreBurn();
+        }
+        BurnAction();
     }
 
     IEnumerator PreExplosionProcess(float _time)

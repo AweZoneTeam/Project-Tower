@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{3010182A-E006-4368-AF5E-1C216FF94D04}" SchemaVersion="72">
+	<SoundBanks>
+		<WorkUnit Name="Default Work Unit" ID="{3010182A-E006-4368-AF5E-1C216FF94D04}" PersistMode="Standalone">
+			<ChildrenList>
+				<SoundBank Name="Main" ID="{3F6CD2BD-4F1B-41F6-98DF-AB6340A7EBEC}">
+					<ObjectInclusionList>
+						<ObjectRef Name="Stop_Box_Pushing" ID="{D1D0F448-6D0C-4060-8F0B-1408A9C8F0D5}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Stop_Ambient_day_night" ID="{4EF9F762-A5C0-417E-A537-640B103E5074}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Lever_Push" ID="{28805477-2FE9-41FC-A879-787AE9115393}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Jump" ID="{BF63F70A-0F3B-4218-B55B-9102EC27752E}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Lever_Turn" ID="{32784432-C7D3-423A-A9FA-FA3A2FD7E546}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Rope_Move" ID="{CECEBA08-49AD-427A-ABDC-854A14728D8B}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Book_Lever" ID="{E91BB1DF-BF4F-43E6-8D6F-97B87F169146}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Chest_Locked" ID="{C271359E-FCAE-440A-BBDF-2C7D427F1EF7}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Door_Opening" ID="{370FD1F2-4577-4439-8914-1B6333ACF494}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Door_Locked" ID="{5859D8FC-D8DB-4449-AF63-999E2F4689B8}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Ambient_day_night" ID="{82BB440C-F07A-4475-AB8B-7047F0BC33D4}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Spikes_Up" ID="{A8D476B1-FE98-447C-B29D-A0DFC66A8207}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Vertical_Stairs_Move" ID="{EE9D993D-F87A-448C-80BA-F6334212BE56}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Wall_Explosion" ID="{836C975C-4FC4-4516-8830-41D9ADCE474D}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Run" ID="{961B55CB-1571-4600-9AE1-D5B00865E25E}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Chest_Opening" ID="{474CEC42-7E24-462E-8FB1-F12C7DE5A842}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Walk" ID="{9DF8FBB0-C9A9-467D-ADBA-D7BD923F2C56}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Box_Pushing" ID="{B8B2A513-7E95-46E1-AD57-89C1F079E846}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Stairs" ID="{DACECA1D-BA66-47C6-99F1-B1F25F0F35BF}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Fire" ID="{D818DBEE-65EF-492E-9D62-157A2AE0695E}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Fall" ID="{A1E7257F-0306-4C38-8914-EB7E994927EE}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Spikes_Down" ID="{A3512845-4D65-4C92-8A52-28B8A261E652}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Thicket_Move" ID="{374F0A68-C01A-4F14-AEE7-C2294A01971D}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Chest_Closing" ID="{1D374F96-B5C2-4FB3-9DC9-1B7F5E8D0B84}" WorkUnitID="{BB3F0547-578D-4CCC-9AA0-836AD05AE109}" Filter="7" Origin="Manual"/>
+					</ObjectInclusionList>
+					<ObjectExclusionList/>
+					<GameSyncExclusionList/>
+				</SoundBank>
+			</ChildrenList>
+		</WorkUnit>
+	</SoundBanks>
+</WwiseDocument>

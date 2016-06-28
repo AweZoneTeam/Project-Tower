@@ -12,9 +12,9 @@ public class BombScript : MonoBehaviour
 
     #region consts
 
-    private const float explosionTime = .6f;
+    private const float explosionTime = .2f;
     private const int preExplosionFPS = 20;
-    private const int explosionFPS = 40;
+    private const int explosionFPS = 30;
 
     #endregion //consts
 

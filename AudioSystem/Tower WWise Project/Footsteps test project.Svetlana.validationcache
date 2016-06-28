@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ValidationCache Version="1" SchemaVersion="72">
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Ambience.wwu" DateLow="2307348439" DateHigh="30526994"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Default Work Unit.wwu" DateLow="2362046296" DateHigh="30526849"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Factory Crankcase REV.wwu" DateLow="2233227505" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Factory SoundSeed Air Objects.wwu" DateLow="2230697360" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Factory Synth One.wwu" DateLow="2231897428" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Actor-Mixer Hierarchy\Movement.wwu" DateLow="3114397356" DateHigh="30527010"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Attenuations\Default Work Unit.wwu" DateLow="1165581525" DateHigh="30526410"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Audio Devices\Default Work Unit.wwu" DateLow="2235117613" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Control Surface Sessions\Default Work Unit.wwu" DateLow="2235047609" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Conversion Settings\Default Work Unit.wwu" DateLow="2232887485" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Conversion Settings\Factory Conversion Settings.wwu" DateLow="2232967490" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Dynamic Dialogue\Default Work Unit.wwu" DateLow="2235807652" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Default Work Unit.wwu" DateLow="2232527465" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory Altiverb - Outdoor and More.wwu" DateLow="2232757478" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory Auro Headphone.wwu" DateLow="2233297509" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory Convolution Reverb Effects.wwu" DateLow="2233667530" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory Effects.wwu" DateLow="2234227562" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Box Modeler.wwu" DateLow="2234407572" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Delay.wwu" DateLow="2234487577" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Dynamics.wwu" DateLow="2234557581" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Filters.wwu" DateLow="2234657586" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Hybrid Reverb Effects.wwu" DateLow="2234737591" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Multiband Distortion.wwu" DateLow="2234837597" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory iZotope Singleband Distortion.wwu" DateLow="2234947603" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Effects\Factory McDSP Effects.wwu" DateLow="2235267621" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Events\Default Work Unit.wwu" DateLow="2362226306" DateHigh="30526849"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Footsteps test project.Svetlana.wsettings" DateLow="3118957617" DateHigh="30527010"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Footsteps test project.wproj" DateLow="2229987319" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Game Parameters\Default Work Unit.wwu" DateLow="1996988749" DateHigh="30526468"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Game Parameters\Factory SoundSeed Air Game Syncs.wwu" DateLow="2232477462" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Interactive Music Hierarchy\Default Work Unit.wwu" DateLow="2235647643" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Master-Mixer Hierarchy\Default Work Unit.wwu" DateLow="2355715934" DateHigh="30526849"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Mixing Sessions\Default Work Unit.wwu" DateLow="2235857655" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Modulators\Default Work Unit.wwu" DateLow="2234997606" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Presets\Default Work Unit.wwu" DateLow="2235387628" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Queries\Default Work Unit.wwu" DateLow="2235487634" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Queries\Factory Queries.wwu" DateLow="2235567638" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\SoundBanks\Default Work Unit.wwu" DateLow="2362346313" DateHigh="30526849"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Soundcaster Sessions\Default Work Unit.wwu" DateLow="3114887384" DateHigh="30527010"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\States\Default Work Unit.wwu" DateLow="2232327453" DateHigh="30526407"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Switches\Default Work Unit.wwu" DateLow="688979090" DateHigh="30527000"/>
+	<ValidationCacheItem File="G:\Unity Projects\Project-Tower\AudioSystem\Footsteps test project\Triggers\Default Work Unit.wwu" DateLow="2235707646" DateHigh="30526407"/>
+</ValidationCache>
